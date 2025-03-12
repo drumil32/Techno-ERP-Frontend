@@ -8,6 +8,7 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 const loginSchema = z.object({
     email: z.string().email("Invalid email"),
@@ -27,7 +28,7 @@ export default function LoginPage() {
         mutationFn: async (data: { email: string; password: string }) => {
             const apiUrl = process.env.NEXT_PUBLIC_API_URL
             console.log(apiUrl)
-            const res = await fetch(`${apiUrl}/api/auth/login`, {
+            const res = await fetch(`${apiUrl}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(data),
@@ -39,6 +40,7 @@ export default function LoginPage() {
         },
         onSuccess: (data) => {
             console.log(data)
+            Cookies.set("authToken", data.token)
             router.push("/");
         },
         onError: () => {
