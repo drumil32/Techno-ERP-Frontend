@@ -12,17 +12,17 @@ const useAuth = () => {
         const token = Cookies.get("authToken");
 
         if (!token) {
-            router.replace("/login");
+            router.replace("/auth/login");
         } else {
             try {
                 setUser({ isAuthenticated: true });
-                if (window.location.pathname === "/login") {
+                if (window.location.pathname === "/auth/login") {
                     router.replace("/");
                 }
             } catch (error) {
                 console.log(error)
                 Cookies.remove("authToken");
-                router.replace("/login");
+                router.replace("/auth/login");
             }
         }
     }, [router]);
