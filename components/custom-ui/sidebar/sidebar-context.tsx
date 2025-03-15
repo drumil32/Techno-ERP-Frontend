@@ -1,17 +1,21 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState } from 'react';
 
-const SidebarContext = createContext({ activeItem: "", setActiveItem: (item: string) => { } });
+const SidebarContext = createContext({ sidebarActiveItem: '', setSidebarActiveItem: (item: string) => {} });
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
-    const [activeItem, setActiveItem] = useState("Marketing");
+  const [sidebarActiveItem, setSidebarActiveItem] = useState('Marketing');
 
-    return (
-        <SidebarContext.Provider value={{ activeItem, setActiveItem }}>
-            {children}
-        </SidebarContext.Provider>
-    );
+  return (
+    <SidebarContext.Provider value={{ sidebarActiveItem, setSidebarActiveItem }}>
+      {children}
+    </SidebarContext.Provider>
+  );
 }
 
 export function useSidebarContext() {
-  return useContext(SidebarContext);
+  const context = useContext(SidebarContext);
+  if(!context) {
+    return new Error("Must be in the SiderBarProvider")
+  }
+  return context
 }
