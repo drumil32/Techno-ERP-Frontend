@@ -1,6 +1,14 @@
 import { createContext, useContext, useState } from 'react';
 
-const SidebarContext = createContext({ sidebarActiveItem: '', setSidebarActiveItem: (item: string) => {} });
+interface SidebarContextType {
+  sidebarActiveItem: string;
+  setSidebarActiveItem: (item: string) => void;
+}
+
+const SidebarContext = createContext({
+  sidebarActiveItem: '',
+  setSidebarActiveItem: (item: string) => {}
+});
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [sidebarActiveItem, setSidebarActiveItem] = useState('Marketing');
@@ -12,10 +20,10 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useSidebarContext() {
+export function useSidebarContext(): SidebarContextType {
   const context = useContext(SidebarContext);
-  if(!context) {
-    return new Error("Must be in the SiderBarProvider")
+  if (!context) {
+    throw new Error('Must be inside the SidebarProvider');
   }
-  return context
+  return context;
 }
