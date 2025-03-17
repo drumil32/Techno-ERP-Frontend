@@ -9,7 +9,7 @@ const useAuth = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const token = Cookies.get('authToken');
+    const token = Cookies.get('token');
 
     if (!token) {
       router.replace('/auth/login');
@@ -21,7 +21,7 @@ const useAuth = () => {
         }
       } catch (error) {
         console.log(error);
-        Cookies.remove('authToken');
+        Cookies.remove('token');
         router.replace('/auth/login');
       }
     }

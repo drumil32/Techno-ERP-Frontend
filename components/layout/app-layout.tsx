@@ -11,16 +11,20 @@ export default function AppLayout() {
     return (
         <HoverContext.Provider value={hovered}>
             <SidebarProvider>
-                <div className="flex h-screen w-full">
+                <div className="flex h-screen w-full overflow-hidden">
                     <aside
-                        className={`bg-primary group h-full ${hovered ? 'w-72' : 'w-24'} bg-gray-900 text-white transition-all duration-300 flex flex-col items-center py-4 px-6 rounded-r-4xl shadow-lg gap-8`}
+                        className={`fixed left-0 top-0 h-full bg-primary text-white transition-all duration-300 flex flex-col items-center py-4 px-6 rounded-r-4xl shadow-lg gap-8 ${hovered ? 'w-72' : 'w-24'
+                            }`}
                         onMouseEnter={() => setHovered(true)}
                         onMouseLeave={() => setHovered(false)}
                     >
                         <TechnoSidebar />
                     </aside>
 
-                    <main className={`transition-all duration-300 flex-1 ${hovered ? 'ml-8' : 'ml-8'}`}>
+                    <main
+                        className={`flex-1 overflow-y-auto transition-all duration-300 ${hovered ? 'pl-80' : 'pl-28'
+                            }`}
+                    >
                         <ContentRenderer />
                     </main>
                 </div>
