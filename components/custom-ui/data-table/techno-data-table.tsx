@@ -26,12 +26,19 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ArrowLeft, ArrowRight, ChevronDown } from 'lucide-react';
 
-const PAGE_SIZE = 10;
-
 // TODO: Create the props type for the table in place of any
-export default function TechnoDataTable({ columns, data, tableName, totalPages, currentPage, onPageChange }: any) {
+export default function TechnoDataTable({
+    columns,
+    data,
+    tableName,
+    totalPages,
+    currentPage,
+    onPageChange,
+    pageLimit,
+    onLimitChange
+}: any) {
     const [globalFilter, setGlobalFilter] = useState<string>('');
-    const [pageSize, setPageSize] = useState<number>(PAGE_SIZE);
+    const [pageSize, setPageSize] = useState<number>(pageLimit);
 
     const table = useReactTable({
         data,
@@ -46,7 +53,6 @@ export default function TechnoDataTable({ columns, data, tableName, totalPages, 
 
     return (
         <div className="w-full space-y-4 border-2 rounded-lg mt-5 px-4 py-2">
-
             {/* Data Table Header */}
             <div className="flex items-center justify-between py-4">
                 <h2 className="text-lg font-bold">{tableName}</h2>
@@ -100,7 +106,6 @@ export default function TechnoDataTable({ columns, data, tableName, totalPages, 
                 </Table>
             </div>
 
-
             {/* Data Table Footer - Pagination Section */}
             <div className="flex items-center justify-between py-4">
                 <div className="flex items-center space-x-2">
@@ -113,7 +118,13 @@ export default function TechnoDataTable({ columns, data, tableName, totalPages, 
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
                             {[10, 20, 30, 50].map((size) => (
-                                <DropdownMenuItem key={size} onClick={() => setPageSize(size)}>
+                                <DropdownMenuItem
+                                    key={size}
+                                    onClick={() => {
+                                        onLimitChange(size);
+                                        setPageSize(size);
+                                    }}
+                                >
                                     {size}
                                 </DropdownMenuItem>
                             ))}
@@ -150,6 +161,6 @@ export default function TechnoDataTable({ columns, data, tableName, totalPages, 
                     </Button>
                 </div>
             </div>
-        </div >
+        </div>
     );
 }
