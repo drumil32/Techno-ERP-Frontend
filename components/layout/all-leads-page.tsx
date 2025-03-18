@@ -7,6 +7,7 @@ import { Button } from '../ui/button';
 import { useEffect, useState } from 'react';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
+import logger from '@/lib/logger';
 
 // TODO: Create the drawer for the edit when view more click
 // TODO: Update the table based on the params selected
@@ -32,7 +33,7 @@ const columns = [
         id: 'actions',
         header: 'Actions',
         cell: ({ row }: any) => (
-            <Button onClick={() => console.log('View More:', row.original)}>View More</Button>
+            <Button onClick={() => logger.info('View More:', row.original)}>View More</Button>
         )
     }
 ];
@@ -74,7 +75,6 @@ const fetchLeadsAnalytics = async ({ queryKey }: any) => {
 }
 
 const refineLeads = (data: any) => {
-    console.log(data)
     const refinedLeads = data.leads.map((lead: any, index: number) => ({
         id: index + 1,
         date: lead.date,
@@ -166,7 +166,7 @@ export default function AllLeadsPage() {
 
     const { filters } = useTechnoFilterContext();
     const applyFilter = () => {
-        console.log(filters);
+        logger.info('Applying filter' , filters);
     };
 
     const [pagesState, setPagesState] = useState(

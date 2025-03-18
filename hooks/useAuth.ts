@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import logger from '@/lib/logger';
 
 const useAuth = () => {
   const [user, setUser] = useState<{ isAuthenticated: boolean } | null>(null);
@@ -20,7 +21,7 @@ const useAuth = () => {
           router.replace('/');
         }
       } catch (error) {
-        console.log(error);
+        logger.error('Error while verifying token:', error);
         Cookies.remove('token');
         router.replace('/auth/login');
       }

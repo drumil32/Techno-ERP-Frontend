@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAdminTrackerContext } from './admin-tracker-context';
 import { useTechnoFilterContext } from '../filter/filter-context';
-import type { AdminAnalyticsResponse } from './admin-tracker-context';
 import TechnoFiltersGroup from '../filter/techno-filters-group';
+import { AdminAnalyticsResponse } from './interfaces';
+import logger from '@/lib/logger';
 
 const AdminTracker = () => {
   const { filters } = useTechnoFilterContext();
@@ -29,7 +30,7 @@ const AdminTracker = () => {
   ]);
 
   const applyFilter = () => {
-      console.log(filters);
+      logger.info('Applying filter', filters);
   };
 
   const { data } = useQuery<AdminAnalyticsResponse['data']>({
