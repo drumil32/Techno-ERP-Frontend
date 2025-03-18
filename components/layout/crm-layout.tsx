@@ -6,6 +6,8 @@ import { TopHeaderProvider, useTopHeaderContext } from '../custom-ui/top-header/
 import TechnoPageTitle from '../custom-ui/page-title/techno-page-title';
 import { TechnoFilterProvider } from '../custom-ui/filter/filter-context';
 import AllLeadsPage from './all-leads-page';
+import AdminTracker from '../custom-ui/admin-tracker/admin-tracker';
+import { AdminTrackerProvider } from '../custom-ui/admin-tracker/admin-tracker-context';
 
 const headerItem = [{ title: 'All Leads' }, { title: 'Yellow Leads' }, { title: 'Admin Tracker' }];
 
@@ -13,7 +15,9 @@ export default function CRMLayout() {
     return (
         <TopHeaderProvider>
             <TechnoFilterProvider>
-                <CRMContent />
+                <AdminTrackerProvider>
+                    <CRMContent />
+                </AdminTrackerProvider>
             </TechnoFilterProvider>
         </TopHeaderProvider>
     );
@@ -38,6 +42,8 @@ function ContentRenderer() {
     switch (headerActiveItem) {
         case 'All Leads':
             return <AllLeadsPage />;
+        case 'Admin Tracker':
+            return <AdminTracker />;
         default:
             return <div>Default Page</div>;
     }

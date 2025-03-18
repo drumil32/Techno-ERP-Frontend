@@ -39,7 +39,7 @@ const columns = [
 
 const fetchLeads = async ({ queryKey }: any) => {
     const [, params] = queryKey;
-    const authToken = Cookies.get('authToken');
+    const authToken = Cookies.get('token');
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const res = await fetch(`${apiUrl}/crm/fetch-data`, {
@@ -57,7 +57,7 @@ const fetchLeads = async ({ queryKey }: any) => {
 
 const fetchLeadsAnalytics = async ({ queryKey }: any) => {
     const [, params] = queryKey;
-    const authToken = Cookies.get('authToken');
+    const authToken = Cookies.get('token');
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const res = await fetch(`${apiUrl}/crm/analytics`, {
