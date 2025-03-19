@@ -1,131 +1,20 @@
 import TechnoAnalyticCardsGroup, {
     CardItem
-} from '../custom-ui/analytic-card/techno-analytic-cards-group';
-import { useTechnoFilterContext } from '../custom-ui/filter/filter-context';
-import TechnoFiltersGroup from '../custom-ui/filter/techno-filters-group';
+} from '../../custom-ui/analytic-card/techno-analytic-cards-group';
+import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
+import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
-import TechnoLeadTypeTag, { TechnoLeadType } from '../custom-ui/lead-type-tag/techno-lead-type-tag';
-import { Button } from '../ui/button';
+import TechnoLeadTypeTag, { TechnoLeadType } from '../../custom-ui/lead-type-tag/techno-lead-type-tag';
+import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import TechnoRightDrawer from '../custom-ui/drawer/techno-right-drawer';
-import LeadViewEdit from './allLeads/leads-view-edit';
+import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
+import LeadViewEdit from './leads-view-edit';
 import { Course, Locations } from '@/static/enum';
-
-const fetchLeads = async ({ queryKey }: any) => {
-    const [, params] = queryKey;
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const res = await fetch(`${apiUrl}/crm/fetch-data`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(params),
-        credentials: 'include'
-    });
-    if (!res.ok) throw new Error('Network response was not ok');
-    return res.json();
-};
-
-const fetchLeadsAnalytics = async ({ queryKey }: any) => {
-    const [, params] = queryKey;
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const res = await fetch(`${apiUrl}/crm/analytics`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(params),
-        credentials: 'include'
-    });
-    if (!res.ok) throw new Error('Network response was not ok');
-    return res.json();
-};
-
-const fetchAssignedToDropdown = async ({ queryKey }: any) => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const res = await fetch(`${apiUrl}/user/fetch-dropdown?moduleName=MARKETING`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-    });
-    if (!res.ok) throw new Error('Network response was not ok');
-    return res.json();
-
-}
-
-const refineLeads = (data: any) => {
-    const refinedLeads = data.leads.map((lead: any, index: number) => ({
-        _id: lead._id,
-        id: index + 1,
-        date: lead.date,
-        name: lead.name,
-        phoneNumber: lead.phoneNumber,
-        altPhoneNumber: lead.altPhoneNumber ?? '-',
-        email: lead.email ?? '-',
-        gender: lead.gender,
-        location: lead.location,
-        course: lead.course ?? '-',
-        leadType: TechnoLeadType[lead.leadType as keyof typeof TechnoLeadType] ?? lead.leadType,
-        _leadType: lead.leadType,
-        source: lead.source ?? '-',
-        assignedTo: lead.assignedTo ?? '-',
-        nextDueDate: lead.nextDueDate ?? '-',
-        createdAt: new Date(lead.createdAt).toLocaleString(),
-        updatedAt: new Date(lead.updatedAt).toLocaleString(),
-    }));
-
-    return {
-        leads: refinedLeads,
-        currentPage: data.currentPage,
-        totalPages: data.totalPages,
-        total: data.total,
-    };
-};
-
-
-const refineAnalytics = (analytics: any) => {
-    const totalLeads = analytics.totalLeads ?? 0;
-
-    const calculatePercentage = (count: number) => {
-        if (totalLeads === 0) return '0%';
-        return `${Math.round((count / totalLeads) * 100)}%`;
-    };
-    const analyticsCardsData: CardItem[] = [
-        {
-            heading: analytics.totalLeads ?? '',
-            subheading: '100%',
-            title: 'Total Leads',
-            color: 'text-black'
-        },
-        {
-            heading: analytics.openLeads ?? '',
-            subheading: calculatePercentage(analytics.openLeads),
-            title: 'Open Leads',
-            color: 'text-orange-600'
-        },
-        {
-            heading: analytics.interestedLeads ?? '',
-            subheading: calculatePercentage(analytics.interestedLeads),
-            title: 'Yellow Leads',
-            color: 'text-yellow-600'
-        },
-        {
-            heading: analytics.notInterestedLeads ?? '',
-            subheading: calculatePercentage(analytics.notInterestedLeads),
-            title: 'Not Interested',
-            color: 'text-red-700'
-        }
-    ];
-    return analyticsCardsData;
-};
+import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
+import { refineLeads, refineAnalytics } from './helpers/refine-data';
 
 export default function AllLeadsPage() {
-
-    const [selectedLeadId, setSelectedLeadId] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [appliedFilters, setAppliedFilters] = useState<any>()
     const [refreshKey, setRefreshKey] = useState(0);
@@ -147,7 +36,8 @@ export default function AllLeadsPage() {
 
     const { filters } = useTechnoFilterContext();
 
-    const currentFiltersRef = useRef(null);
+    const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
+
 
     const applyFilter = () => {
         currentFiltersRef.current = { ...filters };
