@@ -62,9 +62,18 @@ export default function TechnoDataTable({
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        state: { globalFilter },
-        onGlobalFilterChange: setGlobalFilter
+        state: { 
+            globalFilter,
+            pagination: {
+                pageIndex: currentPage - 1,
+                pageSize: pageSize
+            }
+        },
+        onGlobalFilterChange: setGlobalFilter,
+        manualPagination: true, // Tell the table you're handling pagination manually
+        pageCount: totalPages
     });
+    
 
     return (
         <div className="w-full space-y-4 border-2 rounded-lg mt-5 px-4 py-2">

@@ -14,7 +14,6 @@ import { Course, Locations } from '@/static/enum';
 
 const fetchLeads = async ({ queryKey }: any) => {
     const [, params] = queryKey;
-    console.log(params)
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const res = await fetch(`${apiUrl}/crm/fetch-data`, {
         method: 'POST',
@@ -44,6 +43,20 @@ const fetchLeadsAnalytics = async ({ queryKey }: any) => {
     return res.json();
 };
 
+const fetchAssignedToDropdown = async ({ queryKey }: any) => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const res = await fetch(`${apiUrl}/user/fetch-dropdown?moduleName=MARKETING`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+    });
+    if (!res.ok) throw new Error('Network response was not ok');
+    return res.json();
+
+}
+
 const refineLeads = (data: any) => {
     const refinedLeads = data.leads.map((lead: any, index: number) => ({
         _id: lead._id,
@@ -51,21 +64,28 @@ const refineLeads = (data: any) => {
         date: lead.date,
         name: lead.name,
         phoneNumber: lead.phoneNumber,
+        altPhoneNumber: lead.altPhoneNumber ?? '-',
+        email: lead.email ?? '-',
         gender: lead.gender,
         location: lead.location,
         course: lead.course ?? '-',
         leadType: TechnoLeadType[lead.leadType as keyof typeof TechnoLeadType] ?? lead.leadType,
+        _leadType: lead.leadType,
+        source: lead.source ?? '-',
+        assignedTo: lead.assignedTo ?? '-',
         nextDueDate: lead.nextDueDate ?? '-',
-        createdAt: new Date(lead.createdAt).toLocaleString()
+        createdAt: new Date(lead.createdAt).toLocaleString(),
+        updatedAt: new Date(lead.updatedAt).toLocaleString(),
     }));
 
     return {
         leads: refinedLeads,
         currentPage: data.currentPage,
         totalPages: data.totalPages,
-        total: data.total
+        total: data.total,
     };
 };
+
 
 const refineAnalytics = (analytics: any) => {
     const totalLeads = analytics.totalLeads ?? 0;
@@ -103,36 +123,6 @@ const refineAnalytics = (analytics: any) => {
     return analyticsCardsData;
 };
 
-const filtersData = [
-    {
-        filterKey: 'date',
-        isDateFilter: true
-    },
-    {
-        filterKey: 'location',
-        options: Object.values(Locations),
-        hasSearch: true,
-        multiSelect: true
-    },
-    {
-        filterKey: 'course',
-        options: Object.values(Course),
-        hasSearch: true,
-        multiSelect: true
-    },
-    {
-        filterKey: 'lead',
-        options: Object.values(TechnoLeadType),
-        multiSelect: true
-    },
-    {
-        filterKey: 'assignedTo',
-        options: [],
-        hasSearch: true,
-        multiSelect: true
-    }
-];
-
 export default function AllLeadsPage() {
 
     const [selectedLeadId, setSelectedLeadId] = useState(null);
@@ -141,13 +131,17 @@ export default function AllLeadsPage() {
     const [refreshKey, setRefreshKey] = useState(0);
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
+    const [editRow, setEditRow] = useState<any>(null)
 
+    const assignedToQuery = useQuery({
+        queryKey: ['assignedToDropdown'],
+        queryFn: fetchAssignedToDropdown,
+    });
 
     const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const handleViewMore = (id: any) => {
-        setSelectedLeadId(id);
-        console.log(id)
+    const handleViewMore = (row: any) => {
+        setEditRow(row)
         setIsDrawerOpen(true);
     };
 
@@ -157,11 +151,8 @@ export default function AllLeadsPage() {
 
     const applyFilter = () => {
         currentFiltersRef.current = { ...filters };
-        console.log("Applied filters:", currentFiltersRef.current);
         setPage(1)
-        console.log(filters)
         setAppliedFilters({ ...filters });
-
         setRefreshKey(prevKey => prevKey + 1);
 
     };
@@ -175,8 +166,8 @@ export default function AllLeadsPage() {
 
         searchTimerRef.current = setTimeout(() => {
             setDebouncedSearch(value);
-            setPage(1); // Reset to first page on new search
-        }, 500); // 500ms debounce delay
+            setPage(1);
+        }, 500);
     };
 
     useEffect(() => {
@@ -210,7 +201,8 @@ export default function AllLeadsPage() {
             page,
             limit,
             search: debouncedSearch,
-            ...(currentFiltersRef.current || {})
+            ...(currentFiltersRef.current || {}),
+            refreshKey
         };
     };
 
@@ -233,10 +225,10 @@ export default function AllLeadsPage() {
 
     const isLoading = leadsQuery.isLoading || analyticsQuery.isLoading;
     const isError = leadsQuery.isError || analyticsQuery.isError;
-    const leads = leadsQuery.data ? refineLeads(leadsQuery.data) : null;
-    const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data) : [];
+    const leads = leadsQuery.data ? refineLeads(leadsQuery.data.DATA) : null;
+    const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data.DATA) : [];
+    const assignedToDropdownData = assignedToQuery.data ? assignedToQuery.data.DATA : []
 
-    console.log(leads)
     useEffect(() => {
         if (leads) {
             setTotalPages(leads.totalPages);
@@ -263,14 +255,51 @@ export default function AllLeadsPage() {
             id: 'actions',
             header: 'Actions',
             cell: ({ row }: any) => (
-                <Button onClick={() => handleViewMore(row.original._id)}>View More</Button>
+                <Button onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}>
+                    View More
+                </Button>
             )
         }
     ];
 
+    const getFiltersData = () => {
+        return [
+            {
+                filterKey: 'date',
+                isDateFilter: true
+            },
+            {
+                filterKey: 'location',
+                options: Object.values(Locations),
+                hasSearch: true,
+                multiSelect: true
+            },
+            {
+                filterKey: 'course',
+                options: Object.values(Course),
+                hasSearch: true,
+                multiSelect: true
+            },
+            {
+                filterKey: 'leadType',
+                options: Object.values(TechnoLeadType),
+                multiSelect: true
+            },
+            {
+                filterKey: 'assignedTo',
+                options: assignedToDropdownData.map((item: any) => ({
+                    id: item._id,
+                    label: item.name || item._id || String(item)
+                })),
+                hasSearch: true,
+                multiSelect: true
+            }
+        ];
+    };
+
     return (
         <>
-            <TechnoFiltersGroup filters={filtersData} handleFilters={applyFilter} />
+            <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} />
             {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
             {leads?.leads && (
                 <TechnoDataTable
@@ -286,10 +315,11 @@ export default function AllLeadsPage() {
                     searchTerm={search}
                 />
             )}
-            <TechnoRightDrawer title={"Lead Details"} isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
-                {selectedLeadId && <LeadViewEdit id={selectedLeadId} />}
+            <TechnoRightDrawer title={"Lead Details"} isOpen={isDrawerOpen} onClose={() => {setIsDrawerOpen(false);
+                setRefreshKey(prev => prev+1)
+            }}>
+                {editRow && <LeadViewEdit data={editRow} />}
             </TechnoRightDrawer>
-
         </>
     );
 }

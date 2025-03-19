@@ -14,9 +14,14 @@ import TechnoLeadTypeTag, { TechnoLeadType } from '../lead-type-tag/techno-lead-
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
+interface FilterOption {
+    id: string;
+    label: string;
+}
+
 interface TechnoFilterProps {
     filterKey: string;
-    options?: string[];
+    options?: (string | FilterOption)[];
     hasSearch?: boolean;
     multiSelect?: boolean;
     isDateFilter?: boolean;
@@ -68,19 +73,24 @@ export default function TechnoFilter({
         }
     }, [filters, filterKey]);
 
-    const filteredOptions = options.filter((option) =>
-        option.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredOptions = options.filter((option) => {
+        const label = typeof option === 'string' ? option : option.label;
+        return label.toLowerCase().includes(searchTerm.toLowerCase());
+    });
 
-    const handleSelect = (option: string) => {
+
+    const handleSelect = (option: string | FilterOption) => {
+        const value = typeof option === 'string' ? option : option.id;
+        const displayLabel = typeof option === 'string' ? option : option.label;
+
         if (multiSelect) {
             const current = filters[filterKey] || [];
-            const newFilters = current.includes(option)
-                ? current.filter((item: string) => item !== option)
-                : [...current, option];
+            const newFilters = current.includes(value)
+                ? current.filter((item: string) => item !== value)
+                : [...current, value];
             updateFilter(filterKey, newFilters);
         } else {
-            updateFilter(filterKey, option);
+            updateFilter(filterKey, value);
         }
     };
 
@@ -213,14 +223,14 @@ export default function TechnoFilter({
                                 <Checkbox
                                     checked={
                                         multiSelect
-                                            ? filters[filterKey]?.includes(option)
-                                            : filters[filterKey] === option
+                                            ? filters[filterKey]?.includes(typeof option === 'string' ? option : option.id)
+                                            : filters[filterKey] === (typeof option === 'string' ? option : option.id)
                                     }
                                 />
-                                {filterKey === 'lead' ? (
-                                    <TechnoLeadTypeTag type={option as TechnoLeadType} />
+                                {filterKey === 'leadType' ? (
+                                    <TechnoLeadTypeTag type={typeof option === 'string' ? option as TechnoLeadType : option.label as TechnoLeadType} />
                                 ) : (
-                                    <span>{option}</span>
+                                    <span>{typeof option === 'string' ? option : option.label}</span>
                                 )}
                             </div>
                         ))}
