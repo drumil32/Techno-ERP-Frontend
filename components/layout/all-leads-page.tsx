@@ -6,9 +6,8 @@ import TechnoFiltersGroup from '../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import TechnoLeadTypeTag, { TechnoLeadType } from '../custom-ui/lead-type-tag/techno-lead-type-tag';
 import { Button } from '../ui/button';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import Cookies from 'js-cookie';
 import TechnoRightDrawer from '../custom-ui/drawer/techno-right-drawer';
 import LeadViewEdit from './allLeads/leads-view-edit';
 import { Course, Locations } from '@/static/enum';
@@ -139,6 +138,12 @@ export default function AllLeadsPage() {
     const [selectedLeadId, setSelectedLeadId] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [appliedFilters, setAppliedFilters] = useState<any>()
+    const [refreshKey, setRefreshKey] = useState(0);
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+
+
+    const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleViewMore = (id: any) => {
         setSelectedLeadId(id);
@@ -147,12 +152,42 @@ export default function AllLeadsPage() {
     };
 
     const { filters } = useTechnoFilterContext();
+
+    const currentFiltersRef = useRef(null);
+
     const applyFilter = () => {
-        setAppliedFilters(filters)
+        currentFiltersRef.current = { ...filters };
+        console.log("Applied filters:", currentFiltersRef.current);
+        setPage(1)
         console.log(filters)
+        setAppliedFilters({ ...filters });
+
+        setRefreshKey(prevKey => prevKey + 1);
+
     };
 
-    // Single source of truth for pagination
+    const handleSearch = (value: string) => {
+        setSearch(value);
+
+        if (searchTimerRef.current) {
+            clearTimeout(searchTimerRef.current);
+        }
+
+        searchTimerRef.current = setTimeout(() => {
+            setDebouncedSearch(value);
+            setPage(1); // Reset to first page on new search
+        }, 500); // 500ms debounce delay
+    };
+
+    useEffect(() => {
+        return () => {
+            if (searchTimerRef.current) {
+                clearTimeout(searchTimerRef.current);
+            }
+        };
+    }, []);
+
+
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
@@ -169,18 +204,28 @@ export default function AllLeadsPage() {
         setPage(1);
     };
 
-    const filterParams = { page, limit };
+
+    const getQueryParams = () => {
+        return {
+            page,
+            limit,
+            search: debouncedSearch,
+            ...(currentFiltersRef.current || {})
+        };
+    };
+
+    const filterParams = getQueryParams();;
     const analyticsParams = {};
 
     const leadsQuery = useQuery({
-        queryKey: ['leads', filterParams, appliedFilters],
+        queryKey: ['leads', filterParams, appliedFilters, debouncedSearch],
         queryFn: fetchLeads,
         placeholderData: (previousData) => previousData,
         enabled: true
     });
 
     const analyticsQuery = useQuery({
-        queryKey: ['leadsAnalytics', analyticsParams],
+        queryKey: ['leadsAnalytics', analyticsParams, appliedFilters],
         queryFn: fetchLeadsAnalytics,
         placeholderData: (previousData) => previousData,
         enabled: true
@@ -232,11 +277,13 @@ export default function AllLeadsPage() {
                     columns={columns}
                     data={leads.leads}
                     tableName="All Leads Data"
-                    currentPage={page} // Use the single source of truth
+                    currentPage={page}
                     totalPages={totalPages}
-                    pageLimit={limit} // Pass the current limit
+                    pageLimit={limit}
                     onPageChange={handlePageChange}
                     onLimitChange={handleLimitChange}
+                    onSearch={handleSearch}
+                    searchTerm={search}
                 />
             )}
             <TechnoRightDrawer title={"Lead Details"} isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>

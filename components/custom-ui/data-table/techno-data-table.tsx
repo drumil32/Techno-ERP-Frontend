@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     flexRender,
     getCoreRowModel,
@@ -35,10 +35,25 @@ export default function TechnoDataTable({
     currentPage,
     onPageChange,
     pageLimit,
-    onLimitChange
+    onLimitChange,
+    onSearch,
+    searchTerm = ''
 }: any) {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [pageSize, setPageSize] = useState<number>(pageLimit);
+
+    useEffect(() => {
+        setGlobalFilter(searchTerm);
+    }, [searchTerm]);
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setGlobalFilter(value);
+
+        if (onSearch) {
+            onSearch(value);
+        }
+    };
 
     const table = useReactTable({
         data,
@@ -60,7 +75,7 @@ export default function TechnoDataTable({
                     <Input
                         placeholder="Search..."
                         value={globalFilter}
-                        onChange={(e) => setGlobalFilter(e.target.value)}
+                        onChange={handleSearchChange}
                         className="max-w-sm"
                     />
                     {/* TODO: Get the function for the upload and download from parent */}

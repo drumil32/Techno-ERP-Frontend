@@ -12,7 +12,6 @@ import { CalendarIcon, Loader2 } from "lucide-react";
 import { Course, Gender, LeadType, Locations } from '@/static/enum';
 import TechnoLeadTypeTag, { TechnoLeadType } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
 
-// Define the lead data structure
 interface LeadData {
     _id: string;
     date: string;
@@ -109,7 +108,7 @@ export default function LeadViewEdit({ id }: { id: string }) {
             if (!res.ok) throw new Error('Failed to update lead');
 
             setIsEditMode(false);
-            refetch(); // Refresh data after update
+            refetch();
         } catch (err) {
             console.error('Error updating lead:', err);
         } finally {
@@ -119,10 +118,7 @@ export default function LeadViewEdit({ id }: { id: string }) {
 
     if (status === 'pending') {
         return (
-            <Card className="w-full max-w-2xl mx-auto">
-                <CardHeader>
-                    <CardTitle>Lead Details</CardTitle>
-                </CardHeader>
+            <div className="w-full max-w-2xl mx-auto">
                 <CardContent className="space-y-4">
                     {[1, 2, 3, 4, 5].map(i => (
                         <div key={i} className="space-y-2">
@@ -131,20 +127,20 @@ export default function LeadViewEdit({ id }: { id: string }) {
                         </div>
                     ))}
                 </CardContent>
-            </Card>
+            </div>
         );
     }
 
     if (status === 'error' || !formData) {
         return (
-            <Card className="w-full max-w-2xl mx-auto">
+            <div className="w-full max-w-2xl mx-auto">
                 <CardHeader>
                     <CardTitle>Error</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <p className="text-red-500">{error?.message || 'No lead data found'}</p>
                 </CardContent>
-            </Card>
+            </div>
         );
     }
 
