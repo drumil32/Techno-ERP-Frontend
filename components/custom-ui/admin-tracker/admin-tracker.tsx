@@ -33,7 +33,7 @@ const AdminTracker = () => {
       logger.info('Applying filter', filters);
   };
 
-  const { data } = useQuery<AdminAnalyticsResponse['data']>({
+  const { data } = useQuery<AdminAnalyticsResponse['DATA']>({
     queryKey: ['analytics', filters],
     queryFn: getAnalytics
   });

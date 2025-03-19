@@ -9,6 +9,10 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import loginSchema from './login-form-schema';
+import logger from '@/lib/logger';
+import { apiRequest } from '@/lib/apiClient';
+import { API_METHODS } from '@/common/constants/apiMethods';
+import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -24,20 +28,14 @@ export default function LoginPage() {
 
     const loginMutation = useMutation({
         mutationFn: async (data: { email: string; password: string }) => {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-            const res = await fetch(`${apiUrl}/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data),
-                credentials: 'include'
-            });
-
-            if (!res.ok) throw new Error('Invalid credentials');
-
-            return res.json();
+            const response = await apiRequest(
+                API_METHODS.POST,
+                API_ENDPOINTS.login,
+                data
+            );
+            return response;
         },
-        onSuccess: (data) => {
-            Cookies.set('token', data.token);
+        onSuccess: () => {
             router.push('/');
         },
         onError: () => {

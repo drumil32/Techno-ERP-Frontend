@@ -5,6 +5,13 @@ import logger from './logger';
 
 type RequestParams = Record<string, string | number | boolean | undefined>;
 
+export interface Response {
+  SUCCESS: boolean;
+  MESSAGE: string;
+  DATA?: unknown;
+  ERROR?: string;
+}
+
 export const apiRequest = async <T>(
   method: string,
   url: string,
@@ -36,7 +43,7 @@ export const apiRequest = async <T>(
 
     const response = await fetch(requestUrl, {
       method,
-      body: isFormData ? (data as FormData) : JSON.stringify(data),
+      ...(method !== "GET" && { body: isFormData ? (data as FormData) : JSON.stringify(data) }),
       headers: {
         ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
         ...extraHeaders
@@ -44,18 +51,18 @@ export const apiRequest = async <T>(
       credentials: 'include'
     });
 
-    const responseBody = await response.json();
+    const responseBody:Response = await response.json();
 
-    if (!response.ok || !responseBody.success) {
-        toast.error(responseBody.error || responseBody.message || `HTTP Error: ${response.status}`);
+    if (!response.ok || !responseBody.SUCCESS) {
+        toast.error(responseBody.ERROR || responseBody.MESSAGE || `HTTP Error: ${response.status}`);
         if (response.status === 401 && !isAuthRequest) {
             window.location.href = API_ROUTES.login;
         }
         return null; 
     }
 
-    toast.success(responseBody.message);
-    return responseBody.data as T;
+    toast.success(responseBody.MESSAGE);
+    return responseBody.DATA as T;
       
   } catch (error) {
     logger.error('API request error:', error);

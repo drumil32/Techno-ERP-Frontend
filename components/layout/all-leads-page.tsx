@@ -6,8 +6,10 @@ import TechnoLeadTypeTag, { TechnoLeadType } from '../custom-ui/lead-type-tag/te
 import { Button } from '../ui/button';
 import { useEffect, useState } from 'react';
 import { useQueries, useQuery } from '@tanstack/react-query';
-import Cookies from 'js-cookie';
 import logger from '@/lib/logger';
+import { apiRequest } from '@/lib/apiClient';
+import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import { API_METHODS } from '@/common/constants/apiMethods';
 
 // TODO: Create the drawer for the edit when view more click
 // TODO: Update the table based on the params selected
@@ -40,38 +42,22 @@ const columns = [
 
 const fetchLeads = async ({ queryKey }: any) => {
     const [, params] = queryKey;
-    const authToken = Cookies.get('token');
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const res = await fetch(`${apiUrl}/crm/fetch-data`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`,
-        },
-        body: JSON.stringify(params),
-        credentials: 'include'
-    });
-    if (!res.ok) throw new Error('Network response was not ok');
-    return res.json();
+    const response = await apiRequest(
+        API_METHODS.POST,
+        API_ENDPOINTS.getAllLeads,
+        params,
+    )
+    return response;
 };
 
 const fetchLeadsAnalytics = async ({ queryKey }: any) => {
     const [, params] = queryKey;
-    const authToken = Cookies.get('token');
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const res = await fetch(`${apiUrl}/crm/analytics`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authToken}`,
-        },
-        body: JSON.stringify(params),
-        credentials: 'include'
-    });
-    if (!res.ok) throw new Error('Network response was not ok');
-    return res.json();
+    const response = await apiRequest(
+        API_METHODS.POST,
+        API_ENDPOINTS.getAllLeadsAnalytics,
+        params
+    );
+    return response;
 }
 
 const refineLeads = (data: any) => {

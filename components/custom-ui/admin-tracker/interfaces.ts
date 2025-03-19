@@ -3,13 +3,13 @@ export interface AdminTrackerContextType {
 }
 
 export interface AdminAnalyticsResponse {
-    success: boolean;
-    message: string;
-    data?: {
+    SUCCESS: boolean;
+    MESSAGE: string;
+    DATA?: {
       allLeadsAnalytics?: LeadsAnalytics;
       yellowLeadsAnalytics?: YellowLeadsAnalytics;
     };
-    error?: string;
+    ERROR?: string;
   }
   
 export interface LeadsAnalytics {
