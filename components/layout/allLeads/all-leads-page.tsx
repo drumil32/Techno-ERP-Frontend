@@ -1,6 +1,4 @@
-import TechnoAnalyticCardsGroup, {
-    CardItem
-} from '../../custom-ui/analytic-card/techno-analytic-cards-group';
+import TechnoAnalyticCardsGroup from '../../custom-ui/analytic-card/techno-analytic-cards-group';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
@@ -21,6 +19,18 @@ export default function AllLeadsPage() {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [editRow, setEditRow] = useState<any>(null)
+
+    const [sortBy, setSortBy] = useState<string | null>(null);
+    const [orderBy, setOrderBy] = useState<string>('asc');
+
+
+    const handleSortChange = (column: string, order: string) => {
+        setSortBy(column);
+        setOrderBy(order);
+        setPage(1); 
+        setRefreshKey(prevKey => prevKey + 1);
+    };
+
 
     const assignedToQuery = useQuery({
         queryKey: ['assignedToDropdown'],
@@ -74,6 +84,7 @@ export default function AllLeadsPage() {
     const [totalPages, setTotalPages] = useState(0);
     const [totalEntries, setTotalEntries] = useState(0);
 
+
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
             setPage(newPage);
@@ -87,14 +98,22 @@ export default function AllLeadsPage() {
 
 
     const getQueryParams = () => {
-        return {
+        const params: { [key: string]: any } = {
             page,
             limit,
             search: debouncedSearch,
             ...(currentFiltersRef.current || {}),
             refreshKey
         };
+
+        if (sortBy) {
+            params.sortBy = sortBy;
+            params.orderBy = orderBy;
+        }
+
+        return params;
     };
+
 
     const filterParams = getQueryParams();;
     const analyticsParams = {};
@@ -193,20 +212,22 @@ export default function AllLeadsPage() {
             {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
             {leads?.leads && (
                 <TechnoDataTable
-                    columns={columns}
-                    data={leads.leads}
-                    tableName="All Leads Data"
-                    currentPage={page}
-                    totalPages={totalPages}
-                    pageLimit={limit}
-                    onPageChange={handlePageChange}
-                    onLimitChange={handleLimitChange}
-                    onSearch={handleSearch}
-                    searchTerm={search}
-                />
+                columns={columns}
+                data={leads.leads}
+                tableName="All Leads Data"
+                currentPage={page}
+                totalPages={totalPages}
+                pageLimit={limit}
+                onPageChange={handlePageChange}
+                onLimitChange={handleLimitChange}
+                onSearch={handleSearch}
+                searchTerm={search}
+                onSort={handleSortChange}  // Pass the sorting function
+            />
             )}
-            <TechnoRightDrawer title={"Lead Details"} isOpen={isDrawerOpen} onClose={() => {setIsDrawerOpen(false);
-                setRefreshKey(prev => prev+1)
+            <TechnoRightDrawer title={"Lead Details"} isOpen={isDrawerOpen} onClose={() => {
+                setIsDrawerOpen(false);
+                setRefreshKey(prev => prev + 1)
             }}>
                 {editRow && <LeadViewEdit data={editRow} />}
             </TechnoRightDrawer>

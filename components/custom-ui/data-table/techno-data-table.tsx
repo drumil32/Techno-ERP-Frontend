@@ -24,7 +24,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { ArrowLeft, ArrowRight, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { title } from 'process';
 
 // TODO: Create the props type for the table in place of any
 export default function TechnoDataTable({
@@ -37,10 +38,13 @@ export default function TechnoDataTable({
     pageLimit,
     onLimitChange,
     onSearch,
-    searchTerm = ''
+    searchTerm = '',
+    onSort // new onSort handler
 }: any) {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [pageSize, setPageSize] = useState<number>(pageLimit);
+    const [sortColumn, setSortColumn] = useState<string | null>(null); // 'date' or 'nextDueDate'
+    const [sortOrder, setSortOrder] = useState<string>('asc'); // 'asc' or 'desc'
 
     useEffect(() => {
         setGlobalFilter(searchTerm);
@@ -62,7 +66,7 @@ export default function TechnoDataTable({
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        state: { 
+        state: {
             globalFilter,
             pagination: {
                 pageIndex: currentPage - 1,
@@ -70,14 +74,33 @@ export default function TechnoDataTable({
             }
         },
         onGlobalFilterChange: setGlobalFilter,
-        manualPagination: true, // Tell the table you're handling pagination manually
+        manualPagination: true,
         pageCount: totalPages
     });
-    
+
+    const handleSort = (columnName: string) => {
+        if (sortColumn === columnName) {
+            setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortColumn(columnName);
+            setSortOrder('asc');
+        }
+
+        if (onSort) {
+            onSort(columnName, sortOrder === 'asc' ? 'desc' : 'asc'); 
+        }
+    };
+
+
+    const getSortIcon = (columnName: string) => {
+        if (sortColumn === columnName) {
+            return sortOrder === 'asc' ? <ArrowUp className="ml-1 h-4 w-4" /> : <ArrowDown className="ml-1 h-4 w-4" />;
+        }
+        return null;
+    };
 
     return (
         <div className="w-full space-y-4 border-2 rounded-lg mt-5 px-4 py-2">
-            {/* Data Table Header */}
             <div className="flex items-center justify-between py-4">
                 <h2 className="text-lg font-bold">{tableName}</h2>
                 <div className="flex items-center space-x-2">
@@ -87,7 +110,6 @@ export default function TechnoDataTable({
                         onChange={handleSearchChange}
                         className="max-w-sm"
                     />
-                    {/* TODO: Get the function for the upload and download from parent */}
                     <Button>Upload</Button>
                     <Button>Download</Button>
                 </div>
@@ -102,7 +124,17 @@ export default function TechnoDataTable({
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
                                     <TableHead key={header.id} className="text-center">
-                                        {flexRender(header.column.columnDef.header, header.getContext())}
+                                        {header.column.columnDef.header === 'Date' || header.column.columnDef.header === 'Next Due Date' ? (
+                                            <Button
+                                                variant="ghost"
+                                                onClick={() => handleSort(header.column.columnDef.accessorKey)}
+                                            >
+                                                {flexRender(header.column.columnDef.header, header.getContext())}
+                                                {getSortIcon(header.column.columnDef.accessorKey)}
+                                            </Button>
+                                        ) : (
+                                            flexRender(header.column.columnDef.header, header.getContext())
+                                        )}
                                     </TableHead>
                                 ))}
                             </TableRow>
