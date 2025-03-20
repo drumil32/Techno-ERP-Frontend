@@ -1,10 +1,11 @@
 'use client'
 import { createContext, useContext, ReactNode } from 'react';
-import { useTechnoFilterContext } from '../filter/filter-context';
+import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import { AdminTrackerContextType } from './interfaces';
 import { apiRequest } from '@/lib/apiClient';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
+import logger from '@/lib/logger';
 
 const AdminTrackerContext = createContext<AdminTrackerContextType | null>(null);
 
@@ -14,14 +15,11 @@ export function AdminTrackerProvider({ children }: { children: ReactNode }) {
     
     const getAnalytics = async () => {
 
-        const parseDate = (date: any) => {
-            const parsedDate = new Date(date);
-            return isNaN(parsedDate.getTime()) ? null : parsedDate.toLocaleDateString("en-GB");
-        };
+        logger.info('Applying filter', filters);
         
         const transformedValues = {
-            startDate:  parseDate(filters?.date_start),
-            endDate: parseDate(filters?.date_end),
+            startDate:  filters?.startDate,
+            endDate: filters?.endDate,
             location: filters?.location,
             course: filters?.course,
             lead: filters?.lead,

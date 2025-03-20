@@ -48,13 +48,11 @@ export default function AllLeadsPage() {
 
     const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
 
-
     const applyFilter = () => {
         currentFiltersRef.current = { ...filters };
         setPage(1)
         setAppliedFilters({ ...filters });
         setRefreshKey(prevKey => prevKey + 1);
-
     };
 
     const handleSearch = (value: string) => {
@@ -115,7 +113,7 @@ export default function AllLeadsPage() {
     };
 
 
-    const filterParams = getQueryParams();;
+    const filterParams = getQueryParams();
     const analyticsParams = {};
 
     const leadsQuery = useQuery({
@@ -134,9 +132,9 @@ export default function AllLeadsPage() {
 
     const isLoading = leadsQuery.isLoading || analyticsQuery.isLoading;
     const isError = leadsQuery.isError || analyticsQuery.isError;
-    const leads = leadsQuery.data ? refineLeads(leadsQuery.data.DATA) : null;
-    const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data.DATA) : [];
-    const assignedToDropdownData = assignedToQuery.data ? assignedToQuery.data.DATA : []
+    const leads = leadsQuery.data ? refineLeads(leadsQuery.data) : null;
+    const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data) : [];
+    const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : []
 
     useEffect(() => {
         if (leads) {
@@ -196,10 +194,7 @@ export default function AllLeadsPage() {
             },
             {
                 filterKey: 'assignedTo',
-                options: assignedToDropdownData.map((item: any) => ({
-                    id: item._id,
-                    label: item.name || item._id || String(item)
-                })),
+                options: assignedToDropdownData.map((item: any) => item.name || item._id || String(item)),
                 hasSearch: true,
                 multiSelect: true
             }

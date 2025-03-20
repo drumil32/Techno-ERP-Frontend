@@ -288,6 +288,7 @@ export default function LeadViewEdit({ data }: { data: any }) {
                     value={formData.remarks || ''}
                     onChange={handleChange}
                     className="w-full min-h-20 px-3 py-2 border rounded-md"
+                    placeholder="Enter remarks here"
                 />
             </div>
 
@@ -306,6 +307,7 @@ export default function LeadViewEdit({ data }: { data: any }) {
                             }
                         } as React.ChangeEvent<HTMLInputElement>)}
                         className="w-full px-3 py-2 pl-10 border rounded-md"
+                        placeholder="Select a date"
                     />
                     <CalendarIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                 </div>

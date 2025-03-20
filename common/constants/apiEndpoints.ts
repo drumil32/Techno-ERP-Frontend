@@ -1,6 +1,6 @@
 import { get } from "http";
 
-export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
+export const API_DOMAIN = process.env.NEXT_PUBLIC_LOCAL_API_URL;
 
 export const API_ENDPOINTS = {
 
@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
 
     getAllLeads: `${API_DOMAIN}/crm/fetch-data`,
     getAllLeadsAnalytics: `${API_DOMAIN}/crm/analytics`,
+    fetchAssignedToDropdown: `${API_DOMAIN}/user/fetch-dropdown?moduleName=MARKETING`,
 
     getAdminAnalytics: `${API_DOMAIN}/crm/admin/analytics`,
 

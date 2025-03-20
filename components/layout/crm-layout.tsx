@@ -5,9 +5,9 @@ import TechnoBreadCrumb from '../custom-ui/breadcrump/techno-breadcrumb';
 import { TopHeaderProvider, useTopHeaderContext } from '../custom-ui/top-header/top-header-context';
 import TechnoPageTitle from '../custom-ui/page-title/techno-page-title';
 import { TechnoFilterProvider } from '../custom-ui/filter/filter-context';
-import AllLeadsPage from './all-leads-page';
-import AdminTracker from '../custom-ui/admin-tracker/admin-tracker';
-import { AdminTrackerProvider } from '../custom-ui/admin-tracker/admin-tracker-context';
+import AdminTracker from './admin-tracker/admin-tracker';
+import { AdminTrackerProvider } from './admin-tracker/admin-tracker-context';
+import AllLeadsPage from './allLeads/all-leads-page';
 
 const headerItem = [{ title: 'All Leads' }, { title: 'Yellow Leads' }, { title: 'Admin Tracker' }];
 
