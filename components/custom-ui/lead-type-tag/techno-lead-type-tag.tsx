@@ -28,7 +28,7 @@ export default function TechnoLeadTypeTag({ type }: TechnoLeadTypeTagProps) {
 
     return (
         <span className={`px-2 py-1 rounded-full text-sm font-medium ${style}`}>
-            {type.replace(/_/g, ' ')}
+            {type?.replace(/_/g, ' ')}
         </span>
     );
 }

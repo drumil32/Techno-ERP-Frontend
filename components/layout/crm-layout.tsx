@@ -8,6 +8,7 @@ import { TechnoFilterProvider } from '../custom-ui/filter/filter-context';
 import AdminTracker from './admin-tracker/admin-tracker';
 import { AdminTrackerProvider } from './admin-tracker/admin-tracker-context';
 import AllLeadsPage from './allLeads/all-leads-page';
+import YellowLeadsTracker from './yellowLeads/yellow-leads-tracker';
 
 const headerItem = [{ title: 'All Leads' }, { title: 'Yellow Leads' }, { title: 'Admin Tracker' }];
 
@@ -42,6 +43,8 @@ function ContentRenderer() {
     switch (headerActiveItem) {
         case 'All Leads':
             return <AllLeadsPage />;
+        case 'Yellow Leads':
+            return <YellowLeadsTracker />;
         case 'Admin Tracker':
             return <AdminTracker />;
         default:
