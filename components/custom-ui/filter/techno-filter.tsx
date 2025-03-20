@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTechnoFilterContext } from './filter-context';
 import {
     DropdownMenu,
@@ -9,16 +9,38 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar1, ChevronDown } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import TechnoLeadTypeTag, { TechnoLeadType } from '../lead-type-tag/techno-lead-type-tag';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
+interface FilterOption {
+    id: string;
+    label: string;
+}
 
 interface TechnoFilterProps {
     filterKey: string;
-    options?: string[];
+    options?: (string | FilterOption)[];
     hasSearch?: boolean;
     multiSelect?: boolean;
     isDateFilter?: boolean;
 }
+
+const formatDateForAPI = (date: Date | undefined): string | undefined => {
+    if (!date) return undefined;
+    return format(date, 'dd/MM/yyyy');
+};
+
+const parseDateFromAPI = (dateString: string | undefined): Date | undefined => {
+    if (!dateString) return undefined;
+    try {
+        return parse(dateString, 'dd/MM/yyyy', new Date());
+    } catch (error) {
+        console.error('Error parsing date:', error);
+        return undefined;
+    }
+};
 
 export default function TechnoFilter({
     filterKey,
@@ -29,48 +51,87 @@ export default function TechnoFilter({
 }: TechnoFilterProps) {
     const { filters, updateFilter } = useTechnoFilterContext();
     const [searchTerm, setSearchTerm] = useState('');
-    const [startDate, setStartDate] = useState<Date | undefined>();
-    const [endDate, setEndDate] = useState<Date | undefined>();
-    const filteredOptions = options.filter((option) =>
-        option.toLowerCase().includes(searchTerm.toLowerCase())
+    const [startDate, setStartDate] = useState<Date | undefined>(
+        parseDateFromAPI(filters.startDate)
     );
+    const [endDate, setEndDate] = useState<Date | undefined>(
+        parseDateFromAPI(filters.endDate)
+    );
+    const [startCalendarOpen, setStartCalendarOpen] = useState(false);
+    const [endCalendarOpen, setEndCalendarOpen] = useState(false);
+    const [isThisMonth, setIsThisMonth] = useState(filters[filterKey] === 'This Month');
 
-    const handleSelect = (option: string) => {
+    useEffect(() => {
+        setIsThisMonth(filters[filterKey] === 'This Month');
+
+        if (filters.startDate) {
+            setStartDate(parseDateFromAPI(filters.startDate));
+        }
+
+        if (filters.endDate) {
+            setEndDate(parseDateFromAPI(filters.endDate));
+        }
+    }, [filters, filterKey]);
+
+    const filteredOptions = options.filter((option) => {
+        const label = typeof option === 'string' ? option : option.label;
+        return label.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+
+
+    const handleSelect = (option: string | FilterOption) => {
+        const value = typeof option === 'string' ? option : option.id;
+        const displayLabel = typeof option === 'string' ? option : option.label;
+
         if (multiSelect) {
             const current = filters[filterKey] || [];
-            const newFilters = current.includes(option)
-                ? current.filter((item: string) => item !== option)
-                : [...current, option];
+            const newFilters = current.includes(value)
+                ? current.filter((item: string) => item !== value)
+                : [...current, value];
             updateFilter(filterKey, newFilters);
         } else {
-            updateFilter(filterKey, option);
+            updateFilter(filterKey, value);
         }
     };
 
     const handleDateChange = (type: 'start' | 'end', selectedDate: Date | undefined) => {
+        if (isThisMonth) {
+            setIsThisMonth(false);
+            updateFilter(filterKey, undefined);
+        }
+
         if (type === 'start') {
             setStartDate(selectedDate);
-            updateFilter(`${filterKey}_start`, selectedDate);
+            updateFilter('startDate', formatDateForAPI(selectedDate));
+            setStartCalendarOpen(false);
         } else {
             setEndDate(selectedDate);
-            updateFilter(`${filterKey}_end`, selectedDate);
+            updateFilter('endDate', formatDateForAPI(selectedDate));
+            setEndCalendarOpen(false);
         }
     };
 
     const handleThisMonth = () => {
-        if (filters[filterKey] === 'This Month') {
-            setStartDate(undefined);
-            setEndDate(undefined);
-            updateFilter(`${filterKey}_start`, undefined);
-            updateFilter(`${filterKey}_end`, undefined);
-        } else {
+        const newIsThisMonth = !isThisMonth;
+        setIsThisMonth(newIsThisMonth);
+
+        if (newIsThisMonth) {
             const now = new Date();
             const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
             const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
             setStartDate(firstDay);
             setEndDate(lastDay);
-            updateFilter(`${filterKey}_start`, firstDay);
-            updateFilter(`${filterKey}_end`, lastDay);
+
+            updateFilter(filterKey, 'This Month');
+            updateFilter('startDate', formatDateForAPI(firstDay));
+            updateFilter('endDate', formatDateForAPI(lastDay));
+        } else {
+            setStartDate(undefined);
+            setEndDate(undefined);
+            updateFilter(filterKey, undefined);
+            updateFilter('startDate', undefined);
+            updateFilter('endDate', undefined);
         }
     };
 
@@ -78,37 +139,67 @@ export default function TechnoFilter({
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline">
-                    {filterKey} <ChevronDown />
+                    {filterKey}
+                    <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-64">
                 {isDateFilter ? (
                     <div className="p-2 space-y-4">
-                        <div className="flex items-center space-x-2" onClick={handleThisMonth}>
-                            <Checkbox checked={filters[filterKey] === 'This Month'} />
+                        <div className="flex items-center space-x-2 cursor-pointer" onClick={handleThisMonth}>
+                            <Checkbox checked={isThisMonth} />
                             <span>This Month</span>
                         </div>
-                        <div
-                            className={`flex flex-col gap-4 ${filters[filterKey] === 'This Month' ? 'opacity-50 pointer-events-none' : ''}`}
-                        >
-                            <div className="flex items-center gap-2">
-                                <Calendar1 />
-                                {/* TODO: Selection of the Start and End date it is not updating */}
-                                <Input
-                                    type="date"
-                                    value={startDate ? format(startDate, 'yyyy-MM-dd') : ''}
-                                    placeholder="Start Date"
-                                    readOnly
-                                    onClick={() => handleDateChange('start', new Date())}
-                                />
-                                <Calendar1 />
-                                <Input
-                                    type="date"
-                                    value={endDate ? format(endDate, 'yyyy-MM-dd') : ''}
-                                    placeholder="End Date"
-                                    readOnly
-                                    onClick={() => handleDateChange('end', new Date())}
-                                />
+                        <div className={`flex flex-col gap-4 ${isThisMonth ? 'opacity-50 pointer-events-none' : ''}`}>
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2">
+                                    <Calendar1 className="h-4 w-4" />
+                                    <span>Start Date:</span>
+                                </div>
+                                <Popover open={startCalendarOpen} onOpenChange={setStartCalendarOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            className="w-full justify-start text-left font-normal"
+                                        >
+                                            {startDate ? formatDateForAPI(startDate) : "Select start date"}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={startDate}
+                                            onSelect={(date) => handleDateChange('start', date)}
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center gap-2">
+                                    <Calendar1 className="h-4 w-4" />
+                                    <span>End Date:</span>
+                                </div>
+                                <Popover open={endCalendarOpen} onOpenChange={setEndCalendarOpen}>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            className="w-full justify-start text-left font-normal"
+                                        >
+                                            {endDate ? formatDateForAPI(endDate) : "Select end date"}
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={endDate}
+                                            onSelect={(date) => handleDateChange('end', date)}
+                                            initialFocus
+                                            disabled={date => startDate ? date < startDate : false}
+                                        />
+                                    </PopoverContent>
+                                </Popover>
                             </div>
                         </div>
                     </div>
@@ -132,14 +223,14 @@ export default function TechnoFilter({
                                 <Checkbox
                                     checked={
                                         multiSelect
-                                            ? filters[filterKey]?.includes(option)
-                                            : filters[filterKey] === option
+                                            ? filters[filterKey]?.includes(typeof option === 'string' ? option : option.id)
+                                            : filters[filterKey] === (typeof option === 'string' ? option : option.id)
                                     }
                                 />
-                                {filterKey === 'lead' ? (
-                                    <TechnoLeadTypeTag type={option as TechnoLeadType} />
+                                {filterKey === 'leadType' ? (
+                                    <TechnoLeadTypeTag type={typeof option === 'string' ? option as TechnoLeadType : option.label as TechnoLeadType} />
                                 ) : (
-                                    <span>{option}</span>
+                                    <span>{typeof option === 'string' ? option : option.label}</span>
                                 )}
                             </div>
                         ))}
