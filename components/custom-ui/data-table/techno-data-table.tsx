@@ -39,7 +39,8 @@ export default function TechnoDataTable({
     onLimitChange,
     onSearch,
     searchTerm = '',
-    onSort // new onSort handler
+    onSort,
+    children
 }: any) {
     const [globalFilter, setGlobalFilter] = useState<string>('');
     const [pageSize, setPageSize] = useState<number>(pageLimit);
@@ -87,7 +88,7 @@ export default function TechnoDataTable({
         }
 
         if (onSort) {
-            onSort(columnName, sortOrder === 'asc' ? 'desc' : 'asc'); 
+            onSort(columnName, sortOrder === 'asc' ? 'desc' : 'asc');
         }
     };
 
@@ -101,9 +102,13 @@ export default function TechnoDataTable({
 
     return (
         <div className="w-full space-y-4 border-2 rounded-lg mt-5 px-4 py-2">
-            <div className="flex items-center justify-between py-4">
-                <h2 className="text-lg font-bold">{tableName}</h2>
-                <div className="flex items-center space-x-2">
+            <div className="flex w-full items-center py-4">
+                <div className="flex items-center">
+                    <h2 className="text-lg font-bold">{tableName}</h2>
+                    {children && <div className="ml-2">{children}</div>}  
+                </div>
+
+                <div className="flex items-center space-x-2 ml-auto">
                     <Input
                         placeholder="Search..."
                         value={globalFilter}
@@ -127,10 +132,10 @@ export default function TechnoDataTable({
                                         {header.column.columnDef.header === 'Date' || header.column.columnDef.header === 'Next Due Date' ? (
                                             <Button
                                                 variant="ghost"
-                                                onClick={() => handleSort(header.column.columnDef.accessorKey)}
+                                                onClick={() => handleSort(header.column.id)}
                                             >
                                                 {flexRender(header.column.columnDef.header, header.getContext())}
-                                                {getSortIcon(header.column.columnDef.accessorKey)}
+                                                {getSortIcon(header.column.id)}
                                             </Button>
                                         ) : (
                                             flexRender(header.column.columnDef.header, header.getContext())

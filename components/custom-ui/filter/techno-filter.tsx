@@ -97,9 +97,9 @@ export default function TechnoFilter({
     const handleDateChange = (type: 'start' | 'end', selectedDate: Date | undefined) => {
         if (isThisMonth) {
             setIsThisMonth(false);
-            updateFilter(filterKey, undefined);
+            updateFilter('date', undefined);
         }
-
+    
         if (type === 'start') {
             setStartDate(selectedDate);
             updateFilter('startDate', formatDateForAPI(selectedDate));
@@ -110,6 +110,7 @@ export default function TechnoFilter({
             setEndCalendarOpen(false);
         }
     };
+    
 
     const handleThisMonth = () => {
         const newIsThisMonth = !isThisMonth;

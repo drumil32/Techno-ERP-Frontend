@@ -11,10 +11,11 @@ import LeadViewEdit from './leads-view-edit';
 import { Course, Locations } from '@/static/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
+import FilterBadges from './components/filter-badges';
 
 export default function AllLeadsPage() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [appliedFilters, setAppliedFilters] = useState<any>()
+    const [appliedFilters, setAppliedFilters] = useState<any>({}); // Initialize to empty object
     const [refreshKey, setRefreshKey] = useState(0);
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -27,7 +28,7 @@ export default function AllLeadsPage() {
     const handleSortChange = (column: string, order: string) => {
         setSortBy(column);
         setOrderBy(order);
-        setPage(1); 
+        setPage(1);
         setRefreshKey(prevKey => prevKey + 1);
     };
 
@@ -44,17 +45,40 @@ export default function AllLeadsPage() {
         setIsDrawerOpen(true);
     };
 
-    const { filters } = useTechnoFilterContext();
+    const { filters, updateFilter } = useTechnoFilterContext();
 
     const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
-
 
     const applyFilter = () => {
         currentFiltersRef.current = { ...filters };
         setPage(1)
+        console.log("Filters before apply:", filters);
+        console.log("Applied filters before set:", appliedFilters);
         setAppliedFilters({ ...filters });
+        console.log("Applied filters after set:", { ...filters });
         setRefreshKey(prevKey => prevKey + 1);
+    };
 
+
+    const handleFilterRemove = (filterKey: string) => {
+        console.log("Remove filter");
+        const updatedFilters = { ...appliedFilters };
+
+        if (filterKey === 'date') {
+            delete updatedFilters.startDate;
+            delete updatedFilters.endDate;
+            delete updatedFilters.date;
+            updateFilter('date', undefined);
+            updateFilter('startDate', undefined);
+            updateFilter('endDate', undefined);
+        } else {
+            delete updatedFilters[filterKey];
+            updateFilter(filterKey, undefined);
+        }
+
+        setAppliedFilters(updatedFilters);
+        setPage(1);
+        setRefreshKey(prevKey => prevKey + 1);
     };
 
     const handleSearch = (value: string) => {
@@ -102,7 +126,7 @@ export default function AllLeadsPage() {
             page,
             limit,
             search: debouncedSearch,
-            ...(currentFiltersRef.current || {}),
+            ...appliedFilters,
             refreshKey
         };
 
@@ -115,8 +139,8 @@ export default function AllLeadsPage() {
     };
 
 
-    const filterParams = getQueryParams();;
-    const analyticsParams = {};
+    const filterParams = getQueryParams();
+    const analyticsParams = getQueryParams();
 
     const leadsQuery = useQuery({
         queryKey: ['leads', filterParams, appliedFilters, debouncedSearch],
@@ -134,16 +158,10 @@ export default function AllLeadsPage() {
 
     const isLoading = leadsQuery.isLoading || analyticsQuery.isLoading;
     const isError = leadsQuery.isError || analyticsQuery.isError;
-    const leads = leadsQuery.data ? refineLeads(leadsQuery.data.DATA) : null;
     const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data.DATA) : [];
     const assignedToDropdownData = assignedToQuery.data ? assignedToQuery.data.DATA : []
 
-    useEffect(() => {
-        if (leads) {
-            setTotalPages(leads.totalPages);
-            setTotalEntries(leads.total);
-        }
-    }, [leads]);
+
 
     const columns = [
         { accessorKey: 'id', header: 'Serial No.' },
@@ -158,6 +176,7 @@ export default function AllLeadsPage() {
             header: 'Lead Type',
             cell: ({ row }: any) => <TechnoLeadTypeTag type={row.original.leadType as TechnoLeadType} />
         },
+        { accessorKey: 'assignedToName', header: 'Assigned To' },
         { accessorKey: 'nextDueDate', header: 'Next Due Date' },
         { accessorKey: 'createdAt', header: 'Timestamp' },
         {
@@ -206,24 +225,42 @@ export default function AllLeadsPage() {
         ];
     };
 
+    const leads = leadsQuery.data ? refineLeads(leadsQuery.data.DATA, assignedToDropdownData) : null;
+
+    useEffect(() => {
+        if (leads) {
+            setTotalPages(leads.totalPages);
+            setTotalEntries(leads.total);
+        }
+    }, [leads]);
+
+
     return (
         <>
             <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} />
+
             {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
+
             {leads?.leads && (
                 <TechnoDataTable
-                columns={columns}
-                data={leads.leads}
-                tableName="All Leads Data"
-                currentPage={page}
-                totalPages={totalPages}
-                pageLimit={limit}
-                onPageChange={handlePageChange}
-                onLimitChange={handleLimitChange}
-                onSearch={handleSearch}
-                searchTerm={search}
-                onSort={handleSortChange}  // Pass the sorting function
-            />
+                    columns={columns}
+                    data={leads.leads}
+                    tableName="All Leads Data"
+                    currentPage={page}
+                    totalPages={totalPages}
+                    pageLimit={limit}
+                    onPageChange={handlePageChange}
+                    onLimitChange={handleLimitChange}
+                    onSearch={handleSearch}
+                    searchTerm={search}
+                    onSort={handleSortChange}
+                >
+                    <FilterBadges
+                        onFilterRemove={handleFilterRemove}
+                        assignedToData={assignedToDropdownData}
+                        appliedFilters={appliedFilters}
+                    />
+                </TechnoDataTable>
             )}
             <TechnoRightDrawer title={"Lead Details"} isOpen={isDrawerOpen} onClose={() => {
                 setIsDrawerOpen(false);
