@@ -14,10 +14,11 @@ import LeadViewEdit from '../allLeads/leads-view-edit';
 import logger from '@/lib/logger';
 import CampusVisitTag, { CampusVisitStatus } from './campus-visit-tag';
 import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
+import FilterBadges from '../allLeads/components/filter-badges';
 
 export default function YellowLeadsTracker() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [appliedFilters, setAppliedFilters] = useState<any>()
+    const [appliedFilters, setAppliedFilters] = useState<any>({})
     const [refreshKey, setRefreshKey] = useState(0);
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -47,7 +48,7 @@ export default function YellowLeadsTracker() {
         setIsDrawerOpen(true);
     };
 
-    const { filters } = useTechnoFilterContext();
+    const { filters, updateFilter } = useTechnoFilterContext();
 
     const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
 
@@ -201,8 +202,8 @@ export default function YellowLeadsTracker() {
                 multiSelect: true
             },
             {
-                filterKey: 'leadType',
-                options: Object.values(TechnoLeadType),
+                filterKey: 'finalConversion',
+                options: Object.values(FinalConversionType),
                 multiSelect: true
             },
             {
@@ -212,7 +213,30 @@ export default function YellowLeadsTracker() {
                 multiSelect: true
             }
         ];
+    };  
+
+
+    const handleFilterRemove = (filterKey: string) => {
+        console.log("Remove filter");
+        const updatedFilters = { ...appliedFilters };
+
+        if (filterKey === 'date') {
+            delete updatedFilters.startDate;
+            delete updatedFilters.endDate;
+            delete updatedFilters.date;
+            updateFilter('date', undefined);
+            updateFilter('startDate', undefined);
+            updateFilter('endDate', undefined);
+        } else {
+            delete updatedFilters[filterKey];
+            updateFilter(filterKey, undefined);
+        }
+
+        setAppliedFilters(updatedFilters);
+        setPage(1);
+        setRefreshKey(prevKey => prevKey + 1);
     };
+
 
     return (
         <>
@@ -231,7 +255,13 @@ export default function YellowLeadsTracker() {
                 onSearch={handleSearch}
                 searchTerm={search}
                 onSort={handleSortChange} 
-            />
+                >
+                    <FilterBadges
+                        onFilterRemove={handleFilterRemove}
+                        assignedToData={assignedToDropdownData}
+                        appliedFilters={appliedFilters}
+                    />
+            </TechnoDataTable>
             )}
             <TechnoRightDrawer title={"Lead Details"} isOpen={isDrawerOpen} onClose={() => {
                 setIsDrawerOpen(false);
