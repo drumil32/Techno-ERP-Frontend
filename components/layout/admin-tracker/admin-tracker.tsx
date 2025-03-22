@@ -158,11 +158,40 @@ const AdminTracker = () => {
 
   return (
     <>
+      {/* Filters Section */}
       <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} />
+
+      {/* Total Leads Reached Section */}
+      <div className="mt-6">
+      <h1 className="font-inter font-semibold text-xl mb-2 text-[#4E4E4E]">
+        Total number of leads reached
+      </h1>
       {totalLeadsReached && <TechnoAnalyticCardsGroup cardsData={totalLeadsReached} />}
+      </div>
+
+      {/* Yellow Leads Conversion Section */}
+      <div className="mt-6">
+      <h1 className="font-inter font-semibold text-xl mb-2 text-[#4E4E4E]">
+        How many leads were converted to Yellow Leads?
+      </h1>
       {yellowLeadsConverted && <TechnoAnalyticCardsGroup cardsData={yellowLeadsConverted} />}
+      </div>
+
+      {/* Yellow Leads Campus Visit Section */}
+      <div className="mt-6">
+      <h1 className="font-inter font-semibold text-xl mb-2 text-[#4E4E4E]">
+        How many Yellow leads visited the campus?
+      </h1>
       {yellowLeadsVisited && <TechnoAnalyticCardsGroup cardsData={yellowLeadsVisited} />}
+      </div>
+
+      {/* Final Campus Conversion Section */}
+      <div className="mt-6">
+      <h1 className="font-inter font-semibold text-xl mb-2 text-[#4E4E4E]">
+        Final conversion from those who visited the campus
+      </h1>
       {finalCampusConversion && <TechnoAnalyticCardsGroup cardsData={finalCampusConversion} />}
+      </div>
     </>
   );
 };
