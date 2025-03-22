@@ -7,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { Course, Gender, Locations } from '@/static/enum';
 import TechnoLeadTypeTag, { TechnoLeadType } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
+import { apiRequest } from '@/lib/apiClient';
+import { API_METHODS } from '@/common/constants/apiMethods';
+import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 
 interface LeadData {
     _id: string;
@@ -81,16 +84,11 @@ export default function LeadViewEdit({ data }: { data: any }) {
 
             console.log(filteredData)
 
-            const res = await fetch(`${apiUrl}/crm/edit`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(filteredData),
-                credentials: 'include'
-            });
-
-            if (!res.ok) throw new Error('Failed to update lead');
+            await apiRequest(
+                API_METHODS.PUT,
+                API_ENDPOINTS.updateLead,
+                filteredData
+            );
 
             setIsEditMode(false);
 
