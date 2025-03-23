@@ -201,6 +201,7 @@ export default function AllLeadsPage() {
                 filterKey: 'location',
                 label:'Location',
                 options: Object.values(Locations),
+                placeholder: "location",
                 hasSearch: true,
                 multiSelect: true
             },
@@ -208,6 +209,7 @@ export default function AllLeadsPage() {
                 filterKey: 'course',
                 label:'Course',
                 options: Object.values(Course),
+                placeholder: "courses",
                 hasSearch: true,
                 multiSelect: true
             },
@@ -221,6 +223,7 @@ export default function AllLeadsPage() {
                 filterKey: 'assignedTo',
                 label:'Assigned To',
                 options: assignedToDropdownData.map((item: any) => item.name || item._id || String(item)),
+                placeholder: "person",
                 hasSearch: true,
                 multiSelect: true
             }

@@ -3,7 +3,8 @@ import TechnoFilter from './techno-filter';
 
 interface FilterConfig {
   filterKey: string;
-  label:string;
+  label: string;
+  placeholder?: string;
   options?: string[];
   hasSearch?: boolean;
   multiSelect?: boolean;
@@ -23,6 +24,7 @@ export default function TechnoFiltersGroup({ filters, handleFilters }: TechnoFil
           key={filter.filterKey}
           filterKey={filter.filterKey}
           filterLabel={filter.label}
+          filterPlaceholder={filter.placeholder || ''}
           options={filter.options}
           hasSearch={filter.hasSearch}
           multiSelect={filter.multiSelect}
