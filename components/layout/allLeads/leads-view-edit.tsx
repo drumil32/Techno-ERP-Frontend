@@ -67,6 +67,10 @@ export default function LeadViewEdit({ data }: { data: any }) {
         setFormData((prev) => prev ? { ...prev, [name]: value } : null);
     };
 
+    const handleDateChange = (name: string, value: string) => {
+        setFormData((prev) => prev ? { ...prev, [name]: value } : null);
+    };
+
     const handleSubmit = async () => {
         if (!formData) return;
 
@@ -331,13 +335,8 @@ export default function LeadViewEdit({ data }: { data: any }) {
                             }
                             onSelect={(date) => {
                                 const formattedDate = date ? format(date, "dd/MM/yyyy") : "";
-                                handleChange({
-                                    target: {
-                                        name: "nextDueDate",
-                                        value: formattedDate
-                                    }
-                                });
-                            }}
+                                handleDateChange("nextDueDate", formattedDate);
+                            }}                            
                             initialFocus
                         />
                     </PopoverContent>
