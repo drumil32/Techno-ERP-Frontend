@@ -2,7 +2,7 @@ import { CardItem } from "@/components/custom-ui/analytic-card/techno-analytic-c
 import { TechnoLeadType } from "@/components/custom-ui/lead-type-tag/techno-lead-type-tag";
 
 export const refineLeads = (data: any, assignedToDropdownData: any) => { // Modified parameters to get Assigned To Dropdown Data
-    const refinedLeads = data.leads.map((lead: any, index: number) => {
+    const refinedLeads = data.leads?.map((lead: any, index: number) => {
         const assignedToUser = assignedToDropdownData?.find((user: any) => user._id === lead.assignedTo);
         const assignedToName = assignedToUser ? assignedToUser.name : 'N/A'; // Or handle default as needed
 
@@ -21,10 +21,11 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => { // Modi
             _leadType: lead.leadType,
             source: lead.source ?? '-',
             assignedTo: lead.assignedTo ?? '-',
-            assignedToName: assignedToName,  
+            assignedToName: assignedToName,
             nextDueDate: lead.nextDueDate ?? '-',
             createdAt: new Date(lead.createdAt).toLocaleString(),
             updatedAt: new Date(lead.updatedAt).toLocaleString(),
+            remarks: lead.remarks ?? '-',
         };
     });
 

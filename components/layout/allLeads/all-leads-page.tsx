@@ -12,6 +12,7 @@ import { Course, Locations } from '@/static/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
+import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 
 export default function AllLeadsPage() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -20,7 +21,6 @@ export default function AllLeadsPage() {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [editRow, setEditRow] = useState<any>(null)
-
     const [sortBy, setSortBy] = useState<string | null>(null);
     const [orderBy, setOrderBy] = useState<string>('asc');
 
@@ -52,16 +52,12 @@ export default function AllLeadsPage() {
     const applyFilter = () => {
         currentFiltersRef.current = { ...filters };
         setPage(1)
-        console.log("Filters before apply:", filters);
-        console.log("Applied filters before set:", appliedFilters);
         setAppliedFilters({ ...filters });
-        console.log("Applied filters after set:", { ...filters });
         setRefreshKey(prevKey => prevKey + 1);
     };
 
 
     const handleFilterRemove = (filterKey: string) => {
-        console.log("Remove filter");
         const updatedFilters = { ...appliedFilters };
 
         if (filterKey === 'date') {
@@ -158,13 +154,12 @@ export default function AllLeadsPage() {
 
     const isLoading = leadsQuery.isLoading || analyticsQuery.isLoading;
     const isError = leadsQuery.isError || analyticsQuery.isError;
-    const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data.DATA) : [];
-    const assignedToDropdownData = assignedToQuery.data ? assignedToQuery.data.DATA : []
-
-
+    const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data) : [];
+    const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : []
+    const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
 
     const columns = [
-        { accessorKey: 'id', header: 'Serial No.' },
+        { accessorKey: 'id', header: 'S. No' },
         { accessorKey: 'date', header: 'Date' },
         { accessorKey: 'name', header: 'Name' },
         { accessorKey: 'phoneNumber', header: 'Phone Number' },
@@ -183,8 +178,10 @@ export default function AllLeadsPage() {
             id: 'actions',
             header: 'Actions',
             cell: ({ row }: any) => (
-                <Button onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}>
-                    View More
+                <Button variant='ghost' onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}>
+                    <span
+                        className='font-inter font-semibold text-[12px] text-primary '
+                    >View More</span>
                 </Button>
             )
         }
@@ -194,38 +191,48 @@ export default function AllLeadsPage() {
         return [
             {
                 filterKey: 'date',
+                label:'Date',
                 isDateFilter: true
             },
             {
                 filterKey: 'location',
+                label:'Location',
                 options: Object.values(Locations),
+                placeholder: "location",
                 hasSearch: true,
                 multiSelect: true
             },
             {
                 filterKey: 'course',
+                label:'Course',
                 options: Object.values(Course),
+                placeholder: "courses",
                 hasSearch: true,
                 multiSelect: true
             },
             {
                 filterKey: 'leadType',
+                label:'Lead Type',
                 options: Object.values(TechnoLeadType),
                 multiSelect: true
             },
             {
                 filterKey: 'assignedTo',
-                options: assignedToDropdownData.map((item: any) => ({
-                    id: item._id,
-                    label: item.name || item._id || String(item)
-                })),
+                label: 'Assigned To',
+                options: assignedToDropdownData.map((item: any) => {
+                    return {
+                        label: item.name,
+                        id: item._id
+                    }
+                }) as FilterOption[],
+                placeholder:"person",
                 hasSearch: true,
                 multiSelect: true
             }
         ];
     };
 
-    const leads = leadsQuery.data ? refineLeads(leadsQuery.data.DATA, assignedToDropdownData) : null;
+
 
     useEffect(() => {
         if (leads) {
@@ -262,7 +269,7 @@ export default function AllLeadsPage() {
                     />
                 </TechnoDataTable>
             )}
-            <TechnoRightDrawer title={"Lead Details"} isOpen={isDrawerOpen} onClose={() => {
+            <TechnoRightDrawer title={"Edit Lead Details"} isOpen={isDrawerOpen} onClose={() => {
                 setIsDrawerOpen(false);
                 setRefreshKey(prev => prev + 1)
             }}>

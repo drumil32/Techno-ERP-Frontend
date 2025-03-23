@@ -24,8 +24,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { ArrowLeft, ArrowRight, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
-import { title } from 'process';
+import { ArrowLeft, ArrowRight, ChevronDown, ArrowUp, ArrowDown, Search, ChevronLeft, ChevronRight, ChevronsRight, ChevronsLeft } from 'lucide-react';
+import { LuDownload, LuUpload } from 'react-icons/lu';
 
 // TODO: Create the props type for the table in place of any
 export default function TechnoDataTable({
@@ -92,48 +92,65 @@ export default function TechnoDataTable({
         }
     };
 
-
     const getSortIcon = (columnName: string) => {
         if (sortColumn === columnName) {
-            return sortOrder === 'asc' ? <ArrowUp className="ml-1 h-4 w-4" /> : <ArrowDown className="ml-1 h-4 w-4" />;
+            return sortOrder === 'asc' ? (
+                <ArrowUp className="ml-1 h-4 w-4" />
+            ) : (
+                <ArrowDown className="ml-1 h-4 w-4" />
+            );
         }
         return null;
     };
 
     return (
-        <div className="w-full space-y-4 border-2 rounded-lg mt-5 px-4 py-2">
-            <div className="flex w-full items-center py-4">
+        <div className="w-full space-y-4 my-5 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200 ">
+            <div className="flex w-full items-center py-4 px-4">
                 <div className="flex items-center">
-                    <h2 className="text-lg font-bold">{tableName}</h2>
-                    {children && <div className="ml-2">{children}</div>}  
+                    <h2 className="text-xl font-bold">{tableName}</h2>
+                    {children && <div className="ml-2">{children}</div>}
                 </div>
 
                 <div className="flex items-center space-x-2 ml-auto">
-                    <Input
-                        placeholder="Search..."
-                        value={globalFilter}
-                        onChange={handleSearchChange}
-                        className="max-w-sm"
-                    />
-                    <Button>Upload</Button>
-                    <Button>Download</Button>
+                    <div className="relative">
+                        <Input
+                            placeholder="Search for leads"
+                            value={globalFilter}
+                            onChange={handleSearchChange}
+                            className="max-w-[243px] h-[32px] rounded-md bg-[#f3f3f3] px-4 py-2 pr-10 text-gray-600 placeholder-gray-400"
+                        />
+                        <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <Search className="h-4 w-4 text-gray-500" />
+                        </span>
+                    </div>
+                    <Button variant="outline" className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
+                        <span className="font-inter font-medium text-[12px]">Upload</span>
+                    </Button>
+                    <Button className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
+                        <span className="font-inter font-semibold text-[12px]">Download</span>
+                    </Button>
                 </div>
             </div>
 
             {/* Data Table Body */}
-            <div className="rounded-md border">
+            <div >
                 {/* TODO: Update table header and the rows borders and backgground to match the figma design */}
                 <Table>
-                    <TableHeader>
+                    <TableHeader className="bg-[#F7F7F7]">
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className="text-center">
-                                        {header.column.columnDef.header === 'Date' || header.column.columnDef.header === 'Next Due Date' ? (
-                                            <Button
-                                                variant="ghost"
-                                                onClick={() => handleSort(header.column.id)}
-                                            >
+                            <TableRow key={headerGroup.id} className="rounded-lg overflow-hidden">
+                                {headerGroup.headers.map((header, index) => (
+                                    <TableHead
+                                        key={header.id}
+                                        className={`text-center font-light ${index === 0 ? "rounded-l-[5px]" : ""
+                                            } ${index === headerGroup.headers.length - 1 ? "rounded-r-[5px]" : ""
+                                            }`}
+                                    >
+                                        {header.column.columnDef.header === "Date" ||
+                                            header.column.columnDef.header === "Next Due Date" ||
+                                            header.column.columnDef.header === "Next Call Date" ||
+                                            header.column.columnDef.header === "LTC Date" ? (
+                                            <Button variant="ghost" onClick={() => handleSort(header.column.id)}>
                                                 {flexRender(header.column.columnDef.header, header.getContext())}
                                                 {getSortIcon(header.column.id)}
                                             </Button>
@@ -178,7 +195,7 @@ export default function TechnoDataTable({
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="start">
-                            {[10, 20, 30, 50].map((size) => (
+                            {[5, 10, 20, 30, 50].map((size) => (
                                 <DropdownMenuItem
                                     key={size}
                                     onClick={() => {
@@ -199,26 +216,50 @@ export default function TechnoDataTable({
                 </div>
 
                 {/* TODO: Match the page switch match to Figma design */}
-                <div className="flex items-center space-x-2">
-                    <span>
-                        Page {currentPage} of {totalPages}
-                    </span>
+                <div className="flex items-center gap-1">
                     <Button
-                        variant="outline"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onPageChange(1)}
+                        disabled={currentPage === 1}
+                        aria-label="Go to first page"
+                    >
+                        <ChevronsLeft />
+                    </Button>
+
+                    <Button
+                        variant="ghost"
                         size="sm"
                         onClick={() => onPageChange(currentPage - 1)}
                         disabled={currentPage === 1}
+                        aria-label="Go to previous page"
                     >
-                        <ArrowLeft />
+                        <ChevronLeft />
                     </Button>
+
+                    {currentPage > 1 && <span>1  ..</span>}
                     <span>{currentPage}</span>
+
+                    {currentPage < totalPages && <span>..{totalPages}</span>}
+
                     <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         onClick={() => onPageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
+                        aria-label="Go to next page"
                     >
-                        <ArrowRight />
+                        <ChevronRight />
+                    </Button>
+
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onPageChange(totalPages)}
+                        disabled={currentPage === totalPages}
+                        aria-label="Go to last page"
+                    >
+                        <ChevronsRight />
                     </Button>
                 </div>
             </div>

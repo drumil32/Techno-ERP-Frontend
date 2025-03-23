@@ -66,6 +66,14 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
             });
         }
 
+        if (appliedFilters.startLTCDate || appliedFilters.endLTCDate) { 
+            newBadges.push({
+                key: 'ltcDate',
+                label: 'LTC Date',
+                value: formatDateRange(appliedFilters.startLTCDate, appliedFilters.endLTCDate),
+            });
+        }
+
         Object.entries(appliedFilters).forEach(([key, value]) => {
             if (key === 'startDate' || key === 'endDate') return; // Skip startDate and endDate because handled above
             if (Array.isArray(value) && value.length > 0) {
@@ -108,7 +116,7 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
                     >
                         <Badge
                             variant="secondary"
-                            className="py-1 px-2 flex items-center gap-1"
+                            className="py-1 px-2 flex items-center gap-1 cursor-pointer"
                         >
                             <span className="font-medium">{badge.label}:</span> {badge.value}
                             <X

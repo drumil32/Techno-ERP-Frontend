@@ -4,33 +4,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, Loader2, Pencil } from "lucide-react";
 import { Course, Gender, Locations } from '@/static/enum';
-import TechnoLeadTypeTag, { TechnoLeadType } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
-import { Calendar } from "@/components/ui/calendar";
+import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
+import CampusVisitTag, { CampusVisitStatus } from './campus-visit-tag';
+import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { parse, format } from "date-fns";
+import { Calendar } from '@/components/ui/calendar';
 
-interface LeadData {
-    _id: string;
-    name: string;
-    phoneNumber: string;
-    altPhoneNumber?: string;
-    email: string;
-    gender: string;
-    location: string;
-    course?: string;
-    leadType?: string;
-    remarks?: string;
-    nextDueDate?: string;
-    [key: string]: any;
-}
-
-export default function LeadViewEdit({ data }: { data: any }) {
-    const [formData, setFormData] = useState<LeadData | null>(null);
+export default function YellowLeadViewEdit({ data }: { data: any }) {
+    const [formData, setFormData] = useState<YellowLead | null>(null);
     const [isEditMode, setIsEditMode] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -79,16 +66,18 @@ export default function LeadViewEdit({ data }: { data: any }) {
             const allowedFields = [
                 '_id', 'name', 'phoneNumber', 'altPhoneNumber',
                 'email', 'gender', 'location', 'course',
-                'leadType', 'remarks', 'nextDueDate'
+                'campusVisit', 'finalConversion', 'remarks', 'nextDueDate'
             ];
 
             const filteredData = Object.fromEntries(
                 Object.entries(formData).filter(([key]) => allowedFields.includes(key))
             );
 
+            filteredData.campusVisit = filteredData.campusVisit === CampusVisitStatus.true ? true : false;
+
             await apiRequest(
                 API_METHODS.PUT,
-                API_ENDPOINTS.updateLead,
+                API_ENDPOINTS.updateYellowLead,
                 filteredData
             );
 
@@ -107,8 +96,8 @@ export default function LeadViewEdit({ data }: { data: any }) {
         <>
             <div className='flex flex-col gap-6 text-sm'>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Date</p>
-                    <p>{formData.date}</p>
+                    <p className='w-1/4  text-[#666666]'>LTC Date</p>
+                    <p>{formData.ltcDate}</p>
                 </div>
                 <div className='flex gap-2'>
                     <p className='w-1/4  text-[#666666]'>Name</p>
@@ -139,17 +128,19 @@ export default function LeadViewEdit({ data }: { data: any }) {
                     <p>{formData.course}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Lead Type</p>
-                    <p>
-                        <TechnoLeadTypeTag type={formData.leadType as TechnoLeadType} />
-                    </p>
+                    <p className='w-1/4  text-[#666666]'>Campus Visit</p>
+                    <CampusVisitTag status={String(formData.campusVisit) as CampusVisitStatus} />
+                </div>
+                <div className='flex gap-2'>
+                    <p className='w-1/4  text-[#666666]'>Final Conversion</p>
+                    <FinalConversionTag status={formData.finalConversionType as FinalConversionStatus} />
                 </div>
                 <div className='flex gap-2'>
                     <p className='w-1/4  text-[#666666]'>Remarks</p>
                     <p>{formData.remarks}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Next Due Date</p>
+                    <p className='w-1/4  text-[#666666]'>Next Call Date</p>
                     <p>{formData.nextDueDate}</p>
                 </div>
             </div>
@@ -160,8 +151,8 @@ export default function LeadViewEdit({ data }: { data: any }) {
     const EditView = (
         <>
             <div className='flex flex-col gap-2'>
-                <p className='text-[#666666] font-normal'>Date</p>
-                <p>{data.date}</p>
+                <p className='text-[#666666] font-normal'>LTC Date</p>
+                <p>{data.ltcDate}</p>
             </div>
 
             <div className="space-y-2">
@@ -256,25 +247,6 @@ export default function LeadViewEdit({ data }: { data: any }) {
             <div className='flex gap-5'>
 
                 <div className="space-y-2 w-1/2">
-                    <EditLabel htmlFor="leadType" title={"Lead Type"} />
-                    <Select
-                        defaultValue={formData.leadType || ''}
-                        onValueChange={(value) => handleSelectChange("leadType", value)}
-                    >
-                        <SelectTrigger id="leadType" className="w-full rounded-[5px]">
-                            <SelectValue placeholder="Select lead type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {Object.values(TechnoLeadType).map((type) => (
-                                <SelectItem key={type} value={type}>
-                                    <TechnoLeadTypeTag type={type} />
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                <div className="space-y-2 w-1/2">
                     <EditLabel htmlFor="course" title={"Course"} />
                     <Select
                         defaultValue={formData.course || ''}
@@ -292,6 +264,44 @@ export default function LeadViewEdit({ data }: { data: any }) {
                         </SelectContent>
                     </Select>
                 </div>
+
+                <div className="space-y-2 w-1/2">
+                    <EditLabel htmlFor="campusVisit" title={"Campus Visit"} />
+                    <Select
+                        defaultValue={String(formData.campusVisit) || CampusVisitStatus.false}
+                        onValueChange={(value) => handleSelectChange("campusVisit", value)}
+                    >
+                        <SelectTrigger id="campusVisit" className="w-full rounded-[5px]">
+                            <SelectValue placeholder="Select Campus Visit" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Object.values(CampusVisitStatus).map((status) => (
+                                <SelectItem key={status} value={status}>
+                                    <CampusVisitTag status={status} />
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            <div className="space-y-2">
+                <EditLabel htmlFor="finalConversion" title={"Final Conversion"} />
+                <Select
+                    defaultValue={String(formData.finalConversionType) || FinalConversionStatus.PINK}
+                    onValueChange={(value) => handleSelectChange("finalConversion", value)}
+                >
+                    <SelectTrigger id="campusVisit" className="w-full rounded-[5px]">
+                        <SelectValue placeholder="Select Campus Visit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {Object.values(FinalConversionStatus).map((status) => (
+                            <SelectItem key={status} value={status}>
+                                <FinalConversionTag status={status} />
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
             </div>
 
             <div className="space-y-2">
@@ -336,12 +346,13 @@ export default function LeadViewEdit({ data }: { data: any }) {
                             onSelect={(date) => {
                                 const formattedDate = date ? format(date, "dd/MM/yyyy") : "";
                                 handleDateChange("nextDueDate", formattedDate);
-                            }}                            
+                            }}   
                             initialFocus
                         />
                     </PopoverContent>
                 </Popover>
             </div>
+
 
             <div className='flex flex-col gap-2'>
                 <p className='text-[#666666] font-normal'>Timestamp</p>
@@ -354,12 +365,9 @@ export default function LeadViewEdit({ data }: { data: any }) {
 
     return (
         <div className="w-full h-full max-w-2xl mx-auto border-none flex flex-col">
-
-
             <CardContent className="px-3 space-y-6 mb-20">
                 {isEditMode ? EditView : ReadOnlyView}
             </CardContent>
-
 
             {isEditMode ?
                 <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">

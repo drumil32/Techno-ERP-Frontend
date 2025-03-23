@@ -1,9 +1,11 @@
 import { Button } from '@/components/ui/button';
-import TechnoFilter from './techno-filter';
+import TechnoFilter, { FilterOption } from './techno-filter';
 
 interface FilterConfig {
   filterKey: string;
-  options?: string[];
+  label: string;
+  placeholder?: string;
+  options?: string[] | FilterOption[];
   hasSearch?: boolean;
   multiSelect?: boolean;
   isDateFilter?: boolean;
@@ -21,6 +23,8 @@ export default function TechnoFiltersGroup({ filters, handleFilters }: TechnoFil
         <TechnoFilter
           key={filter.filterKey}
           filterKey={filter.filterKey}
+          filterLabel={filter.label}
+          filterPlaceholder={filter.placeholder || ''}
           options={filter.options}
           hasSearch={filter.hasSearch}
           multiSelect={filter.multiSelect}

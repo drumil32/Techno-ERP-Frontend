@@ -13,7 +13,7 @@ interface TechnoAnalyticCardsGroupProps {
 
 export default function TechnoAnalyticCardsGroup({ cardsData }: TechnoAnalyticCardsGroupProps) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-8 gap-4">
+    <div className="w-full flex flex-row gap-[12px] flex-wrap">
       {cardsData.map(({ heading, subheading, title, color }, i) => (
         <TechnoAnalyticCard
           key={i}
@@ -21,7 +21,7 @@ export default function TechnoAnalyticCardsGroup({ cardsData }: TechnoAnalyticCa
           subheading={subheading}
           title={title}
           color={color}
-        />
+        /> 
       ))}
     </div>
   );
