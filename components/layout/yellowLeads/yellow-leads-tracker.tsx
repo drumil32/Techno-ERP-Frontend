@@ -216,7 +216,7 @@ export default function YellowLeadsTracker() {
       {
         filterKey: 'finalConversion',
         label: 'Final Conversion',
-        options: Object.values(FinalConversionType),
+        options: Object.values(FinalConversionStatus),
         multiSelect: true
       },
       {

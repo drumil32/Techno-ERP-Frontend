@@ -13,10 +13,14 @@ import { format, parse } from 'date-fns';
 import TechnoLeadTypeTag, { TechnoLeadType } from '../lead-type-tag/techno-lead-type-tag';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import FinalConversionTag, {
+  FinalConversionStatus
+} from '@/components/layout/yellowLeads/final-conversion-tag';
+import { FinalConversionType } from '@/static/enum';
 
 export interface FilterOption {
-    id: string;
-    label: string;
+  id: string;
+  label: string;
 }
 
 interface TechnoFilterProps {
@@ -115,7 +119,7 @@ export default function TechnoFilter({
         setEndCalendarOpen(false);
       }
     };
-  }
+  };
 
   const handleThisMonth = () => {
     const newIsThisMonth = !isThisMonth;
@@ -241,7 +245,9 @@ export default function TechnoFilter({
                       : filters[filterKey] === (typeof option === 'string' ? option : option.id)
                   }
                 />
-                {filterKey === 'leadType' ? (
+                {
+                
+                filterKey === 'leadType' ? (
                   <TechnoLeadTypeTag
                     type={
                       typeof option === 'string'
@@ -249,7 +255,19 @@ export default function TechnoFilter({
                         : (option.label as TechnoLeadType)
                     }
                   />
-                ) : (
+                  ) :
+                    
+                filterKey === 'finalConversion' ? (
+                  <FinalConversionTag
+                    status={
+                      typeof option === 'string'
+                        ? (option as FinalConversionStatus)
+                        : (option.label as FinalConversionStatus)
+                    }
+                  />
+                ):
+                
+                (
                   <span>{typeof option === 'string' ? option : option.label}</span>
                 )}
               </div>
