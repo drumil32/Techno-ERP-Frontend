@@ -100,22 +100,22 @@ export default function TechnoFilter({
     }
 
     const handleDateChange = (type: 'start' | 'end', selectedDate: Date | undefined) => {
-        if (isThisMonth) {
-            setIsThisMonth(false);
-            updateFilter('date', undefined);
-        }
+      if (isThisMonth) {
+        setIsThisMonth(false);
+        updateFilter('date', undefined);
+      }
 
-        if (type === 'start') {
-            setStartDate(selectedDate);
-            updateFilter('startDate', formatDateForAPI(selectedDate));
-            setStartCalendarOpen(false);
-        } else {
-            setEndDate(selectedDate);
-            updateFilter('endDate', formatDateForAPI(selectedDate));
-            setEndCalendarOpen(false);
-        }
+      if (type === 'start') {
+        setStartDate(selectedDate);
+        updateFilter('startDate', formatDateForAPI(selectedDate));
+        setStartCalendarOpen(false);
+      } else {
+        setEndDate(selectedDate);
+        updateFilter('endDate', formatDateForAPI(selectedDate));
+        setEndCalendarOpen(false);
+      }
     };
-
+  }
 
   const handleThisMonth = () => {
     const newIsThisMonth = !isThisMonth;

@@ -218,12 +218,14 @@ export default function AllLeadsPage() {
             },
             {
                 filterKey: 'assignedTo',
+                label: 'Assigned To',
                 options: assignedToDropdownData.map((item: any) => {
                     return {
                         label: item.name,
                         id: item._id
                     }
                 }) as FilterOption[],
+                placeholder:"person",  
                 hasSearch: true,
                 multiSelect: true
             }
