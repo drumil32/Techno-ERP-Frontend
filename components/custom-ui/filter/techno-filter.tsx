@@ -21,6 +21,7 @@ interface FilterOption {
 
 interface TechnoFilterProps {
     filterKey: string;
+    filterLabel:string;
     options?: (string | FilterOption)[];
     hasSearch?: boolean;
     multiSelect?: boolean;
@@ -44,6 +45,7 @@ const parseDateFromAPI = (dateString: string | undefined): Date | undefined => {
 
 export default function TechnoFilter({
     filterKey,
+    filterLabel,
     options = [],
     hasSearch = false,
     multiSelect = false,
@@ -140,7 +142,7 @@ export default function TechnoFilter({
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline">
-                    {filterKey}
+                    {filterLabel}
                     <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>

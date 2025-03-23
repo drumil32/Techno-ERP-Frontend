@@ -192,27 +192,32 @@ export default function AllLeadsPage() {
         return [
             {
                 filterKey: 'date',
+                label:'Date',
                 isDateFilter: true
             },
             {
                 filterKey: 'location',
+                label:'Location',
                 options: Object.values(Locations),
                 hasSearch: true,
                 multiSelect: true
             },
             {
                 filterKey: 'course',
+                label:'Course',
                 options: Object.values(Course),
                 hasSearch: true,
                 multiSelect: true
             },
             {
                 filterKey: 'leadType',
+                label:'Lead Type',
                 options: Object.values(TechnoLeadType),
                 multiSelect: true
             },
             {
                 filterKey: 'assignedTo',
+                label:'Assigned To',
                 options: assignedToDropdownData.map((item: any) => item.name || item._id || String(item)),
                 hasSearch: true,
                 multiSelect: true
