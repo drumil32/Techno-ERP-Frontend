@@ -103,22 +103,17 @@ export default function TechnoFilter({
       updateFilter('date', undefined);
     }
 
-    const handleDateChange = (type: 'start' | 'end', selectedDate: Date | undefined) => {
-      if (isThisMonth) {
-        setIsThisMonth(false);
-        updateFilter('date', undefined);
-      }
+    const variant = filterKey === 'ltcDate' ? "LTC" : "";
 
-      if (type === 'start') {
-        setStartDate(selectedDate);
-        updateFilter('startDate', formatDateForAPI(selectedDate));
-        setStartCalendarOpen(false);
-      } else {
-        setEndDate(selectedDate);
-        updateFilter('endDate', formatDateForAPI(selectedDate));
-        setEndCalendarOpen(false);
-      }
-    };
+    updateFilter(`${type}${variant}Date`, formatDateForAPI(selectedDate));
+
+    if (type === 'start') {
+      setStartDate(selectedDate);
+      setStartCalendarOpen(false);
+    } else {
+      setEndDate(selectedDate);
+      setEndCalendarOpen(false);
+    }
   };
 
   const handleThisMonth = () => {
@@ -134,14 +129,14 @@ export default function TechnoFilter({
       setEndDate(lastDay);
 
       updateFilter(filterKey, 'This Month');
-      updateFilter('startDate', formatDateForAPI(firstDay));
-      updateFilter('endDate', formatDateForAPI(lastDay));
+      handleDateChange('start', firstDay);
+      handleDateChange('end', lastDay);
     } else {
       setStartDate(undefined);
       setEndDate(undefined);
       updateFilter(filterKey, undefined);
-      updateFilter('startDate', undefined);
-      updateFilter('endDate', undefined);
+      handleDateChange('start', undefined);
+      handleDateChange('end', undefined);
     }
   };
 
@@ -257,7 +252,7 @@ export default function TechnoFilter({
                   />
                   ) :
                     
-                filterKey === 'finalConversion' ? (
+                filterKey === 'finalConversionType' ? (
                   <FinalConversionTag
                     status={
                       typeof option === 'string'

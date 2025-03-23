@@ -22,6 +22,7 @@ import CampusVisitTag, { CampusVisitStatus } from './campus-visit-tag';
 import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
 import FilterBadges from '../allLeads/components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
+import YellowLeadViewEdit from './yellow-view-edit';
 
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -149,14 +150,11 @@ export default function YellowLeadsTracker() {
   }, [leads]);
 
   const columns = [
-    { accessorKey: 'id', header: 'Serial No.' },
-    { accessorKey: 'date', header: 'Date' },
+    { accessorKey: 'id', header: 'S. No.' },
+    { accessorKey: 'ltcDate', header: 'LTC Date' },
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'altPhoneNumber', header: 'Alt. Phone Number' },
-    { accessorKey: 'email', header: 'Email' },
     { accessorKey: 'gender', header: 'Gender' },
-    { accessorKey: 'assignedToName', header: 'Assigned To' },
     { accessorKey: 'location', header: 'Location' },
     { accessorKey: 'course', header: 'Course' },
     {
@@ -166,18 +164,16 @@ export default function YellowLeadsTracker() {
         <CampusVisitTag status={row.original.campusVisit as CampusVisitStatus} />
       )
     },
+    { accessorKey: 'nextDueDate', header: 'Next Call Date' },
     {
-      accessorKey: 'finalConversion',
+      accessorKey: 'finalConversionType',
       header: 'Final Conversion',
       cell: ({ row }: any) => (
-        <FinalConversionTag status={row.original.finalConversion as FinalConversionStatus} />
+        <FinalConversionTag status={row.original.finalConversionType as FinalConversionStatus} />
       )
     },
     { accessorKey: 'remarks', header: 'Remarks' },
-    { accessorKey: 'ltcDate', header: 'LTC Date' },
-    { accessorKey: 'nextDueDate', header: 'Next Due Date' },
-    { accessorKey: 'createdAt', header: 'Created At' },
-    { accessorKey: 'updatedAt', header: 'Updated At' },
+    { accessorKey: 'assignedToName', header: 'Assigned To' },
     {
       id: 'actions',
       header: 'Actions',
@@ -195,8 +191,8 @@ export default function YellowLeadsTracker() {
   const getFiltersData = () => {
     return [
       {
-        filterKey: 'date',
-        label: 'Date',
+        filterKey: 'ltcDate',
+        label: 'LTC Date',
         isDateFilter: true
       },
       {
@@ -214,7 +210,7 @@ export default function YellowLeadsTracker() {
         multiSelect: true
       },
       {
-        filterKey: 'finalConversion',
+        filterKey: 'finalConversionType',
         label: 'Final Conversion',
         options: Object.values(FinalConversionStatus),
         multiSelect: true
@@ -236,7 +232,7 @@ export default function YellowLeadsTracker() {
 
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
-
+    
     if (filterKey === 'date') {
       delete updatedFilters.startDate;
       delete updatedFilters.endDate;
@@ -244,7 +240,15 @@ export default function YellowLeadsTracker() {
       updateFilter('date', undefined);
       updateFilter('startDate', undefined);
       updateFilter('endDate', undefined);
-    } else {
+    }
+    else if (filterKey === 'ltcDate')
+    {
+      delete updatedFilters.startLTCDate;
+      delete updatedFilters.endLTCDate;
+      updateFilter('startLTCDate', undefined);
+      updateFilter('endLTCDate', undefined);
+    }
+    else {
       delete updatedFilters[filterKey];
       updateFilter(filterKey, undefined);
     }
@@ -287,7 +291,7 @@ export default function YellowLeadsTracker() {
           setRefreshKey((prev) => prev + 1);
         }}
       >
-        {editRow && <LeadViewEdit data={editRow} />}
+        {editRow && <YellowLeadViewEdit data={editRow} />}
       </TechnoRightDrawer>
     </>
   );

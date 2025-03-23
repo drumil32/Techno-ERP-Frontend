@@ -1,4 +1,4 @@
-export interface Lead {
+export interface YellowLead {
     _id: string;
     srNo: number;
     name: string;
@@ -10,7 +10,7 @@ export interface Lead {
     location: string;
     course: string;
     campusVisit: boolean;
-    finalConversion: string;
+    finalConversionType: string;
     remarks: string;
     createdAt: string; // ISO Date string
     updatedAt: string; // ISO Date string

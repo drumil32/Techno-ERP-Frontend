@@ -141,8 +141,12 @@ export default function TechnoDataTable({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id} className="text-center">
-                    {header.column.columnDef.header === 'Date' ||
-                    header.column.columnDef.header === 'Next Due Date' ? (
+                    {
+                      header.column.columnDef.header === 'Date' ||
+                      header.column.columnDef.header === 'Next Due Date' ||
+                      header.column.columnDef.header === 'Next Call Date' ||
+                      header.column.columnDef.header === 'LTC Date' ? (
+                      
                       <Button variant="ghost" onClick={() => handleSort(header.column.id)}>
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {getSortIcon(header.column.id)}

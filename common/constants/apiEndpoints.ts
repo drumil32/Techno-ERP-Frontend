@@ -22,5 +22,6 @@ export const API_ENDPOINTS = {
 
     getYellowLeads: `${API_DOMAIN}/crm/yellow-lead`,
     getYellowLeadsAnalytics: `${API_DOMAIN}/crm/yellow-lead-analytics`,
+    updateYellowLead: `${API_DOMAIN}/crm/update-yellow-lead`,
 
 };
