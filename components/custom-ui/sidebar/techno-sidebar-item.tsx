@@ -11,9 +11,9 @@ export default function TechnoSidebarItem({ icon: Icon, text }: { icon: any; tex
     <div
       className={`flex items-center transition-all duration-300 py-3 px-4 ease-in-out cursor-pointer ${
         hovered
-          ? `justify-start gap-4 rounded-lg w-full ${isActive && `bg-white text-primary rounded-lg`}`
+          ? `justify-start gap-4 rounded-lg w-full ${isActive && `bg-[#FAFAFA] text-primary rounded-lg`}`
           : isActive
-            ? 'justify-start rounded-l-lg w-[145%] bg-white text-primary'
+            ? 'justify-start rounded-l-lg w-[145%] bg-[#FAFAFA] text-primary'
             : 'justify-center w-full'
       }`}
       onClick={() => setSidebarActiveItem(text)}

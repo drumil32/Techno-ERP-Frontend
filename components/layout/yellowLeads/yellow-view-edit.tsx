@@ -12,6 +12,9 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
 import CampusVisitTag, { CampusVisitStatus } from './campus-visit-tag';
 import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { parse, format } from "date-fns";
+import { Calendar } from '@/components/ui/calendar';
 
 export default function YellowLeadViewEdit({ data }: { data: any }) {
     const [formData, setFormData] = useState<YellowLead | null>(null);
@@ -59,7 +62,7 @@ export default function YellowLeadViewEdit({ data }: { data: any }) {
             const allowedFields = [
                 '_id', 'name', 'phoneNumber', 'altPhoneNumber',
                 'email', 'gender', 'location', 'course',
-                'campusVisit','finalConversion', 'remarks', 'nextDueDate'
+                'campusVisit', 'finalConversion', 'remarks', 'nextDueDate'
             ];
 
             const filteredData = Object.fromEntries(
@@ -262,7 +265,7 @@ export default function YellowLeadViewEdit({ data }: { data: any }) {
                     <EditLabel htmlFor="campusVisit" title={"Campus Visit"} />
                     <Select
                         defaultValue={String(formData.campusVisit) || CampusVisitStatus.false}
-                        onValueChange={(value) => handleSelectChange("campusVisit",value)}
+                        onValueChange={(value) => handleSelectChange("campusVisit", value)}
                     >
                         <SelectTrigger id="campusVisit" className="w-full rounded-[5px]">
                             <SelectValue placeholder="Select Campus Visit" />
@@ -311,24 +314,46 @@ export default function YellowLeadViewEdit({ data }: { data: any }) {
 
             <div className="space-y-2 w-1/2">
                 <EditLabel htmlFor="nextDueDate" title={"Next Due Date"} />
-                <div className="relative">
-                    <input
-                        type="date"
-                        id="nextDueDate"
-                        name="nextDueDate"
-                        value={formatDateToInput(formData.nextDueDate || '')}
-                        onChange={(e) => handleChange({
-                            target: {
-                                name: 'nextDueDate',
-                                value: formatDateToDisplay(e.target.value)
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant="outline"
+                            className="w-full justify-start text-left pl-20"
+                        >
+                            <CalendarIcon className=" left-3 h-5 w-5 text-gray-400" />
+                            {(() => {
+                                try {
+                                    return formData.nextDueDate
+                                        ? format(parse(formData.nextDueDate, "dd/MM/yyyy", new Date()), "dd/MM/yyyy")
+                                        : "Select a date";
+                                } catch (e) {
+                                    return "Select a date";
+                                }
+                            })()}                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                        <Calendar
+                            mode="single"
+                            selected={
+                                formData.nextDueDate
+                                    ? parse(formData.nextDueDate, "dd/MM/yyyy", new Date())
+                                    : undefined
                             }
-                        } as React.ChangeEvent<HTMLInputElement>)}
-                        className="w-full px-3 py-2 pl-10 border rounded-[5px]"
-                        placeholder="Select a date"
-                    />
-                    <CalendarIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-                </div>
+                            onSelect={(date) => {
+                                const formattedDate = date ? format(date, "dd/MM/yyyy") : "";
+                                handleChange({
+                                    target: {
+                                        name: "nextDueDate",
+                                        value: formattedDate
+                                    }
+                                });
+                            }}
+                            initialFocus
+                        />
+                    </PopoverContent>
+                </Popover>
             </div>
+
 
             <div className='flex flex-col gap-2'>
                 <p className='text-[#666666] font-normal'>Timestamp</p>
@@ -341,22 +366,12 @@ export default function YellowLeadViewEdit({ data }: { data: any }) {
 
     return (
         <div className="w-full h-full max-w-2xl mx-auto border-none flex flex-col">
-            <div className='w-full flex px-4 mb-2'>
-                {
-                    !isEditMode &&
-                    <Button onClick={() => setIsEditMode(true)} className='ml-auto' icon={Pencil}>
-                        Edit Lead
-                    </Button>
-
-                }
-            </div>
-
             <CardContent className="px-3 space-y-6 mb-20">
                 {isEditMode ? EditView : ReadOnlyView}
             </CardContent>
 
-                {isEditMode &&
-            <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
+            {isEditMode ?
+                <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
                     <>
                         <Button
                             variant="outline"
@@ -381,8 +396,15 @@ export default function YellowLeadViewEdit({ data }: { data: any }) {
                             )}
                         </Button>
                     </>
-            </CardFooter>
-                }
+                </CardFooter> :
+                <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
+                    <div className='w-full flex'>
+                        <Button onClick={() => setIsEditMode(true)} className='ml-auto' icon={Pencil}>
+                            Edit Lead
+                        </Button>
+                    </div>
+                </CardFooter>
+            }
         </div>
     );
 }

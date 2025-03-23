@@ -159,7 +159,7 @@ export default function AllLeadsPage() {
     const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
 
     const columns = [
-        { accessorKey: 'id', header: 'Serial No.' },
+        { accessorKey: 'id', header: 'S. No' },
         { accessorKey: 'date', header: 'Date' },
         { accessorKey: 'name', header: 'Name' },
         { accessorKey: 'phoneNumber', header: 'Phone Number' },
@@ -225,7 +225,7 @@ export default function AllLeadsPage() {
                         id: item._id
                     }
                 }) as FilterOption[],
-                placeholder:"person",  
+                placeholder:"person",
                 hasSearch: true,
                 multiSelect: true
             }

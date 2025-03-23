@@ -10,7 +10,7 @@ interface TechnoTopHeaderProps {
 
 export default function TechnoTopHeader({ headerItems }: TechnoTopHeaderProps) {
   return (
-    <div className="w-full h-16 border-b border-gray-300 flex text-lg">
+    <div className="w-full h-16 border-b border-gray-300 flex text-lg bg-white">
       {headerItems.map((item, i) => (
         <TechnoTopHeaderItem key={i} item={item} />
       ))}
