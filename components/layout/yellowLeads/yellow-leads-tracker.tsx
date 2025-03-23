@@ -176,8 +176,10 @@ export default function YellowLeadsTracker() {
             id: 'actions',
             header: 'Actions',
             cell: ({ row }: any) => (
-                <Button onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}>
-                    View More
+                <Button variant='ghost' onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}>
+                    <span
+                        className='font-inter font-semibold text-[12px] text-primary '
+                    >View More</span>
                 </Button>
             )
         }
