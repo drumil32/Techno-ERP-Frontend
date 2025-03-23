@@ -28,10 +28,10 @@ export default function TechnoLeadTypeTag({ type }: TechnoLeadTypeTagProps) {
 
     return (
         <span className={`px-2 py-1 rounded-full text-sm font-medium ${style}`}>
+            {/* Converting into Pascal style*/}
             {type?.split('_').map((word, _) =>
                 word.charAt(0) + word.slice(1).toLowerCase()
             ).join(' ')}
         </span>
     );
 }
-

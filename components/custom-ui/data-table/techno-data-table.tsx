@@ -113,15 +113,15 @@ export default function TechnoDataTable({
 
         <div className="flex items-center space-x-2 ml-auto">
           <div className="relative">
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-              <Search className="h-4 w-4 text-gray-500" />
-            </span>
             <Input
-              placeholder="Search..."
+              placeholder="Search for leads"
               value={globalFilter}
               onChange={handleSearchChange}
-              className="max-w-sm"
+              className="max-w-[243px] h-[32px] rounded-md bg-[#f3f3f3] px-4 py-2 pr-10 text-gray-600 placeholder-gray-400"
             />
+            <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <Search className="h-4 w-4 text-gray-500" />
+            </span>
           </div>
           <Button variant="outline" className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
             <span className="font-inter font-medium text-[12px]">Upload</span>
