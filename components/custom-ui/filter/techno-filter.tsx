@@ -14,7 +14,7 @@ import TechnoLeadTypeTag, { TechnoLeadType } from '../lead-type-tag/techno-lead-
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-interface FilterOption {
+export interface FilterOption {
     id: string;
     label: string;
 }
@@ -99,7 +99,7 @@ export default function TechnoFilter({
             setIsThisMonth(false);
             updateFilter('date', undefined);
         }
-    
+
         if (type === 'start') {
             setStartDate(selectedDate);
             updateFilter('startDate', formatDateForAPI(selectedDate));
@@ -110,7 +110,7 @@ export default function TechnoFilter({
             setEndCalendarOpen(false);
         }
     };
-    
+
 
     const handleThisMonth = () => {
         const newIsThisMonth = !isThisMonth;

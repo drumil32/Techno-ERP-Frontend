@@ -12,6 +12,7 @@ import { Course, Locations } from '@/static/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
+import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 
 export default function AllLeadsPage() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -51,16 +52,12 @@ export default function AllLeadsPage() {
     const applyFilter = () => {
         currentFiltersRef.current = { ...filters };
         setPage(1)
-        console.log("Filters before apply:", filters);
-        console.log("Applied filters before set:", appliedFilters);
         setAppliedFilters({ ...filters });
-        console.log("Applied filters after set:", { ...filters });
         setRefreshKey(prevKey => prevKey + 1);
     };
 
 
     const handleFilterRemove = (filterKey: string) => {
-        console.log("Remove filter");
         const updatedFilters = { ...appliedFilters };
 
         if (filterKey === 'date') {
@@ -213,14 +210,19 @@ export default function AllLeadsPage() {
             },
             {
                 filterKey: 'assignedTo',
-                options: assignedToDropdownData.map((item: any) => item.name || item._id || String(item)),
+                options: assignedToDropdownData.map((item: any) => {
+                    return {
+                        label: item.name,
+                        id: item._id
+                    }
+                }) as FilterOption[],
                 hasSearch: true,
                 multiSelect: true
             }
         ];
     };
 
-    
+
 
     useEffect(() => {
         if (leads) {
