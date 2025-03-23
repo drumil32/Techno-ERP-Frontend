@@ -8,7 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Calendar1, ChevronDown } from 'lucide-react';
+import { Calendar1, ChevronDown, Search } from 'lucide-react';
 import { format, parse } from 'date-fns';
 import TechnoLeadTypeTag, { TechnoLeadType } from '../lead-type-tag/techno-lead-type-tag';
 import { Calendar } from '@/components/ui/calendar';
@@ -21,6 +21,7 @@ export interface FilterOption {
 
 interface TechnoFilterProps {
     filterKey: string;
+    filterLabel:string;
     options?: (string | FilterOption)[];
     hasSearch?: boolean;
     multiSelect?: boolean;
@@ -44,6 +45,7 @@ const parseDateFromAPI = (dateString: string | undefined): Date | undefined => {
 
 export default function TechnoFilter({
     filterKey,
+    filterLabel,
     options = [],
     hasSearch = false,
     multiSelect = false,
@@ -140,7 +142,7 @@ export default function TechnoFilter({
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="outline">
-                    {filterKey}
+                    {filterLabel}
                     <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
@@ -207,7 +209,10 @@ export default function TechnoFilter({
                 ) : (
                     <>
                         {hasSearch && (
-                            <div className="p-2">
+                                <div className="p-2 relative">
+                                    <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                  <Search className="h-4 w-4 text-gray-500" />
+                                                </span>
                                 <Input
                                     placeholder="Search..."
                                     value={searchTerm}

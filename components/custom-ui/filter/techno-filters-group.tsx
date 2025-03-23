@@ -21,6 +21,7 @@ export default function TechnoFiltersGroup({ filters, handleFilters }: TechnoFil
         <TechnoFilter
           key={filter.filterKey}
           filterKey={filter.filterKey}
+          filterLabel={filter.label}
           options={filter.options}
           hasSearch={filter.hasSearch}
           multiSelect={filter.multiSelect}

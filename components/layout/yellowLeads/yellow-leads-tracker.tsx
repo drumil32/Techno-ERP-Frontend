@@ -31,7 +31,7 @@ export default function YellowLeadsTracker() {
     const handleSortChange = (column: string, order: string) => {
         setSortBy(column);
         setOrderBy(order);
-        setPage(1); 
+        setPage(1);
         setRefreshKey(prevKey => prevKey + 1);
     };
 
@@ -166,7 +166,7 @@ export default function YellowLeadsTracker() {
         {
             accessorKey: 'finalConversion', header: 'Final Conversion',
             cell: ({ row }: any) => <FinalConversionTag status={row.original.finalConversion as FinalConversionStatus} />
-         },
+        },
         { accessorKey: 'remarks', header: 'Remarks' },
         { accessorKey: 'ltcDate', header: 'LTC Date' },
         { accessorKey: 'nextDueDate', header: 'Next Due Date' },
@@ -176,44 +176,51 @@ export default function YellowLeadsTracker() {
             id: 'actions',
             header: 'Actions',
             cell: ({ row }: any) => (
-                <Button onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}>
-                    View More
+                <Button variant='ghost' onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}>
+                    <span
+                        className='font-inter font-semibold text-[12px] text-primary '
+                    >View More</span>
                 </Button>
             )
         }
-      ];
+    ];
 
     const getFiltersData = () => {
         return [
             {
                 filterKey: 'date',
+                label: 'Date',
                 isDateFilter: true
             },
             {
                 filterKey: 'location',
+                label: 'Location',
                 options: Object.values(Locations),
                 hasSearch: true,
                 multiSelect: true
             },
             {
                 filterKey: 'course',
+                label: 'Course',
                 options: Object.values(Course),
                 hasSearch: true,
                 multiSelect: true
             },
             {
                 filterKey: 'finalConversion',
+                label: 'Final Conversion',
                 options: Object.values(FinalConversionType),
                 multiSelect: true
             },
             {
                 filterKey: 'assignedTo',
+                label: 'Assigned To',
                 options: assignedToDropdownData.map((item: any) => item.name || item._id || String(item)),
                 hasSearch: true,
                 multiSelect: true
             }
         ];
-    };  
+    };
 
 
     const handleFilterRemove = (filterKey: string) => {
@@ -244,24 +251,24 @@ export default function YellowLeadsTracker() {
             {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
             {leads?.leads && (
                 <TechnoDataTable
-                columns={columns}
-                data={leads.leads}
-                tableName="Yellow Leads Data"
-                currentPage={page}
-                totalPages={totalPages}
-                pageLimit={limit}
-                onPageChange={handlePageChange}
-                onLimitChange={handleLimitChange}
-                onSearch={handleSearch}
-                searchTerm={search}
-                onSort={handleSortChange} 
+                    columns={columns}
+                    data={leads.leads}
+                    tableName="Yellow Leads Data"
+                    currentPage={page}
+                    totalPages={totalPages}
+                    pageLimit={limit}
+                    onPageChange={handlePageChange}
+                    onLimitChange={handleLimitChange}
+                    onSearch={handleSearch}
+                    searchTerm={search}
+                    onSort={handleSortChange}
                 >
                     <FilterBadges
                         onFilterRemove={handleFilterRemove}
                         assignedToData={assignedToDropdownData}
                         appliedFilters={appliedFilters}
                     />
-            </TechnoDataTable>
+                </TechnoDataTable>
             )}
             <TechnoRightDrawer title={"Lead Details"} isOpen={isDrawerOpen} onClose={() => {
                 setIsDrawerOpen(false);

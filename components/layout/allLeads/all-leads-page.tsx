@@ -178,8 +178,10 @@ export default function AllLeadsPage() {
             id: 'actions',
             header: 'Actions',
             cell: ({ row }: any) => (
-                <Button onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}>
-                    View More
+                <Button variant='ghost' onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}>
+                    <span
+                        className='font-inter font-semibold text-[12px] text-primary '
+                    >View More</span>
                 </Button>
             )
         }
@@ -189,22 +191,26 @@ export default function AllLeadsPage() {
         return [
             {
                 filterKey: 'date',
+                label:'Date',
                 isDateFilter: true
             },
             {
                 filterKey: 'location',
+                label:'Location',
                 options: Object.values(Locations),
                 hasSearch: true,
                 multiSelect: true
             },
             {
                 filterKey: 'course',
+                label:'Course',
                 options: Object.values(Course),
                 hasSearch: true,
                 multiSelect: true
             },
             {
                 filterKey: 'leadType',
+                label:'Lead Type',
                 options: Object.values(TechnoLeadType),
                 multiSelect: true
             },

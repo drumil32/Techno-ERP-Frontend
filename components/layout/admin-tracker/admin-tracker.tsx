@@ -36,16 +36,19 @@ const AdminTracker = () => {
     return [
       {
         filterKey: 'date',
+        label:'Date',
         isDateFilter: true
       },
       {
         filterKey: 'location',
+        label:'Location',
         options: Object.values(Locations),
         hasSearch: true,
         multiSelect: true
       },
       {
         filterKey: 'assignedTo',
+        label:'Assigned To',
         options: assignedToDropdownData.map((item: any) => item.name || item._id || String(item)),
         hasSearch: true,
         multiSelect: true
