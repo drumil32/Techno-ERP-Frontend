@@ -71,7 +71,6 @@ export default function LeadViewEdit({ data }: { data: any }) {
         try {
             const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-            // Pick only the allowed fields for submission
             const allowedFields = [
                 '_id', 'name', 'phoneNumber', 'altPhoneNumber',
                 'email', 'gender', 'location', 'course',
@@ -103,47 +102,47 @@ export default function LeadViewEdit({ data }: { data: any }) {
     // Render read-only view
     const ReadOnlyView = (
         <>
-            <div className='flex flex-col gap-4 text-lg'>
+            <div className='flex flex-col gap-6 text-[12px]'>
                 <div className='flex gap-2'>
-                    <p>Date:</p>
+                    <p className='w-1/4  text-[#666666]'>Date:</p>
                     <p>{data.date}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p>Name:</p>
+                    <p className='w-1/4  text-[#666666]'>Name:</p>
                     <p>{data.name}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p>Phone Number:</p>
+                    <p className='w-1/4  text-[#666666]'>Phone Number:</p>
                     <p>{data.phoneNumber}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p>Alt Number:</p>
+                    <p className='w-1/4  text-[#666666]'>Alt Number:</p>
                     <p>{data.altPhoneNumber}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p>Email:</p>
+                    <p className='w-1/4  text-[#666666]'>Email:</p>
                     <p>{data.email}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p>Location:</p>
+                    <p className='w-1/4  text-[#666666]'>Location:</p>
                     <p>{data.location}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p>Course:</p>
+                    <p className='w-1/4  text-[#666666]'>Course:</p>
                     <p>{data.course}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p>Lead Type:</p>
+                    <p className='w-1/4  text-[#666666]'>Lead Type:</p>
                     <p>
                         <TechnoLeadTypeTag type={data.leadType} />
                     </p>
                 </div>
                 <div className='flex gap-2'>
-                    <p>Remarks:</p>
+                    <p className='w-1/4  text-[#666666]'>Remarks:</p>
                     <p>{data.remarks}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p>Next Due Date:</p>
+                    <p className='w-1/4  text-[#666666]'>Next Due Date:</p>
                     <p>{data.nextDueDate}</p>
                 </div>
             </div>
@@ -315,12 +314,22 @@ export default function LeadViewEdit({ data }: { data: any }) {
 
     return (
         <div className="w-full max-w-2xl mx-auto border-none">
+            <div className='w-full flex px-4 my-2'>
+                {
+                    !isEditMode &&
+                    <Button onClick={() => setIsEditMode(true)} className='ml-auto'>
+                        Edit Lead
+                    </Button>
+
+                }
+            </div>
+
             <CardContent className="space-y-6">
                 {isEditMode ? EditView : ReadOnlyView}
             </CardContent>
 
             <CardFooter className="flex justify-end gap-2 pt-6">
-                {isEditMode ? (
+                {isEditMode &&
                     <>
                         <Button
                             variant="outline"
@@ -345,11 +354,7 @@ export default function LeadViewEdit({ data }: { data: any }) {
                             )}
                         </Button>
                     </>
-                ) : (
-                    <Button onClick={() => setIsEditMode(true)}>
-                        Edit Lead
-                    </Button>
-                )}
+                }
             </CardFooter>
         </div>
     );
