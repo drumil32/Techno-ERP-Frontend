@@ -21,10 +21,11 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => { // Modi
             _leadType: lead.leadType,
             source: lead.source ?? '-',
             assignedTo: lead.assignedTo ?? '-',
-            assignedToName: assignedToName,  
+            assignedToName: assignedToName,
             nextDueDate: lead.nextDueDate ?? '-',
             createdAt: new Date(lead.createdAt).toLocaleString(),
             updatedAt: new Date(lead.updatedAt).toLocaleString(),
+            remarks: lead.remarks ?? '-',
         };
     });
 

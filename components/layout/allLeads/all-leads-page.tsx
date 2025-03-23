@@ -265,7 +265,7 @@ export default function AllLeadsPage() {
                     />
                 </TechnoDataTable>
             )}
-            <TechnoRightDrawer title={"Lead Details"} isOpen={isDrawerOpen} onClose={() => {
+            <TechnoRightDrawer title={"Edit Lead Details"} isOpen={isDrawerOpen} onClose={() => {
                 setIsDrawerOpen(false);
                 setRefreshKey(prev => prev + 1)
             }}>

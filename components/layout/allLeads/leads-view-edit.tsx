@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2, Pencil } from "lucide-react";
 import { Course, Gender, Locations } from '@/static/enum';
 import TechnoLeadTypeTag, { TechnoLeadType } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
 import { apiRequest } from '@/lib/apiClient';
@@ -69,8 +69,6 @@ export default function LeadViewEdit({ data }: { data: any }) {
 
         setIsSubmitting(true);
         try {
-            const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
             const allowedFields = [
                 '_id', 'name', 'phoneNumber', 'altPhoneNumber',
                 'email', 'gender', 'location', 'course',
@@ -80,8 +78,6 @@ export default function LeadViewEdit({ data }: { data: any }) {
             const filteredData = Object.fromEntries(
                 Object.entries(formData).filter(([key]) => allowedFields.includes(key))
             );
-
-            console.log(filteredData)
 
             await apiRequest(
                 API_METHODS.PUT,
@@ -102,48 +98,52 @@ export default function LeadViewEdit({ data }: { data: any }) {
     // Render read-only view
     const ReadOnlyView = (
         <>
-            <div className='flex flex-col gap-6 text-[12px]'>
+            <div className='flex flex-col gap-6 text-sm'>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Date:</p>
-                    <p>{data.date}</p>
+                    <p className='w-1/4  text-[#666666]'>Date</p>
+                    <p>{formData.date}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Name:</p>
-                    <p>{data.name}</p>
+                    <p className='w-1/4  text-[#666666]'>Name</p>
+                    <p>{formData.name}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Phone Number:</p>
-                    <p>{data.phoneNumber}</p>
+                    <p className='w-1/4  text-[#666666]'>Phone number</p>
+                    <p>{formData.phoneNumber}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Alt Number:</p>
-                    <p>{data.altPhoneNumber}</p>
+                    <p className='w-1/4  text-[#666666]'>Alt number</p>
+                    <p>{formData.altPhoneNumber}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Email:</p>
-                    <p>{data.email}</p>
+                    <p className='w-1/4  text-[#666666]'>Email</p>
+                    <p>{formData.email}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Location:</p>
-                    <p>{data.location}</p>
+                    <p className='w-1/4  text-[#666666]'>Gender</p>
+                    <p>{formData.gender.charAt(0) + data.gender.slice(1).toLowerCase()}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Course:</p>
-                    <p>{data.course}</p>
+                    <p className='w-1/4  text-[#666666]'>Location</p>
+                    <p>{formData.location}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Lead Type:</p>
+                    <p className='w-1/4  text-[#666666]'>Course</p>
+                    <p>{formData.course}</p>
+                </div>
+                <div className='flex gap-2'>
+                    <p className='w-1/4  text-[#666666]'>Lead Type</p>
                     <p>
-                        <TechnoLeadTypeTag type={data.leadType} />
+                        <TechnoLeadTypeTag type={formData.leadType as TechnoLeadType} />
                     </p>
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Remarks:</p>
-                    <p>{data.remarks}</p>
+                    <p className='w-1/4  text-[#666666]'>Remarks</p>
+                    <p>{formData.remarks}</p>
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Next Due Date:</p>
-                    <p>{data.nextDueDate}</p>
+                    <p className='w-1/4  text-[#666666]'>Next Due Date</p>
+                    <p>{formData.nextDueDate}</p>
                 </div>
             </div>
         </>
@@ -152,145 +152,155 @@ export default function LeadViewEdit({ data }: { data: any }) {
     // Render edit view
     const EditView = (
         <>
-
-            <div className='flex gap-2'>
-                <p>Date:</p>
+            <div className='flex flex-col gap-2'>
+                <p className='text-[#666666] font-normal'>Date</p>
                 <p>{data.date}</p>
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
+                <EditLabel htmlFor="name" title={"Name"} />
                 <Input
                     id="name"
                     name="name"
                     value={formData.name || ''}
                     onChange={handleChange}
+                    className='rounded-[5px]'
                 />
             </div>
 
+
+            <div className='flex gap-5'>
+                <div className="space-y-2">
+                    <EditLabel htmlFor="phoneNumber" title={"Phone number"} />
+                    <Input
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        value={formData.phoneNumber || ''}
+                        onChange={handleChange}
+                        className='rounded-[5px]'
+                    />
+                </div>
+
+                <div className="space-y-2">
+                    <EditLabel htmlFor="altPhoneNumber" title={"Alt Phone number"} />
+                    <Input
+                        id="altPhoneNumber"
+                        name="altPhoneNumber"
+                        value={formData.altPhoneNumber || ''}
+                        onChange={handleChange}
+                        className='rounded-[5px]'
+                    />
+                </div>
+            </div>
+
             <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <EditLabel htmlFor="email" title={"Email"} />
                 <Input
                     id="email"
                     name="email"
                     type="email"
                     value={formData.email || ''}
                     onChange={handleChange}
+                    className='rounded-[5px]'
                 />
             </div>
 
-            <div className="space-y-2">
-                <Label htmlFor="gender">Gender</Label>
-                <Select
-                    defaultValue={formData.gender}
-                    onValueChange={(value) => handleSelectChange("gender", value)}
-                >
-                    <SelectTrigger id="gender" className="w-full">
-                        <SelectValue placeholder="Select gender" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {Object.values(Gender).map((gender) => (
-                            <SelectItem key={gender} value={gender}>
-                                {gender}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+            <div className='flex gap-5 w-full'>
+                <div className="space-y-2 w-1/2">
+                    <EditLabel htmlFor="gender" title={"Gender"} />
+                    <Select
+                        defaultValue={formData.gender}
+                        onValueChange={(value) => handleSelectChange("gender", value)}
+                    >
+                        <SelectTrigger id="gender" className="w-full rounded-[5px]">
+                            <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Object.values(Gender).map((gender) => (
+                                <SelectItem key={gender} value={gender}>
+                                    {gender}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+
+                <div className="space-y-2 w-1/2">
+                    <EditLabel htmlFor="location" title={"Location"} />
+                    <Select
+                        defaultValue={formData.location}
+                        onValueChange={(value) => handleSelectChange("location", value)}
+                    >
+                        <SelectTrigger id="location" className="w-full rounded-[5px]">
+                            <SelectValue placeholder="Select location" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Object.values(Locations).map((location) => (
+                                <SelectItem key={location} value={location}>
+                                    {location}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            <div className='flex gap-5'>
+
+                <div className="space-y-2 w-1/2">
+                    <EditLabel htmlFor="leadType" title={"Lead Type"} />
+                    <Select
+                        defaultValue={formData.leadType || ''}
+                        onValueChange={(value) => handleSelectChange("leadType", value)}
+                    >
+                        <SelectTrigger id="leadType" className="w-full rounded-[5px]">
+                            <SelectValue placeholder="Select lead type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Object.values(TechnoLeadType).map((type) => (
+                                <SelectItem key={type} value={type}>
+                                    <TechnoLeadTypeTag type={type} />
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                <div className="space-y-2 w-1/2">
+                    <EditLabel htmlFor="course" title={"Course"} />
+                    <Select
+                        defaultValue={formData.course || ''}
+                        onValueChange={(value) => handleSelectChange("course", value)}
+                    >
+                        <SelectTrigger id="course" className="w-full rounded-[5px]">
+                            <SelectValue placeholder="Select course" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Object.values(Course).map((course) => (
+                                <SelectItem key={course} value={course}>
+                                    {course}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="phoneNumber">Phone Number</Label>
-                <Input
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={formData.phoneNumber || ''}
-                    onChange={handleChange}
-                />
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="altPhoneNumber">Alternative Phone</Label>
-                <Input
-                    id="altPhoneNumber"
-                    name="altPhoneNumber"
-                    value={formData.altPhoneNumber || ''}
-                    onChange={handleChange}
-                />
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
-                <Select
-                    defaultValue={formData.location}
-                    onValueChange={(value) => handleSelectChange("location", value)}
-                >
-                    <SelectTrigger id="location" className="w-full">
-                        <SelectValue placeholder="Select location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {Object.values(Locations).map((location) => (
-                            <SelectItem key={location} value={location}>
-                                {location}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
-
-
-
-            <div className="space-y-2">
-                <Label htmlFor="leadType">Lead Type</Label>
-                <Select
-                    defaultValue={formData.leadType || ''}
-                    onValueChange={(value) => handleSelectChange("leadType", value)}
-                >
-                    <SelectTrigger id="leadType" className="w-full">
-                        <SelectValue placeholder="Select lead type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {Object.values(TechnoLeadType).map((type) => (
-                            <SelectItem key={type} value={type}>
-                                <TechnoLeadTypeTag type={type} />
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="course">Course</Label>
-                <Select
-                    defaultValue={formData.course || ''}
-                    onValueChange={(value) => handleSelectChange("course", value)}
-                >
-                    <SelectTrigger id="course" className="w-full">
-                        <SelectValue placeholder="Select course" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {Object.values(Course).map((course) => (
-                            <SelectItem key={course} value={course}>
-                                {course}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="remarks">Remarks</Label>
+                <EditLabel htmlFor="remarks" title={"Remarks"} />
                 <textarea
                     id="remarks"
                     name="remarks"
                     value={formData.remarks || ''}
                     onChange={handleChange}
-                    className="w-full min-h-20 px-3 py-2 border rounded-md"
+                    className="w-full min-h-20 px-3 py-2 border rounded-[5px]"
                     placeholder="Enter remarks here"
                 />
             </div>
 
-            <div className="space-y-2">
-                <Label htmlFor="nextDueDate">Next Due Date</Label>
+            <div className="space-y-2 w-1/2">
+                <EditLabel htmlFor="nextDueDate" title={"Next Due Date"} />
                 <div className="relative">
                     <input
                         type="date"
@@ -303,33 +313,40 @@ export default function LeadViewEdit({ data }: { data: any }) {
                                 value: formatDateToDisplay(e.target.value)
                             }
                         } as React.ChangeEvent<HTMLInputElement>)}
-                        className="w-full px-3 py-2 pl-10 border rounded-md"
+                        className="w-full px-3 py-2 pl-10 border rounded-[5px]"
                         placeholder="Select a date"
                     />
                     <CalendarIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                 </div>
             </div>
+
+            <div className='flex flex-col gap-2'>
+                <p className='text-[#666666] font-normal'>Timestamp</p>
+                <p >{data.createdAt}</p>
+            </div>
+
+
         </>
     );
 
     return (
-        <div className="w-full max-w-2xl mx-auto border-none">
-            <div className='w-full flex px-4 my-2'>
+        <div className="w-full h-full max-w-2xl mx-auto border-none flex flex-col">
+            <div className='w-full flex px-4 mb-2'>
                 {
                     !isEditMode &&
-                    <Button onClick={() => setIsEditMode(true)} className='ml-auto'>
+                    <Button onClick={() => setIsEditMode(true)} className='ml-auto' icon={Pencil}>
                         Edit Lead
                     </Button>
 
                 }
             </div>
 
-            <CardContent className="space-y-6">
+            <CardContent className="px-3 space-y-6 mb-20">
                 {isEditMode ? EditView : ReadOnlyView}
             </CardContent>
 
-            <CardFooter className="flex justify-end gap-2 pt-6">
                 {isEditMode &&
+            <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
                     <>
                         <Button
                             variant="outline"
@@ -350,12 +367,20 @@ export default function LeadViewEdit({ data }: { data: any }) {
                                     Saving
                                 </>
                             ) : (
-                                'Save Changes'
+                                'Save Lead'
                             )}
                         </Button>
                     </>
-                }
             </CardFooter>
+                }
         </div>
     );
+}
+
+function EditLabel({ htmlFor, title }: any) {
+    return (
+        <>
+            <Label htmlFor={htmlFor} className='font-normal text-[#666666]'>{title}</Label>
+        </>
+    )
 }
