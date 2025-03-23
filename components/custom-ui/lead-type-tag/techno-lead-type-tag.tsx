@@ -22,14 +22,27 @@ const typeStyles = {
 interface TechnoLeadTypeTagProps {
     type: TechnoLeadType;
 }
+function toPascal(title: string) {
+    if(!title.includes('_'))
+    {
+        return title[0].toUpperCase() + title.slice(1).toLowerCase();
+    }
+    var words = title.split('_');
+    var convertedTitle = '';
+    words.forEach((word) => {
+        let formatedWord = word[0].toUpperCase() + word.slice(1).toLowerCase();
+        convertedTitle += formatedWord;
+        convertedTitle += ' ';
+    })
 
+    return convertedTitle;
+}
 export default function TechnoLeadTypeTag({ type }: TechnoLeadTypeTagProps) {
     const style = typeStyles[type] || "bg-gray-100 text-gray-700";
 
     return (
         <span className={`px-2 py-1 rounded-full text-sm font-medium ${style}`}>
-            {type?.replace(/_/g, ' ')}
+            {toPascal(type)}
         </span>
     );
 }
-
