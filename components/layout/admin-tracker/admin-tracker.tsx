@@ -10,6 +10,7 @@ import TechnoAnalyticCardsGroup, {
   CardItem
 } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { refineAnalytics } from './helpers/refine-data';
+import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 
 const AdminTracker = () => {
   const { filters } = useTechnoFilterContext();
@@ -49,7 +50,12 @@ const AdminTracker = () => {
       {
         filterKey: 'assignedTo',
         label:'Assigned To',
-        options: assignedToDropdownData.map((item: any) => item.name || item._id || String(item)),
+        options: assignedToDropdownData.map((item: any) => {
+          return {
+              label: item.name,
+              id: item._id
+          }
+      }) as FilterOption[],
         hasSearch: true,
         multiSelect: true
       }
