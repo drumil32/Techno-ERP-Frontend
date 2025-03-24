@@ -9,7 +9,7 @@ import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
-import { Course, FinalConversionType, Locations } from '@/static/enum';
+import { Course, FinalConversionType, Locations } from '@/types/enum';
 import {
   fetchAssignedToDropdown,
   fetchYellowLeads,

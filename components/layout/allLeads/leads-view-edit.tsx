@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon, Loader2, Pencil } from "lucide-react";
-import { Course, Gender, Locations } from '@/static/enum';
+import { Course, Gender, Locations } from '@/types/enum';
 import TechnoLeadTypeTag, { TechnoLeadType } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';

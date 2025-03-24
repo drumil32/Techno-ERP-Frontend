@@ -1,9 +1,9 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HoverContext } from '../custom-ui/sidebar/hover-context';
 import TechnoSidebar from '../custom-ui/sidebar/techno-sidebar';
 import { SidebarProvider, useSidebarContext } from '../custom-ui/sidebar/sidebar-context';
-import CRMLayout from './crm-layout';
+import { useRouter } from 'next/navigation';
 
 export default function AppLayout() {
     const [hovered, setHovered] = useState<boolean>(false);
@@ -35,11 +35,20 @@ export default function AppLayout() {
 
 function ContentRenderer() {
     const { sidebarActiveItem } = useSidebarContext();
+    const router = useRouter();
 
-    switch (sidebarActiveItem) {
-        case 'Marketing':
-            return <CRMLayout />;
-        default:
-            return <div>Default Page</div>;
-    }
+    useEffect(() => {
+        switch (sidebarActiveItem) {
+            case 'Marketing':
+                router.push('/crm');
+                break;
+            case 'Admissions':
+                router.push('/admissions');
+                break;
+            default:
+                router.push('/');
+        }
+    }, [sidebarActiveItem, router]);
+
+    return null; 
 }

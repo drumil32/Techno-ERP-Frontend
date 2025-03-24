@@ -6,7 +6,7 @@ const TopHeaderContext = createContext({
 });
 
 export function TopHeaderProvider({ children }: { children: React.ReactNode }) {
-  const [headerActiveItem, setHeaderActiveItem] = useState('All Leads');
+  const [headerActiveItem, setHeaderActiveItem] = useState('');
 
   return (
     <TopHeaderContext.Provider value={{ headerActiveItem, setHeaderActiveItem }}>

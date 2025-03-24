@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import FinalConversionTag, {
   FinalConversionStatus
 } from '@/components/layout/yellowLeads/final-conversion-tag';
-import { FinalConversionType } from '@/static/enum';
+import { FinalConversionType } from '@/types/enum';
 
 export interface FilterOption {
   id: string;

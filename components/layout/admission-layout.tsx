@@ -4,28 +4,20 @@ import TechnoTopHeader from '../custom-ui/top-header/techno-top-header';
 import TechnoBreadCrumb from '../custom-ui/breadcrump/techno-breadcrumb';
 import { TopHeaderProvider, useTopHeaderContext } from '../custom-ui/top-header/top-header-context';
 import TechnoPageTitle from '../custom-ui/page-title/techno-page-title';
-import { TechnoFilterProvider } from '../custom-ui/filter/filter-context';
-import AdminTracker from './admin-tracker/admin-tracker';
-import { AdminTrackerProvider } from './admin-tracker/admin-tracker-context';
-import AllLeadsPage from './allLeads/all-leads-page';
-import YellowLeadsTracker from './yellowLeads/yellow-leads-tracker';
 import { useEffect } from 'react';
+import AdmissionsLandingPage from './admissions/admission-page';
 
-const headerItem = [{ title: 'All Leads' }, { title: 'Yellow Leads' }, { title: 'Admin Tracker' }];
+const headerItem = [{ title: 'Application Process' }];
 
-export default function CRMLayout() {
+export default function AdmissionLayout() {
     return (
         <TopHeaderProvider>
-            <TechnoFilterProvider>
-                <AdminTrackerProvider>
-                    <CRMContent />
-                </AdminTrackerProvider>
-            </TechnoFilterProvider>
+            <AdmissionContent />
         </TopHeaderProvider>
     );
 }
 
-function CRMContent() {
+function AdmissionContent() {
     const { setHeaderActiveItem } = useTopHeaderContext()
     useEffect(() => {
         setHeaderActiveItem(headerItem[0].title);
@@ -46,14 +38,9 @@ function ContentRenderer() {
     const { headerActiveItem } = useTopHeaderContext();
 
     switch (headerActiveItem) {
-        case 'All Leads':
-            return <AllLeadsPage />;
-        case 'Yellow Leads':
-            return <YellowLeadsTracker />;
-        case 'Admin Tracker':
-            return <AdminTracker />;
+        case 'Application Process':
+            return <AdmissionsLandingPage/>;
         default:
             return <div>Default Page</div>;
     }
-
 }

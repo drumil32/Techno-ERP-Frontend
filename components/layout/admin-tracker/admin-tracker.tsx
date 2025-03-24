@@ -5,7 +5,7 @@ import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import { AdminAnalyticsResponse } from './interfaces';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
-import { Locations } from '@/static/enum';
+import { Locations } from '@/types/enum';
 import TechnoAnalyticCardsGroup, {
   CardItem
 } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
