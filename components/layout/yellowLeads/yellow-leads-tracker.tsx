@@ -9,7 +9,7 @@ import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
-import { Course, FinalConversionType, Locations } from '@/static/enum';
+import { Course, finalConversion, Locations } from '@/static/enum';
 import {
   fetchAssignedToDropdown,
   fetchYellowLeads,
@@ -166,10 +166,10 @@ export default function YellowLeadsTracker() {
     },
     { accessorKey: 'nextDueDate', header: 'Next Call Date' },
     {
-      accessorKey: 'finalConversionType',
+      accessorKey: 'finalConversion',
       header: 'Final Conversion',
       cell: ({ row }: any) => (
-        <FinalConversionTag status={row.original.finalConversionType as FinalConversionStatus} />
+        <FinalConversionTag status={row.original.finalConversion as FinalConversionStatus} />
       )
     },
     { accessorKey: 'remarks', header: 'Remarks' },
@@ -210,7 +210,7 @@ export default function YellowLeadsTracker() {
         multiSelect: true
       },
       {
-        filterKey: 'finalConversionType',
+        filterKey: 'finalConversion',
         label: 'Final Conversion',
         options: Object.values(FinalConversionStatus),
         multiSelect: true

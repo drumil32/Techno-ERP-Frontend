@@ -28,7 +28,7 @@ export enum LeadType {
 }
 
 
-export enum FinalConversionType {
+export enum finalConversion {
   PINK = 'PENDING',
   GREEN = 'CONVERTED',
   RED = 'NOT_CONVERTED'

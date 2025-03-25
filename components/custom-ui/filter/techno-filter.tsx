@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import FinalConversionTag, {
   FinalConversionStatus
 } from '@/components/layout/yellowLeads/final-conversion-tag';
-import { FinalConversionType } from '@/static/enum';
+import { finalConversion } from '@/static/enum';
 
 export interface FilterOption {
   id: string;
@@ -252,7 +252,7 @@ export default function TechnoFilter({
                   />
                   ) :
                     
-                filterKey === 'finalConversionType' ? (
+                filterKey === 'finalConversion' ? (
                   <FinalConversionTag
                     status={
                       typeof option === 'string'
