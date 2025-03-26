@@ -9,7 +9,7 @@ import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
-import { Course, FinalConversionType, Locations } from '@/static/enum';
+import { Course, finalConversion, Locations } from '@/static/enum';
 import {
   fetchAssignedToDropdown,
   fetchYellowLeads,
@@ -23,7 +23,7 @@ import FinalConversionTag, { FinalConversionStatus } from './final-conversion-ta
 import FilterBadges from '../allLeads/components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import YellowLeadViewEdit from './yellow-view-edit';
-
+import { toast } from 'sonner';
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -64,6 +64,12 @@ export default function YellowLeadsTracker() {
     setAppliedFilters({ ...filters });
     setRefreshKey((prevKey) => prevKey + 1);
   };
+
+  const clearFilters = () => {
+    currentFiltersRef.current = {};
+    setAppliedFilters({});
+    setRefreshKey((prevKey) => prevKey + 1);
+  }
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -107,8 +113,8 @@ export default function YellowLeadsTracker() {
       page,
       limit,
       search: debouncedSearch,
-        ...appliedFilters,
-        refreshKey
+      ...appliedFilters,
+      refreshKey
     };
 
     if (sortBy) {
@@ -136,8 +142,6 @@ export default function YellowLeadsTracker() {
     enabled: true
   });
 
-  const isLoading = leadsQuery.isLoading || analyticsQuery.isLoading;
-  const isError = leadsQuery.isError || analyticsQuery.isError;
   const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data) : [];
   const assignedToDropdownData = Array.isArray(assignedToQuery?.data) ? assignedToQuery?.data : [];
   const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
@@ -148,6 +152,71 @@ export default function YellowLeadsTracker() {
       setTotalEntries(leads.total);
     }
   }, [leads]);
+
+  const toastIdRef = useRef<string | number | null>(null);
+
+  useEffect(() => {
+    const isLoading = leadsQuery.isLoading || analyticsQuery.isLoading || assignedToQuery.isLoading;
+    const hasError = leadsQuery.isError || analyticsQuery.isError || assignedToQuery.isError;
+    const isSuccess = leadsQuery.isSuccess && analyticsQuery.isSuccess && assignedToQuery.isSuccess;
+    const isFetching = leadsQuery.isFetching || analyticsQuery.isFetching || assignedToQuery.isFetching;
+
+
+    if (toastIdRef.current) {
+      if (isLoading || isFetching) {
+        toast.loading('Loading data...', {
+          id: toastIdRef.current,
+          duration: Infinity
+        });
+      }
+
+      if (hasError) {
+        toast.error('Data load failed', {
+          id: toastIdRef.current,
+          duration: 3000
+        });
+        setTimeout(() => { toastIdRef.current = null }, 3000);
+        toastIdRef.current = null;
+      }
+
+      if (isSuccess) {
+        toast.success('Data loaded', {
+          id: toastIdRef.current!,
+          duration: 2000
+        });
+        toastIdRef.current = null;
+      }
+    }
+    else if (hasError) {
+      toastIdRef.current = toast.error('Data load failed', {
+        duration: 3000
+      });
+    }
+    else if (isLoading || isFetching) {
+      toastIdRef.current = toast.loading('Loading data...', {
+        duration: Infinity
+      });
+    }
+    return () => {
+      if (toastIdRef.current) {
+        toast.dismiss(toastIdRef.current);
+      }
+    };
+  }, [
+    refreshKey,
+    leadsQuery.isLoading,
+    leadsQuery.isError,
+    leadsQuery.isSuccess,
+    leadsQuery.isFetching,
+    analyticsQuery.isLoading,
+    analyticsQuery.isError,
+    analyticsQuery.isSuccess,
+    analyticsQuery.isFetching,
+    assignedToQuery.isLoading,
+    assignedToQuery.isError,
+    assignedToQuery.isSuccess,
+    assignedToQuery.isFetching
+  ]);
 
   const columns = [
     { accessorKey: 'id', header: 'S. No.' },
@@ -166,10 +235,10 @@ export default function YellowLeadsTracker() {
     },
     { accessorKey: 'nextDueDate', header: 'Next Call Date' },
     {
-      accessorKey: 'finalConversionType',
+      accessorKey: 'finalConversion',
       header: 'Final Conversion',
       cell: ({ row }: any) => (
-        <FinalConversionTag status={row.original.finalConversionType as FinalConversionStatus} />
+        <FinalConversionTag status={row.original.finalConversion as FinalConversionStatus} />
       )
     },
     { accessorKey: 'remarks', header: 'Remarks' },
@@ -232,7 +301,7 @@ export default function YellowLeadsTracker() {
 
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
-    
+
     if (filterKey === 'date') {
       delete updatedFilters.startDate;
       delete updatedFilters.endDate;
@@ -241,8 +310,7 @@ export default function YellowLeadsTracker() {
       updateFilter('startDate', undefined);
       updateFilter('endDate', undefined);
     }
-    else if (filterKey === 'ltcDate')
-    {
+    else if (filterKey === 'ltcDate') {
       delete updatedFilters.startLTCDate;
       delete updatedFilters.endLTCDate;
       updateFilter('startLTCDate', undefined);
@@ -260,7 +328,7 @@ export default function YellowLeadsTracker() {
 
   return (
     <>
-      <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} />
+      <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} clearFilters={clearFilters} />
       {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
       {leads?.leads && (
         <TechnoDataTable

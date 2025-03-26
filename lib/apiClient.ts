@@ -29,47 +29,38 @@ export const apiRequest = async <T>(
     url.includes(API_ENDPOINTS.update_password) ||
     url.includes(API_ENDPOINTS.logout);
 
-  try {
-    const isFormData = data instanceof FormData;
+  const isFormData = data instanceof FormData;
 
-    // Construct query parameters
-    const queryString = new URLSearchParams(
-      Object.entries(params)
-        .filter(([_, v]) => v !== undefined)
-        .map(([k, v]) => [k, String(v)])
-    ).toString();
+  // Construct query parameters
+  const queryString = new URLSearchParams(
+    Object.entries(params)
+      .filter(([_, v]) => v !== undefined)
+      .map(([k, v]) => [k, String(v)])
+  ).toString();
 
-    const requestUrl = queryString ? `${url}?${queryString}` : url;
+  const requestUrl = queryString ? `${url}?${queryString}` : url;
 
-    const response = await fetch(requestUrl, {
-      method,
-      ...(method !== "GET" && { body: isFormData ? (data as FormData) : JSON.stringify(data) }),
-      headers: {
-        ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-        ...extraHeaders
-      },
-      credentials: 'include'
-    });
+  const response = await fetch(requestUrl, {
+    method,
+    ...(method !== "GET" && { body: isFormData ? (data as FormData) : JSON.stringify(data) }),
+    headers: {
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+      ...extraHeaders
+    },
+    credentials: 'include'
+  });
 
-    const responseBody:Response = await response.json();
+  const responseBody: Response = await response.json();
 
-    if (!response.ok || !responseBody.SUCCESS) {
-        toast.error(responseBody.ERROR || responseBody.MESSAGE || `HTTP Error: ${response.status}`);
-        if (response.status === 401 && !isAuthRequest) {
-            window.location.href = API_ROUTES.login;
-        }
-        return null; 
+  if (!response.ok || !responseBody.SUCCESS) {
+    toast.error(responseBody.ERROR || responseBody.MESSAGE || `HTTP Error: ${response.status}`);
+    if (response.status === 401 && !isAuthRequest) {
+      window.location.href = API_ROUTES.login;
     }
-
-    toast.success(responseBody.MESSAGE);
-    return responseBody.DATA as T;
-      
-  } catch (error) {
-    logger.error('API request error:', error);
-
-    // Show a toast notification for any error
-    toast.error(`API Error: ${(error as Error).message}`);
-
-    throw error;
+    return null;
   }
+
+  return responseBody.DATA as T;
+
+
 };

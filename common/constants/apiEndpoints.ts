@@ -5,6 +5,7 @@ export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
 export const API_ENDPOINTS = {
 
     login: `${API_DOMAIN}/auth/login`,
+    profile:`${API_DOMAIN}/user/profile`,
     register: `${API_DOMAIN}/auth/register`,
     send_otp: `${API_DOMAIN}/auth/send-otp`,
     verify_otp: `${API_DOMAIN}/auth/verify-otp`,

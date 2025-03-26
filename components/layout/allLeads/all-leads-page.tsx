@@ -13,10 +13,10 @@ import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './help
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
-
+import { toast } from 'sonner';
 export default function AllLeadsPage() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [appliedFilters, setAppliedFilters] = useState<any>({}); // Initialize to empty object
+    const [appliedFilters, setAppliedFilters] = useState<any>({}); 
     const [refreshKey, setRefreshKey] = useState(0);
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -55,6 +55,12 @@ export default function AllLeadsPage() {
         setAppliedFilters({ ...filters });
         setRefreshKey(prevKey => prevKey + 1);
     };
+
+    const clearFilters = () => {
+        currentFiltersRef.current = {};
+        setAppliedFilters({});
+        setRefreshKey((prevKey) => prevKey + 1);
+    }
 
 
     const handleFilterRemove = (filterKey: string) => {
@@ -152,11 +158,70 @@ export default function AllLeadsPage() {
         enabled: true
     });
 
-    const isLoading = leadsQuery.isLoading || analyticsQuery.isLoading;
-    const isError = leadsQuery.isError || analyticsQuery.isError;
     const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data) : [];
     const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : []
     const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
+
+    const toastIdRef = useRef<string | number | null>(null);
+
+    useEffect(() => {
+        const isLoading = leadsQuery.isLoading || analyticsQuery.isLoading;
+        const hasError = leadsQuery.isError || analyticsQuery.isError;
+        const isSuccess = leadsQuery.isSuccess && analyticsQuery.isSuccess;
+        const isFetching = leadsQuery.isFetching || analyticsQuery.isFetching;
+
+        if (toastIdRef.current) {
+            if (isLoading || isFetching) {
+                toast.loading('Loading leads data...', {
+                    id: toastIdRef.current,
+                    duration: Infinity
+                });
+            }
+
+            if (hasError) {
+                toast.error('Failed to load leads data', {
+                    id: toastIdRef.current,
+                    duration: 3000
+                });
+                setTimeout(() => { toastIdRef.current = null }, 3000);
+                toastIdRef.current = null;
+            }
+
+            if (isSuccess) {
+                toast.success('Leads data loaded successfully', {
+                    id: toastIdRef.current!,
+                    duration: 2000
+                });
+                toastIdRef.current = null;
+            }
+        }
+        else if (hasError) {
+            toastIdRef.current = toast.error('Failed to load leads data', {
+                duration: 3000
+            });
+        }
+        else if (isLoading || isFetching) {
+            toastIdRef.current = toast.loading('Loading leads data...', {
+                duration: Infinity
+            });
+        }
+
+        return () => {
+            if (toastIdRef.current) {
+                toast.dismiss(toastIdRef.current);
+            }
+        };
+    }, [
+        refreshKey,
+        leadsQuery.isLoading,
+        leadsQuery.isError,
+        leadsQuery.isSuccess,
+        leadsQuery.isFetching,
+        analyticsQuery.isLoading,
+        analyticsQuery.isError,
+        analyticsQuery.isSuccess,
+        analyticsQuery.isFetching
+    ]);
 
     const columns = [
         { accessorKey: 'id', header: 'S. No' },
@@ -191,12 +256,12 @@ export default function AllLeadsPage() {
         return [
             {
                 filterKey: 'date',
-                label:'Date',
+                label: 'Date',
                 isDateFilter: true
             },
             {
                 filterKey: 'location',
-                label:'Location',
+                label: 'Location',
                 options: Object.values(Locations),
                 placeholder: "location",
                 hasSearch: true,
@@ -204,7 +269,7 @@ export default function AllLeadsPage() {
             },
             {
                 filterKey: 'course',
-                label:'Course',
+                label: 'Course',
                 options: Object.values(Course),
                 placeholder: "courses",
                 hasSearch: true,
@@ -212,7 +277,7 @@ export default function AllLeadsPage() {
             },
             {
                 filterKey: 'leadType',
-                label:'Lead Type',
+                label: 'Lead Type',
                 options: Object.values(TechnoLeadType),
                 multiSelect: true
             },
@@ -225,7 +290,7 @@ export default function AllLeadsPage() {
                         id: item._id
                     }
                 }) as FilterOption[],
-                placeholder:"person",
+                placeholder: "person",
                 hasSearch: true,
                 multiSelect: true
             }
@@ -244,7 +309,7 @@ export default function AllLeadsPage() {
 
     return (
         <>
-            <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} />
+            <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} clearFilters={clearFilters} />
 
             {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
 
