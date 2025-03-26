@@ -14,9 +14,10 @@ import TechnoLeadTypeTag, { TechnoLeadType } from '../lead-type-tag/techno-lead-
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import FinalConversionTag, {
-  FinalConversionStatus
+  FinalConversionStatus,
+  toPascal
 } from '@/components/layout/yellowLeads/final-conversion-tag';
-import { finalConversion } from '@/static/enum';
+import { Course, CourseNameMapper, finalConversion, MarketingSources } from '@/static/enum';
 
 export interface FilterOption {
   id: string;
@@ -31,6 +32,7 @@ interface TechnoFilterProps {
   hasSearch?: boolean;
   multiSelect?: boolean;
   isDateFilter?: boolean;
+  applyFilters: () => void;
 }
 
 const formatDateForAPI = (date: Date | undefined): string | undefined => {
@@ -51,6 +53,7 @@ const parseDateFromAPI = (dateString: string | undefined): Date | undefined => {
 export default function TechnoFilter({
   filterKey,
   filterLabel,
+  applyFilters,
   filterPlaceholder,
   options = [],
   hasSearch = false,
@@ -75,6 +78,8 @@ export default function TechnoFilter({
     if (filters.endDate) {
       setEndDate(parseDateFromAPI(filters.endDate));
     }
+
+    applyFilters();
   }, [filters, filterKey]);
 
   const filteredOptions = options.filter((option) => {
@@ -250,9 +255,8 @@ export default function TechnoFilter({
                         : (option.label as TechnoLeadType)
                     }
                   />
-                  ) :
-                    
-                filterKey === 'finalConversion' ? (
+                  ) :                    
+                filterKey === 'finalConversionType' ? (
                   <FinalConversionTag
                     status={
                       typeof option === 'string'
@@ -261,7 +265,12 @@ export default function TechnoFilter({
                     }
                   />
                 ):
-                
+                filterKey === 'course' ? (
+                  <span>{CourseNameMapper[option as Course]}</span>
+                ):
+                filterKey === 'source' ? (
+                  <span>{toPascal(option as string)}</span>
+                ):
                 (
                   <span>{typeof option === 'string' ? option : option.label}</span>
                 )}

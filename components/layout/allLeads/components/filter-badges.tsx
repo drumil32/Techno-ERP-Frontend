@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { format, parse } from 'date-fns';
-import { Course, Locations } from '@/static/enum';
+import { Course, CourseNameMapper, Locations } from '@/static/enum';
 import { Badge } from '@/components/ui/badge';
+import { toPascal } from '../../yellowLeads/final-conversion-tag';
 
 
 type BadgeData = {
@@ -27,20 +28,20 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
 
     const formatDateRange = (startDateStr: string | undefined, endDateStr: string | undefined) => {
         if (!startDateStr && !endDateStr) return '';
-    
+
         try {
             let startDate: Date | undefined;
             let endDate: Date | undefined;
-    
+
             if (startDateStr) {
                 startDate = parse(startDateStr, 'dd/MM/yyyy', new Date());
             }
-    
+
             if (endDateStr) {
                 endDate = parse(endDateStr, 'dd/MM/yyyy', new Date());
             }
-    
-    
+
+
             if (startDate && endDate) {
                 return `${format(startDate, 'dd/MM/yyyy')} - ${format(endDate, 'dd/MM/yyyy')}`;
             } else if (startDate) {
@@ -54,7 +55,7 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
             return 'Invalid Date';  // Or some other fallback
         }
     };
-    
+
     useEffect(() => {
         const newBadges: BadgeData[] = [];
 
@@ -66,7 +67,7 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
             });
         }
 
-        if (appliedFilters.startLTCDate || appliedFilters.endLTCDate) { 
+        if (appliedFilters.startLTCDate || appliedFilters.endLTCDate) {
             newBadges.push({
                 key: 'ltcDate',
                 label: 'LTC Date',
@@ -83,10 +84,13 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
                 if (key === 'location') {
                     getLabel = (val: string) => Locations[val as keyof typeof Locations] || val;
                 } else if (key === 'course') {
-                    getLabel = (val: string) => Course[val as keyof typeof Course] || val;
+                    getLabel = (val: string) => CourseNameMapper[val as Course] || val;
                 } else if (key === 'assignedTo') {
                     getLabel = getAssignedToLabel;
-                } else {
+                } else if (key === 'source') {
+                    getLabel = (val: string) => toPascal(val);
+                }
+                else {
                     getLabel = (val: string) => val;
                 }
 
@@ -108,26 +112,26 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
     }, [appliedFilters, assignedToData]);
 
     return (
-            <div className="flex flex-row flex-wrap gap-2">
-                {badges.map((badge) => (
-                    <div className="flex flex-row flex-wrap gap-2"
-                        onClick={() => onFilterRemove(badge.key)} // Remove by badge.key
-                        key={badge.key}
+        <div className="flex flex-row flex-wrap gap-2">
+            {badges.map((badge) => (
+                <div className="flex flex-row flex-wrap gap-2"
+                    onClick={() => onFilterRemove(badge.key)} // Remove by badge.key
+                    key={badge.key}
+                >
+                    <Badge
+                        variant="secondary"
+                        className="py-1 px-2 flex items-center gap-1 cursor-pointer"
                     >
-                        <Badge
-                            variant="secondary"
-                            className="py-1 px-2 flex items-center gap-1 cursor-pointer"
-                        >
-                            <span className="font-medium">{badge.label}:</span> {badge.value}
-                            <X
-                                size={16}
-                                className="ml-1 cursor-pointer"
+                        <span className="font-medium">{badge.label}:</span> {badge.value}
+                        <X
+                            size={16}
+                            className="ml-1 cursor-pointer"
 
-                            />
-                        </Badge>
-                    </div>
-                ))}
-            </div>
+                        />
+                    </Badge>
+                </div>
+            ))}
+        </div>
     );
 };
 

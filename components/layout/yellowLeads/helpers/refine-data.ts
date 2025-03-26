@@ -1,6 +1,7 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { CampusVisitStatus } from '../campus-visit-tag';
 import { FinalConversionStatus } from '../final-conversion-tag';
+import { Course, CourseNameMapper } from '@/static/enum';
 
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   const refinedLeads = data.yellowLeads?.map((lead: any, index: number) => {
@@ -20,7 +21,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       assignedTo: lead.assignedTo ?? '-',
       assignedToName: assignedToName,
       location: lead.location,
-      course: lead.course ?? '-',
+      course: CourseNameMapper[ lead.course as Course ]?? '-',
       campusVisit:
         CampusVisitStatus[lead.campusVisit as keyof typeof CampusVisitStatus] ?? lead.campusVisit,
       finalConversion:

@@ -15,11 +15,7 @@ const headerItem = [{ title: 'All Leads' }, { title: 'Yellow Leads' }, { title: 
 export default function CRMLayout() {
     return (
         <TopHeaderProvider>
-            <TechnoFilterProvider>
-                <AdminTrackerProvider>
-                    <CRMContent />
-                </AdminTrackerProvider>
-            </TechnoFilterProvider>
+            <CRMContent />
         </TopHeaderProvider>
     );
 }
@@ -42,13 +38,27 @@ function ContentRenderer() {
 
     switch (headerActiveItem) {
         case 'All Leads':
-            return <AllLeadsPage />;
+            return (
+                <TechnoFilterProvider key="all-leads">
+                    <AllLeadsPage />
+                </TechnoFilterProvider>
+            );
         case 'Yellow Leads':
-            return <YellowLeadsTracker />;
+            return (
+                <TechnoFilterProvider key="yellow-leads">
+                    <YellowLeadsTracker />
+                </TechnoFilterProvider>
+            );
         case 'Admin Tracker':
-            return <AdminTracker />;
+            return (
+                <TechnoFilterProvider key="admin-tracker">
+                <AdminTrackerProvider key="admin-tracker">
+                    <AdminTracker />
+                </AdminTrackerProvider>
+                </TechnoFilterProvider>
+
+            );
         default:
             return <div>Default Page</div>;
     }
-
 }

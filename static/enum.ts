@@ -79,6 +79,26 @@ export enum Course {
   MSCC = "MSCC"
 }
 
+export const CourseNameMapper: Record<Course, string> = {
+  [Course.BCOM]: "B.COM",
+  [Course.BCOMH]: "B.COM (HONS)",
+  [Course.BAJMC]: "BA-JMC",
+  [Course.BED]: "B.ED",
+  [Course.BSCM]: "B.SC (PCM)",
+  [Course.BSCB]: "B.SC (ZBC)",
+  [Course.BBA]: "BBA",
+  [Course.BCA]: "BCA",
+  [Course.BVAA]: "BVA (App Art)",
+  [Course.BVAP]: "BVA (Painting)",
+  [Course.MAJMC]: "MA-JMC",
+  [Course.MCOMC]: "M.COM (COM)",
+  [Course.MBA]: "MBA",
+  [Course.LLB]: "LLB",
+  [Course.MCA]: "MCA",
+  [Course.MVAP]: "MVA (Paint)",
+  [Course.MSCC]: "M.SC (Chem)"
+};
+
 
 export enum AcademicDetails {
   Tenth = "10th",
@@ -177,6 +197,11 @@ export enum Locations {
   AMT = "Amethi",
   FTP = "Fatehpur",
   LKO = "Lucknow"
+}
+
+export enum MarketingSources {
+  SCHOOL = "SCHOOL",
+  DIGITAL_MARKETING = "DIGITAL_MARKETING"
 }
 
 
