@@ -116,8 +116,6 @@ export default function YellowLeadsTracker() {
       search: debouncedSearch,
       ...appliedFilters,
       refreshKey
-      ...appliedFilters,
-      refreshKey
     };
 
     if (sortBy) {
@@ -314,7 +312,6 @@ export default function YellowLeadsTracker() {
       updateFilter('startDate', undefined);
       updateFilter('endDate', undefined);
     }
-    else if (filterKey === 'ltcDate') {
     else if (filterKey === 'ltcDate') {
       delete updatedFilters.startLTCDate;
       delete updatedFilters.endLTCDate;

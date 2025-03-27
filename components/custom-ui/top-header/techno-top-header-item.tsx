@@ -1,3 +1,4 @@
+import logger from '@/lib/logger';
 import { useTopHeaderContext } from './top-header-context';
 
 interface HeaderItem {
@@ -11,6 +12,7 @@ interface TechnoTopHeaderItemProps {
 export default function TechnoTopHeaderItem({ item }: TechnoTopHeaderItemProps) {
   const { headerActiveItem, setHeaderActiveItem } = useTopHeaderContext();
   const isActive = item.title === headerActiveItem;
+  logger.debug("HEADER ITEM",headerActiveItem)
 
   return (
     <button

@@ -12,11 +12,12 @@ export default function TechnoSidebarItem({ icon: Icon, text }: { icon: React.Co
   const pathname = usePathname();
   const { sidebarActiveItem, setSidebarActiveItem } = useSidebarContext();
   
-  const isActive = pathname === ROUTE_MAP[text] || sidebarActiveItem === text;
+  const route = ROUTE_MAP[text];
+  const isActive = pathname === route || sidebarActiveItem === text;
+
   const handleClick = () => {
-    const route = ROUTE_MAP[text];
-    setSidebarActiveItem(text);
     if (route) {
+      setSidebarActiveItem(text);
       router.push(route);
     }
   };

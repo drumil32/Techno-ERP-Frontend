@@ -1,7 +1,7 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { CampusVisitStatus } from '../campus-visit-tag';
 import { FinalConversionStatus } from '../final-conversion-tag';
-import { Course, CourseNameMapper } from '@/static/enum';
+import { Course, CourseNameMapper } from '@/types/enum';
 
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   const refinedLeads = data.yellowLeads?.map((lead: any, index: number) => {
