@@ -23,7 +23,7 @@ const inter=Inter({
 
 export const metadata: Metadata = {
   title: 'Techno ERP',
-  description: 'erp system for college.'
+  description: 'Enterprise-Resource-Planning for Techno'
 };
 
 export default function RootLayout({
@@ -35,7 +35,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}>
         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-        <Toaster expand richColors theme='light' position="top-right" />
+        <Toaster richColors theme='light' position="top-center" />
       </body>
     </html>
   );

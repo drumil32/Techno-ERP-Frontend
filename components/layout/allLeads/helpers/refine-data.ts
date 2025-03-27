@@ -1,5 +1,6 @@
 import { CardItem } from "@/components/custom-ui/analytic-card/techno-analytic-cards-group";
 import { TechnoLeadType } from "@/components/custom-ui/lead-type-tag/techno-lead-type-tag";
+import { Course, CourseNameMapper } from "@/static/enum";
 
 export const refineLeads = (data: any, assignedToDropdownData: any) => { // Modified parameters to get Assigned To Dropdown Data
     const refinedLeads = data.leads?.map((lead: any, index: number) => {
@@ -16,7 +17,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => { // Modi
             email: lead.email ?? '-',
             gender: lead.gender,
             location: lead.location,
-            course: lead.course ?? '-',
+            course: CourseNameMapper[ lead.course as Course] ?? '-', 
             leadType: TechnoLeadType[lead.leadType as keyof typeof TechnoLeadType] ?? lead.leadType,
             _leadType: lead.leadType,
             source: lead.source ?? '-',

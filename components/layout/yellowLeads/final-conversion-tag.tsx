@@ -9,7 +9,7 @@ const conversionStyles = {
     [FinalConversionStatus.GREEN]: "bg-green-100 text-green-700",
     [FinalConversionStatus.RED]: "bg-red-100 text-red-700",
 };
-function toPascal(title: string) {
+export function toPascal(title: string) {
     if(!title.includes('_'))
     {
         return title[0].toUpperCase() + title.slice(1).toLowerCase();

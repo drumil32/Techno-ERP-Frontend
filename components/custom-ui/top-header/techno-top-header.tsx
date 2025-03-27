@@ -1,4 +1,13 @@
+import { useEffect, useState } from 'react';
 import TechnoTopHeaderItem from './techno-top-header-item';
+import { fetchProfileData } from './utils/fetch-data';
+import { toast } from 'sonner';
+interface UserProfile{
+  id:string;
+  name:string;
+  email:string;
+  roles:string[];
+}
 
 interface TechnoTopHeaderProps {
   headerItems: Record<string, string>;

@@ -21,11 +21,7 @@ const HEADER_ITEMS = {
 export default function CRMLayout() {
     return (
         <TopHeaderProvider>
-            <TechnoFilterProvider>
-                <AdminTrackerProvider>
-                    <CRMContent />
-                </AdminTrackerProvider>
-            </TechnoFilterProvider>
+            <CRMContent />
         </TopHeaderProvider>
     );
 }
@@ -53,13 +49,27 @@ function ContentRenderer() {
 
     switch (headerActiveItem) {
         case HEADER_ITEMS.ALL_LEADS:
-            return <AllLeadsPage />;
+            return (
+                <TechnoFilterProvider key="all-leads">
+                    <AllLeadsPage />
+                </TechnoFilterProvider>
+            );
         case HEADER_ITEMS.YELLOW_LEADS:
-            return <YellowLeadsTracker />;
+            return (
+                <TechnoFilterProvider key="yellow-leads">
+                    <YellowLeadsTracker />
+                </TechnoFilterProvider>
+            );
         case HEADER_ITEMS.ADMIN_TRACKER:
-            return <AdminTracker />;
+            return (
+                <TechnoFilterProvider key="admin-tracker">
+                <AdminTrackerProvider key="admin-tracker">
+                    <AdminTracker />
+                </AdminTrackerProvider>
+                </TechnoFilterProvider>
+
+            );
         default:
             return <div>Default Page</div>;
     }
-
 }

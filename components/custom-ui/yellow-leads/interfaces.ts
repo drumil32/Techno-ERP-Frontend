@@ -10,7 +10,7 @@ export interface YellowLead {
     location: string;
     course: string;
     campusVisit: boolean;
-    finalConversionType: string;
+    finalConversion: string;
     remarks: string;
     createdAt: string; // ISO Date string
     updatedAt: string; // ISO Date string

@@ -14,9 +14,10 @@ interface FilterConfig {
 interface TechnoFilterGroupsProps {
   filters: FilterConfig[];
   handleFilters: () => void;
+  clearFilters: () => void;
 }
 
-export default function TechnoFiltersGroup({ filters, handleFilters }: TechnoFilterGroupsProps) {
+export default function TechnoFiltersGroup({ filters, handleFilters,clearFilters }: TechnoFilterGroupsProps) {
   return (
     <div className="flex flex-wrap gap-4">
       {filters.map((filter) => (
@@ -29,9 +30,10 @@ export default function TechnoFiltersGroup({ filters, handleFilters }: TechnoFil
           hasSearch={filter.hasSearch}
           multiSelect={filter.multiSelect}
           isDateFilter={filter.isDateFilter}
+          applyFilters={handleFilters}
         />
       ))}
-      <Button onClick={handleFilters}>Apply Filters</Button>
+      <Button onClick={clearFilters}>Clear Filters</Button>
     </div>
   );
 }

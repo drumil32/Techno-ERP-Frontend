@@ -132,8 +132,8 @@ export default function YellowLeadViewEdit({ data }: { data: any }) {
                     <CampusVisitTag status={String(formData.campusVisit) as CampusVisitStatus} />
                 </div>
                 <div className='flex gap-2'>
-                    <p className='w-1/4  text-[#666666]'>Final Conversion</p>
-                    <FinalConversionTag status={formData.finalConversionType as FinalConversionStatus} />
+                    <p className='w-1/3.5  text-[#666666]'>Final Conversion</p>
+                    <FinalConversionTag status={formData.finalConversion as FinalConversionStatus} />
                 </div>
                 <div className='flex gap-2'>
                     <p className='w-1/4  text-[#666666]'>Remarks</p>
@@ -288,11 +288,11 @@ export default function YellowLeadViewEdit({ data }: { data: any }) {
             <div className="space-y-2">
                 <EditLabel htmlFor="finalConversion" title={"Final Conversion"} />
                 <Select
-                    defaultValue={String(formData.finalConversionType) || FinalConversionStatus.PINK}
+                    defaultValue={String(formData.finalConversion) as FinalConversionStatus }
                     onValueChange={(value) => handleSelectChange("finalConversion", value)}
                 >
                     <SelectTrigger id="campusVisit" className="w-full rounded-[5px]">
-                        <SelectValue placeholder="Select Campus Visit" />
+                        <SelectValue placeholder="Select Final Conversion Type" />
                     </SelectTrigger>
                     <SelectContent>
                         {Object.values(FinalConversionStatus).map((status) => (
@@ -354,10 +354,10 @@ export default function YellowLeadViewEdit({ data }: { data: any }) {
             </div>
 
 
-            <div className='flex flex-col gap-2'>
+            {/* <div className='flex flex-col gap-2'>
                 <p className='text-[#666666] font-normal'>Timestamp</p>
                 <p >{data.createdAt}</p>
-            </div>
+            </div> */}
 
 
         </>
