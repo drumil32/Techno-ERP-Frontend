@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono,Inter } from 'next/font/google';
+import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import './globals.css';
 
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -16,10 +16,10 @@ const geistMono = Geist_Mono({
   subsets: ['latin']
 });
 
-const inter=Inter({
+const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin']
-})
+});
 
 export const metadata: Metadata = {
   title: 'Techno ERP',
@@ -35,7 +35,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}>
         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-        <Toaster richColors theme='light' position="top-center" />
+        <Toaster richColors theme="light" position="top-center" />
       </body>
     </html>
   );

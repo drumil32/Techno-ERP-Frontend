@@ -21,7 +21,7 @@ export default function TechnoAnalyticCardsGroup({ cardsData }: TechnoAnalyticCa
           subheading={subheading}
           title={title}
           color={color}
-        /> 
+        />
       ))}
     </div>
   );

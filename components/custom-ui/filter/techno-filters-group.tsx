@@ -17,7 +17,11 @@ interface TechnoFilterGroupsProps {
   clearFilters: () => void;
 }
 
-export default function TechnoFiltersGroup({ filters, handleFilters,clearFilters }: TechnoFilterGroupsProps) {
+export default function TechnoFiltersGroup({
+  filters,
+  handleFilters,
+  clearFilters
+}: TechnoFilterGroupsProps) {
   return (
     <div className="flex flex-wrap gap-4">
       {filters.map((filter) => (

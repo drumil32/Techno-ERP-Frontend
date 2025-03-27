@@ -21,7 +21,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       assignedTo: lead.assignedTo ?? '-',
       assignedToName: assignedToName,
       location: lead.location,
-      course: CourseNameMapper[ lead.course as Course ]?? '-',
+      course: CourseNameMapper[lead.course as Course] ?? '-',
       campusVisit:
         CampusVisitStatus[lead.campusVisit as keyof typeof CampusVisitStatus] ?? lead.campusVisit,
       finalConversion:
