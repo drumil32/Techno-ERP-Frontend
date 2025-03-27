@@ -11,6 +11,7 @@ import TechnoAnalyticCardsGroup, {
 } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { refineAnalytics } from './helpers/refine-data';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
+import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
 
 const AdminTracker = () => {
   const { filters } = useTechnoFilterContext();
@@ -167,6 +168,8 @@ const AdminTracker = () => {
 
   return (
     <>
+      <TechnoPageTitle title="Admin Tracker" />
+
       {/* Filters Section */}
       <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} />
 

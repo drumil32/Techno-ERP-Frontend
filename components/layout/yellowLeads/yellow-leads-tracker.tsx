@@ -23,6 +23,7 @@ import FinalConversionTag, { FinalConversionStatus } from './final-conversion-ta
 import FilterBadges from '../allLeads/components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import YellowLeadViewEdit from './yellow-view-edit';
+import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
 
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -107,8 +108,8 @@ export default function YellowLeadsTracker() {
       page,
       limit,
       search: debouncedSearch,
-        ...appliedFilters,
-        refreshKey
+      ...appliedFilters,
+      refreshKey
     };
 
     if (sortBy) {
@@ -232,7 +233,7 @@ export default function YellowLeadsTracker() {
 
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
-    
+
     if (filterKey === 'date') {
       delete updatedFilters.startDate;
       delete updatedFilters.endDate;
@@ -241,8 +242,7 @@ export default function YellowLeadsTracker() {
       updateFilter('startDate', undefined);
       updateFilter('endDate', undefined);
     }
-    else if (filterKey === 'ltcDate')
-    {
+    else if (filterKey === 'ltcDate') {
       delete updatedFilters.startLTCDate;
       delete updatedFilters.endLTCDate;
       updateFilter('startLTCDate', undefined);
@@ -260,6 +260,7 @@ export default function YellowLeadsTracker() {
 
   return (
     <>
+      <TechnoPageTitle title="Yellow Leads" />
       <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} />
       {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
       {leads?.leads && (

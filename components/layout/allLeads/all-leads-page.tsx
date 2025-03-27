@@ -13,10 +13,11 @@ import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './help
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
+import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
 
 export default function AllLeadsPage() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [appliedFilters, setAppliedFilters] = useState<any>({}); // Initialize to empty object
+    const [appliedFilters, setAppliedFilters] = useState<any>({}); 
     const [refreshKey, setRefreshKey] = useState(0);
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -244,6 +245,7 @@ export default function AllLeadsPage() {
 
     return (
         <>
+            <TechnoPageTitle title="All Leads"/>
             <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} />
 
             {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}

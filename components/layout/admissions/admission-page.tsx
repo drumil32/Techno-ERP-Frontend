@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { fetchAdmissionsData } from "./helpers/fetch-data";
 import TechnoDataTable from "@/components/custom-ui/data-table/techno-data-table";
 import { refineAdmissions } from "./helpers/refine-data";
@@ -9,23 +9,14 @@ import TechnoRightDrawer from "@/components/custom-ui/drawer/techno-right-drawer
 import AdmissionCard from "@/components/custom-ui/admission-card/techno-admission-card";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import TechnoPageTitle from "@/components/custom-ui/page-title/techno-page-title";
 
 export default function AdmissionsLandingPage() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [editRow, setEditRow] = useState<AdmissionTableRowType>()
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
 
-    const admissionsQuery = useQuery({
-        queryKey: ['admissions'],
-        queryFn: fetchAdmissionsData,
-        placeholderData: (previousData) => previousData,
-        enabled: true
-    })
-
-    const isLoading = admissionsQuery.isLoading
-    const isError = admissionsQuery.isError
-    const admissionsData = admissionsQuery.data ? refineAdmissions(admissionsQuery.data) : []
-
-    console.log(admissionsData)
 
     const handleViewMore = (row: AdmissionTableRowType) => {
         setEditRow(row)
@@ -55,8 +46,48 @@ export default function AdmissionsLandingPage() {
             )
         }
     ];
+
+    const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+
+    const handleSearch = (value: string) => {
+        setSearch(value);
+
+        if (searchTimerRef.current) {
+            clearTimeout(searchTimerRef.current);
+        }
+
+        searchTimerRef.current = setTimeout(() => {
+            setDebouncedSearch(value);
+        }, 500);
+    };
+
+    const getQueryParams = () => {
+        const params: { [key: string]: any } = {
+            search: debouncedSearch,
+        };
+        return params;
+    };
+
+    const filterParams = getQueryParams();
+
+    const admissionsQuery = useQuery({
+        queryKey: ['admissions', filterParams],
+        queryFn: fetchAdmissionsData,
+        placeholderData: (previousData) => previousData,
+        enabled: true
+    })
+
+    const isLoading = admissionsQuery.isLoading
+    const isError = admissionsQuery.isError
+    const admissionsData = admissionsQuery.data ? refineAdmissions(admissionsQuery.data) : []
+
+    console.log(admissionsData)
+
+
     return (
         <>
+            <TechnoPageTitle title="Admission Application Process" />
             <div className="flex gap-[32px]">
                 <AdmissionCard
                     heading="New Application"
@@ -92,6 +123,8 @@ export default function AdmissionsLandingPage() {
                         currentPage={1}
                         totalPages={1}
                         pageLimit={10}
+                        onSearch={handleSearch}
+                        searchTerm={search}
                     />
                 )
             }

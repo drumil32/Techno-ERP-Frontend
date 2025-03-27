@@ -7,9 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
 import loginSchema from './login-form-schema';
-import logger from '@/lib/logger';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
@@ -36,7 +34,7 @@ export default function LoginPage() {
             return response;
         },
         onSuccess: () => {
-            router.push('/');
+            router.push('/c/crm');
         },
         onError: () => {
             setError('Invalid email or password');
