@@ -15,6 +15,7 @@ export default function TechnoRightDrawer({ title, isOpen, onClose, children }: 
                     <button
                         onClick={onClose}
                         className="bg-[#F8F8F8] p-[6px] rounded-[5px] h-[28px] w-[28px] flex items-center justify-center"
+                        title="Close drawer"
                     >
                         <ChevronsLeft size={20}/>
                     </button>

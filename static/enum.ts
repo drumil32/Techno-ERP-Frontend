@@ -210,3 +210,17 @@ export const ADMISSION = 'admissions'
 
 export const MARKETING_SHEET = 'Marketing Sheet'
 
+// Enquiry Form Stage - 1
+
+export enum AdmissionMode {
+  ONLINE = 'ONLINE',
+  OFFLINE = 'OFFLINE'
+}
+
+export enum EducationLevel {
+  Tenth = "10th",
+  Twelfth = "12th",
+  Graduation = "Graduation",
+  Others = "Others"
+}
+
