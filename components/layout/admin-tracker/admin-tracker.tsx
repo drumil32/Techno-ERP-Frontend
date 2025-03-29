@@ -16,7 +16,7 @@ import FilterBadges from '../allLeads/components/filter-badges';
 const AdminTracker = () => {
   const { filters, updateFilter } = useTechnoFilterContext();
   const { getAnalytics } = useAdminTrackerContext();
-  const [appliedFilters, setAppliedFilters] = useState<any>({}); 
+  const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
   const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
   const getQueryParams = () => {
@@ -61,7 +61,7 @@ const AdminTracker = () => {
           return {
             label: item.name,
             id: item._id
-          }
+          };
         }) as FilterOption[],
         hasSearch: true,
         multiSelect: true
@@ -76,29 +76,38 @@ const AdminTracker = () => {
   };
 
   const clearFilters = () => {
-    currentFiltersRef.current = {};
-    setAppliedFilters({});
-    setRefreshKey((prevKey) => prevKey + 1);
-  }
-  
-  const handleFilterRemove = (filterKey: string) => {
-    const updatedFilters = appliedFilters ? { ...appliedFilters } : {};
-    
-    if (filterKey === 'date') {
-        delete updatedFilters.startDate;
-        delete updatedFilters.endDate;
-        delete updatedFilters.date;
+    getFiltersData().forEach((filter) => {
+      if (filter.filterKey === 'date') {
         updateFilter('date', undefined);
         updateFilter('startDate', undefined);
         updateFilter('endDate', undefined);
+      } else {
+        updateFilter(filter.filterKey, undefined);
+      }
+    });
+
+    setAppliedFilters({});
+    currentFiltersRef.current = {};
+    setRefreshKey((prevKey) => prevKey + 1);
+  };
+  const handleFilterRemove = (filterKey: string) => {
+    const updatedFilters = appliedFilters ? { ...appliedFilters } : {};
+
+    if (filterKey === 'date') {
+      delete updatedFilters.startDate;
+      delete updatedFilters.endDate;
+      delete updatedFilters.date;
+      updateFilter('date', undefined);
+      updateFilter('startDate', undefined);
+      updateFilter('endDate', undefined);
     } else {
-        delete updatedFilters[filterKey];
-        updateFilter(filterKey, undefined);
+      delete updatedFilters[filterKey];
+      updateFilter(filterKey, undefined);
     }
 
     setAppliedFilters(updatedFilters);
-    setRefreshKey(prevKey => prevKey + 1);
-};
+    setRefreshKey((prevKey) => prevKey + 1);
+  };
 
   const analyticsParams = {};
 
@@ -125,8 +134,6 @@ const AdminTracker = () => {
       notReached: 'text-red-600'
     }
   );
-
-  
 
   const yellowLeadsConverted = refineAnalytics(
     {
@@ -218,7 +225,9 @@ const AdminTracker = () => {
           id: toastIdRef.current,
           duration: 3000
         });
-        setTimeout(() => { toastIdRef.current = null }, 3000);
+        setTimeout(() => {
+          toastIdRef.current = null;
+        }, 3000);
         toastIdRef.current = null;
       }
 
@@ -229,13 +238,11 @@ const AdminTracker = () => {
         });
         toastIdRef.current = null;
       }
-    }
-    else if (hasError) {
+    } else if (hasError) {
       toastIdRef.current = toast.error('Failed to load admin tracker data', {
         duration: 3000
       });
-    }
-    else if (isLoading || isFetching) {
+    } else if (isLoading || isFetching) {
       toastIdRef.current = toast.loading('Loading admin tracker data...', {
         duration: Infinity
       });
@@ -260,7 +267,11 @@ const AdminTracker = () => {
   return (
     <>
       {/* Filters Section */}
-      <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} clearFilters={clearFilters} />
+      <TechnoFiltersGroup
+        filters={getFiltersData()}
+        handleFilters={applyFilter}
+        clearFilters={clearFilters}
+      />
       <FilterBadges
         onFilterRemove={handleFilterRemove}
         assignedToData={assignedToDropdownData}
