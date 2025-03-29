@@ -19,7 +19,6 @@ export const apiRequest = async <T>(
   params: RequestParams = {},
   extraHeaders: Record<string, string> = {}
 ): Promise<T | null> => {
-
   const isAuthRequest =
     url.includes(API_ENDPOINTS.login) ||
     url.includes(API_ENDPOINTS.register) ||
@@ -42,7 +41,7 @@ export const apiRequest = async <T>(
 
   const response = await fetch(requestUrl, {
     method,
-    ...(method !== "GET" && { body: isFormData ? (data as FormData) : JSON.stringify(data) }),
+    ...(method !== 'GET' && { body: isFormData ? (data as FormData) : JSON.stringify(data) }),
     headers: {
       ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       ...extraHeaders
@@ -61,6 +60,4 @@ export const apiRequest = async <T>(
   }
 
   return responseBody.DATA as T;
-
-
 };

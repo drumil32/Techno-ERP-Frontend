@@ -5,27 +5,48 @@ import TechnoIcon from '../icon/TechnoIcon';
 import { useHoverContext } from './hover-context';
 import { useSidebarContext } from './sidebar-context';
 import { SIDEBAR_ITEMS } from '@/common/constants/sidebarItems';
-import { ROUTE_MAP } from '@/common/constants/frontendRouting';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
 
-export default function TechnoSidebarItem({ icon: Icon, text }: { icon: React.ComponentType<{ size: number, strokeWidth: number }>; text: string }) {
+export default function TechnoSidebarItem({
+  icon: Icon,
+  text
+}: {
+  icon: React.ComponentType<{ size: number, strokeWidth: number }>;
+  text: string
+}) {
   const hovered = useHoverContext();
   const router = useRouter();
   const pathname = usePathname();
   const { sidebarActiveItem, setSidebarActiveItem } = useSidebarContext();
 
-  // Find the key in SIDEBAR_ITEMS that matches the text
   const routeKey = Object.keys(SIDEBAR_ITEMS).find(
     (key) => SIDEBAR_ITEMS[key as keyof typeof SIDEBAR_ITEMS] === text
-  ) as keyof typeof ROUTE_MAP | undefined;
+  ) as keyof typeof SITE_MAP | undefined;
 
-  const route = routeKey ? ROUTE_MAP[routeKey] : null;
+  const getRoute = () => {
+    if (!routeKey) return null;
 
-  const isActive = pathname === route || sidebarActiveItem === text;
+    const mapValue = SITE_MAP[routeKey];
+
+    if (typeof mapValue === 'string') {
+      return mapValue;
+    }
+    else if (typeof mapValue === 'object') {
+      return mapValue.DEFAULT;
+    }
+
+    return null;
+  };
+
+  const route = getRoute();
+
+  const isActive =
+    (route && pathname.startsWith(route)) ||
+    sidebarActiveItem === text;
 
   const handleClick = () => {
     if (route) {
       setSidebarActiveItem(text);
-      console.log(route)
       router.push(route);
     }
   };
@@ -51,4 +72,3 @@ export default function TechnoSidebarItem({ icon: Icon, text }: { icon: React.Co
     </div>
   );
 }
-

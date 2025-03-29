@@ -7,9 +7,10 @@ import { useEffect } from 'react';
 import AdmissionsLandingPage from './admissions/admission-page';
 import { useSidebarContext } from '../custom-ui/sidebar/sidebar-context';
 import { SIDEBAR_ITEMS } from '@/common/constants/sidebarItems';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 const HEADER_ITEMS = {
-    APPLICATION_PROCESS: {title:"Application Process", route: "/c/admissions"}
+    APPLICATION_PROCESS: {title:"Application Process", route: SITE_MAP.ADMISSIONS.DEFAULT}
 }
 
 export default function AdmissionLayout() {

@@ -12,12 +12,12 @@ interface TechnoTopHeaderItemProps {
 
 export default function TechnoTopHeaderItem({ item }: TechnoTopHeaderItemProps) {
   const { headerActiveItem, setHeaderActiveItem } = useTopHeaderContext();
-  const router = useRouter(); // Next.js router instance
+  const router = useRouter(); 
   const isActive = item.title === headerActiveItem;
 
   const handleClick = () => {
     setHeaderActiveItem(item.title);
-    router.push(item.route); // Navigate to the route
+    router.push(item.route); 
   };
 
   return (

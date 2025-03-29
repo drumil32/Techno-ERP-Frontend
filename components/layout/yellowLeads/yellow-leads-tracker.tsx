@@ -68,12 +68,6 @@ export default function YellowLeadsTracker() {
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
-  const clearFilters = () => {
-    currentFiltersRef.current = {};
-    setAppliedFilters({});
-    setRefreshKey((prevKey) => prevKey + 1);
-  }
-
   const handleSearch = (value: string) => {
     setSearch(value);
 
@@ -162,8 +156,8 @@ export default function YellowLeadsTracker() {
     const isLoading = leadsQuery.isLoading || analyticsQuery.isLoading || assignedToQuery.isLoading;
     const hasError = leadsQuery.isError || analyticsQuery.isError || assignedToQuery.isError;
     const isSuccess = leadsQuery.isSuccess && analyticsQuery.isSuccess && assignedToQuery.isSuccess;
-    const isFetching = leadsQuery.isFetching || analyticsQuery.isFetching || assignedToQuery.isFetching;
-
+    const isFetching =
+      leadsQuery.isFetching || analyticsQuery.isFetching || assignedToQuery.isFetching;
 
     if (toastIdRef.current) {
       if (isLoading || isFetching) {
@@ -178,7 +172,9 @@ export default function YellowLeadsTracker() {
           id: toastIdRef.current,
           duration: 3000
         });
-        setTimeout(() => { toastIdRef.current = null }, 3000);
+        setTimeout(() => {
+          toastIdRef.current = null;
+        }, 3000);
         toastIdRef.current = null;
       }
 
@@ -189,13 +185,11 @@ export default function YellowLeadsTracker() {
         });
         toastIdRef.current = null;
       }
-    }
-    else if (hasError) {
+    } else if (hasError) {
       toastIdRef.current = toast.error('Data load failed', {
         duration: 3000
       });
-    }
-    else if (isLoading || isFetching) {
+    } else if (isLoading || isFetching) {
       toastIdRef.current = toast.loading('Loading data...', {
         duration: Infinity
       });
@@ -305,22 +299,13 @@ export default function YellowLeadsTracker() {
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
 
-
-    if (filterKey === 'date') {
-      delete updatedFilters.startDate;
-      delete updatedFilters.endDate;
-      delete updatedFilters.date;
-      updateFilter('date', undefined);
-      updateFilter('startDate', undefined);
-      updateFilter('endDate', undefined);
-    }
-    else if (filterKey === 'ltcDate') {
+    if (filterKey === 'ltcDate') {
       delete updatedFilters.startLTCDate;
       delete updatedFilters.endLTCDate;
+      updateFilter('ltcDate', undefined);
       updateFilter('startLTCDate', undefined);
       updateFilter('endLTCDate', undefined);
-    }
-    else {
+    } else {
       delete updatedFilters[filterKey];
       updateFilter(filterKey, undefined);
     }
@@ -330,10 +315,30 @@ export default function YellowLeadsTracker() {
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
+  const clearFilters = () => {
+    getFiltersData().forEach((filter) => {
+      if (filter.filterKey == 'ltcDate') {
+        updateFilter('ltcDate', undefined);
+        updateFilter('startLTCDate', undefined);
+        updateFilter('endLTCDate', undefined);
+      } else {
+        updateFilter(filter.filterKey, undefined);
+      }
+    });
+
+    setAppliedFilters({});
+    currentFiltersRef.current = {};
+    setPage(1);
+    setRefreshKey((prevKey) => prevKey + 1);
+  };
+
   return (
     <>
-      <TechnoPageTitle title="Yellow Leads" />
-      <TechnoFiltersGroup filters={getFiltersData()} handleFilters={applyFilter} clearFilters={clearFilters} />
+      <TechnoFiltersGroup
+        filters={getFiltersData()}
+        handleFilters={applyFilter}
+        clearFilters={clearFilters}
+      />
       {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
       {leads?.leads && (
         <TechnoDataTable

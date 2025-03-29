@@ -110,7 +110,7 @@ export default function TechnoFilter({
       updateFilter('date', undefined);
     }
 
-    const variant = filterKey === 'ltcDate' ? "LTC" : "";
+    const variant = filterKey === 'ltcDate' ? 'LTC' : '';
 
     updateFilter(`${type}${variant}Date`, formatDateForAPI(selectedDate));
 
@@ -247,9 +247,7 @@ export default function TechnoFilter({
                       : filters[filterKey] === (typeof option === 'string' ? option : option.id)
                   }
                 />
-                {
-                
-                filterKey === 'leadType' ? (
+                {filterKey === 'leadType' ? (
                   <TechnoLeadTypeTag
                     type={
                       typeof option === 'string'
@@ -257,8 +255,7 @@ export default function TechnoFilter({
                         : (option.label as TechnoLeadType)
                     }
                   />
-                  ) :                    
-                filterKey === 'finalConversionType' ? (
+                ) : filterKey === 'finalConversionType' ? (
                   <FinalConversionTag
                     status={
                       typeof option === 'string'
@@ -266,14 +263,11 @@ export default function TechnoFilter({
                         : (option.label as FinalConversionStatus)
                     }
                   />
-                ):
-                filterKey === 'course' ? (
+                ) : filterKey === 'course' ? (
                   <span>{CourseNameMapper[option as Course]}</span>
-                ):
-                filterKey === 'source' ? (
+                ) : filterKey === 'source' ? (
                   <span>{toPascal(option as string)}</span>
-                ):
-                (
+                ) : (
                   <span>{typeof option === 'string' ? option : option.label}</span>
                 )}
               </div>

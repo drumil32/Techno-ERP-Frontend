@@ -4,7 +4,7 @@ const logLevels: Record<string, LogLevel> = {
   DEBUG: 'debug',
   INFO: 'info',
   WARN: 'warn',
-  ERROR: 'error',
+  ERROR: 'error'
 };
 
 class Logger {

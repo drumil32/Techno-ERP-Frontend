@@ -15,13 +15,13 @@ export function TechnoFilterProvider({ children }: { children: ReactNode }) {
 
   const updateFilter = (key: string, value: any) => {
     if (value === undefined) {
-      setFilters(prev => {
+      setFilters((prev) => {
         const newFilters = { ...prev };
         delete newFilters[key];
         return newFilters;
       });
     } else {
-      setFilters(prev => ({ ...prev, [key]: value }));
+      setFilters((prev) => ({ ...prev, [key]: value }));
     }
   };
 
