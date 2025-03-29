@@ -4,6 +4,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
+import { Countries, Districts, StatesOfIndia } from '@/static/enum';
 
 interface AddressDetailsSectionInterface {
     form: UseFormReturn<any>;
@@ -103,7 +104,7 @@ const AddressDetailsSection : React.FC<AddressDetailsSectionInterface> = ({ form
                         <SelectValue placeholder="Select the district" />
                       </SelectTrigger>
                       <SelectContent>
-                        {['District 1', 'District 2', 'District 3'].map((district) => (
+                        {Object.values(Districts).map((district) => (
                         <SelectItem key={district} value={district}>
                           {district}
                         </SelectItem>
@@ -131,7 +132,7 @@ const AddressDetailsSection : React.FC<AddressDetailsSectionInterface> = ({ form
                         <SelectValue placeholder="Select the state" />
                       </SelectTrigger>
                       <SelectContent>
-                        {['State 1', 'State 2', 'State 3'].map((state) => (
+                        {Object.values(StatesOfIndia).map((state) => (
                         <SelectItem key={state} value={state}>
                           {state}
                         </SelectItem>
@@ -159,7 +160,7 @@ const AddressDetailsSection : React.FC<AddressDetailsSectionInterface> = ({ form
                         <SelectValue placeholder="Select the country" />
                       </SelectTrigger>
                       <SelectContent>
-                        {['Country 1', 'Country 2', 'Country 3'].map((country) => (
+                        {Object.values(Countries).map((country) => (
                         <SelectItem key={country} value={country}>
                           {country}
                         </SelectItem>

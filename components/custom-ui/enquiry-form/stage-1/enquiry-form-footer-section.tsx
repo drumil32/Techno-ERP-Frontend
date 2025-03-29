@@ -1,10 +1,14 @@
 import { Button } from '@/components/ui/button'
 import React from 'react'
 
-const EnquiryFormFooter = () => {
+interface EnquiryFormFooterProps {
+  saveDraft: () => void;
+}
+
+const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft }) => {
   return (
-    <div className="fixed w-[80%] bottom-0 bg-white shadow-md p-4 border-t flex justify-between items-center">
-    <Button type="button">
+    <div className="fixed w-full bottom-0 bg-white shadow-md p-4 border-t flex justify-between items-center">
+    <Button type="button" onClick={saveDraft}>
       <span className="font-inter font-semibold text-[12px]">Save Draft</span>
     </Button>
 

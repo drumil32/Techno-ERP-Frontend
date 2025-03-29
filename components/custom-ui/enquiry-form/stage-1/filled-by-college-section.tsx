@@ -28,12 +28,16 @@ interface FilledByCollegeSectionInterface {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  telecallerNames: string[];
+  counsellorNames: string[];
 }
 
 const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   form,
   commonFieldClass,
-  commonFormItemClass
+  commonFormItemClass,
+  telecallerNames,
+  counsellorNames
 }) => {
   return (
     <Accordion type="single" collapsible>
@@ -57,11 +61,18 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                       Counsellor’s Name
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        className={commonFieldClass}
-                        placeholder="Enter Counsellor’s Name"
-                      />
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger className={`${commonFieldClass} w-full`}>
+                          <SelectValue placeholder="Select Counseller's Name" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {counsellorNames?.map((name) => (
+                            <SelectItem key={name} value={name}>
+                              {name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -83,7 +94,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                           <SelectValue placeholder="Select Telecaller’s Name" />
                         </SelectTrigger>
                         <SelectContent>
-                          {['Telecaller 1', 'Telecaller 2', 'Telecaller 3'].map((name) => (
+                          {telecallerNames?.map((name) => (
                             <SelectItem key={name} value={name}>
                               {name}
                             </SelectItem>

@@ -97,7 +97,10 @@ export const enquirySchema = z.object({
 
   applicationStatus: z.nativeEnum(ApplicationStatus).default(ApplicationStatus.STEP_1),
 
+  dateOfCounselling: requestDateSchema,
+
   studentFee: z.string().optional(),
+  studentFeeDraft: z.string().optional(),
   dateOfAdmission: requestDateSchema,
 
   documents: z.array(singleDocumentSchema).optional(),
@@ -111,6 +114,7 @@ export const enquirySchema = z.object({
   admittedThrough: z.nativeEnum(AdmittedThrough),
   approvedBy: z.string().optional(),
   telecallerName: z.string().optional(),
+  counsellorName: z.string().optional(),
 });
 
 export const enquiryStep1RequestSchema = enquirySchema
