@@ -182,16 +182,23 @@ const EnquiryFormStage1 = () => {
                                 className={`${commonFieldClass} justify-between bg-inherit border-none shadow-none font-normal`}
                               >
                                 <span className={!field.value ? 'text-[#9D9D9D]' : ''}>
-                                  {field.value ? format(field.value, 'dd/MM/yyyy') : 'Select Date'}
+                                  {field.value ? field.value : 'Select Date'}
                                 </span>
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent>
-                              <Calendar
-                                mode="single"
-                                selected={field.value ? new Date(field.value) : undefined}
-                                onSelect={(date) => field.onChange(date || undefined)}
-                                initialFocus
+                            <Calendar
+                              mode="single"
+                              selected={field.value ? new Date(field.value) : undefined}
+                              onSelect={(date) => {
+                                if (date) {
+                                const formattedDate = format(date, 'dd/MM/yyyy');
+                                field.onChange(formattedDate);
+                                } else {
+                                field.onChange('');
+                                }
+                              }}
+                              initialFocus
                               />
                             </PopoverContent>
                           </Popover>
@@ -417,17 +424,24 @@ const EnquiryFormStage1 = () => {
                                 className={`${commonFieldClass} justify-between bg-inherit`}
                               >
                                 <span className={!field.value ? 'text-[#9D9D9D]' : ''}>
-                                  {field.value ? format(field.value, 'dd/MM/yyyy') : 'Select Date'}
+                                  {field.value ? field.value : 'Select Date'}
                                 </span>
                                 <CalendarDaysIcon size={16} className="ml-2" />
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent>
-                              <Calendar
-                                mode="single"
-                                selected={field.value ? new Date(field.value) : undefined}
-                                onSelect={(date) => field.onChange(date || undefined)}
-                                initialFocus
+                            <Calendar
+                              mode="single"
+                              selected={field.value ? new Date(field.value) : undefined}
+                              onSelect={(date) => {
+                                if (date) {
+                                const formattedDate = format(date, 'dd/MM/yyyy');
+                                field.onChange(formattedDate);
+                                } else {
+                                field.onChange('');
+                                }
+                              }}
+                              initialFocus
                               />
                             </PopoverContent>
                           </Popover>
@@ -761,7 +775,12 @@ const EnquiryFormStage1 = () => {
                                 Passing Year
                               </FormLabel>
                               <FormControl>
-                                <Input {...field} type="number" placeholder="Enter Passing Year" />
+                                <Input
+                                  {...field}
+                                  type="number"
+                                  placeholder="Enter Passing Year"
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -782,6 +801,7 @@ const EnquiryFormStage1 = () => {
                                   {...field}
                                   type="number"
                                   placeholder="Enter Percentage"
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
                                   min={0}
                                   max={100}
                                 />
@@ -879,7 +899,10 @@ const EnquiryFormStage1 = () => {
                                 Passing Year
                               </FormLabel>
                               <FormControl>
-                                <Input {...field} type="number" placeholder="Enter Passing Year" />
+                                <Input {...field}
+                                  type="number"
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
+                                  placeholder="Enter Passing Year" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -900,6 +923,7 @@ const EnquiryFormStage1 = () => {
                                   {...field}
                                   type="number"
                                   placeholder="Enter Percentage"
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
                                   min={0}
                                   max={100}
                                 />
@@ -996,7 +1020,10 @@ const EnquiryFormStage1 = () => {
                                 Passing Year
                               </FormLabel>
                               <FormControl>
-                                <Input {...field} type="number" placeholder="Enter Passing Year" />
+                                <Input {...field}
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
+                                  type="number"
+                                  placeholder="Enter Passing Year" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -1017,6 +1044,7 @@ const EnquiryFormStage1 = () => {
                                   {...field}
                                   type="number"
                                   placeholder="Enter Percentage"
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
                                   min={0}
                                   max={100}
                                 />
@@ -1139,17 +1167,24 @@ const EnquiryFormStage1 = () => {
                                 className={`${commonFieldClass} justify-between bg-inherit`}
                               >
                                 <span className={!field.value ? 'text-[#9D9D9D]' : ''}>
-                                  {field.value ? format(field.value, 'dd/MM/yyyy') : 'Select the Date'}
+                                  {field.value ? field.value : 'Select the Date'}
                                 </span>
                                 <CalendarDaysIcon size={16} className="ml-2" />
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent>
                               <Calendar
-                                mode="single"
-                                selected={field.value ? new Date(field.value) : undefined}
-                                onSelect={(date) => field.onChange(date || undefined)}
-                                initialFocus
+                              mode="single"
+                              selected={field.value ? new Date(field.value) : undefined}
+                              onSelect={(date) => {
+                                if (date) {
+                                const formattedDate = format(date, 'dd/MM/yyyy');
+                                field.onChange(formattedDate);
+                                } else {
+                                field.onChange('');
+                                }
+                              }}
+                              initialFocus
                               />
                             </PopoverContent>
                           </Popover>
