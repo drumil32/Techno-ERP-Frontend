@@ -109,7 +109,8 @@ export const enquirySchema = z.object({
   religion: z.nativeEnum(Religion).optional(),
   bloodGroup: z.nativeEnum(BloodGroup).optional(),
   admittedThrough: z.nativeEnum(AdmittedThrough),
-  approvedBy: z.string().optional()
+  approvedBy: z.string().optional(),
+  telecallerName: z.string().optional(),
 });
 
 export const enquiryStep1RequestSchema = enquirySchema

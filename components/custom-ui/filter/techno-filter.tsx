@@ -13,11 +13,9 @@ import { format, parse } from 'date-fns';
 import TechnoLeadTypeTag, { TechnoLeadType } from '../lead-type-tag/techno-lead-type-tag';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import FinalConversionTag, {
-  FinalConversionStatus,
-  toPascal
-} from '@/components/layout/yellowLeads/final-conversion-tag';
+import FinalConversionTag, {FinalConversionStatus} from '@/components/layout/yellowLeads/final-conversion-tag';
 import { Course, CourseNameMapper, finalConversion, MarketingSources } from '@/static/enum';
+import { toPascal } from '@/lib/utils';
 
 export interface FilterOption {
   id: string;

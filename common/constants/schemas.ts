@@ -9,7 +9,8 @@ export const requestDateSchema = z
   .regex(/^[1-9]\d{9}$/, 'Invalid contact number format. Expected: 1234567890');
 
 export const addressSchema = z.object({
-  landmark: z.string().min(5, 'Permanent address must be at least 5 characters'),
+  addressLine1: z.string().min(5, 'Permanent address must be at least 5 characters'),
+  addressLine2: z.string().optional(),
   district: z.string(),
   pincode: z
     .string()
