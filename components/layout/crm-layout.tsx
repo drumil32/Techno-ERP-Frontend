@@ -13,52 +13,50 @@ import YellowLeadsTracker from './yellowLeads/yellow-leads-tracker';
 const headerItem = [{ title: 'All Leads' }, { title: 'Yellow Leads' }, { title: 'Admin Tracker' }];
 
 export default function CRMLayout() {
-    return (
-        <TopHeaderProvider>
-            <CRMContent />
-        </TopHeaderProvider>
-    );
+  return (
+    <TopHeaderProvider>
+      <CRMContent />
+    </TopHeaderProvider>
+  );
 }
 
 function CRMContent() {
-    return (
-        <>
-            <TechnoTopHeader headerItems={headerItem} />
-            <div className="flex flex-col px-4 gap-4">
-                <TechnoBreadCrumb />
-                <TechnoPageTitle />
-                <ContentRenderer />
-            </div>
-        </>
-    );
+  return (
+    <>
+      <TechnoTopHeader headerItems={headerItem} />
+      <div className="flex flex-col px-4 gap-4">
+        <TechnoBreadCrumb />
+        <ContentRenderer />
+      </div>
+    </>
+  );
 }
 
 function ContentRenderer() {
-    const { headerActiveItem } = useTopHeaderContext();
+  const { headerActiveItem } = useTopHeaderContext();
 
-    switch (headerActiveItem) {
-        case 'All Leads':
-            return (
-                <TechnoFilterProvider key="all-leads">
-                    <AllLeadsPage />
-                </TechnoFilterProvider>
-            );
-        case 'Yellow Leads':
-            return (
-                <TechnoFilterProvider key="yellow-leads">
-                    <YellowLeadsTracker />
-                </TechnoFilterProvider>
-            );
-        case 'Admin Tracker':
-            return (
-                <TechnoFilterProvider key="admin-tracker">
-                <AdminTrackerProvider key="admin-tracker">
-                    <AdminTracker />
-                </AdminTrackerProvider>
-                </TechnoFilterProvider>
-
-            );
-        default:
-            return <div>Default Page</div>;
-    }
+  switch (headerActiveItem) {
+    case 'All Leads':
+      return (
+        <TechnoFilterProvider key="all-leads">
+          <AllLeadsPage />
+        </TechnoFilterProvider>
+      );
+    case 'Yellow Leads':
+      return (
+        <TechnoFilterProvider key="yellow-leads">
+          <YellowLeadsTracker />
+        </TechnoFilterProvider>
+      );
+    case 'Admin Tracker':
+      return (
+        <TechnoFilterProvider key="admin-tracker">
+          <AdminTrackerProvider key="admin-tracker">
+            <AdminTracker />
+          </AdminTrackerProvider>
+        </TechnoFilterProvider>
+      );
+    default:
+      return <div>Default Page</div>;
+  }
 }

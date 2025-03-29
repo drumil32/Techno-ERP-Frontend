@@ -9,6 +9,8 @@ import {
   ApplicationStatus,
   Category,
   Course,
+
+  CourseNameMapper,
   EducationLevel,
   Gender
 } from '@/static/enum';
@@ -43,6 +45,9 @@ import { CalendarDaysIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 
+import { toPascal } from '@/lib/utils';
+
+
 const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
   confirmation: z.boolean()
 });
@@ -65,7 +70,8 @@ const EnquiryFormStage1 = () => {
       motherOccupation: '',
       category: Category.GENERAL,
       address: {
-        landmark: '',
+        addressLine1: '',
+        addressLine2: '',
         district: '',
         state: '',
         pincode: '',
@@ -104,12 +110,13 @@ const EnquiryFormStage1 = () => {
       ],
       applicationStatus: ApplicationStatus.STEP_1,
       approvedBy: '',
+      telecallerName: '',
       confirmation: false
     }
   });
 
-  const commonFormItemClass = 'col-span-1 gap-x-2 gap-y-0';
-  const commonFieldClass = 'w-[407px]';
+  const commonFormItemClass = 'col-span-1 gap-y-0';
+  const commonFieldClass = '';
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -125,14 +132,15 @@ const EnquiryFormStage1 = () => {
         <Accordion type="single" collapsible>
           <AccordionItem value="student-details">
             <div className="space-y-2">
+              
+              {/* Section Title */}
               <AccordionTrigger className="w-full items-center">
-                {/* Section Title */}
                 <h3 className="font-inter text-[16px] font-semibold">Student Details</h3>
                 <hr className="flex-1 border-t border-[#DADADA] ml-2" />
               </AccordionTrigger>
 
               <AccordionContent>
-                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 bg-white p-4 rounded-[10px]">
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6  gap-x-[32px] bg-white p-4 rounded-[10px]">
                   <FormField
                     key="admissionMode"
                     control={form.control}
@@ -144,13 +152,13 @@ const EnquiryFormStage1 = () => {
                         </FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger className={commonFieldClass}>
-                              <SelectValue placeholder="Select Admission Mode" />
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue className='text-[#9D9D9D]' placeholder="Select Admission Mode" />
                             </SelectTrigger>
                             <SelectContent>
                               {Object.values(AdmissionMode).map((mode) => (
                                 <SelectItem key={mode} value={mode}>
-                                  {mode}
+                                  {toPascal(mode)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -175,20 +183,26 @@ const EnquiryFormStage1 = () => {
                             <PopoverTrigger asChild>
                               <Button
                                 variant="outline"
-                                className={`${commonFieldClass} justify-between bg-inherit`}
+                                className={`${commonFieldClass} justify-between bg-inherit border-none shadow-none font-normal`}
                               >
-                                <span>
-                                  {field.value ? format(field.value, 'dd/MM/yyyy') : 'Select Date'}
+                                <span className={!field.value ? 'text-[#9D9D9D]' : ''}>
+                                  {field.value ? field.value : 'Select Date'}
                                 </span>
-                                <CalendarDaysIcon size={16} className="ml-2" />
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent>
-                              <Calendar
-                                mode="single"
-                                selected={field.value ? new Date(field.value) : undefined}
-                                onSelect={(date) => field.onChange(date || undefined)}
-                                initialFocus
+                            <Calendar
+                              mode="single"
+                              selected={field.value ? new Date(field.value) : undefined}
+                              onSelect={(date) => {
+                                if (date) {
+                                const formattedDate = format(date, 'dd/MM/yyyy');
+                                field.onChange(formattedDate);
+                                } else {
+                                field.onChange('');
+                                }
+                              }}
+                              initialFocus
                               />
                             </PopoverContent>
                           </Popover>
@@ -265,34 +279,6 @@ const EnquiryFormStage1 = () => {
                   />
 
                   <FormField
-                    key="gender"
-                    control={form.control}
-                    name="gender"
-                    render={({ field }) => (
-                      <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                          Gender
-                        </FormLabel>
-                        <FormControl>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger className={commonFieldClass}>
-                              <SelectValue placeholder="Select Gender" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Object.values(Gender).map((gender) => (
-                                <SelectItem key={gender} value={gender}>
-                                  {gender}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
                     key="fatherName"
                     control={form.control}
                     name="fatherName"
@@ -337,6 +323,95 @@ const EnquiryFormStage1 = () => {
                   />
 
                   <FormField
+                    key="fatherOccupation"
+                    control={form.control}
+                    name="fatherOccupation"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          Father Occupation
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            className={commonFieldClass}
+                            placeholder="Enter father's occupation"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    key="motherName"
+                    control={form.control}
+                    name="motherName"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          Mother Name
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            className={commonFieldClass}
+                            placeholder="Enter mother's name"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    key="motherPhoneNumber"
+                    control={form.control}
+                    name="motherPhoneNumber"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          Mother Phone Number
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            {...field}
+                            className={commonFieldClass}
+                            placeholder="Enter mother's phone number"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    key="motherOccupation"
+                    control={form.control}
+                    name="motherOccupation"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          Mother Occupation
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            className={commonFieldClass}
+                            placeholder="Enter mother's occupation"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  
+                  />
+
+                  <FormField
                     key="dateOfBirth"
                     control={form.control}
                     name="dateOfBirth"
@@ -352,21 +427,56 @@ const EnquiryFormStage1 = () => {
                                 variant="outline"
                                 className={`${commonFieldClass} justify-between bg-inherit`}
                               >
-                                <span>
-                                  {field.value ? format(field.value, 'dd/MM/yyyy') : 'Select Date'}
+                                <span className={!field.value ? 'text-[#9D9D9D]' : ''}>
+                                  {field.value ? field.value : 'Select Date'}
                                 </span>
                                 <CalendarDaysIcon size={16} className="ml-2" />
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent>
-                              <Calendar
-                                mode="single"
-                                selected={field.value ? new Date(field.value) : undefined}
-                                onSelect={(date) => field.onChange(date || undefined)}
-                                initialFocus
+                            <Calendar
+                              mode="single"
+                              selected={field.value ? new Date(field.value) : undefined}
+                              onSelect={(date) => {
+                                if (date) {
+                                const formattedDate = format(date, 'dd/MM/yyyy');
+                                field.onChange(formattedDate);
+                                } else {
+                                field.onChange('');
+                                }
+                              }}
+                              initialFocus
                               />
                             </PopoverContent>
                           </Popover>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    key="category"
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          Category
+                        </FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange}>
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue className='text-[#9D9D9D]' placeholder="Select Category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(Category).map((category) => (
+                                <SelectItem key={category} value={category}>
+                                  {toPascal(category)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -378,19 +488,19 @@ const EnquiryFormStage1 = () => {
                     control={form.control}
                     name="course"
                     render={({ field }) => (
-                      <FormItem className={`${commonFormItemClass}`}>
+                      <FormItem className={`${commonFormItemClass} col-start-1`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                           Course
                         </FormLabel>
                         <FormControl>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger className={commonFieldClass}>
-                              <SelectValue placeholder="Select Course" />
+                          <Select onValueChange={field.onChange}>
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue className='text-[#9D9D9D]' placeholder="Select Course" />
                             </SelectTrigger>
                             <SelectContent>
-                              {Object.values(Course).map((c) => (
-                                <SelectItem key={c} value={c}>
-                                  {c}
+                              {Object.values(Course).map((course) => (
+                                <SelectItem key={course} value={course}>
+                                  {CourseNameMapper[course as Course]}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -411,9 +521,9 @@ const EnquiryFormStage1 = () => {
                           Reference
                         </FormLabel>
                         <FormControl>
-                          <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <SelectTrigger className={commonFieldClass}>
-                              <SelectValue placeholder="Select Reference" />
+                          <Select onValueChange={field.onChange}>
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue className='text-[#9D9D9D]' placeholder="Select Reference" />
                             </SelectTrigger>
                             <SelectContent>
                               {Object.values(AdmissionReference).map((ref) => (
@@ -445,131 +555,153 @@ const EnquiryFormStage1 = () => {
               </AccordionTrigger>
 
               <AccordionContent>
-                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 bg-white p-4 rounded-[10px]">
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px] bg-white p-4 rounded-[10px]">
+                  
                   <FormField
-                    key="landmark"
-                    control={form.control}
-                    name="address.landmark"
-                    render={({ field }) => (
-                      <FormItem className={`col-span-2 gap-x-2 gap-y-0`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                          Address Line 1
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="w-[847px]"
-                            placeholder="Enter Address Line 1"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                  key="addressLine1"
+                  control={form.control}
+                  name="address.addressLine1"
+                  render={({ field }) => (
+                    <FormItem className={`col-span-2 gap-x-2 gap-y-0`}>
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                      Address Line 1
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                      {...field}
+                      className=""
+                      placeholder="Enter Address Line 1"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                  )}
                   />
 
                   <FormField
-                    key="landmark"
-                    control={form.control}
-                    name="address.landmark"
-                    render={({ field }) => (
-                      <FormItem className={`col-span-2 gap-x-2 gap-y-0`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                          Address Line 2
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className="w-[847px]"
-                            placeholder="Enter Address Line 2"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                  key="addressLine2"
+                  control={form.control}
+                  name="address.addressLine2"
+                  render={({ field }) => (
+                    <FormItem className={`col-span-2 gap-x-2 gap-y-0`}>
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                      Address Line 2
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                      {...field}
+                      className=""
+                      placeholder="Enter Address Line 2"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                  )}
                   />
 
                   <FormField
-                    key="pincode"
-                    control={form.control}
-                    name="address.pincode"
-                    render={({ field }) => (
-                      <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                          Pincode
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className={commonFieldClass}
-                            placeholder="Enter the pin code"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                  key="pincode"
+                  control={form.control}
+                  name="address.pincode"
+                  render={({ field }) => (
+                    <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                      Pincode
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                      {...field}
+                      className={commonFieldClass}
+                      placeholder="Enter the pin code"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                  )}
                   />
 
                   <FormField
-                    key="district"
-                    control={form.control}
-                    name="address.district"
-                    render={({ field }) => (
-                      <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                          District
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className={commonFieldClass}
-                            placeholder="Select the district"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                  key="district"
+                  control={form.control}
+                  name="address.district"
+                  render={({ field }) => (
+                    <FormItem className={`${commonFormItemClass} col-span-1`}>
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                      District
+                    </FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger className={`${commonFieldClass} w-full`}>
+                        <SelectValue placeholder="Select the district" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {['District 1', 'District 2', 'District 3'].map((district) => (
+                        <SelectItem key={district} value={district}>
+                          {district}
+                        </SelectItem>
+                        ))}
+                      </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                  )}
                   />
 
                   <FormField
-                    key="state"
-                    control={form.control}
-                    name="address.state"
-                    render={({ field }) => (
-                      <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                          State
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className={commonFieldClass}
-                            placeholder="Select the state"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                  key="state"
+                  control={form.control}
+                  name="address.state"
+                  render={({ field }) => (
+                    <FormItem className={`${commonFormItemClass} col-start-1`}>
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                      State
+                    </FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger className={`${commonFieldClass} w-full`}>
+                        <SelectValue placeholder="Select the state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {['State 1', 'State 2', 'State 3'].map((state) => (
+                        <SelectItem key={state} value={state}>
+                          {state}
+                        </SelectItem>
+                        ))}
+                      </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                  )}
                   />
 
                   <FormField
-                    key="country"
-                    control={form.control}
-                    name="address.country"
-                    render={({ field }) => (
-                      <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                          Country
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className={commonFieldClass}
-                            placeholder="Select the country"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                  key="country"
+                  control={form.control}
+                  name="address.country"
+                  render={({ field }) => (
+                    <FormItem className={`${commonFormItemClass}`}>
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                      Country
+                    </FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <SelectTrigger className={`${commonFieldClass} w-full`}>
+                        <SelectValue placeholder="Select the country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {['Country 1', 'Country 2', 'Country 3'].map((country) => (
+                        <SelectItem key={country} value={country}>
+                          {country}
+                        </SelectItem>
+                        ))}
+                      </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                  )}
                   />
                 </div>
               </AccordionContent>
@@ -591,9 +723,9 @@ const EnquiryFormStage1 = () => {
                 <div className="grid grid-row-3 gap-y-6 bg-white p-4 rounded-[10px]">
                   <div className="space-y-4">
                     {/* Subheading */}
-                    <h4 className="font-inter text-[14px] font-medium">10th</h4>
+                    <h4 className="font-inter text-[16px] font-semibold">10th</h4>
 
-                    <div className="grid grid-cols-3 gap-y-6 gap-x-[32px]">
+                    <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px]">
                       <FormField
                         key="academicDetails.0.schoolCollegeName"
                         control={form.control}
@@ -601,13 +733,13 @@ const EnquiryFormStage1 = () => {
                         render={({ field }) => (
                           <FormItem className={`${commonFormItemClass} col-span-1`}>
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                              School Name
+                              School/College Name
                             </FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 className={commonFieldClass}
-                                placeholder="Enter School Name"
+                                placeholder="Enter school/college Name"
                               />
                             </FormControl>
                             <FormMessage />
@@ -622,13 +754,13 @@ const EnquiryFormStage1 = () => {
                         render={({ field }) => (
                           <FormItem className={`${commonFormItemClass} col-span-1`}>
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                              Board Name
+                              University/Board Name
                             </FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 className={commonFieldClass}
-                                placeholder="Enter Board Name"
+                                placeholder="Enter university/board Name"
                               />
                             </FormControl>
                             <FormMessage />
@@ -647,7 +779,12 @@ const EnquiryFormStage1 = () => {
                                 Passing Year
                               </FormLabel>
                               <FormControl>
-                                <Input {...field} type="number" placeholder="Enter Passing Year" />
+                                <Input
+                                  {...field}
+                                  type="number"
+                                  placeholder="Enter Passing Year"
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
+                                />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -668,6 +805,7 @@ const EnquiryFormStage1 = () => {
                                   {...field}
                                   type="number"
                                   placeholder="Enter Percentage"
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
                                   min={0}
                                   max={100}
                                 />
@@ -692,7 +830,7 @@ const EnquiryFormStage1 = () => {
                                 {...field}
                                 type="text"
                                 className={commonFieldClass}
-                                placeholder="Enter subjects separated by commas"
+                                placeholder="(Optional)"
                                 onChange={(e) =>
                                   field.onChange(
                                     e.target.value.split(',').map((item) => item.trim())
@@ -709,9 +847,9 @@ const EnquiryFormStage1 = () => {
 
                   <div className="space-y-4">
                     {/* Subheading */}
-                    <h4 className="font-inter text-[14px] font-medium">12th</h4>
+                    <h4 className="font-inter  text-[16px] font-semibold">12th</h4>
 
-                    <div className="grid grid-cols-3 gap-y-6 gap-x-[32px]">
+                    <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px]">
                       <FormField
                         key="academicDetails.1.schoolCollegeName"
                         control={form.control}
@@ -719,13 +857,13 @@ const EnquiryFormStage1 = () => {
                         render={({ field }) => (
                           <FormItem className={`${commonFormItemClass} col-span-1`}>
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                              School Name
+                              School/College Name
                             </FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 className={commonFieldClass}
-                                placeholder="Enter School Name"
+                                placeholder="Enter school/college Name"
                               />
                             </FormControl>
                             <FormMessage />
@@ -740,13 +878,13 @@ const EnquiryFormStage1 = () => {
                         render={({ field }) => (
                           <FormItem className={`${commonFormItemClass} col-span-1`}>
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                              Board Name
+                              University/Board Name
                             </FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 className={commonFieldClass}
-                                placeholder="Enter Board Name"
+                                placeholder="Enter university/board Name"
                               />
                             </FormControl>
                             <FormMessage />
@@ -765,7 +903,10 @@ const EnquiryFormStage1 = () => {
                                 Passing Year
                               </FormLabel>
                               <FormControl>
-                                <Input {...field} type="number" placeholder="Enter Passing Year" />
+                                <Input {...field}
+                                  type="number"
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
+                                  placeholder="Enter Passing Year" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -786,6 +927,7 @@ const EnquiryFormStage1 = () => {
                                   {...field}
                                   type="number"
                                   placeholder="Enter Percentage"
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
                                   min={0}
                                   max={100}
                                 />
@@ -809,7 +951,7 @@ const EnquiryFormStage1 = () => {
                                 {...field}
                                 type="text"
                                 className={commonFieldClass}
-                                placeholder="Enter subjects separated by commas"
+                                placeholder="(Optional)"
                                 onChange={(e) =>
                                   field.onChange(
                                     e.target.value.split(',').map((item) => item.trim())
@@ -826,9 +968,9 @@ const EnquiryFormStage1 = () => {
 
                   <div className="space-y-4">
                     {/* Subheading */}
-                    <h4 className="font-inter text-[14px] font-medium">Graduate</h4>
+                    <h4 className="font-inter  text-[16px] font-semibold">Graduation</h4>
 
-                    <div className="grid grid-cols-3 gap-y-6 gap-x-[32px]">
+                    <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px]">
                       <FormField
                         key="academicDetails.2.schoolCollegeName"
                         control={form.control}
@@ -836,13 +978,13 @@ const EnquiryFormStage1 = () => {
                         render={({ field }) => (
                           <FormItem className={`${commonFormItemClass} col-span-1`}>
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                              School Name
+                              School/College Name
                             </FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 className={commonFieldClass}
-                                placeholder="Enter School Name"
+                                placeholder="Enter school/college Name"
                               />
                             </FormControl>
                             <FormMessage />
@@ -857,13 +999,13 @@ const EnquiryFormStage1 = () => {
                         render={({ field }) => (
                           <FormItem className={`${commonFormItemClass} col-span-1`}>
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                              Board Name
+                              University/Board Name
                             </FormLabel>
                             <FormControl>
                               <Input
                                 {...field}
                                 className={commonFieldClass}
-                                placeholder="Enter Board Name"
+                                placeholder="Enter university/board Name"
                               />
                             </FormControl>
                             <FormMessage />
@@ -882,7 +1024,10 @@ const EnquiryFormStage1 = () => {
                                 Passing Year
                               </FormLabel>
                               <FormControl>
-                                <Input {...field} type="number" placeholder="Enter Passing Year" />
+                                <Input {...field}
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
+                                  type="number"
+                                  placeholder="Enter Passing Year" />
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -903,6 +1048,7 @@ const EnquiryFormStage1 = () => {
                                   {...field}
                                   type="number"
                                   placeholder="Enter Percentage"
+                                  onChange={(e) => field.onChange(Number(e.target.value))}
                                   min={0}
                                   max={100}
                                 />
@@ -927,7 +1073,7 @@ const EnquiryFormStage1 = () => {
                                 {...field}
                                 type="text"
                                 className={commonFieldClass}
-                                placeholder="Enter subjects separated by commas"
+                                placeholder="(Optional)"
                                 onChange={(e) =>
                                   field.onChange(
                                     e.target.value.split(',').map((item) => item.trim())
@@ -958,7 +1104,7 @@ const EnquiryFormStage1 = () => {
               </AccordionTrigger>
 
               <AccordionContent>
-                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-4 bg-white p-4 rounded-[10px]">
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-4 gap-x-[32px] bg-white p-4 rounded-[10px]">
                   <FormField
                     key="counsellor"
                     control={form.control}
@@ -978,30 +1124,37 @@ const EnquiryFormStage1 = () => {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                    />
 
-                  {/* <FormField
-                    key="telecaller"
+                    <FormField
+                    key="telecallerName"
                     control={form.control}
-                    name="telecaller"
+                    name="telecallerName"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                          Telecaller’s Name
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            className={commonFieldClass}
-                            placeholder="Enter Telecaller’s Name"
-                          />
-                        </FormControl>
-                        <FormMessage />
+                      <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        Telecaller’s Name
+                      </FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <SelectTrigger className={`${commonFieldClass} w-full`}>
+                          <SelectValue placeholder="Select Telecaller’s Name" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {['Telecaller 1', 'Telecaller 2', 'Telecaller 3'].map((name) => (
+                          <SelectItem key={name} value={name}>
+                            {name}
+                          </SelectItem>
+                          ))}
+                        </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
                       </FormItem>
                     )}
-                  /> */}
+                    />
 
-                  <FormField
+                    <FormField
                     key="dateOfEnquiry"
                     control={form.control}
                     name="dateOfEnquiry"
@@ -1017,18 +1170,25 @@ const EnquiryFormStage1 = () => {
                                 variant="outline"
                                 className={`${commonFieldClass} justify-between bg-inherit`}
                               >
-                                <span>
-                                  {field.value ? format(field.value, 'dd/MM/yyyy') : 'Select Date'}
+                                <span className={!field.value ? 'text-[#9D9D9D]' : ''}>
+                                  {field.value ? field.value : 'Select the Date'}
                                 </span>
                                 <CalendarDaysIcon size={16} className="ml-2" />
                               </Button>
                             </PopoverTrigger>
                             <PopoverContent>
                               <Calendar
-                                mode="single"
-                                selected={field.value ? new Date(field.value) : undefined}
-                                onSelect={(date) => field.onChange(date || undefined)}
-                                initialFocus
+                              mode="single"
+                              selected={field.value ? new Date(field.value) : undefined}
+                              onSelect={(date) => {
+                                if (date) {
+                                const formattedDate = format(date, 'dd/MM/yyyy');
+                                field.onChange(formattedDate);
+                                } else {
+                                field.onChange('');
+                                }
+                              }}
+                              initialFocus
                               />
                             </PopoverContent>
                           </Popover>
@@ -1051,7 +1211,7 @@ const EnquiryFormStage1 = () => {
                           <Input
                             {...field}
                             className={commonFieldClass}
-                            placeholder="Enter Remarks"
+                            placeholder="Optional"
                           />
                         </FormControl>
                         <FormMessage />
@@ -1071,9 +1231,9 @@ const EnquiryFormStage1 = () => {
           render={({ field }) => (
             <FormItem className="cols-span-3">
               <FormControl>
-                <div className="flex items-center bg-white rounded-[5px] p-1">
-                  <Checkbox checked={field.value} onCheckedChange={field.onChange} className="" />
-                  <label className={`ml-2 w-full`}>
+                <div className="flex items-center bg-white rounded-[5px] p-[10px]">
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} className="w-[16px] h-[16px]" />
+                  <label className={`ml-2 w-full text-[12px]`}>
                     All the above information has been verified by the applicant and thoroughly
                     check by the Admissions team.
                   </label>

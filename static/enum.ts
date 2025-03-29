@@ -1,6 +1,6 @@
 /**
  * Marketing Module Enums
-*/
+ */
 export enum UserRoles {
   ADMIN = 'ADMIN',
   LEAD_MARKETING = 'LEAD_MARKETING',
@@ -16,7 +16,6 @@ export enum Gender {
   NOT_TO_MENTION = 'NOT_TO_MENTION'
 }
 
-
 export enum LeadType {
   ORANGE = 'OPEN',
   RED = 'NOT_INTERESTED',
@@ -27,93 +26,88 @@ export enum LeadType {
   WHITE = 'DID_NOT_PICK'
 }
 
-
 export enum finalConversion {
   PINK = 'PENDING',
   GREEN = 'CONVERTED',
   RED = 'NOT_CONVERTED'
 }
 
-
 /**
  * Admission Module Enums
-*/
+ */
 
 export enum Category {
-  SC = "SC",
-  ST = "ST",
-  OBC = "OBC",
-  GENERAL = "General",
-  EWS = "EWS",
-  OTHER = "Other"
-};
+  SC = 'SC',
+  ST = 'ST',
+  OBC = 'OBC',
+  GENERAL = 'General',
+  EWS = 'EWS',
+  OTHER = 'Other'
+}
 
 export enum AdmissionReference {
-  Advertising = "Advertising",
-  BusinessAssociate = "Business Associate",
-  DigitalMarketing = "Digital Marketing",
-  DirectWalkIn = "Direct Walk-in",
-  LUNPGExternalVenue = "LU/NPG/External Venue",
-  StudentReference = "Student Reference",
-  TechnoligenceStaffCalling = "Technoligence/Staff Calling",
-  Other = "Other"
-};
+  Advertising = 'Advertising',
+  BusinessAssociate = 'Business Associate',
+  DigitalMarketing = 'Digital Marketing',
+  DirectWalkIn = 'Direct Walk-in',
+  LUNPGExternalVenue = 'LU/NPG/External Venue',
+  StudentReference = 'Student Reference',
+  TechnoligenceStaffCalling = 'Technoligence/Staff Calling',
+  Other = 'Other'
+}
 
 export enum Course {
-  BCOM = "BCOM",
-  BCOMH = "BCOMH",
-  BAJMC = "BAJMC",
-  BED = "BED",
-  BSCM = "BSCM",
-  BSCB = "BSCB",
-  BBA = "BBA",
-  BCA = "BCA",
-  BVAA = "BVAA",
-  BVAP = "BVAP",
-  MAJMC = "MAJMC",
-  MCOMC = "MCOMC",
-  MBA = "MBA",
-  LLB = "LLB",
-  MCA = "MCA",
-  MVAP = "MVAP",
-  MSCC = "MSCC"
+  BCOM = 'BCOM',
+  BCOMH = 'BCOMH',
+  BAJMC = 'BAJMC',
+  BED = 'BED',
+  BSCM = 'BSCM',
+  BSCB = 'BSCB',
+  BBA = 'BBA',
+  BCA = 'BCA',
+  BVAA = 'BVAA',
+  BVAP = 'BVAP',
+  MAJMC = 'MAJMC',
+  MCOMC = 'MCOMC',
+  MBA = 'MBA',
+  LLB = 'LLB',
+  MCA = 'MCA',
+  MVAP = 'MVAP',
+  MSCC = 'MSCC'
 }
 
 export const CourseNameMapper: Record<Course, string> = {
-  [Course.BCOM]: "B.COM",
-  [Course.BCOMH]: "B.COM (HONS)",
-  [Course.BAJMC]: "BA-JMC",
-  [Course.BED]: "B.ED",
-  [Course.BSCM]: "B.SC (PCM)",
-  [Course.BSCB]: "B.SC (ZBC)",
-  [Course.BBA]: "BBA",
-  [Course.BCA]: "BCA",
-  [Course.BVAA]: "BVA (App Art)",
-  [Course.BVAP]: "BVA (Painting)",
-  [Course.MAJMC]: "MA-JMC",
-  [Course.MCOMC]: "M.COM (COM)",
-  [Course.MBA]: "MBA",
-  [Course.LLB]: "LLB",
-  [Course.MCA]: "MCA",
-  [Course.MVAP]: "MVA (Paint)",
-  [Course.MSCC]: "M.SC (Chem)"
+  [Course.BCOM]: 'B.COM',
+  [Course.BCOMH]: 'B.COM (HONS)',
+  [Course.BAJMC]: 'BA-JMC',
+  [Course.BED]: 'B.ED',
+  [Course.BSCM]: 'B.SC (PCM)',
+  [Course.BSCB]: 'B.SC (ZBC)',
+  [Course.BBA]: 'BBA',
+  [Course.BCA]: 'BCA',
+  [Course.BVAA]: 'BVA (App Art)',
+  [Course.BVAP]: 'BVA (Painting)',
+  [Course.MAJMC]: 'MA-JMC',
+  [Course.MCOMC]: 'M.COM (COM)',
+  [Course.MBA]: 'MBA',
+  [Course.LLB]: 'LLB',
+  [Course.MCA]: 'MCA',
+  [Course.MVAP]: 'MVA (Paint)',
+  [Course.MSCC]: 'M.SC (Chem)'
 };
 
-
 export enum AcademicDetails {
-  Tenth = "10th",
-  Twelfth = "12th",
-  Graduation = "Graduation",
-  Others = "Others"
+  Tenth = '10th',
+  Twelfth = '12th',
+  Graduation = 'Graduation',
+  Others = 'Others'
 }
 
-
-export enum ApplicationIdPrefix{
-  "TIHS" = "TIHS",
-  "TIMS" = "TIMS",
-  "TCL" = "TCL"
+export enum ApplicationIdPrefix {
+  'TIHS' = 'TIHS',
+  'TIMS' = 'TIMS',
+  'TCL' = 'TCL'
 }
-
 
 export enum Religion {
   HINDUISM = 'Hinduism',
@@ -122,9 +116,8 @@ export enum Religion {
   SIKHISM = 'Sikhism',
   BUDDHISM = 'Buddhism',
   JAINISM = 'Jainism',
-  OTHERS = 'Others',
+  OTHERS = 'Others'
 }
-
 
 export enum BloodGroup {
   A_POSITIVE = 'A+',
@@ -134,15 +127,13 @@ export enum BloodGroup {
   AB_POSITIVE = 'AB+',
   AB_NEGATIVE = 'AB-',
   O_POSITIVE = 'O+',
-  O_NEGATIVE = 'O-',
+  O_NEGATIVE = 'O-'
 }
-
 
 export enum AdmittedThrough {
   DIRECT = 'Direct',
   COUNSELLING = 'Counselling'
 }
-
 
 export enum DocumentType {
   TENTH_MARKSHEET = '10th_Marksheet',
@@ -167,8 +158,6 @@ export enum DocumentType {
   EWS_CERTIFICATE = 'EWS_Certificate'
 }
 
-
-
 export enum ApplicationStatus {
   STEP_1 = 'Step_1',
   STEP_2 = 'Step_2',
@@ -176,36 +165,34 @@ export enum ApplicationStatus {
   STEP_4 = 'Step_4'
 }
 
-
 export enum MimeType {
   PNG = 'image/png',
   JPG = 'image/jpeg',
   JPEG = 'image/jpeg',
-  PDF = 'application/pdf',
+  PDF = 'application/pdf'
 }
 
 export enum ModuleNames {
-  MARKETING = "MARKETING"
+  MARKETING = 'MARKETING'
 }
 
 export enum Locations {
-  KNP = "Kanpur",
-  UNA = "Unnao",
-  STP = "Sitapur",
-  HRD = "Hardoi",
-  BBK = "Barabanki",
-  AMT = "Amethi",
-  FTP = "Fatehpur",
-  LKO = "Lucknow"
+  KNP = 'Kanpur',
+  UNA = 'Unnao',
+  STP = 'Sitapur',
+  HRD = 'Hardoi',
+  BBK = 'Barabanki',
+  AMT = 'Amethi',
+  FTP = 'Fatehpur',
+  LKO = 'Lucknow'
 }
 
 export enum MarketingSources {
-  SCHOOL = "SCHOOL",
-  DIGITAL_MARKETING = "DIGITAL_MARKETING"
+  SCHOOL = 'SCHOOL',
+  DIGITAL_MARKETING = 'DIGITAL_MARKETING'
 }
 
-
-export const ADMISSION = 'admissions'
+export const ADMISSION = 'admissions';
 
 
 export const MARKETING_SHEET = 'Marketing Sheet'

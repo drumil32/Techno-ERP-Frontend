@@ -6,11 +6,11 @@ interface HeaderItem {
   title: string;
 }
 
-interface UserProfile{
-  id:string;
-  name:string;
-  email:string;
-  roles:string[];
+interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  roles: string[];
 }
 
 interface TechnoTopHeaderProps {

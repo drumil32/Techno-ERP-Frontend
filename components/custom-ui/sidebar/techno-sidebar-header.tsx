@@ -13,11 +13,7 @@ export default function TechnoSidebarHeader() {
         <div className="flex items-center gap-4 transition-opacity duration-500 ease-in-out opacity-100">
           {/* TODO: Name and Avatar will replace by the college logo and name */}
           <Avatar className="w-[33px] h-[33px] transition-transform duration-300 ease-in-out">
-            <AvatarImage
-              className="rounded-full"
-              src="/images/techno-logo.png"
-              alt="User Avatar"
-            />
+            <AvatarImage className="rounded-full" src="/images/techno-logo.png" alt="User Avatar" />
             <AvatarFallback>U</AvatarFallback>
           </Avatar>
           <p className="text-xl font-bold transition-all duration-300 ease-in-out">TECHNO</p>

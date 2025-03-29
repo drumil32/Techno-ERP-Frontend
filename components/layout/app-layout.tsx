@@ -4,6 +4,7 @@ import { HoverContext } from '../custom-ui/sidebar/hover-context';
 import TechnoSidebar from '../custom-ui/sidebar/techno-sidebar';
 import { SidebarProvider, useSidebarContext } from '../custom-ui/sidebar/sidebar-context';
 import CRMLayout from './crm-layout';
+import EnquiryFormStage1 from '../custom-ui/enquiry-form/stage-1/enquiry-form-stage1';
 
 export default function AppLayout() {
     const [hovered, setHovered] = useState<boolean>(false);
@@ -39,6 +40,8 @@ function ContentRenderer() {
     switch (sidebarActiveItem) {
         case 'Marketing':
             return <CRMLayout />;
+        case 'Admissions':
+            return <EnquiryFormStage1 />;
         default:
             return <div>Default Page</div>;
     }
