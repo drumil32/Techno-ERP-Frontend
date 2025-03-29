@@ -5,22 +5,17 @@ import { fetchAdmissionsData } from "./helpers/fetch-data";
 import TechnoDataTable from "@/components/custom-ui/data-table/techno-data-table";
 import { refineAdmissions } from "./helpers/refine-data";
 import { AdmissionTableRowType } from "@/types/admissions";
-import TechnoRightDrawer from "@/components/custom-ui/drawer/techno-right-drawer";
 import AdmissionCard from "@/components/custom-ui/admission-card/techno-admission-card";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import TechnoPageTitle from "@/components/custom-ui/page-title/techno-page-title";
 
 export default function AdmissionsLandingPage() {
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [editRow, setEditRow] = useState<AdmissionTableRowType>()
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
 
 
     const handleViewMore = (row: AdmissionTableRowType) => {
-        setEditRow(row)
-        setIsDrawerOpen(true);
     };
     const columns = [
         { accessorKey: 'id', header: 'S. No' },
@@ -78,12 +73,7 @@ export default function AdmissionsLandingPage() {
         enabled: true
     })
 
-    const isLoading = admissionsQuery.isLoading
-    const isError = admissionsQuery.isError
     const admissionsData = admissionsQuery.data ? refineAdmissions(admissionsQuery.data) : []
-
-    console.log(admissionsData)
-
 
     return (
         <>
@@ -128,10 +118,6 @@ export default function AdmissionsLandingPage() {
                     />
                 )
             }
-            <TechnoRightDrawer title={"Admission Data"} isOpen={isDrawerOpen} onClose={() => {
-                setIsDrawerOpen(false);
-            }}>
-            </TechnoRightDrawer>
         </>
     )
 }

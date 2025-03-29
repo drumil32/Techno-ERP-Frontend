@@ -1,3 +1,4 @@
+import { SIDEBAR_ITEMS } from '@/common/constants/sidebarItems';
 import TechnoSidebarItem from './techno-sidebar-item';
 import { Presentation, UserPlus, IndianRupee, FolderOpen, BookOpen, Users } from 'lucide-react';
 
@@ -12,10 +13,11 @@ export default function TechnoSidebarBody() {
 }
 
 const MENU_ITEMS = [
-  { icon: Presentation, text: 'Marketing' },
-  { icon: UserPlus, text: 'Admissions' },
-  { icon: IndianRupee, text: 'Finance' },
-  { icon: FolderOpen, text: 'Student Repository' },
-  { icon: BookOpen, text: 'All Courses' },
-  { icon: Users, text: 'Faculty' }
+  { icon: Presentation, text: SIDEBAR_ITEMS.MARKETING },
+  { icon: UserPlus, text: SIDEBAR_ITEMS.ADMISSIONS },
+  { icon: IndianRupee, text: SIDEBAR_ITEMS.FINANCE },
+  { icon: FolderOpen, text: SIDEBAR_ITEMS.STUDENT_REPOSITORY },
+  { icon: BookOpen, text: SIDEBAR_ITEMS.ALL_COURSES },
+  { icon: Users, text: SIDEBAR_ITEMS.FACULTY }
 ];
+

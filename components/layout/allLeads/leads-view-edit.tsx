@@ -336,7 +336,7 @@ export default function LeadViewEdit({ data }: { data: any }) {
                             onSelect={(date) => {
                                 const formattedDate = date ? format(date, "dd/MM/yyyy") : "";
                                 handleDateChange("nextDueDate", formattedDate);
-                            }}                            
+                            }}
                             initialFocus
                         />
                     </PopoverContent>

@@ -1,8 +1,9 @@
-import logger from '@/lib/logger';
 import { useTopHeaderContext } from './top-header-context';
+import { useRouter } from 'next/navigation';
 
 interface HeaderItem {
   title: string;
+  route: string;
 }
 
 interface TechnoTopHeaderItemProps {
@@ -11,12 +12,17 @@ interface TechnoTopHeaderItemProps {
 
 export default function TechnoTopHeaderItem({ item }: TechnoTopHeaderItemProps) {
   const { headerActiveItem, setHeaderActiveItem } = useTopHeaderContext();
+  const router = useRouter(); // Next.js router instance
   const isActive = item.title === headerActiveItem;
-  logger.debug("HEADER ITEM",headerActiveItem)
+
+  const handleClick = () => {
+    setHeaderActiveItem(item.title);
+    router.push(item.route); // Navigate to the route
+  };
 
   return (
     <button
-      onClick={() => setHeaderActiveItem(item.title)}
+      onClick={handleClick}
       className={`px-4 py-2 rounded-md transition-all cursor-pointer ${
         isActive ? 'text-primary font-bold underline' : 'text-black'
       }`}

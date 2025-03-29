@@ -11,6 +11,7 @@ import loginSchema from './login-form-schema';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import { ROUTE_MAP } from '@/common/constants/frontendRouting';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -34,7 +35,7 @@ export default function LoginPage() {
             return response;
         },
         onSuccess: () => {
-            router.push('/c/crm');
+            router.push(ROUTE_MAP.MARKETING);
         },
         onError: () => {
             setError('Invalid email or password');

@@ -9,7 +9,7 @@ import { useSidebarContext } from '../custom-ui/sidebar/sidebar-context';
 import { SIDEBAR_ITEMS } from '@/common/constants/sidebarItems';
 
 const HEADER_ITEMS = {
-    APPLICATION_PROCESS: "Application Process"
+    APPLICATION_PROCESS: {title:"Application Process", route: "/c/admissions"}
 }
 
 export default function AdmissionLayout() {
@@ -24,7 +24,7 @@ function AdmissionContent() {
     const { setHeaderActiveItem } = useTopHeaderContext()
     const { setSidebarActiveItem } = useSidebarContext()
     useEffect(() => {
-        setHeaderActiveItem(HEADER_ITEMS.APPLICATION_PROCESS);
+        setHeaderActiveItem(HEADER_ITEMS.APPLICATION_PROCESS.title);
         setSidebarActiveItem(SIDEBAR_ITEMS.ADMISSIONS)
     }, []);
     return (
@@ -42,7 +42,7 @@ function ContentRenderer() {
     const { headerActiveItem } = useTopHeaderContext();
 
     switch (headerActiveItem) {
-        case HEADER_ITEMS.APPLICATION_PROCESS:
+        case HEADER_ITEMS.APPLICATION_PROCESS.title:
             return <AdmissionsLandingPage />;
         default:
             return <div>Default Page</div>;

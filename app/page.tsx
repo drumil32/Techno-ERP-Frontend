@@ -7,18 +7,17 @@ import { apiRequest } from '@/lib/apiClient';
 import { useEffect } from 'react';
 
 export default function Home() {
-    
-    useEffect(() => {
-        const checkAuthentication = async () => {
-            await apiRequest(
-                API_METHODS.GET,
-                API_ENDPOINTS.isAuthenticated
-            );
-        }
-        checkAuthentication();
-    }, []);
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const response = await apiRequest(
+        API_METHODS.GET,
+        API_ENDPOINTS.isAuthenticated
+      );
+    }
+    checkAuthentication();
+  }, []);
 
-    return (
-        <AppLayout/>
-    );
+  return (
+    <AppLayout />
+  );
 }
