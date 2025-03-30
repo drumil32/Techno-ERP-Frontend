@@ -29,7 +29,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       nextDueDate: lead.nextDueDate ?? '-',
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: new Date(lead.updatedAt).toLocaleString(),
-      remarks: lead.remarks ?? '-'
+      remarks: lead.remarks ?? '-',
+      leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'NA'
     };
   });
 

@@ -243,7 +243,7 @@ export default function AllLeadsPage() {
     },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
     { accessorKey: 'nextDueDate', header: 'Next Due Date' },
-    { accessorKey: 'createdAt', header: 'Timestamp' },
+    { accessorKey: 'leadTypeModifiedDate', header: 'Timestamp' },
     {
       id: 'actions',
       header: 'Actions',

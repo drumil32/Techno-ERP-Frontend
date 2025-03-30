@@ -17,7 +17,7 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
 import CampusVisitTag, { CampusVisitStatus } from './campus-visit-tag';
-import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
+import FinalConversionTag, { FinalConversionStatus, toPascal } from './final-conversion-tag';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { parse, format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
@@ -137,7 +137,7 @@ export default function YellowLeadViewEdit({ data }: { data: any }) {
         </div>
         <div className="flex gap-2">
           <p className="w-1/4  text-[#666666]">Gender</p>
-          <p>{formData.gender.charAt(0) + data.gender.slice(1).toLowerCase()}</p>
+          <p>{toPascal(formData.gender)}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4  text-[#666666]">Location</p>

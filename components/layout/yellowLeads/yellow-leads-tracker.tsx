@@ -243,6 +243,7 @@ export default function YellowLeadsTracker() {
       cell: ({ row }: any) => (
         <Button
           variant="ghost"
+          className='cursor-pointer'
           onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
         >
           <span className="font-inter font-semibold text-[12px] text-primary ">View More</span>
@@ -350,6 +351,7 @@ export default function YellowLeadsTracker() {
           onSearch={handleSearch}
           searchTerm={search}
           onSort={handleSortChange}
+          totalEntries={totalEntries}
         >
           <FilterBadges
             onFilterRemove={handleFilterRemove}
