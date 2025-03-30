@@ -235,14 +235,14 @@ export default function AllLeadsPage() {
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'gender', header: 'Gender' },
     { accessorKey: 'location', header: 'Location' },
-    { accessorKey: 'course', header: 'Course' },
+    { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'leadType',
       header: 'Lead Type',
       cell: ({ row }: any) => <TechnoLeadTypeTag type={row.original.leadType as TechnoLeadType} />
     },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
-    { accessorKey: 'nextDueDate', header: 'Next Due Date' },
+    { accessorKey: 'nextDueDateView', header: 'Next Due Date' },
     { accessorKey: 'createdAt', header: 'Timestamp' },
     {
       id: 'actions',

@@ -218,8 +218,8 @@ export default function YellowLeadsTracker() {
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'gender', header: 'Gender' },
-    { accessorKey: 'location', header: 'Location' },
-    { accessorKey: 'course', header: 'Course' },
+    { accessorKey: 'locationView', header: 'Location' },
+    { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'campusVisit',
       header: 'Campus Visit',
@@ -227,7 +227,7 @@ export default function YellowLeadsTracker() {
         <CampusVisitTag status={row.original.campusVisit as CampusVisitStatus} />
       )
     },
-    { accessorKey: 'nextDueDate', header: 'Next Call Date' },
+    { accessorKey: 'nextDueDateView', header: 'Next Call Date' },
     {
       accessorKey: 'finalConversion',
       header: 'Final Conversion',
@@ -235,7 +235,7 @@ export default function YellowLeadsTracker() {
         <FinalConversionTag status={row.original.finalConversion as FinalConversionStatus} />
       )
     },
-    { accessorKey: 'remarks', header: 'Remarks' },
+    { accessorKey: 'remarksView', header: 'Remarks' },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
     {
       id: 'actions',

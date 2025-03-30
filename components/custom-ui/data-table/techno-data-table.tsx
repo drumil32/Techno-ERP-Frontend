@@ -181,10 +181,10 @@ export default function TechnoDataTable({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={
-                        cell.column.columnDef.header === 'Remarks' && cell.getValue() != '-'
+                      className={ `text-center
+                        ${cell.column.columnDef.header === 'Remarks' && cell.getValue()!='-'
                           ? 'text-left max-w-[225px] truncate'
-                          : 'text-center'
+                          : ''}`
                       }
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
