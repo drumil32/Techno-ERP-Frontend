@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
-import { apiRequest } from '@/lib/apiClient';
+import { apiRequest, Response } from '@/lib/apiClient';
 
 export const getEnquiry = async (enquiry_id: string) => {
     return apiRequest(
@@ -19,7 +19,7 @@ export const createEnquiry = async (data: any) => {
 
 export const updateEnquiry = async (data: any) => {
     return apiRequest(
-        API_METHODS.POST,
+        API_METHODS.PUT,
         API_ENDPOINTS.updateEnquiry,
         data
     );
@@ -35,7 +35,7 @@ export const createEnquiryDraft = async (data: any) => {
 
 export const updateEnquiryDraft = async (data: any) => {
     return apiRequest(
-        API_METHODS.POST,
+        API_METHODS.PUT,
         API_ENDPOINTS.updateEnquiryDraft,
         data
     );

@@ -1,6 +1,6 @@
 // UI components
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from './schema';
@@ -30,9 +30,13 @@ import {
   getEnquiry,
   getTeleCallers,
   updateEnquiry,
+  updateEnquiryDraft,
   updateEnquiryStatus
 } from './enquiry-form-api';
 import { useSearchParams } from 'next/navigation';
+import { toast } from 'sonner';
+import logger from '@/lib/logger';
+import { Response } from '@/lib/apiClient';
 
 // Form Schema
 const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
@@ -49,16 +53,11 @@ const EnquiryFormStage1 = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      admissionMode: AdmissionMode.ONLINE,
-      gender: Gender.NOT_TO_MENTION,
-      category: Category.GENERAL,
-      reference: AdmissionReference.Advertising,
-      course: Course.BCOM,
       confirmation: false
     }
   });
 
-  const { data, isError, isLoading, isPending } = useQuery({
+  const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id],
     queryFn: () => getEnquiry(id ? id : ''),
     enabled: !!id
@@ -69,6 +68,59 @@ const EnquiryFormStage1 = () => {
       form.reset(data);
     }
   }, [data, form]);
+
+  const toastIdRef = useRef<string | number | null>(null);
+
+  useEffect(() => {
+  
+      if (toastIdRef.current) {
+        if (isLoading || isFetching) {
+          toast.loading('Loading enquiry data...', {
+            id: toastIdRef.current,
+            duration: Infinity
+          });
+        }
+  
+        if (isError) {
+          toast.error('Failed to load enquiry data', {
+            id: toastIdRef.current,
+            duration: 3000
+          });
+          setTimeout(() => {
+            toastIdRef.current = null;
+          }, 3000);
+          toastIdRef.current = null;
+        }
+  
+        if (isSuccess) {
+          toast.success('Admin tracker enquiry successfully', {
+            id: toastIdRef.current!,
+            duration: 2000
+          });
+          toastIdRef.current = null;
+        }
+      } else if (isError) {
+        toastIdRef.current = toast.error('Failed to load enquiry data', {
+          duration: 3000
+        });
+      } else if (isLoading || isFetching) {
+        toastIdRef.current = toast.loading('Loading enquiry data...', {
+          duration: Infinity
+        });
+      }
+  
+      return () => {
+        if (toastIdRef.current) {
+          toast.dismiss(toastIdRef.current);
+        }
+      };
+    }, [
+      isLoading,
+      isError,
+      isSuccess,
+      isFetching,
+      data
+    ]);
 
   const results = useQueries({
     queries: [
@@ -91,6 +143,8 @@ const EnquiryFormStage1 = () => {
 
   async function saveDraft() {
     const values = form.getValues();
+
+    logger.info('Enquiry Form Stage 1 - Save Draft', values);
 
     // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep1RequestSchema.shape);
@@ -140,25 +194,48 @@ const EnquiryFormStage1 = () => {
     }
 
     // Remove confirmation field from values
-    const { confirmation, ...rest } = values;
+    
+    const { confirmation,_id, ...rest } = values;
 
     if (!id) {
-      await createEnquiryDraft(rest);
+      const response = await createEnquiryDraft(rest);
+
+      if (!response)
+        {
+          toast.error('Failed to create enquiry draft');
+          return;
+        }
+        toast.success('Enquiry draft created successfully');
     } else {
-      await updateEnquiry({ ...rest, id });
+
+      const response = await updateEnquiryDraft({ ...rest, id });
+
+      if (!response)
+      {
+        toast.error('Failed to update enquiry draft');
+        return;
+      }
+      toast.success("Enquiry draft updated successfully");
     }
 
     form.setValue('confirmation', false);
   }
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit() {
+    const values = form.getValues();
+    logger.info('Enquiry Form Stage 1 - Submit', values);
+
     // remove confirmation field from values
-    const { confirmation, ...rest } = values;
+    const { confirmation, _id, ...rest } = values;
     const enquiry: any = await createEnquiry(rest);
-    await updateEnquiryStatus({
+    const response = await updateEnquiryStatus({
       id: enquiry?._id,
       newStatus: ApplicationStatus.STEP_2
     });
+
+    console.log('Enquiry Form Stage 1 - Submit Response', response);
+    
+    form.setValue('confirmation', false);
     form.reset();
   }
 
@@ -202,7 +279,7 @@ const EnquiryFormStage1 = () => {
         <ConfirmationCheckBox form={form} />
 
         {/* Sticky Footer */}
-        <EnquiryFormFooter saveDraft={saveDraft} />
+        <EnquiryFormFooter saveDraft={saveDraft} onSubmit={onSubmit} />
       </form>
     </Form>
   );

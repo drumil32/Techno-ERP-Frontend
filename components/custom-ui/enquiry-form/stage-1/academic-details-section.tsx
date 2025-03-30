@@ -168,9 +168,10 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             type="text"
                             className={commonFieldClass}
                             placeholder="(Optional)"
-                            onChange={(e) =>
-                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
-                            }
+                            onChange={(e) => {
+                              const value = e.target.value.trim();
+                              field.onChange(value ? value.split(',').map((item) => item.trim()) : undefined);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -303,13 +304,14 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         </FormLabel>
                         <FormControl>
                           <Input
-                            {...field}
-                            type="text"
-                            className={commonFieldClass}
-                            placeholder="(Optional)"
-                            onChange={(e) =>
-                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
-                            }
+                          {...field}
+                          type="text"
+                          className={commonFieldClass}
+                          placeholder="(Optional)"
+                          onChange={(e) => {
+                            const value = e.target.value.trim();
+                            field.onChange(value ? value.split(',').map((item) => item.trim()) : undefined);
+                          }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -445,9 +447,10 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             type="text"
                             className={commonFieldClass}
                             placeholder="(Optional)"
-                            onChange={(e) =>
-                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
-                            }
+                            onChange={(e) => {
+                              const value = e.target.value.trim();
+                              field.onChange(value ? value.split(',').map((item) => item.trim()) : undefined);
+                            }}
                           />
                         </FormControl>
                         <FormMessage />

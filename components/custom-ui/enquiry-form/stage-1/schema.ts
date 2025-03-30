@@ -34,8 +34,7 @@ export const academicDetailSchema = z.object({
     .min(0, 'Percentage must be at least 0')
     .max(100, 'Percentage cannot exceed 100'),
   subjects: z
-    .array(z.string().min(1, 'Subject name is required'))
-    .nonempty('Subjects cannot be empty')
+    .array(z.string().min(1, 'Subject name is required')).optional()
 });
 
 export const singleDocumentSchema = z.object({
@@ -60,6 +59,7 @@ export const singleDocumentSchema = z.object({
 export const academicDetailsArraySchema = z.array(academicDetailSchema);
 
 export const enquirySchema = z.object({
+  _id: z.string().optional(),
   // Student Details
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
   dateOfEnquiry: requestDateSchema,
@@ -135,7 +135,8 @@ export const enquiryStep1RequestSchema = enquirySchema
   .strict();
 
   export const enquiryDraftStep1RequestSchema = enquiryStep1RequestSchema
-  .extend({
+    .extend({
+    _id : z.string().optional(),
     studentName: z.string({ required_error: "Student Name is required", }).nonempty('Student Name is required'),
     studentPhoneNumber: contactNumberSchema,
     counsellor: z.string().optional(),
@@ -143,4 +144,8 @@ export const enquiryStep1RequestSchema = enquirySchema
     dateOfCounselling: requestDateSchema.optional(),
     address: addressSchema.partial().optional(),
     academicDetails: z.array(academicDetailSchema.partial()).optional(),
-  }).partial().strip();
+    }).partial().strip();
+  
+  export const enquiryDraftStep1UpdateSchema = enquiryDraftStep1RequestSchema.extend({
+    id: z.string().optional()      // This is referring to _id in the enquiryDraftsTable
+  }).partial().strict();
