@@ -33,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}>
+      <body className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}>
         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         <Toaster richColors theme="light" position="top-center" />
       </body>

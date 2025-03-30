@@ -24,7 +24,7 @@ export default function AppLayout() {
 
           <main
             className={`flex-1 overflow-y-auto transition-all duration-300 bg-[#FAFAFA] ${
-              hovered ? 'pl-80' : 'pl-24'
+              hovered ? 'pl-80' : 'pl-20'
             }`}
           >
             <ContentRenderer />
