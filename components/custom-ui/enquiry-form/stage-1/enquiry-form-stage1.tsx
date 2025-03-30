@@ -5,13 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from './schema';
 import {
-  AdmissionMode,
-  AdmissionReference,
   ApplicationStatus,
-  Category,
-  Course,
-  EducationLevel,
-  Gender
 } from '@/static/enum';
 import { Form } from '@/components/ui/form';
 
@@ -29,14 +23,29 @@ import {
   getCounsellors,
   getEnquiry,
   getTeleCallers,
-  updateEnquiry,
   updateEnquiryDraft,
   updateEnquiryStatus
 } from './enquiry-form-api';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import logger from '@/lib/logger';
-import { Response } from '@/lib/apiClient';
+
+function removeNullValues(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj
+      .map(removeNullValues)
+      .filter((item) => item !== null && item !== undefined && !(Array.isArray(item) && item.length === 0));
+  } else if (typeof obj === 'object' && obj !== null) {
+    return Object.fromEntries(
+      Object.entries(obj)
+        .map(([key, value]) => [key, removeNullValues(value)])
+        .filter(([_, value]) => value !== null && value !== undefined && !(Array.isArray(value) && value.length === 0))
+    );
+  } else {
+    return obj;
+  }
+}
+
 
 // Form Schema
 const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
@@ -142,10 +151,12 @@ const EnquiryFormStage1 = () => {
   const commonFieldClass = '';
 
   async function saveDraft() {
-    const values = form.getValues();
+    let values = form.getValues();
 
     logger.info('Enquiry Form Stage 1 - Save Draft', values);
-
+    // Remove null values from the entire object
+    values = removeNullValues(values);
+    
     // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep1RequestSchema.shape);
     const filteredKeys = Object.keys(values).filter((key) => schemaKeys.includes(key));
@@ -222,9 +233,8 @@ const EnquiryFormStage1 = () => {
   }
 
   async function onSubmit() {
-    const values = form.getValues();
-    logger.info('Enquiry Form Stage 1 - Submit', values);
-
+    let values = form.getValues();
+    values = removeNullValues(values);
     // remove confirmation field from values
     const { confirmation, _id, ...rest } = values;
     const enquiry: any = await createEnquiry(rest);
@@ -233,7 +243,11 @@ const EnquiryFormStage1 = () => {
       newStatus: ApplicationStatus.STEP_2
     });
 
-    console.log('Enquiry Form Stage 1 - Submit Response', response);
+    if (!response) {
+      toast.error('Failed to update enquiry status');
+      return;
+    }
+    toast.success('Enquiry status updated successfully');
     
     form.setValue('confirmation', false);
     form.reset();

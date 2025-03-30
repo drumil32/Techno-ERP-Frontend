@@ -29,7 +29,6 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
   commonFieldClass,
   commonFormItemClass
 }) => {
-
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">
@@ -168,10 +167,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             type="text"
                             className={commonFieldClass}
                             placeholder="(Optional)"
-                            onChange={(e) => {
-                              const value = e.target.value.trim();
-                              field.onChange(value ? value.split(',').map((item) => item.trim()) : undefined);
-                            }}
+                            onChange={(e) =>
+                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -182,7 +180,6 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
               </div>
 
               <div className="space-y-4">
-                
                 {/* Subheading */}
                 <h4 className="font-inter  text-[16px] font-semibold">12th</h4>
 
@@ -304,14 +301,13 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         </FormLabel>
                         <FormControl>
                           <Input
-                          {...field}
-                          type="text"
-                          className={commonFieldClass}
-                          placeholder="(Optional)"
-                          onChange={(e) => {
-                            const value = e.target.value.trim();
-                            field.onChange(value ? value.split(',').map((item) => item.trim()) : undefined);
-                          }}
+                            {...field}
+                            type="text"
+                            className={commonFieldClass}
+                            placeholder="(Optional)"
+                            onChange={(e) =>
+                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -447,10 +443,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             type="text"
                             className={commonFieldClass}
                             placeholder="(Optional)"
-                            onChange={(e) => {
-                              const value = e.target.value.trim();
-                              field.onChange(value ? value.split(',').map((item) => item.trim()) : undefined);
-                            }}
+                            onChange={(e) =>
+                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
+                            }
                           />
                         </FormControl>
                         <FormMessage />
