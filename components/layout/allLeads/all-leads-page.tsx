@@ -16,6 +16,8 @@ import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { toast } from 'sonner';
+
+
 export default function AllLeadsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -25,6 +27,11 @@ export default function AllLeadsPage() {
   const [editRow, setEditRow] = useState<any>(null);
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [orderBy, setOrderBy] = useState<string>('asc');
+  const [isEditing, setIsEditing] = useState(false);
+
+  const toggleIsEditing = () => {
+    setIsEditing(prev => !prev)
+  }
 
   const handleSortChange = (column: string, order: string) => {
     setSortBy(column);
@@ -235,14 +242,14 @@ export default function AllLeadsPage() {
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'gender', header: 'Gender' },
     { accessorKey: 'location', header: 'Location' },
-    { accessorKey: 'course', header: 'Course' },
+    { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'leadType',
       header: 'Lead Type',
       cell: ({ row }: any) => <TechnoLeadTypeTag type={row.original.leadType as TechnoLeadType} />
     },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
-    { accessorKey: 'nextDueDate', header: 'Next Due Date' },
+    { accessorKey: 'nextDueDateView', header: 'Next Due Date' },
     { accessorKey: 'leadTypeModifiedDate', header: 'Timestamp' },
     {
       id: 'actions',
@@ -351,8 +358,14 @@ export default function AllLeadsPage() {
           setRefreshKey((prev) => prev + 1);
         }}
       >
-        {editRow && <LeadViewEdit data={editRow} />}
+        {isDrawerOpen && editRow && (
+          <LeadViewEdit
+            key={editRow._id}
+            data={editRow}
+          />
+        )}
       </TechnoRightDrawer>
+
     </>
   );
 }
