@@ -22,6 +22,7 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { Calendar } from '@/components/ui/calendar';
 import { parse, format } from 'date-fns';
 import { toast } from 'sonner';
+import { toPascal } from '@/lib/utils';
 
 interface LeadData {
   _id: string;
@@ -144,7 +145,7 @@ export default function LeadViewEdit({ data }: { data: any }) {
         </div>
         <div className="flex gap-2">
           <p className="w-1/4  text-[#666666]">Gender</p>
-          <p>{formData.gender.charAt(0) + data.gender.slice(1).toLowerCase()}</p>
+          <p>{toPascal(formData.gender)}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4  text-[#666666]">Location</p>
