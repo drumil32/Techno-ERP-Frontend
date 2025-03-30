@@ -31,7 +31,7 @@ export default function LoginPage() {
       return response;
     },
     onSuccess: () => {
-      router.push(SITE_MAP.MARKETING);
+      router.push(SITE_MAP.HOME.DEFAULT);
     },
     onError: () => {
       setError('Invalid email or password');

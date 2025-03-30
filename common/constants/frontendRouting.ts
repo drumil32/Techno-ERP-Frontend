@@ -1,4 +1,7 @@
 export const SITE_MAP = {
+    HOME: {
+        DEFAULT: '/c/marketing/all-leads',
+    },
     MARKETING: {
         DEFAULT: '/c/marketing/all-leads',
         ALL_LEADS: '/c/marketing/all-leads',

@@ -194,4 +194,93 @@ export enum MarketingSources {
 
 export const ADMISSION = 'admissions';
 
-export const MARKETING_SHEET = 'Marketing Sheet';
+
+export const MARKETING_SHEET = 'Marketing Sheet'
+
+// Enquiry Form Stage - 1
+
+export enum AdmissionMode {
+  ONLINE = 'ONLINE',
+  OFFLINE = 'OFFLINE'
+}
+
+export enum EducationLevel {
+  Tenth = "10th",
+  Twelfth = "12th",
+  Graduation = "Graduation",
+  Others = "Others"
+}
+
+export enum Countries {
+  India = "India",
+  Pakistan = "Pakistan",
+  China = "China",
+  Nepal = "Nepal",
+  Bhutan = "Bhutan",
+  Bangladesh = "Bangladesh",
+  Myanmar = "Myanmar",
+  SriLanka = "Sri Lanka",
+  Afghanistan = "Afghanistan",
+  Maldives = "Maldives",
+  Thailand = "Thailand",
+}
+
+export enum Districts {
+  Lucknow = "Lucknow",
+  Sitapur = "Sitapur",
+  Hardoi = "Hardoi",
+  Barabanki = "Barabanki",
+  Raebareli = "Raebareli",
+  Unnao = "Unnao",
+}
+
+export enum StatesOfIndia {
+  AndhraPradesh = "Andhra Pradesh",
+  ArunachalPradesh = "Arunachal Pradesh",
+  Assam = "Assam",
+  Bihar = "Bihar",
+  Chhattisgarh = "Chhattisgarh",
+  Goa = "Goa",
+  Gujarat = "Gujarat",
+  Haryana = "Haryana",
+  HimachalPradesh = "Himachal Pradesh",
+  Jharkhand = "Jharkhand",
+  Karnataka = "Karnataka",
+  Kerala = "Kerala",
+  MadhyaPradesh = "Madhya Pradesh",
+  Maharashtra = "Maharashtra",
+  Manipur = "Manipur",
+  Meghalaya = "Meghalaya",
+  Mizoram = "Mizoram",
+  Nagaland = "Nagaland",
+  Odisha = "Odisha",
+  Punjab = "Punjab",
+  Rajasthan = "Rajasthan",
+  Sikkim = "Sikkim",
+  TamilNadu = "Tamil Nadu",
+  Telangana = "Telangana",
+  Tripura = "Tripura",
+  UttarPradesh = "Uttar Pradesh",
+  Uttarakhand = "Uttarakhand",
+  WestBengal = "West Bengal",
+}
+
+
+// Fee types
+
+export enum FeeType {
+  HOSTEL = "HOSTEL",
+  TRANSPORT = "TRANSPORT",
+  PROSPECTUS = "PROSPECTUS",
+  STUDENTID = "STUDENTID",
+  UNIFORM = "UNIFORM",
+  STUDENTWELFARE = "STUDENTWELFARE",
+  BOOKBANK = "BOOKBANK",
+  EXAMFEES = "EXAMFEES"
+}
+
+export enum FeeStatus {
+  FINAL = "FINAL",
+  DRAFT = "DRAFT"
+}
+

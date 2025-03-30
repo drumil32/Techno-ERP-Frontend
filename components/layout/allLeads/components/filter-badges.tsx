@@ -5,7 +5,7 @@ import { X } from 'lucide-react';
 import { format, parse } from 'date-fns';
 import { Course, CourseNameMapper, Locations } from '@/types/enum';
 import { Badge } from '@/components/ui/badge';
-import { toPascal } from '../../yellowLeads/final-conversion-tag';
+import { toPascal } from '@/lib/utils';
 
 type BadgeData = {
   key: string;
