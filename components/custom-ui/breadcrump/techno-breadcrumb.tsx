@@ -16,7 +16,7 @@ export default function TechnoBreadCrumb() {
   const { headerActiveItem } = useTopHeaderContext();
 
   return (
-    <Breadcrumb className="my-5">
+    <Breadcrumb className="mt-20">
       <BreadcrumbList className="text-lg">
         <BreadcrumbItem>
           <BreadcrumbLink href="/">{sidebarActiveItem}</BreadcrumbLink>
