@@ -1,3 +1,5 @@
+'use client'
+
 import { createContext, useContext, useState, useEffect } from "react";
 import { usePathname } from "next/navigation"; 
 import { SITE_MAP } from "@/common/constants/frontendRouting";

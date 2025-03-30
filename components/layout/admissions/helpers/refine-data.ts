@@ -1,3 +1,5 @@
+import logger from "@/lib/logger"
+
 const displayGender = (gender:string) => {
     if(gender=="MALE") {
         return "Male"
@@ -13,7 +15,7 @@ export const refineAdmissions = (data:any) => {
         return {
             ...admission,
             id: index+1,
-            district: admission.address.district,
+            district: admission.address?.district ?? '-',
             genderDisplay: displayGender(admission.gender),
         };
     })
