@@ -39,34 +39,36 @@ export const academicDetailSchema = z.object({
 });
 
 export const singleDocumentSchema = z.object({
-    enquiryId : z.string(),
-    type: z.nativeEnum(DocumentType),
-    documentBuffer: z.object({
-        buffer: z.instanceof(Buffer),
-        mimetype: z.string(),
-        size: z.number()
+  enquiryId: z.string(),
+  type: z.nativeEnum(DocumentType),
+  documentBuffer: z
+    .object({
+      buffer: z.instanceof(Buffer),
+      mimetype: z.string(),
+      size: z
+        .number()
         .positive()
         .max(5 * 1024 * 1024, { message: 'File size must be less than 5MB' }),
-        originalname: z.string(),
-    }).refine(
-        (file) => ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'].includes(file.mimetype),
-        { message: 'Invalid file type. Only PNG, JPG, JPEG, and PDF are allowed.' }
+      originalname: z.string()
+    })
+    .refine(
+      (file) => ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'].includes(file.mimetype),
+      { message: 'Invalid file type. Only PNG, JPG, JPEG, and PDF are allowed.' }
     )
 });
 
 export const academicDetailsArraySchema = z.array(academicDetailSchema);
 
 export const enquirySchema = z.object({
+  // Student Details
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
+  dateOfEnquiry: requestDateSchema,
   studentName: z
     .string({ required_error: 'Student Name is required' })
     .nonempty('Student Name is required'),
 
-  dateOfBirth: requestDateSchema,
-  dateOfEnquiry: requestDateSchema,
   studentPhoneNumber: contactNumberSchema,
-  gender: z.nativeEnum(Gender).default(Gender.NOT_TO_MENTION),
-
+  emailId: z.string().email('Invalid email format').optional(),
   fatherName: z
     .string({ required_error: 'Father Name is required' })
     .nonempty("Father's Name is required"),
@@ -74,7 +76,6 @@ export const enquirySchema = z.object({
   fatherOccupation: z
     .string({ required_error: 'Father occupation is required' })
     .nonempty('Father occupation is required'),
-
   motherName: z
     .string({ required_error: "Mother's Name is required" })
     .nonempty("Mother's Name is required"),
@@ -82,22 +83,20 @@ export const enquirySchema = z.object({
   motherOccupation: z
     .string({ required_error: 'Mother occupation is required' })
     .nonempty('Mother occupation is required'),
-
+  dateOfBirth: requestDateSchema,
   category: z.nativeEnum(Category),
-  address: addressSchema,
-  emailId: z.string().email('Invalid email format').optional(),
-
-  reference: z.nativeEnum(AdmissionReference),
+  gender: z.nativeEnum(Gender).default(Gender.NOT_TO_MENTION),
   course: z.nativeEnum(Course),
+  reference: z.nativeEnum(AdmissionReference),
+
+  // Address Details
+  address: addressSchema,
+
   previousCollegeData: previousCollegeDataSchema.optional(),
 
-  counsellor: z.string(),
-  remarks: z.string().optional(),
   academicDetails: academicDetailsArraySchema.optional(),
 
   applicationStatus: z.nativeEnum(ApplicationStatus).default(ApplicationStatus.STEP_1),
-
-  dateOfCounselling: requestDateSchema,
 
   studentFee: z.string().optional(),
   studentFeeDraft: z.string().optional(),
@@ -112,11 +111,36 @@ export const enquirySchema = z.object({
   religion: z.nativeEnum(Religion).optional(),
   bloodGroup: z.nativeEnum(BloodGroup).optional(),
   admittedThrough: z.nativeEnum(AdmittedThrough),
+
+  // Filled By College Details
+  dateOfCounselling: requestDateSchema,
+  remarks: z.string().optional(),
   approvedBy: z.string().optional(),
-  telecallerName: z.string().optional(),
-  counsellorName: z.string().optional(),
+  telecaller: z.string().optional(),
+  counsellor: z.string().optional()
 });
 
 export const enquiryStep1RequestSchema = enquirySchema
-  .omit({ studentFee: true, dateOfAdmission: true, bloodGroup: true, admittedThrough: true, aadharNumber: true, religion: true, previousCollegeData: true, documents: true })
+  .omit({
+    studentFee: true,
+    dateOfAdmission: true,
+    bloodGroup: true,
+    admittedThrough: true,
+    aadharNumber: true,
+    religion: true,
+    previousCollegeData: true,
+    documents: true,
+    applicationStatus: true
+  })
   .strict();
+
+  export const enquiryDraftStep1RequestSchema = enquiryStep1RequestSchema
+  .extend({
+    studentName: z.string({ required_error: "Student Name is required", }).nonempty('Student Name is required'),
+    studentPhoneNumber: contactNumberSchema,
+    counsellor: z.string().optional(),
+    telecaller: z.string().optional(),
+    dateOfCounselling: requestDateSchema.optional(),
+    address: addressSchema.partial().optional(),
+    academicDetails: z.array(academicDetailSchema.partial()).optional(),
+  }).partial().strip();

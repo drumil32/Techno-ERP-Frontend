@@ -43,22 +43,22 @@ export const updateEnquiryDraft = async (data: any) => {
 
 export const updateEnquiryStatus = async (data: any) => {
     return apiRequest(
-        API_METHODS.POST,
+        API_METHODS.PUT,
         API_ENDPOINTS.updateEnquiryStatus,
         data
     );
 }
 
-export const teleCallerNames = async () => {
+export const getTeleCallers = async () => {
     return apiRequest(
         API_METHODS.GET,
-        API_ENDPOINTS.fetchAssignedToDropdown
+        API_ENDPOINTS.fetchTeleCallersDropdown
     );
 }
 
-export const counsellorNames = async () => {
+export const getCounsellors = async () => {
     return apiRequest(
         API_METHODS.GET,
-        API_ENDPOINTS.fetchAssignedToDropdown
+        API_ENDPOINTS.fetchCounsellorsDropdown
     );
 }

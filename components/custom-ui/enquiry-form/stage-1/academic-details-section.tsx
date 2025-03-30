@@ -173,6 +173,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
               </div>
 
               <div className="space-y-4">
+                
                 {/* Subheading */}
                 <h4 className="font-inter  text-[16px] font-semibold">12th</h4>
 

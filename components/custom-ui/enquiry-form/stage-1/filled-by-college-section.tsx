@@ -23,21 +23,27 @@ import { CalendarDaysIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 
+interface UserRoleInterface {
+  _id: string;
+  name: string;
+  email : string;
+}
+
 // Props Interface
 interface FilledByCollegeSectionInterface {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
   commonFieldClass: string;
-  telecallerNames: string[];
-  counsellorNames: string[];
+  telecallers: UserRoleInterface[];
+  counsellors: UserRoleInterface[];
 }
 
 const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   form,
   commonFieldClass,
   commonFormItemClass,
-  telecallerNames,
-  counsellorNames
+  telecallers,
+  counsellors
 }) => {
   return (
     <Accordion type="single" collapsible>
@@ -61,14 +67,14 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                       Counsellor’s Name
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select Counseller's Name" />
                         </SelectTrigger>
                         <SelectContent>
-                          {counsellorNames?.map((name) => (
-                            <SelectItem key={name} value={name}>
-                              {name}
+                          {counsellors?.map((counsellor,index) => (
+                            <SelectItem key={index} value={counsellor._id}>
+                              {counsellor.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -80,23 +86,23 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
               />
 
               <FormField
-                key="telecallerName"
+                key="telecaller"
                 control={form.control}
-                name="telecallerName"
+                name="telecaller"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                       Telecaller’s Name
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select Telecaller’s Name" />
                         </SelectTrigger>
                         <SelectContent>
-                          {telecallerNames?.map((name) => (
-                            <SelectItem key={name} value={name}>
-                              {name}
+                          {telecallers?.map((telecaller,index) => (
+                            <SelectItem key={index} value={telecaller._id}>
+                              {telecaller.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -108,13 +114,13 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
               />
 
               <FormField
-                key="dateOfEnquiry"
+                key="dateOfCounselling"
                 control={form.control}
-                name="dateOfEnquiry"
+                name="dateOfCounselling"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                      Date
+                      Date of Counselling
                     </FormLabel>
                     <FormControl>
                       <Popover>

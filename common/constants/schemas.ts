@@ -11,12 +11,15 @@ export const requestDateSchema = z
 export const addressSchema = z.object({
   addressLine1: z.string().min(5, 'Permanent address must be at least 5 characters'),
   addressLine2: z.string().optional(),
-  district: z.string(),
   pincode: z
-    .string()
+  .string()
     .regex(/^[1-9][0-9]{5}$/, 'Pincode must be a 6-digit number starting with a non-zero digit'),
-  state: z.string(),
-  country: z.string()
+  
+  
+  district: z.string().nonempty('District is required'),
+  state: z.string().nonempty('State is required'),
+  country: z.string().nonempty('Country is required')
+  
 });
 
 export const previousCollegeDataSchema = z.object({

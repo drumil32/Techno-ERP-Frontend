@@ -40,4 +40,7 @@ export const API_ENDPOINTS = {
   updateEnquiryDraft: `${API_DOMAIN}/admission/enquiry/update-draft-step-1`,
 
   updateEnquiryStatus: `${API_DOMAIN}/admission/enquiry/update-status`,
+
+  fetchTeleCallersDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=ADMISSION`,
+  fetchCounsellorsDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=COUNSELOR&moduleName=ADMISSION`,
 };

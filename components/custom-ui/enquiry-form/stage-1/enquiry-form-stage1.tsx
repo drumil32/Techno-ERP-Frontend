@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { enquiryStep1RequestSchema } from './schema';
+import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from './schema';
 import {
   AdmissionMode,
   AdmissionReference,
@@ -15,28 +15,35 @@ import {
 } from '@/static/enum';
 import { Form } from '@/components/ui/form';
 
-// Custom Components 
+// Custom Components
 import EnquiryFormFooter from './enquiry-form-footer-section';
 import StudentDetailsForm from './student-details-section';
 import AddressDetailsSection from './address-details-section';
 import AcademicDetailsSection from './academic-details-section';
 import FilledByCollegeSection from './filled-by-college-section';
 import ConfirmationCheckBox from './confirmation-check-box';
-import { useQuery } from '@tanstack/react-query';
-import { counsellorNames, createEnquiry, createEnquiryDraft, getEnquiry, teleCallerNames, updateEnquiryStatus } from './enquiry-form-api';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import {
+  createEnquiry,
+  createEnquiryDraft,
+  getCounsellors,
+  getEnquiry,
+  getTeleCallers,
+  updateEnquiryStatus
+} from './enquiry-form-api';
 import { useSearchParams } from 'next/navigation';
 
 // Form Schema
 const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
-  confirmation: z.boolean().refine(value => value === true, {
-    message: "You must confirm to proceed."
+  confirmation: z.boolean().refine((value) => value === true, {
+    message: 'You must confirm to proceed.'
   })
 });
 
 const EnquiryFormStage1 = () => {
-  
+  // Get the enquiry / draft id from the URL
   const searchParams = useSearchParams();
-  const enquiry_id = searchParams.get('enquiry_id');
+  const id = searchParams.get('id');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -93,48 +100,89 @@ const EnquiryFormStage1 = () => {
           subjects: []
         }
       ],
-      applicationStatus: ApplicationStatus.STEP_1,
-      approvedBy: '',
-      telecallerName: '',
-      confirmation: false
+      telecaller: '',
+      confirmation: false,
+      dateOfCounselling: ''
     }
   });
 
   const { data, isError, isLoading, isPending } = useQuery({
-    queryKey: ['enquiryFormData', enquiry_id],
-    queryFn: () => enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null'),
+    queryKey: ['enquiryFormData', id],
+    queryFn: () => getEnquiry(id ? id : ''),
+    enabled: !!id
   });
 
   useEffect(() => {
     if (data) {
-      form.reset(data);
+      // Automatically remove extra fields not defined in the schema
+      const parsedData = enquiryStep1RequestSchema.parse(data);
+      form.reset(parsedData);
     }
   }, [data, form]);
 
-  const { data: telecallerNamesData } = useQuery({
-    queryKey: ['telecallerNames'],
-    queryFn: teleCallerNames,
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ['telecallers'],
+        queryFn: getTeleCallers
+      },
+      {
+        queryKey: ['counsellors'],
+        queryFn: getCounsellors
+      }
+    ]
   });
 
-  const { data: counsellorNamesData } = useQuery({
-    queryKey: ['counsellorNames'],
-    queryFn: counsellorNames,
-  });
+  const telecallersData = results[0].data ?? [];
+  const counsellorsData = results[1].data ?? [];
 
   const commonFormItemClass = 'col-span-1 gap-y-0';
   const commonFieldClass = '';
 
   async function saveDraft() {
-    console.log('Draft saved with values:', form.getValues());
-    // await createEnquiryDraft(form.getValues());
+    const values = form.getValues();
+
+    // Validate values against enquiryDraftStep1RequestSchema
+    const validationResult = enquiryDraftStep1RequestSchema.safeParse(values);
+
+    if (!validationResult.success) {
+      
+      const errors = validationResult.error.format();
+      form.setError('root', {
+        type: 'manual',
+        message: 'Validation failed. Please check the form fields.'
+      });
+
+      Object.keys(errors).forEach((key) => {
+        if (key !== '_errors') {
+          if (key in errors) {
+            form.setError(key as keyof typeof values, {
+              type: 'manual',
+              message: errors[key]?.["_errors"][0] || 'Invalid value'
+            });
+          }
+        }
+      });
+
+      return;
+    }
+
+    // remove confirmation field from values
+    const { confirmation, ...rest } = values;
+
+    console.log('Draft saved with values:', rest);
+    await createEnquiryDraft(rest);
+    
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log('Form submitted with values:', values);
-    await createEnquiry(values);
+    // remove confirmation field from values
+    const { confirmation, ...rest } = values;
+
+    const enquiry: any = await createEnquiry(rest);
     await updateEnquiryStatus({
-      enquiry_id: enquiry_id,
-      status: ApplicationStatus.STEP_2
+      id: enquiry?._id,
+      newStatus: ApplicationStatus.STEP_2
     });
     form.reset();
   }
@@ -171,8 +219,8 @@ const EnquiryFormStage1 = () => {
           form={form}
           commonFieldClass={commonFieldClass}
           commonFormItemClass={commonFormItemClass}
-          telecallerNames={Array.isArray(telecallerNamesData) ? telecallerNamesData : []}
-          counsellorNames={Array.isArray(counsellorNamesData) ? counsellorNamesData : []}
+          telecallers={Array.isArray(telecallersData) ? telecallersData : []}
+          counsellors={Array.isArray(counsellorsData) ? counsellorsData : []}
         />
 
         {/* Confirmation Check box */}
