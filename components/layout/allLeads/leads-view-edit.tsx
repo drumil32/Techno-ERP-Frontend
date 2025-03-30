@@ -49,7 +49,7 @@ interface FormErrors {
   nextDueDate?: string;
 }
 
-export default function LeadViewEdit({ data } : any) {
+export default function LeadViewEdit({ data }: any) {
   const [formData, setFormData] = useState<LeadData | null>(null);
   const [originalData, setOriginalData] = useState<LeadData | null>(null);
   const [isEditing, toggleIsEditing] = useState(false)
@@ -69,7 +69,7 @@ export default function LeadViewEdit({ data } : any) {
 
     try {
       const tempData = { ...formData, [name]: value };
-      
+
       const validationData = {
         _id: tempData._id,
         name: tempData.name,
@@ -84,26 +84,30 @@ export default function LeadViewEdit({ data } : any) {
         nextDueDate: tempData.nextDueDate
       };
 
-      setErrors({});
+      // First, validate the entire schema
       updateLeadRequestSchema.parse(validationData);
-      
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[name as keyof FormErrors];
+
+      // If validation passes, remove any existing error for this field
+      setErrors((prevErrors: any) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[name];
         return newErrors;
       });
+
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const fieldError = error.errors.find(e => e.path.includes(name));
-        if (fieldError) {
-          setErrors(prev => ({
-            ...prev,
-            [name]: fieldError.message
-          }));
-        }
+        // Collect all field errors
+        const newErrors: FormErrors = { ...errors }; // Preserve existing errors
+        error.errors.forEach((err) => {
+          const key = err.path[0] as keyof FormErrors;
+          newErrors[key] = err.message;
+        });
+
+        setErrors(newErrors);
       }
     }
   };
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -118,7 +122,7 @@ export default function LeadViewEdit({ data } : any) {
 
   const handleDateChange = (date: Date | undefined) => {
     if (!date) return;
-    
+
     const formattedDate = format(date, 'dd/MM/yyyy');
     setFormData((prev) => (prev ? { ...prev, nextDueDate: formattedDate } : null));
     validateField('nextDueDate', formattedDate);
@@ -137,10 +141,10 @@ export default function LeadViewEdit({ data } : any) {
 
   const hasChanges = () => {
     if (!formData || !originalData) return false;
-    
+
     const allowedFields = [
       'name',
-      'phoneNumber', 
+      'phoneNumber',
       'altPhoneNumber',
       'email',
       'gender',
@@ -150,7 +154,7 @@ export default function LeadViewEdit({ data } : any) {
       'remarks',
       'nextDueDate'
     ];
-    
+
     return allowedFields.some(field => {
       const origValue = originalData[field] || '';
       const newValue = formData[field] || '';
@@ -443,9 +447,9 @@ export default function LeadViewEdit({ data } : any) {
       </div>
 
       <div className="flex flex-col gap-2">
-          <p className="text-[#666666]">Last Modified Date</p>
-          <p>{formData.leadTypeModifiedDate}</p>
-        </div>
+        <p className="text-[#666666]">Last Modified Date</p>
+        <p>{formData.leadTypeModifiedDate}</p>
+      </div>
     </>
   );
 
@@ -468,8 +472,8 @@ export default function LeadViewEdit({ data } : any) {
             >
               Cancel
             </Button>
-            <Button 
-              onClick={handleSubmit} 
+            <Button
+              onClick={handleSubmit}
               disabled={isSubmitting || Object.keys(errors).length > 0}
             >
               {isSubmitting ? (

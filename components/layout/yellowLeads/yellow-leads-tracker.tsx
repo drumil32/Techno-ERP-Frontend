@@ -28,12 +28,6 @@ export default function YellowLeadsTracker() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editRow, setEditRow] = useState<any>(null);
 
-  const [isEditing, setIsEditing] = useState(false);  
-
-  const toggleIsEditing = () => {
-    setIsEditing(prev => !prev)
-  }
-
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [orderBy, setOrderBy] = useState<string>('asc');
 

@@ -33,13 +33,18 @@ interface FormErrors {
   nextDueDate?: string;
 }
 
-// Define schema for validation - only validate fields that are provided
+export const contactNumberSchema = z
+  .string()
+  .regex(/^[1-9]\d{9}$/, 'Invalid contact number format. Expected: 1234567890');
+
 const updateLeadRequestSchema = z.object({
   _id: z.string(),
-  name: z.string().min(3, "Name must be at least 3 characters").optional(),
-  phoneNumber: z.string().regex(/^\d{10}$/, "Phone number must be 10 digits").optional(),
-  altPhoneNumber: z.string().regex(/^\d{10}$/, "Alt phone number must be 10 digits").optional().or(z.literal('')),
-  email: z.string().email("Invalid email format").optional(),
+  name: z.string().min(1, 'Name field is required').optional(),
+  phoneNumber: contactNumberSchema
+    .optional(),
+  altPhoneNumber: contactNumberSchema
+    .optional(),
+  email: z.string().email('Invalid Email Format').optional(),
   gender: z.string().optional(),
   location: z.string().optional(),
   course: z.string().optional(),
@@ -49,7 +54,7 @@ const updateLeadRequestSchema = z.object({
   nextDueDate: z.string().optional()
 }).strict();
 
-export default function YellowLeadViewEdit({ data }:  any) {
+export default function YellowLeadViewEdit({ data }: any) {
   const [formData, setFormData] = useState<YellowLead | null>(null);
   const [originalData, setOriginalData] = useState<YellowLead | null>(null);
   const [isEditing, toggleIsEditing] = useState(false)
@@ -68,63 +73,46 @@ export default function YellowLeadViewEdit({ data }:  any) {
   const validateField = (name: string, value: any) => {
     if (!formData) return;
 
-    // Only validate fields that have been changed
-    if (value === originalData?.[name as keyof YellowLead]) {
-      // If value is the same as original, remove from changedFields and clear error
-      setChangedFields(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(name);
-        return newSet;
-      });
-      
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[name as keyof FormErrors];
-        return newErrors;
-      });
-      
-      return;
-    }
-
-    // Add to changedFields if it's different from original
-    setChangedFields(prev => {
-      const newSet = new Set(prev);
-      newSet.add(name);
-      return newSet;
-    });
-
     try {
-      // Only validate the specific field
-      if (name === 'name' && value) {
-        updateLeadRequestSchema.shape.name.parse(value);
-      } else if (name === 'phoneNumber' && value) {
-        updateLeadRequestSchema.shape.phoneNumber.parse(value);
-      } else if (name === 'altPhoneNumber') {
-        // Special case for altPhoneNumber which can be empty
-        if (value) {
-          updateLeadRequestSchema.shape.altPhoneNumber.parse(value);
-        }
-      } else if (name === 'email' && value) {
-        updateLeadRequestSchema.shape.email.parse(value);
+
+      const tempData = { ...formData, [name]: value };
+
+      const validationData = {
+        _id: tempData._id,
+        name: tempData.name,
+        phoneNumber: tempData.phoneNumber,
+        altPhoneNumber: tempData.altPhoneNumber,
+        email: tempData.email,
+        gender: tempData.gender,
+        location: tempData.location,
+        course: tempData.course,
+        campusVisit: tempData.campusVisit,
+        finalConversion: tempData.finalConversion,
+        remarks: tempData.remarks,
+        nextDueDate: tempData.nextDueDate
+
       }
-      
-      // Clear error for this field if validation passes
-      setErrors(prev => {
-        const newErrors = { ...prev };
-        delete newErrors[name as keyof FormErrors];
+
+      updateLeadRequestSchema.parse(validationData)
+
+      setErrors((prevErrors: any) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[name];
         return newErrors;
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const fieldError = error.errors.find(e => e.path.includes(name));
-        if (fieldError) {
-          setErrors(prev => ({
-            ...prev,
-            [name]: fieldError.message
-          }));
-        }
+        // Collect all field errors
+        const newErrors: FormErrors = { ...errors }; // Preserve existing errors
+        error.errors.forEach((err) => {
+          const key = err.path[0] as keyof FormErrors;
+          newErrors[key] = err.message;
+        });
+
+        setErrors(newErrors);
       }
     }
+
   };
 
   const parseDateString = (dateString?: string): Date | undefined => {
@@ -150,15 +138,45 @@ export default function YellowLeadViewEdit({ data }:  any) {
 
   const handleDateChange = (date: Date | undefined) => {
     if (!date) return;
-    
+
     const formattedDate = format(date, 'dd/MM/yyyy');
     setFormData((prev) => (prev ? { ...prev, nextDueDate: formattedDate } : null));
     validateField('nextDueDate', formattedDate);
     setIsCalendarOpen(false);
   };
 
+  const hasChanges = () => {
+    if (!formData || !originalData) return false;
+
+    const allowedFields = [
+      'name',
+      'phoneNumber',
+      'altPhoneNumber',
+      'email',
+      'gender',
+      'location',
+      'course',
+      'leadType',
+      'remarks',
+      'nextDueDate'
+    ];
+
+    return allowedFields.some((field: any) => {
+      const origValue = originalData[field] || '';
+      const newValue = formData[field] || '';
+      return origValue !== newValue;
+    });
+  };
+
+
   const handleSubmit = async () => {
     if (!formData) return;
+
+    if (!hasChanges()) {
+      toast.info('No changes to save');
+      toggleIsEditing(false);
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -177,81 +195,46 @@ export default function YellowLeadViewEdit({ data }:  any) {
         'nextDueDate'
       ];
 
-      const updateData: Record<string, any> = { _id: formData._id };
-      
-      changedFields.forEach(field => {
-        if (allowedFields.includes(field)) {
-          updateData[field] = formData[field as keyof YellowLead];
-        }
-      });
 
-      
-      if (changedFields.has('campusVisit')) {
-        updateData.campusVisit = updateData.campusVisit === CampusVisitStatus.true ? true : false;
-      }
+      const filteredData = Object.fromEntries(
+        Object.entries(formData).filter(([key]) => allowedFields.includes(key))
+      );
 
-      if (Object.keys(updateData).length <= 1) {
-        toast.info('No changes to save');
-        toggleIsEditing(false);
-        return;
-      }
-
-      
-      const fieldsToValidate = Object.keys(updateData);
-      let hasValidationErrors = false;
-      
-      fieldsToValidate.forEach(field => {
-        try {
-          if (field === 'name' && updateData.name) {
-            updateLeadRequestSchema.shape.name.parse(updateData.name);
-          } else if (field === 'phoneNumber' && updateData.phoneNumber) {
-            updateLeadRequestSchema.shape.phoneNumber.parse(updateData.phoneNumber);
-          } else if (field === 'altPhoneNumber') {
-            if (updateData.altPhoneNumber) {
-              updateLeadRequestSchema.shape.altPhoneNumber.parse(updateData.altPhoneNumber);
-            }
-          } else if (field === 'email' && updateData.email) {
-            updateLeadRequestSchema.shape.email.parse(updateData.email);
-          }
-        } catch (error) {
-          if (error instanceof z.ZodError) {
-            const fieldError = error.errors.find(e => e.path.includes(field));
-            if (fieldError) {
-              setErrors(prev => ({
-                ...prev,
-                [field]: fieldError.message
-              }));
-              hasValidationErrors = true;
-            }
-          }
-        }
-      });
-
-      if (hasValidationErrors) {
+      const validation = updateLeadRequestSchema.safeParse(filteredData);
+      if (!validation.success) {
+        const newErrors: FormErrors = {};
+        validation.error.errors.forEach((err) => {
+          const key = err.path[0] as keyof FormErrors;
+          newErrors[key] = err.message;
+        });
+        setErrors(newErrors);
         toast.error('Please fix the errors in the form');
         return;
       }
 
+
+      filteredData.campusVisit = filteredData.campusVisit === 'YES';
+
+
+      console.log(filteredData)
+
       const response = await apiRequest(
         API_METHODS.PUT,
         API_ENDPOINTS.updateYellowLead,
-        updateData
+        filteredData
       );
 
+      console.log(response)
+
       if (response) {
-        toast.success('Updated Yellow Lead Successfully');
-        // Update the original data with new values
+        toast.success('Updated Lead Successfully');
         setOriginalData(formData);
-        // Clear the changed fields
-        setChangedFields(new Set());
       } else {
-        // Revert to original data if update fails
         setFormData(originalData);
-        toast.error('Failed to update lead');
       }
-      
       toggleIsEditing(false);
       setErrors({});
+
     } catch (err) {
       console.error('Error updating lead:', err);
       toast.error('An error occurred while updating the lead');
@@ -259,7 +242,7 @@ export default function YellowLeadViewEdit({ data }:  any) {
       setIsSubmitting(false);
     }
   };
-  
+
   if (!formData) return <div>Loading...</div>;
 
   // Render read-only view
@@ -333,7 +316,7 @@ export default function YellowLeadViewEdit({ data }:  any) {
           name="name"
           value={formData.name || ''}
           onChange={handleChange}
-          className="rounded-[5px]"
+          className={`rounded-[5px] ${errors.name ? 'border-red-500' : ''}`}
         />
         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
       </div>
@@ -346,7 +329,7 @@ export default function YellowLeadViewEdit({ data }:  any) {
             name="phoneNumber"
             value={formData.phoneNumber || ''}
             onChange={handleChange}
-            className="rounded-[5px]"
+            className={`rounded-[5px] ${errors.phoneNumber ? 'border-red-500' : ''}`}
           />
           {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
         </div>
@@ -358,7 +341,7 @@ export default function YellowLeadViewEdit({ data }:  any) {
             name="altPhoneNumber"
             value={formData.altPhoneNumber || ''}
             onChange={handleChange}
-            className="rounded-[5px]"
+            className={`rounded-[5px] ${errors.altPhoneNumber ? 'border-red-500' : ''}`}
           />
           {errors.altPhoneNumber && <p className="text-red-500 text-xs mt-1">{errors.altPhoneNumber}</p>}
         </div>
@@ -372,7 +355,7 @@ export default function YellowLeadViewEdit({ data }:  any) {
           type="email"
           value={formData.email || ''}
           onChange={handleChange}
-          className="rounded-[5px]"
+          className={`rounded-[5px] ${errors.email ? 'border-red-500' : ''}`}
         />
         {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
       </div>
@@ -489,7 +472,7 @@ export default function YellowLeadViewEdit({ data }:  any) {
       </div>
 
       <div className="space-y-2 w-1/2">
-        <EditLabel htmlFor="nextDueDate" title={'Next Due Date'} />
+        <EditLabel htmlFor="nextDueDate" title={'Next Call Date'} />
         <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
           <PopoverTrigger asChild>
             <Button variant="outline" className="w-full justify-start text-left pl-20">
@@ -531,8 +514,8 @@ export default function YellowLeadViewEdit({ data }:  any) {
             >
               Cancel
             </Button>
-            <Button 
-              onClick={handleSubmit} 
+            <Button
+              onClick={handleSubmit}
               disabled={isSubmitting || Object.keys(errors).length > 0}
             >
               {isSubmitting ? (
@@ -549,7 +532,23 @@ export default function YellowLeadViewEdit({ data }:  any) {
       ) : (
         <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
           <div className="w-full flex">
-            <Button onClick={() => toggleIsEditing(true)} className="ml-auto" icon={Pencil}>
+            <Button
+              onClick={() => {
+                // Validate critical fields before entering edit mode
+                if (formData) {
+                  ['name', 'phoneNumber', 'email'].forEach(field => {
+                    validateField(field, formData[field as keyof YellowLead]);
+                  });
+                  // If altPhoneNumber has a value, validate it too
+                  if (formData.altPhoneNumber) {
+                    validateField('altPhoneNumber', formData.altPhoneNumber);
+                  }
+                }
+                toggleIsEditing(true);
+              }}
+              className="ml-auto"
+              icon={Pencil}
+            >
               Edit Lead
             </Button>
           </div>

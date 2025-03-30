@@ -18,4 +18,6 @@ export interface YellowLead {
   date: string; // DD/MM/YYYY format
   ltcDate: string; // DD/MM/YYYY format
   nextDueDate: string; // DD/MM/YYYY format
+  [key: string]: any;
+
 }
