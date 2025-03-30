@@ -29,6 +29,7 @@ import {
   getCounsellors,
   getEnquiry,
   getTeleCallers,
+  updateEnquiry,
   updateEnquiryStatus
 } from './enquiry-form-api';
 import { useSearchParams } from 'next/navigation';
@@ -49,60 +50,11 @@ const EnquiryFormStage1 = () => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       admissionMode: AdmissionMode.ONLINE,
-      dateOfBirth: '',
-      dateOfEnquiry: '',
-      studentPhoneNumber: '',
-      studentName: '',
       gender: Gender.NOT_TO_MENTION,
-      fatherName: '',
-      fatherPhoneNumber: '',
-      fatherOccupation: '',
-      motherName: '',
-      motherPhoneNumber: '',
-      motherOccupation: '',
       category: Category.GENERAL,
-      address: {
-        addressLine1: '',
-        addressLine2: '',
-        district: '',
-        state: '',
-        pincode: '',
-        country: ''
-      },
-      emailId: '',
       reference: AdmissionReference.Advertising,
       course: Course.BCOM,
-      counsellor: '',
-      remarks: '',
-      academicDetails: [
-        {
-          educationLevel: EducationLevel.Tenth,
-          schoolCollegeName: '',
-          universityBoardName: '',
-          passingYear: 0,
-          percentageObtained: 0,
-          subjects: []
-        },
-        {
-          educationLevel: EducationLevel.Twelfth,
-          schoolCollegeName: '',
-          universityBoardName: '',
-          passingYear: 0,
-          percentageObtained: 0,
-          subjects: []
-        },
-        {
-          educationLevel: EducationLevel.Graduation,
-          schoolCollegeName: '',
-          universityBoardName: '',
-          passingYear: 0,
-          percentageObtained: 0,
-          subjects: []
-        }
-      ],
-      telecaller: '',
-      confirmation: false,
-      dateOfCounselling: ''
+      confirmation: false
     }
   });
 
@@ -114,9 +66,7 @@ const EnquiryFormStage1 = () => {
 
   useEffect(() => {
     if (data) {
-      // Automatically remove extra fields not defined in the schema
-      const parsedData = enquiryStep1RequestSchema.parse(data);
-      form.reset(parsedData);
+      form.reset(data);
     }
   }, [data, form]);
 
@@ -142,43 +92,68 @@ const EnquiryFormStage1 = () => {
   async function saveDraft() {
     const values = form.getValues();
 
-    // Validate values against enquiryDraftStep1RequestSchema
-    const validationResult = enquiryDraftStep1RequestSchema.safeParse(values);
+    // Pick only the present fields from schema
+    const schemaKeys = Object.keys(enquiryDraftStep1RequestSchema.shape);
+    const filteredKeys = Object.keys(values).filter((key) => schemaKeys.includes(key));
+
+    const partialSchema = enquiryDraftStep1RequestSchema.pick(
+      filteredKeys.reduce(
+        (acc, key) => {
+          acc[key as keyof typeof enquiryDraftStep1RequestSchema.shape] = true;
+          return acc;
+        },
+        {} as Partial<Record<keyof typeof enquiryDraftStep1RequestSchema.shape, true>>
+      )
+    );
+
+    const validationResult = partialSchema.safeParse(values);
+
+    // Clear previous errors before setting new ones
+    form.clearErrors();
 
     if (!validationResult.success) {
-      
       const errors = validationResult.error.format();
+
       form.setError('root', {
         type: 'manual',
         message: 'Validation failed. Please check the form fields.'
       });
 
-      Object.keys(errors).forEach((key) => {
-        if (key !== '_errors') {
-          if (key in errors) {
-            form.setError(key as keyof typeof values, {
-              type: 'manual',
-              message: errors[key]?.["_errors"][0] || 'Invalid value'
-            });
+      // Recursive function to set errors for nested fields
+      function setNestedErrors(errorObj: any, path = '') {
+        Object.entries(errorObj).forEach(([key, value]) => {
+          if (key === '_errors') {
+            if (Array.isArray(value) && value.length > 0) {
+              form.setError(path as keyof typeof values, {
+                type: 'manual',
+                message: value[0] || 'Invalid value'
+              });
+            }
+          } else if (typeof value === 'object' && value !== null) {
+            setNestedErrors(value, path ? `${path}.${key}` : key);
           }
-        }
-      });
+        });
+      }
 
+      setNestedErrors(errors);
       return;
     }
 
-    // remove confirmation field from values
+    // Remove confirmation field from values
     const { confirmation, ...rest } = values;
 
-    console.log('Draft saved with values:', rest);
-    await createEnquiryDraft(rest);
-    
+    if (!id) {
+      await createEnquiryDraft(rest);
+    } else {
+      await updateEnquiry({ ...rest, id });
+    }
+
+    form.setValue('confirmation', false);
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // remove confirmation field from values
     const { confirmation, ...rest } = values;
-
     const enquiry: any = await createEnquiry(rest);
     await updateEnquiryStatus({
       id: enquiry?._id,
