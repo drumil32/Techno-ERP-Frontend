@@ -262,7 +262,6 @@ const AdminTracker = () => {
     data
   ]);
 
-  if (!data) return <p className="text-center text-gray-500">No data available</p>;
 
   return (
     <>
@@ -278,37 +277,41 @@ const AdminTracker = () => {
         appliedFilters={appliedFilters}
       />
 
-      {/* Total Leads Reached Section */}
-      <div className="mt-[32px]">
-        <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-          Total number of leads reached
-        </h1>
-        {totalLeadsReached && <TechnoAnalyticCardsGroup cardsData={totalLeadsReached} />}
-      </div>
+      {data &&
+        <>
+          {/* Total Leads Reached Section */}
+          <div className="mt-[32px]">
+            <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+              Total number of leads reached
+            </h1>
+            {totalLeadsReached && <TechnoAnalyticCardsGroup cardsData={totalLeadsReached} />}
+          </div>
 
-      {/* Yellow Leads Conversion Section */}
-      <div className="mt-[32px]">
-        <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-          How many leads were converted to Yellow Leads?
-        </h1>
-        {yellowLeadsConverted && <TechnoAnalyticCardsGroup cardsData={yellowLeadsConverted} />}
-      </div>
+          {/* Yellow Leads Conversion Section */}
+          <div className="mt-[32px]">
+            <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+              How many leads were converted to Yellow Leads?
+            </h1>
+            {yellowLeadsConverted && <TechnoAnalyticCardsGroup cardsData={yellowLeadsConverted} />}
+          </div>
 
-      {/* Yellow Leads Campus Visit Section */}
-      <div className="mt-[32px]">
-        <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-          How many Yellow leads visited the campus?
-        </h1>
-        {yellowLeadsVisited && <TechnoAnalyticCardsGroup cardsData={yellowLeadsVisited} />}
-      </div>
+          {/* Yellow Leads Campus Visit Section */}
+          <div className="mt-[32px]">
+            <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+              How many Yellow leads visited the campus?
+            </h1>
+            {yellowLeadsVisited && <TechnoAnalyticCardsGroup cardsData={yellowLeadsVisited} />}
+          </div>
 
-      {/* Final Campus Conversion Section */}
-      <div className="mt-[32px] mb-[68px]">
-        <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-          Final conversion from those who visited the campus
-        </h1>
-        {finalCampusConversion && <TechnoAnalyticCardsGroup cardsData={finalCampusConversion} />}
-      </div>
+          {/* Final Campus Conversion Section */}
+          <div className="mt-[32px] mb-[68px]">
+            <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+              Final conversion from those who visited the campus
+            </h1>
+            {finalCampusConversion && <TechnoAnalyticCardsGroup cardsData={finalCampusConversion} />}
+          </div>
+        </>
+      }
     </>
   );
 };

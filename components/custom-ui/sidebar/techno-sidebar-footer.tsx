@@ -1,9 +1,33 @@
+'use client'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useHoverContext } from './hover-context';
 import TechnoSidebarItem from './techno-sidebar-item';
 import { LogOut } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import { API_METHODS } from '@/common/constants/apiMethods';
+import { useRouter } from 'next/navigation';
 
 export default function TechnoSidebarFooter() {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    const res = await fetch(API_ENDPOINTS.logout, {
+      method: API_METHODS.GET,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    })
+    const data = await res.json();
+
+    if (data &&
+      data.SUCCESS === true) {
+      console.log("User is authenticated, redirecting to home");
+      router.replace("/auth/login");
+    }
+  }
   const hovered = useHoverContext();
   return (
     <>
@@ -14,7 +38,7 @@ export default function TechnoSidebarFooter() {
           <AvatarFallback></AvatarFallback>
         </Avatar>
       )}
-      <TechnoSidebarItem icon={LogOut} text="Logout" />
+      <TechnoSidebarItem icon={LogOut} text="Logout" onClick={handleLogout}/>
     </>
   );
 }

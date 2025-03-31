@@ -11,6 +11,7 @@ export default function AppLayout() {
   return (
     <HoverContext.Provider value={hovered}>
       <SidebarProvider>
+        <div className='w-screen h-[53px] bg-white absolute border-b border-gray-300 '></div>
         <div className="flex h-screen w-full overflow-hidden">
           <aside
             className={`fixed left-0 top-0 h-full bg-primary text-white transition-all duration-300 flex flex-col items-center py-6 px-2  rounded-r-4xl shadow-lg gap-8 ${
@@ -24,7 +25,7 @@ export default function AppLayout() {
 
           <main
             className={`flex-1 overflow-y-auto transition-all duration-300 bg-[#FAFAFA] ${
-              hovered ? 'pl-80' : 'pl-24'
+              hovered ? 'pl-80' : 'pl-20'
             }`}
           >
             <ContentRenderer />

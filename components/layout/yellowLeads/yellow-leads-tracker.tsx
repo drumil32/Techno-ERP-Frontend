@@ -2,28 +2,24 @@ import TechnoAnalyticCardsGroup from '../../custom-ui/analytic-card/techno-analy
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
-import TechnoLeadTypeTag, {
-  TechnoLeadType
-} from '../../custom-ui/lead-type-tag/techno-lead-type-tag';
 import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
-import { Course, finalConversion, Locations } from '@/static/enum';
+import { Course,  Locations } from '@/static/enum';
 import {
   fetchAssignedToDropdown,
   fetchYellowLeads,
   fetchYellowLeadsAnalytics
 } from './helpers/fetch-data';
 import { refineAnalytics, refineLeads } from './helpers/refine-data';
-import LeadViewEdit from '../allLeads/leads-view-edit';
-import logger from '@/lib/logger';
 import CampusVisitTag, { CampusVisitStatus } from './campus-visit-tag';
 import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
 import FilterBadges from '../allLeads/components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import YellowLeadViewEdit from './yellow-view-edit';
 import { toast } from 'sonner';
+
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -218,8 +214,8 @@ export default function YellowLeadsTracker() {
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'gender', header: 'Gender' },
-    { accessorKey: 'location', header: 'Location' },
-    { accessorKey: 'course', header: 'Course' },
+    { accessorKey: 'locationView', header: 'Location' },
+    { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'campusVisit',
       header: 'Campus Visit',
@@ -227,7 +223,7 @@ export default function YellowLeadsTracker() {
         <CampusVisitTag status={row.original.campusVisit as CampusVisitStatus} />
       )
     },
-    { accessorKey: 'nextDueDate', header: 'Next Call Date' },
+    { accessorKey: 'nextDueDateView', header: 'Next Call Date' },
     {
       accessorKey: 'finalConversion',
       header: 'Final Conversion',
@@ -235,7 +231,7 @@ export default function YellowLeadsTracker() {
         <FinalConversionTag status={row.original.finalConversion as FinalConversionStatus} />
       )
     },
-    { accessorKey: 'remarks', header: 'Remarks' },
+    { accessorKey: 'remarksView', header: 'Remarks' },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
     {
       id: 'actions',
@@ -243,6 +239,7 @@ export default function YellowLeadsTracker() {
       cell: ({ row }: any) => (
         <Button
           variant="ghost"
+          className='cursor-pointer'
           onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
         >
           <span className="font-inter font-semibold text-[12px] text-primary ">View More</span>
@@ -350,6 +347,7 @@ export default function YellowLeadsTracker() {
           onSearch={handleSearch}
           searchTerm={search}
           onSort={handleSortChange}
+          totalEntries={totalEntries}
         >
           <FilterBadges
             onFilterRemove={handleFilterRemove}
@@ -366,7 +364,12 @@ export default function YellowLeadsTracker() {
           setRefreshKey((prev) => prev + 1);
         }}
       >
-        {editRow && <YellowLeadViewEdit data={editRow} />}
+      {isDrawerOpen && editRow && (
+          <YellowLeadViewEdit
+            key={editRow._id}
+            data={editRow}
+          />
+        )}
       </TechnoRightDrawer>
     </>
   );

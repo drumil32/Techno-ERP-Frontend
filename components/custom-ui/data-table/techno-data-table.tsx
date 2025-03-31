@@ -51,6 +51,7 @@ export default function TechnoDataTable({
   onSearch,
   searchTerm = '',
   onSort,
+  totalEntries,
   children
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -115,7 +116,7 @@ export default function TechnoDataTable({
   };
 
   return (
-    <div className="w-full space-y-4 my-5 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200 ">
+    <div className="w-full bg-white space-y-4 my-5 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200 ">
       <div className="flex w-full items-center py-4 px-4">
         <div className="flex items-center">
           <h2 className="text-xl font-bold">{tableName}</h2>
@@ -180,10 +181,10 @@ export default function TechnoDataTable({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={
-                        cell.column.columnDef.header === 'Remarks' && cell.getValue() != '-'
+                      className={ `text-center
+                        ${cell.column.columnDef.header === 'Remarks' && cell.getValue()!='-'
                           ? 'text-left max-w-[225px] truncate'
-                          : 'text-center'
+                          : ''}`
                       }
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -228,8 +229,8 @@ export default function TechnoDataTable({
           </DropdownMenu>
           <span>
             {table.getState().pagination.pageIndex * pageSize + 1} -{' '}
-            {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, data.length)} of{' '}
-            {data.length}
+            {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, totalEntries)} of{' '}
+            {totalEntries}
           </span>
         </div>
 

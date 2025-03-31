@@ -15,8 +15,8 @@ export default function TechnoTopHeaderItem({ item }: TechnoTopHeaderItemProps) 
   return (
     <button
       onClick={() => setHeaderActiveItem(item.title)}
-      className={`px-4 py-2 rounded-md transition-all cursor-pointer ${
-        isActive ? 'text-primary font-bold underline' : 'text-black'
+      className={`px-2 pb-4 rounded-[3px] transition-all cursor-pointer ${
+        isActive ? 'text-primary font-bold border-b-4 border-b-[#5B31D1]' : 'text-black'
       }`}
     >
       {item.title}

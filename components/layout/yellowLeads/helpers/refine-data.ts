@@ -15,22 +15,27 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       id: index + 1,
       name: lead.name,
       phoneNumber: lead.phoneNumber,
-      altPhoneNumber: lead.altPhoneNumber ?? '-',
+      altPhoneNumber: lead.altPhoneNumber ,
+      altPhoneNumberView: lead.altPhoneNumber ?? '-',
       email: lead.email ?? '-',
       gender: lead.gender,
       assignedTo: lead.assignedTo ?? '-',
       assignedToName: assignedToName,
       location: lead.location,
-      course: CourseNameMapper[lead.course as Course] ?? '-',
+      locationView: lead.location ?? '-',
+      course: lead.course,
+      courseView:CourseNameMapper[lead.course as Course] ?? '-',
       campusVisit:
         CampusVisitStatus[lead.campusVisit as keyof typeof CampusVisitStatus] ?? lead.campusVisit,
       finalConversion:
         FinalConversionStatus[lead.finalConversion as keyof typeof FinalConversionStatus] ??
         lead.finalConversion,
-      remarks: lead.remarks ?? '-',
+      remarks: lead.remarks,
+      remarksView: lead.remarks ?? '-',
       date: lead.date,
       ltcDate: lead.ltcDate ?? '-',
-      nextDueDate: lead.nextDueDate ?? '-',
+      nextDueDate: lead.nextDueDate,
+      nextDueDateView: lead.nextDueDate ?? '-',
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: new Date(lead.updatedAt).toLocaleString()
     };
