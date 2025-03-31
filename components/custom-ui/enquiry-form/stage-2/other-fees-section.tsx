@@ -18,7 +18,7 @@ const getOtherFees = async () => {
   const response = await fetch(API_ENDPOINTS.getOtherFees, {
     method: API_METHODS.GET,
     headers: {
-      'Content-Type': 'application/json' 
+      'Content-Type': 'application/json'
     },
     credentials: 'include'
   });
@@ -31,65 +31,59 @@ const getOtherFees = async () => {
 
 
 export const OtherFeesSection: React.FC<OtherFeesSectionFormProps> = ({ form }) => {
-  const { data, isLoading } = useQuery({
+  console.log(form)
+  const { data: otherFeesData, isLoading } = useQuery({
     queryKey: ['otherFeesData'],
     queryFn: getOtherFees,
     staleTime: 1000 * 60,
   })
-  
+
   useEffect(() => {
-    if (!isLoading) {
-      console.log("Other Fees Data:", data);
+    if (!form.getValues("otherFees")) {
+      form.setValue("otherFees", []);
     }
-  }, [data, isLoading]);
 
-  // useEffect(() => {
-  //   if (!form.getValues("otherFees")) {
-  //     form.setValue("otherFees", []);
-  //   }
+    if (otherFeesData && !isLoading) {
+      const existingFees = form.getValues("otherFees") || [];
+      const existingFeeTypes = existingFees.map((fee: any) => fee.type);
 
-  //   if(otherFeesData && !isLoading) {
-  //     const existingFees = form.getValues("otherFees") || [];
-  //     const existingFeeTypes = existingFees.map((fee:any) => fee.type);
+      const updatedFees = [...existingFees];
 
-  //     const updatedFees = [...existingFees];
+      otherFeesData.forEach((feeData: { type: any, fee: number }) => {
+        if (!existingFeeTypes.includes(feeData.type)) {
+          updatedFees.push({
+            type: feeData.type,
+            feeAmount: feeData.fee,
+            finalFee: 0,
+            feesDepositedTOA: 0,
+            remarks: ""
+          });
+        }
 
-  //     otherFeesData.foreach((feeData: { type: FeeType, fee: number }) => {
-  //       if (!existingFeeTypes.includes(feeData.type)) {
-  //         updatedFees.push({
-  //           type: feeData.type,
-  //           feeAmount: feeData.fee,
-  //           finalFee: 0,
-  //           feesDepositedTOA: 0,
-  //           remarks: ""
-  //         });
-  //       }
-  //     });
+      });
 
-  //     updatedFees.sort((a, b) => a.type.localeCompare(b.type));
-  //     form.setValue("otherFees", updatedFees);
+      console.log("Other Fees in Form:", form.getValues("otherFees"));
+      updatedFees.sort((a, b) => a.type.localeCompare(b.type));
+      form.setValue("otherFees", updatedFees);
 
-  //   }
-  // }, [form, otherFeesData, isLoading]);
+    }
+  }, [otherFeesData, form, otherFeesData, isLoading]);
 
   const getFeeTypeDisplayName = (type: string) => {
     return type.replace(/([A-Z])/g, ' $1').trim();
   };
-  // console.log(otherFeesData)
 
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="fees-category">
         <div className="space-y-2">
-          {/* Section Title */}
           <AccordionTrigger className="w-full items-center">
             <h3 className="font-inter text-[16px] font-semibold">Fees Category</h3>
             <hr className="flex-1 border-t border-[#DADADA] ml-2" />
           </AccordionTrigger>
 
           <AccordionContent>
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6  gap-x-[32px] bg-white p-4 rounded-[10px]">
-            </div>
+          
           </AccordionContent>
         </div>
       </AccordionItem>

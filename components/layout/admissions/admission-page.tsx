@@ -11,13 +11,17 @@ import AdmissionCard from "@/components/custom-ui/admission-card/techno-admissio
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import TechnoPageTitle from "@/components/custom-ui/page-title/techno-page-title";
+import { useRouter } from "next/navigation";
 
 export default function AdmissionsLandingPage() {
     const [search, setSearch] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
-
+    const router = useRouter()
 
     const handleViewMore = (row: AdmissionTableRowType) => {
+        if(row && row.id) {
+            router.push(`/c/admissions/admission-form/${row._id}/${row.applicationStatus.toLocaleLowerCase()}`)
+        }
     };
     const columns = [
         { accessorKey: 'id', header: 'S. No' },
