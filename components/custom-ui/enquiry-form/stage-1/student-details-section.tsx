@@ -389,7 +389,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       Category
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Category" />
                         </SelectTrigger>
@@ -417,7 +417,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       Gender
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Gender" />
                         </SelectTrigger>
@@ -445,7 +445,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       Course
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Course" />
                         </SelectTrigger>
@@ -473,7 +473,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       Reference
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Reference" />
                         </SelectTrigger>

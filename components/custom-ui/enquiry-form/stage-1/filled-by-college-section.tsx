@@ -67,7 +67,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                       Counsellor’s Name
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select Counseller's Name" />
                         </SelectTrigger>
@@ -95,7 +95,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                       Telecaller’s Name
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select Telecaller’s Name" />
                         </SelectTrigger>

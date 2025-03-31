@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from './schema';
 import {
   ApplicationStatus,
+  EducationLevel,
 } from '@/static/enum';
 import { Form } from '@/components/ui/form';
 
@@ -28,7 +29,6 @@ import {
 } from './enquiry-form-api';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import logger from '@/lib/logger';
 
 function removeNullValues(obj: any): any {
   if (Array.isArray(obj)) {
@@ -62,7 +62,20 @@ const EnquiryFormStage1 = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      confirmation: false
+      studentName: '',
+      studentPhoneNumber: '',
+      confirmation: false,
+      academicDetails: [
+        {
+          educationLevel: EducationLevel.Tenth,
+        },
+        {
+          educationLevel: EducationLevel.Twelfth,
+        },
+        {
+          educationLevel: EducationLevel.Graduation,
+        }
+      ]
     }
   });
 
@@ -152,11 +165,8 @@ const EnquiryFormStage1 = () => {
 
   async function saveDraft() {
     let values = form.getValues();
-
-    logger.info('Enquiry Form Stage 1 - Save Draft', values);
     // Remove null values from the entire object
     values = removeNullValues(values);
-    
     // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep1RequestSchema.shape);
     const filteredKeys = Object.keys(values).filter((key) => schemaKeys.includes(key));
@@ -293,7 +303,7 @@ const EnquiryFormStage1 = () => {
         <ConfirmationCheckBox form={form} />
 
         {/* Sticky Footer */}
-        <EnquiryFormFooter saveDraft={saveDraft} onSubmit={onSubmit} />
+        <EnquiryFormFooter saveDraft={saveDraft}/>
       </form>
     </Form>
   );
