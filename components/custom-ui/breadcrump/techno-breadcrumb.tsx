@@ -19,11 +19,11 @@ export default function TechnoBreadCrumb() {
     <Breadcrumb className="mt-20">
       <BreadcrumbList className="text-lg">
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">{sidebarActiveItem.toUpperCase()}</BreadcrumbLink>
+          <BreadcrumbLink href="/">{sidebarActiveItem}</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage className="text-primary">{headerActiveItem.toUpperCase()}</BreadcrumbPage>
+          <BreadcrumbPage className="text-primary">{headerActiveItem}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

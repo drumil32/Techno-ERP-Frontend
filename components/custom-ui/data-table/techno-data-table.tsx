@@ -38,7 +38,6 @@ import {
 } from 'lucide-react';
 import { LuDownload, LuUpload } from 'react-icons/lu';
 
-// TODO: Create the props type for the table in place of any
 export default function TechnoDataTable({
   columns,
   data,
@@ -56,8 +55,8 @@ export default function TechnoDataTable({
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
-  const [sortColumn, setSortColumn] = useState<string | null>(null); // 'date' or 'nextDueDate'
-  const [sortOrder, setSortOrder] = useState<string>('asc'); // 'asc' or 'desc'
+  const [sortColumn, setSortColumn] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<string>('asc');
 
   useEffect(() => {
     setGlobalFilter(searchTerm);
@@ -66,10 +65,7 @@ export default function TechnoDataTable({
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setGlobalFilter(value);
-
-    if (onSearch) {
-      onSearch(value);
-    }
+    if (onSearch) onSearch(value);
   };
 
   const table = useReactTable({
@@ -92,16 +88,10 @@ export default function TechnoDataTable({
   });
 
   const handleSort = (columnName: string) => {
-    if (sortColumn === columnName) {
-      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortColumn(columnName);
-      setSortOrder('asc');
-    }
-
-    if (onSort) {
-      onSort(columnName, sortOrder === 'asc' ? 'desc' : 'asc');
-    }
+    const newOrder = sortColumn === columnName ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc';
+    setSortColumn(columnName);
+    setSortOrder(newOrder);
+    if (onSort) onSort(columnName, newOrder);
   };
 
   const getSortIcon = (columnName: string) => {
@@ -116,13 +106,13 @@ export default function TechnoDataTable({
   };
 
   return (
-    <div className="w-full bg-white space-y-4 my-5 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200 ">
+    <div className="w-full bg-white space-y-4 my-[16px] mb-0 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
+      {/* Header Section */}
       <div className="flex w-full items-center py-4 px-4">
         <div className="flex items-center">
           <h2 className="text-xl font-bold">{tableName}</h2>
           {children && <div className="ml-2">{children}</div>}
         </div>
-
         <div className="flex items-center space-x-2 ml-auto">
           <div className="relative">
             <Input
@@ -144,17 +134,15 @@ export default function TechnoDataTable({
         </div>
       </div>
 
-      {/* Data Table Body */}
-      <div>
-        {/* TODO: Update table header and the rows borders and backgground to match the figma design */}
-        <Table>
-          <TableHeader className="bg-[#F7F7F7]">
+      <div className="relative min-h-[580px] overflow-auto">
+        <Table className="w-full">
+          <TableHeader className="bg-[#F7F7F7] sticky top-0 z-5">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="rounded-lg overflow-hidden">
+              <TableRow key={headerGroup.id} className="h-10">
                 {headerGroup.headers.map((header, index) => (
                   <TableHead
                     key={header.id}
-                    className={`text-center font-light ${index === 0 ? 'rounded-l-[5px]' : ''} ${
+                    className={`text-center font-light h-10 ${index === 0 ? 'rounded-l-[5px]' : ''} ${
                       index === headerGroup.headers.length - 1 ? 'rounded-r-[5px]' : ''
                     }`}
                   >
@@ -174,18 +162,18 @@ export default function TechnoDataTable({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
+          <TableBody className="[&_tr]:h-[39px]">
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow key={row.id} className="h-[39px]">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={ `text-center
-                        ${cell.column.columnDef.header === 'Remarks' && cell.getValue()!='-'
+                      className={`h-[39px] py-2 ${
+                        cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-'
                           ? 'text-left max-w-[225px] truncate'
-                          : ''}`
-                      }
+                          : 'text-center'
+                      }`}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
@@ -193,8 +181,11 @@ export default function TechnoDataTable({
                 </TableRow>
               ))
             ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="text-center py-4">
+              <TableRow className="h-[390px]">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-[390px] flex items-center justify-center text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
@@ -203,7 +194,7 @@ export default function TechnoDataTable({
         </Table>
       </div>
 
-      {/* Data Table Footer - Pagination Section */}
+      {/* Pagination Section */}
       <div className="flex items-center justify-between py-4">
         <div className="flex items-center space-x-2">
           <span>Rows per page:</span>
@@ -234,7 +225,6 @@ export default function TechnoDataTable({
           </span>
         </div>
 
-        {/* TODO: Match the page switch match to Figma design */}
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"
@@ -245,7 +235,6 @@ export default function TechnoDataTable({
           >
             <ChevronsLeft />
           </Button>
-
           <Button
             variant="ghost"
             size="sm"
@@ -255,12 +244,9 @@ export default function TechnoDataTable({
           >
             <ChevronLeft />
           </Button>
-
           {currentPage > 1 && <span>1 ..</span>}
           <span>{currentPage}</span>
-
           {currentPage < totalPages && <span>..{totalPages}</span>}
-
           <Button
             variant="ghost"
             size="sm"
@@ -270,7 +256,6 @@ export default function TechnoDataTable({
           >
             <ChevronRight />
           </Button>
-
           <Button
             variant="ghost"
             size="sm"
