@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,9 +11,12 @@ import loginSchema from './login-form-schema';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import useAuthRedirect from '@/lib/useAuthRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 export default function LoginPage() {
+  useAuthRedirect();
+
   const router = useRouter();
   const [error, setError] = useState('');
 

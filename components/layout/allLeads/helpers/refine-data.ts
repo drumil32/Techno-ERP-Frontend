@@ -1,6 +1,7 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { TechnoLeadType } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
 import { Course, CourseNameMapper } from '@/types/enum';
+import { toPascal } from '../../yellowLeads/final-conversion-tag';
 
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   // Modified parameters to get Assigned To Dropdown Data
@@ -16,20 +17,29 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       date: lead.date,
       name: lead.name,
       phoneNumber: lead.phoneNumber,
-      altPhoneNumber: lead.altPhoneNumber ?? '-',
-      email: lead.email ?? '-',
-      gender: lead.gender,
+      altPhoneNumber: lead.altPhoneNumber,
+      altPhoneNumberView: lead.altPhoneNumber ?? '-',
+      email: lead.email,
+      emailView: lead.email ?? '-',
+      gender:  lead.gender,
+      genderView:  toPascal(lead.gender),
       location: lead.location,
-      course: CourseNameMapper[lead.course as Course] ?? '-',
+      course: lead.course,
+      courseView: CourseNameMapper[lead.course as Course] ?? '-',
       leadType: TechnoLeadType[lead.leadType as keyof typeof TechnoLeadType] ?? lead.leadType,
       _leadType: lead.leadType,
-      source: lead.source ?? '-',
-      assignedTo: lead.assignedTo ?? '-',
+      source: lead.source,
+      sourceView: lead.source ?? '-',
+      assignedTo: lead.assignedTo,
+      assignedToView: lead.assignedTo ?? '-',
       assignedToName: assignedToName,
-      nextDueDate: lead.nextDueDate ?? '-',
+      nextDueDate: lead.nextDueDate ,
+      nextDueDateView: lead.nextDueDate ?? '-' ,
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: new Date(lead.updatedAt).toLocaleString(),
-      remarks: lead.remarks ?? '-'
+      remarks: lead.remarks ,
+      remarksView: lead.remarks ?? '-',
+      leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'NA'
     };
   });
 

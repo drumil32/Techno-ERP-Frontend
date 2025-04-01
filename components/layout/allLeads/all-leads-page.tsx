@@ -19,6 +19,7 @@ import FilterBadges from './components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { toast } from 'sonner';
 
+
 export default function AllLeadsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -28,6 +29,11 @@ export default function AllLeadsPage() {
   const [editRow, setEditRow] = useState<any>(null);
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [orderBy, setOrderBy] = useState<string>('asc');
+  const [isEditing, setIsEditing] = useState(false);
+
+  const toggleIsEditing = () => {
+    setIsEditing(prev => !prev)
+  }
 
   const handleSortChange = (column: string, order: string) => {
     setSortBy(column);
@@ -236,23 +242,24 @@ export default function AllLeadsPage() {
     { accessorKey: 'date', header: 'Date' },
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'gender', header: 'Gender' },
+    { accessorKey: 'genderView', header: 'Gender' },
     { accessorKey: 'location', header: 'Location' },
-    { accessorKey: 'course', header: 'Course' },
+    { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'leadType',
       header: 'Lead Type',
       cell: ({ row }: any) => <TechnoLeadTypeTag type={row.original.leadType as TechnoLeadType} />
     },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
-    { accessorKey: 'nextDueDate', header: 'Next Due Date' },
-    { accessorKey: 'createdAt', header: 'Timestamp' },
+    { accessorKey: 'nextDueDateView', header: 'Next Due Date' },
+    { accessorKey: 'leadTypeModifiedDate', header: 'Timestamp' },
     {
       id: 'actions',
       header: 'Actions',
       cell: ({ row }: any) => (
         <Button
           variant="ghost"
+          className='cursor-pointer'
           onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
         >
           <span className="font-inter font-semibold text-[12px] text-primary ">View More</span>
@@ -327,7 +334,7 @@ export default function AllLeadsPage() {
         <TechnoDataTable
           columns={columns}
           data={leads.leads}
-          tableName="All Leads Data"
+          tableName="All Leads Table"
           currentPage={page}
           totalPages={totalPages}
           pageLimit={limit}
@@ -336,6 +343,7 @@ export default function AllLeadsPage() {
           onSearch={handleSearch}
           searchTerm={search}
           onSort={handleSortChange}
+          totalEntries={totalEntries}
         >
           <FilterBadges
             onFilterRemove={handleFilterRemove}
@@ -352,8 +360,14 @@ export default function AllLeadsPage() {
           setRefreshKey((prev) => prev + 1);
         }}
       >
-        {editRow && <LeadViewEdit data={editRow} />}
+        {isDrawerOpen && editRow && (
+          <LeadViewEdit
+            key={editRow._id}
+            data={editRow}
+          />
+        )}
       </TechnoRightDrawer>
+
     </>
   );
 }

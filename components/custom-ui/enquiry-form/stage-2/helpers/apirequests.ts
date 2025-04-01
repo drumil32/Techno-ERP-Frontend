@@ -3,17 +3,30 @@ import { API_METHODS } from "@/common/constants/apiMethods";
 
 export const getOtherFees = async () => {
     const response = await fetch(API_ENDPOINTS.getOtherFees, {
-      method: API_METHODS.GET,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include'
+        method: API_METHODS.GET,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
     });
     if (!response.ok) {
-      throw new Error("Failed to fetch other fees");
+        throw new Error("Failed to fetch other fees");
     }
-  
+
     return response.json();
-  }
-  
-  
+}
+
+export const getSemWiseFee = async () => {
+    const response = await fetch(API_ENDPOINTS.getOtherFees, {
+        method: API_METHODS.GET,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+    });
+    if (!response.ok) {
+        throw new Error("Failed to fetch other fees");
+    }
+
+    return response.json();
+}
