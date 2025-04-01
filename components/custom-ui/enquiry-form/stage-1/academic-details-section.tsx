@@ -102,9 +102,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Passing Year"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === "" ? undefined : Number(value));
+                                }}
                               />
                             </FormControl>
                           </FormItem>
@@ -123,9 +126,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === "" ? undefined : Number(value));
+                                }}
                                 min={0}
                                 max={100}
                               />
@@ -240,9 +246,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Passing Year"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === "" ? undefined : Number(value));
+                                }}
                               />
                             </FormControl>
                           </FormItem>
@@ -261,9 +270,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === "" ? undefined : Number(value));
+                                }}
                                 min={0}
                                 max={100}
                               />
@@ -378,9 +390,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Passing Year"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === '' ? undefined : Number(value));
+                                }}
                               />
                             </FormControl>
                           </FormItem>
@@ -399,9 +414,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === "" ? undefined : Number(value));
+                                }}
                                 min={0}
                                 max={100}
                               />
