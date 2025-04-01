@@ -4,7 +4,6 @@ export enum TechnoLeadType {
   BLACK = 'COURSE_UNAVAILABLE',
   BLUE = 'NO_CLARITY',
   YELLOW = 'INTERESTED',
-  GREEN = 'ADMISSION',
   WHITE = 'DID_NOT_PICK'
 }
 
@@ -15,7 +14,6 @@ const typeStyles = {
   [TechnoLeadType.WHITE]: 'bg-slate-100 text-slate-700',
   [TechnoLeadType.BLACK]: 'bg-gray-100 text-gray-700',
   [TechnoLeadType.RED]: 'bg-rose-100 text-rose-700',
-  [TechnoLeadType.GREEN]: 'bg-green-100 text-green-700'
 };
 
 interface TechnoLeadTypeTagProps {

@@ -1,6 +1,7 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { TechnoLeadType } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
 import { Course, CourseNameMapper } from '@/static/enum';
+import { toPascal } from '../../yellowLeads/final-conversion-tag';
 
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   // Modified parameters to get Assigned To Dropdown Data
@@ -20,7 +21,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       altPhoneNumberView: lead.altPhoneNumber ?? '-',
       email: lead.email,
       emailView: lead.email ?? '-',
-      gender: lead.gender,
+      gender:  lead.gender,
+      genderView:  toPascal(lead.gender),
       location: lead.location,
       course: lead.course,
       courseView: CourseNameMapper[lead.course as Course] ?? '-',
