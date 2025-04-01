@@ -11,7 +11,7 @@ interface UserData {
     roles: UserRoles[];
   };
 }
-
+// TODO Fix role to employee marketing
 const ROLE_PRIORITY: UserRoles[] = [
   UserRoles.ADMIN,
   UserRoles.LEAD_MARKETING,
@@ -21,16 +21,6 @@ const ROLE_PRIORITY: UserRoles[] = [
 ];
 
 export const fetchAssignedToDropdown = async () => {
-  const profile: UserData | null = await apiRequest(API_METHODS.GET, API_ENDPOINTS.profile);
-  
-  if (!profile?.userData?.roles?.length) {
-    throw new Error('No roles found for user');
-  }
-
-  const userRole = ROLE_PRIORITY.find(role => profile.userData.roles.includes(role)) 
-                  || profile.userData.roles[0];
-
-  const url = `${API_ENDPOINTS.fetchAssignedToDropdown}?role=${userRole}&moduleName=MARKETING`;
-
-  return await apiRequest(API_METHODS.GET, url);
+  const result= await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchAssignedToDropdown);
+  return result;
 };

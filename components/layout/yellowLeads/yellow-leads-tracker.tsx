@@ -172,7 +172,7 @@ export default function YellowLeadsTracker() {
       }
 
       if (isSuccess) {
-        toast.success('Data loaded', {
+        toast.success('Yellow Leads data loaded successfully', {
           id: toastIdRef.current!,
           duration: 2000
         });

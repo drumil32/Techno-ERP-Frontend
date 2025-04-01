@@ -142,14 +142,13 @@ export default function TechnoDataTable({
                 {headerGroup.headers.map((header, index) => (
                   <TableHead
                     key={header.id}
-                    className={`text-center font-light h-10 ${index === 0 ? 'rounded-l-[5px]' : ''} ${
-                      index === headerGroup.headers.length - 1 ? 'rounded-r-[5px]' : ''
-                    }`}
+                    className={`text-center font-light h-10 ${index === 0 ? 'rounded-l-[5px]' : ''} ${index === headerGroup.headers.length - 1 ? 'rounded-r-[5px]' : ''
+                      }`}
                   >
                     {header.column.columnDef.header === 'Date' ||
-                    header.column.columnDef.header === 'Next Due Date' ||
-                    header.column.columnDef.header === 'Next Call Date' ||
-                    header.column.columnDef.header === 'LTC Date' ? (
+                      header.column.columnDef.header === 'Next Due Date' ||
+                      header.column.columnDef.header === 'Next Call Date' ||
+                      header.column.columnDef.header === 'LTC Date' ? (
                       <Button variant="ghost" onClick={() => handleSort(header.column.id)}>
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {getSortIcon(header.column.id)}
@@ -169,11 +168,10 @@ export default function TechnoDataTable({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={`h-[39px] py-2 ${
-                        cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-'
-                          ? 'text-left max-w-[225px] truncate'
-                          : 'text-center'
-                      }`}
+                      className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-'
+                        ? 'text-left max-w-[225px] truncate'
+                        : 'text-center'
+                        }`}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
@@ -181,12 +179,28 @@ export default function TechnoDataTable({
                 </TableRow>
               ))
             ) : (
-              <TableRow className="h-[390px]">
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-[390px] flex items-center justify-center text-center"
-                >
-                  No results.
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-[580px] text-center">
+                  <div className="flex flex-col items-center justify-center h-full">
+                    <svg
+                      className="w-16 h-16 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <h3 className="mt-4 text-lg font-medium text-gray-900">No Results Found</h3>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Try adjusting your search or filter to find what you're looking for.
+                    </p>
+                  </div>
                 </TableCell>
               </TableRow>
             )}
