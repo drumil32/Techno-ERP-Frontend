@@ -21,8 +21,14 @@ import { z } from 'zod';
 
 export const academicDetailSchema = z.object({
   educationLevel: z.nativeEnum(EducationLevel),
-  schoolCollegeName: z.string().min(1, 'School/College Name is required'),
-  universityBoardName: z.string().min(1, 'University/Board Name is required'),
+  schoolCollegeName: z
+    .string()
+    .min(1, 'School/College Name is required')
+    .regex(/^[A-Za-z\s]+$/, 'School/College Name must only contain alphabets and spaces'),
+  universityBoardName: z
+    .string()
+    .min(1, 'University/Board Name is required')
+    .regex(/^[A-Za-z\s]+$/, 'University/Board Name must only contain alphabets and spaces'),
   passingYear: z
     .number()
     .int()
@@ -33,8 +39,7 @@ export const academicDetailSchema = z.object({
     .number()
     .min(0, 'Percentage must be at least 0')
     .max(100, 'Percentage cannot exceed 100'),
-  subjects: z
-    .array(z.string().min(1, 'Subject name is required')).optional()
+  subjects: z.array(z.string().min(1, 'Subject name is required')).optional()
 });
 
 export const singleDocumentSchema = z.object({
@@ -65,23 +70,28 @@ export const enquirySchema = z.object({
   dateOfEnquiry: requestDateSchema,
   studentName: z
     .string({ required_error: 'Student Name is required' })
+    .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
     .nonempty('Student Name is required'),
 
   studentPhoneNumber: contactNumberSchema,
   emailId: z.string().email('Invalid email format').optional(),
   fatherName: z
     .string({ required_error: 'Father Name is required' })
+    .regex(/^[A-Za-z\s]+$/, 'Father Name must only contain alphabets and spaces')
     .nonempty("Father's Name is required"),
   fatherPhoneNumber: contactNumberSchema,
   fatherOccupation: z
     .string({ required_error: 'Father occupation is required' })
+    .regex(/^[A-Za-z\s]+$/, 'Father occupation must only contain alphabets and spaces')
     .nonempty('Father occupation is required'),
   motherName: z
     .string({ required_error: "Mother's Name is required" })
+    .regex(/^[A-Za-z\s]+$/, 'Mother Name must only contain alphabets and spaces')
     .nonempty("Mother's Name is required"),
   motherPhoneNumber: contactNumberSchema,
   motherOccupation: z
     .string({ required_error: 'Mother occupation is required' })
+    .regex(/^[A-Za-z\s]+$/, 'Mother occupation must only contain alphabets and spaces')
     .nonempty('Mother occupation is required'),
   dateOfBirth: requestDateSchema,
   category: z.nativeEnum(Category),
@@ -134,18 +144,26 @@ export const enquiryStep1RequestSchema = enquirySchema
   })
   .strict();
 
-  export const enquiryDraftStep1RequestSchema = enquiryStep1RequestSchema
-    .extend({
-    _id : z.string().optional(),
-    studentName: z.string({ required_error: "Student Name is required", }).nonempty('Student Name is required'),
+export const enquiryDraftStep1RequestSchema = enquiryStep1RequestSchema
+  .extend({
+    _id: z.string().optional(),
+    studentName: z
+      .string({ required_error: 'Student Name is required' })
+      .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
+      .nonempty('Student Name is required'),
     studentPhoneNumber: contactNumberSchema,
     counsellor: z.string().optional(),
     telecaller: z.string().optional(),
     dateOfCounselling: requestDateSchema.optional(),
     address: addressSchema.partial().optional(),
-    academicDetails: z.array(academicDetailSchema.partial()).optional(),
-    }).partial().strip();
-  
-  export const enquiryDraftStep1UpdateSchema = enquiryDraftStep1RequestSchema.extend({
-    id: z.string().optional()      // This is referring to _id in the enquiryDraftsTable
-  }).partial().strict();
+    academicDetails: z.array(academicDetailSchema.partial()).optional()
+  })
+  .partial()
+  .strip();
+
+export const enquiryDraftStep1UpdateSchema = enquiryDraftStep1RequestSchema
+  .extend({
+    id: z.string().optional() // This is referring to _id in the enquiryDraftsTable
+  })
+  .partial()
+  .strict();
