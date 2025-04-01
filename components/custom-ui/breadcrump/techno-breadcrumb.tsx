@@ -16,14 +16,14 @@ export default function TechnoBreadCrumb() {
   const { headerActiveItem } = useTopHeaderContext();
 
   return (
-    <Breadcrumb className="my-4">
+    <Breadcrumb className="mt-20">
       <BreadcrumbList className="text-lg">
         <BreadcrumbItem>
-          <BreadcrumbLink href="/">{sidebarActiveItem}</BreadcrumbLink>
+          <BreadcrumbLink href="/">{sidebarActiveItem.toUpperCase()}</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage className="text-primary font-bold">{headerActiveItem}</BreadcrumbPage>
+          <BreadcrumbPage className="text-primary">{headerActiveItem.toUpperCase()}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

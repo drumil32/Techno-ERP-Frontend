@@ -1,12 +1,8 @@
-import { updateEnquiry } from '@/components/custom-ui/enquiry-form/stage-1/enquiry-form-api';
-import { get } from 'http';
-
 export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
 
 export const API_ENDPOINTS = {
 
   // Auth 
-
   login: `${API_DOMAIN}/auth/login`,
   profile: `${API_DOMAIN}/user/profile`,
   register: `${API_DOMAIN}/auth/register`,
@@ -18,7 +14,6 @@ export const API_ENDPOINTS = {
   isAuthenticated: `${API_DOMAIN}/auth/is-authenticated`,
 
   // Marketing
-
   getAllLeads: `${API_DOMAIN}/crm/fetch-data`,
   getAllLeadsAnalytics: `${API_DOMAIN}/crm/analytics`,
   fetchAssignedToDropdown: `${API_DOMAIN}/user/fetch-dropdown?moduleName=MARKETING`,
@@ -31,7 +26,6 @@ export const API_ENDPOINTS = {
   updateYellowLead: `${API_DOMAIN}/crm/update-yellow-lead`,
 
   // Admissions 
-
   getEnquiry: (enquiry_id : string) => `${API_DOMAIN}/admission/enquiry/${enquiry_id}`,
   createEnquiry: `${API_DOMAIN}/admission/enquiry/step-1`,
   updateEnquiry: `${API_DOMAIN}/admission/enquiry/step-1`,

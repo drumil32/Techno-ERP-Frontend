@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
-import { Course, Gender, LeadType, Locations } from '@/static/enum';
+import { Course, CourseNameMapper, Gender, LeadType, Locations } from '@/static/enum';
 import TechnoLeadTypeTag, {
   TechnoLeadType
 } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
@@ -20,8 +20,11 @@ import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { Calendar } from '@/components/ui/calendar';
-import { parse, format } from 'date-fns';
+import { parse, format, isValid } from 'date-fns';
 import { toast } from 'sonner';
+import { toPascal } from '../yellowLeads/final-conversion-tag';
+import { updateLeadRequestSchema } from './validators';
+import z from 'zod';
 
 interface LeadData {
   _id: string;
@@ -38,50 +41,136 @@ interface LeadData {
   [key: string]: any;
 }
 
-export default function LeadViewEdit({ data }: { data: any }) {
+interface FormErrors {
+  name?: string;
+  phoneNumber?: string;
+  altPhoneNumber?: string;
+  email?: string;
+  nextDueDate?: string;
+}
+
+export default function LeadViewEdit({ data }: any) {
   const [formData, setFormData] = useState<LeadData | null>(null);
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [originalData, setOriginalData] = useState<LeadData | null>(null);
+  const [isEditing, toggleIsEditing] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const formatDateToInput = (dateString: string) => {
-    if (!dateString || dateString === '-') return '';
-    try {
-      const [day, month, year] = dateString.split('/');
-      return `${year}-${month}-${day}`;
-    } catch {
-      return '';
-    }
-  };
-
-  const formatDateToDisplay = (dateString: string) => {
-    if (!dateString) return '';
-    try {
-      const [year, month, day] = dateString.split('-');
-      return `${day}/${month}/${year}`;
-    } catch {
-      return dateString;
-    }
-  };
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   useEffect(() => {
-    if (data) setFormData(data);
+    if (data) {
+      setFormData(data);
+      setOriginalData(data);
+    }
   }, [data]);
+
+  const validateField = (name: string, value: any) => {
+    if (!formData) return;
+
+    try {
+      const tempData = { ...formData, [name]: value };
+
+      const validationData = {
+        _id: tempData._id,
+        name: tempData.name,
+        phoneNumber: tempData.phoneNumber,
+        altPhoneNumber: tempData.altPhoneNumber,
+        email: tempData.email,
+        gender: tempData.gender,
+        location: tempData.location,
+        course: tempData.course,
+        leadType: tempData.leadType,
+        remarks: tempData.remarks,
+        nextDueDate: tempData.nextDueDate
+      };
+
+      // First, validate the entire schema
+      updateLeadRequestSchema.parse(validationData);
+
+      // If validation passes, remove any existing error for this field
+      setErrors((prevErrors: any) => {
+        const newErrors = { ...prevErrors };
+        delete newErrors[name];
+        return newErrors;
+      });
+
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        // Collect all field errors
+        const newErrors: FormErrors = { ...errors }; // Preserve existing errors
+        error.errors.forEach((err) => {
+          const key = err.path[0] as keyof FormErrors;
+          newErrors[key] = err.message;
+        });
+
+        setErrors(newErrors);
+      }
+    }
+  };
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
+    validateField(name, value);
   };
 
   const handleSelectChange = (name: string, value: string) => {
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
+    validateField(name, value);
   };
 
-  const handleDateChange = (name: string, value: string) => {
-    setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
+  const handleDateChange = (date: Date | undefined) => {
+    if (!date) return;
+
+    const formattedDate = format(date, 'dd/MM/yyyy');
+    setFormData((prev) => (prev ? { ...prev, nextDueDate: formattedDate } : null));
+    validateField('nextDueDate', formattedDate);
+    setIsCalendarOpen(false);
+  };
+
+  const parseDateString = (dateString?: string): Date | undefined => {
+    if (!dateString) return undefined;
+    try {
+      const parsedDate = parse(dateString, 'dd/MM/yyyy', new Date());
+      return isValid(parsedDate) ? parsedDate : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+
+  const hasChanges = () => {
+    if (!formData || !originalData) return false;
+
+    const allowedFields = [
+      'name',
+      'phoneNumber',
+      'altPhoneNumber',
+      'email',
+      'gender',
+      'location',
+      'course',
+      'leadType',
+      'remarks',
+      'nextDueDate'
+    ];
+
+    return allowedFields.some(field => {
+      const origValue = originalData[field] || '';
+      const newValue = formData[field] || '';
+      return origValue !== newValue;
+    });
   };
 
   const handleSubmit = async () => {
     if (!formData) return;
+
+    // Check if there are any changes
+    if (!hasChanges()) {
+      toast.info('No changes to save');
+      toggleIsEditing(false);
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -103,76 +192,89 @@ export default function LeadViewEdit({ data }: { data: any }) {
         Object.entries(formData).filter(([key]) => allowedFields.includes(key))
       );
 
+      const validation = updateLeadRequestSchema.safeParse(filteredData);
+      if (!validation.success) {
+        const newErrors: FormErrors = {};
+        validation.error.errors.forEach((err) => {
+          const key = err.path[0] as keyof FormErrors;
+          newErrors[key] = err.message;
+        });
+        setErrors(newErrors);
+        toast.error('Please fix the errors in the form');
+        return;
+      }
+
       const response = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateLead, filteredData);
       if (response) {
         toast.success('Updated Lead Successfully');
+        setOriginalData(formData);
       } else {
-        setFormData(data);
+        setFormData(originalData);
       }
-      setIsEditMode(false);
+      toggleIsEditing(false);
+      setErrors({});
     } catch (err) {
       console.error('Error updating lead:', err);
     } finally {
       setIsSubmitting(false);
     }
   };
+
   if (!formData) return <div>Loading...</div>;
 
-  // Render read-only view
   const ReadOnlyView = (
     <>
       <div className="flex flex-col gap-6 text-sm">
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Date</p>
-          <p>{formData.date}</p>
+          <p className="w-1/4 text-[#666666]">Date</p>
+          <p>{formData.date ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Name</p>
-          <p>{formData.name}</p>
+          <p className="w-1/4 text-[#666666]">Name</p>
+          <p>{formData.name ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Phone number</p>
-          <p>{formData.phoneNumber}</p>
+          <p className="w-1/4 text-[#666666]">Phone number</p>
+          <p>{formData.phoneNumber ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Alt number</p>
-          <p>{formData.altPhoneNumber}</p>
+          <p className="w-1/4 text-[#666666]">Alt number</p>
+          <p>{formData.altPhoneNumber ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Email</p>
-          <p>{formData.email}</p>
+          <p className="w-1/4 text-[#666666]">Email</p>
+          <p>{formData.email ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Gender</p>
-          <p>{formData.gender.charAt(0) + data.gender.slice(1).toLowerCase()}</p>
+          <p className="w-1/4 text-[#666666]">Gender</p>
+          <p>{toPascal(formData.gender) ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Location</p>
-          <p>{formData.location}</p>
+          <p className="w-1/4 text-[#666666]">Location</p>
+          <p>{formData.location ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Course</p>
-          <p>{formData.course}</p>
+          <p className="w-1/4 text-[#666666]">Course</p>
+          <p>{formData.course ? CourseNameMapper[formData.course as Course] : '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Lead Type</p>
+          <p className="w-1/4 text-[#666666]">Lead Type</p>
           <p>
-            <TechnoLeadTypeTag type={formData.leadType as TechnoLeadType} />
+            <TechnoLeadTypeTag type={formData.leadType as TechnoLeadType ?? '-'} />
           </p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Remarks</p>
-          <p>{formData.remarks}</p>
+          <p className="w-1/4 text-[#666666]">Remarks</p>
+          <p>{formData.remarks ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Next Due Date</p>
-          <p>{formData.nextDueDate}</p>
+          <p className="w-1/4 text-[#666666]">Next Due Date</p>
+          <p>{formData.nextDueDate ?? '-'}</p>
         </div>
       </div>
     </>
   );
 
-  // Render edit view
   const EditView = (
     <>
       <div className="flex flex-col gap-2">
@@ -189,6 +291,7 @@ export default function LeadViewEdit({ data }: { data: any }) {
           onChange={handleChange}
           className="rounded-[5px]"
         />
+        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
       </div>
 
       <div className="flex gap-5">
@@ -201,6 +304,7 @@ export default function LeadViewEdit({ data }: { data: any }) {
             onChange={handleChange}
             className="rounded-[5px]"
           />
+          {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
         </div>
 
         <div className="space-y-2">
@@ -212,6 +316,7 @@ export default function LeadViewEdit({ data }: { data: any }) {
             onChange={handleChange}
             className="rounded-[5px]"
           />
+          {errors.altPhoneNumber && <p className="text-red-500 text-xs mt-1">{errors.altPhoneNumber}</p>}
         </div>
       </div>
 
@@ -225,6 +330,7 @@ export default function LeadViewEdit({ data }: { data: any }) {
           onChange={handleChange}
           className="rounded-[5px]"
         />
+        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
       </div>
 
       <div className="flex gap-5 w-full">
@@ -299,7 +405,7 @@ export default function LeadViewEdit({ data }: { data: any }) {
             <SelectContent>
               {Object.values(Course).map((course) => (
                 <SelectItem key={course} value={course}>
-                  {course}
+                  {CourseNameMapper[course as Course]}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -321,42 +427,28 @@ export default function LeadViewEdit({ data }: { data: any }) {
 
       <div className="space-y-2 w-1/2">
         <EditLabel htmlFor="nextDueDate" title={'Next Due Date'} />
-        <Popover>
+        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
           <PopoverTrigger asChild>
             <Button variant="outline" className="w-full justify-start text-left pl-20">
-              <CalendarIcon className=" left-3 h-5 w-5 text-gray-400" />
-              {(() => {
-                try {
-                  return formData.nextDueDate
-                    ? format(parse(formData.nextDueDate, 'dd/MM/yyyy', new Date()), 'dd/MM/yyyy')
-                    : 'Select a date';
-                } catch (e) {
-                  return 'Select a date';
-                }
-              })()}{' '}
+              <CalendarIcon className="left-3 h-5 w-5 text-gray-400" />
+              {formData.nextDueDate || 'Select a date'}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
             <Calendar
               mode="single"
-              selected={
-                formData.nextDueDate
-                  ? parse(formData.nextDueDate, 'dd/MM/yyyy', new Date())
-                  : undefined
-              }
-              onSelect={(date) => {
-                const formattedDate = date ? format(date, 'dd/MM/yyyy') : '';
-                handleDateChange('nextDueDate', formattedDate);
-              }}
+              selected={parseDateString(formData.nextDueDate)}
+              onSelect={handleDateChange}
               initialFocus
             />
           </PopoverContent>
         </Popover>
+        {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
       </div>
 
       <div className="flex flex-col gap-2">
-        <p className="text-[#666666] font-normal">Timestamp</p>
-        <p>{data.createdAt}</p>
+        <p className="text-[#666666]">Last Modified Date</p>
+        <p>{formData.leadTypeModifiedDate}</p>
       </div>
     </>
   );
@@ -364,22 +456,26 @@ export default function LeadViewEdit({ data }: { data: any }) {
   return (
     <div className="w-full h-full max-w-2xl mx-auto border-none flex flex-col">
       <CardContent className="px-3 space-y-6 mb-20">
-        {isEditMode ? EditView : ReadOnlyView}
+        {isEditing ? EditView : ReadOnlyView}
       </CardContent>
 
-      {isEditMode ? (
+      {isEditing ? (
         <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
           <>
             <Button
               variant="outline"
               onClick={() => {
-                setFormData(data);
-                setIsEditMode(false);
+                setFormData(originalData);
+                toggleIsEditing(false);
+                setErrors({});
               }}
             >
               Cancel
             </Button>
-            <Button onClick={handleSubmit} disabled={isSubmitting}>
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting || Object.keys(errors).length > 0}
+            >
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -396,13 +492,13 @@ export default function LeadViewEdit({ data }: { data: any }) {
           <div className="w-full flex">
             {formData.leadType != LeadType.YELLOW ? (
               <>
-                <Button onClick={() => setIsEditMode(true)} className="ml-auto" icon={Pencil}>
+                <Button onClick={() => toggleIsEditing(true)} className="ml-auto" icon={Pencil}>
                   Edit Lead
                 </Button>
               </>
             ) : (
               <>
-                <div className=" text-center text-sm">
+                <div className="text-center text-sm">
                   *In case of any update please refer to Yellow Lead section
                 </div>
               </>
@@ -416,10 +512,8 @@ export default function LeadViewEdit({ data }: { data: any }) {
 
 function EditLabel({ htmlFor, title }: any) {
   return (
-    <>
-      <Label htmlFor={htmlFor} className="font-normal text-[#666666]">
-        {title}
-      </Label>
-    </>
+    <Label htmlFor={htmlFor} className="font-normal text-[#666666]">
+      {title}
+    </Label>
   );
 }
