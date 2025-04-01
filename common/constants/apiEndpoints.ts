@@ -43,7 +43,7 @@ export const API_ENDPOINTS = {
 
   // Fees Details
   getOtherFees: `${API_DOMAIN}/fees-structure/other-fees`,
-  getFeesByCourse: (course_name: string) => `${API_DOMAIN}/fees-structure/${course_name}`,
+  getFeesByCourse: (course_name: string) => `${API_DOMAIN}/fees-structure/course/${course_name}`,
 
   createStudentFees: `${API_DOMAIN}/admission/enquiry/step-2`,
   updateStudentFees: `${API_DOMAIN}/admission/enquiry/step-2`,
