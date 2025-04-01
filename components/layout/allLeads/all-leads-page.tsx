@@ -1,3 +1,5 @@
+'use client'
+
 import TechnoAnalyticCardsGroup from '../../custom-ui/analytic-card/techno-analytic-cards-group';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
@@ -10,13 +12,12 @@ import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
 import LeadViewEdit from './leads-view-edit';
-import { Course, Locations } from '@/static/enum';
+import { Course, Locations } from '@/types/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { toast } from 'sonner';
-
 
 export default function AllLeadsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

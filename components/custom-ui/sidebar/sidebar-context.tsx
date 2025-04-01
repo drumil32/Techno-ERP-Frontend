@@ -11,7 +11,7 @@ const SidebarContext = createContext({
 });
 
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
-  const [sidebarActiveItem, setSidebarActiveItem] = useState('Marketing');
+  const [sidebarActiveItem, setSidebarActiveItem] = useState('');
 
   return (
     <SidebarContext.Provider value={{ sidebarActiveItem, setSidebarActiveItem }}>

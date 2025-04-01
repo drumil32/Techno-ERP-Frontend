@@ -14,14 +14,14 @@ interface UserProfile {
 }
 
 interface TechnoTopHeaderProps {
-  headerItems: HeaderItem[];
+  headerItems: Record<string, { title: string; route: string }>;
 }
 
 export default function TechnoTopHeader({ headerItems }: TechnoTopHeaderProps) {
   return (
-    <div className="pt-[21px] w-full h-[53px] absolute z-10 border-b border-gray-300 flex text-lg bg-white gap-[24px] px-2">
-      {headerItems.map((item, i) => (
-        <TechnoTopHeaderItem key={i} item={item} />
+    <div className="w-full h-16 border-b border-gray-300 flex text-lg bg-white">
+      {Object.values(headerItems).map((item) => (
+        <TechnoTopHeaderItem key={item.title} item={item} />
       ))}
     </div>
   );

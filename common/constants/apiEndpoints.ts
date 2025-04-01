@@ -37,4 +37,14 @@ export const API_ENDPOINTS = {
 
   fetchTeleCallersDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=ADMISSION`,
   fetchCounsellorsDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=COUNSELOR&moduleName=ADMISSION`,
+  // Fees Details
+  getOtherFees: `${API_DOMAIN}/fees-structure/other-fees`,
+  getFeesByCourse: (course_name: string) => `${API_DOMAIN}/fees-structure/${course_name}`,
+
+  createStudentFees: `${API_DOMAIN}/admission/enquiry/step-2`,
+  updateStudentFees: `${API_DOMAIN}/admission/enquiry/step-2`,
+
+  createStudentFeesDraft: `${API_DOMAIN}/admission/enquiry/create-draft-step-2`,
+  updateStudentFeesDraft: `${API_DOMAIN}/admission/enquiry/update-draft-step-2`,
+
 };

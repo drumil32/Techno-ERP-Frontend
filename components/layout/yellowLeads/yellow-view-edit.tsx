@@ -11,19 +11,20 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
-import { Course, CourseNameMapper, Gender, Locations } from '@/static/enum';
+import { Course, CourseNameMapper, Gender, Locations } from '@/types/enum';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
 import CampusVisitTag, { CampusVisitStatus } from './campus-visit-tag';
-import FinalConversionTag, { FinalConversionStatus, toPascal } from './final-conversion-tag';
+import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { parse, format, isValid } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { toast } from 'sonner';
 
 import z from 'zod';
+import { toPascal } from '@/lib/utils';
 
 interface FormErrors {
   name?: string;

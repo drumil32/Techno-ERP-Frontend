@@ -33,7 +33,7 @@ import {
   Course,
   CourseNameMapper,
   Gender
-} from '@/static/enum';
+} from '@/types/enum';
 
 // React and React Hook Form
 import React from 'react';

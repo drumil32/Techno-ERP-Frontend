@@ -1,7 +1,9 @@
 import { useTopHeaderContext } from './top-header-context';
+import { useRouter } from 'next/navigation';
 
 interface HeaderItem {
   title: string;
+  route: string;
 }
 
 interface TechnoTopHeaderItemProps {
@@ -10,13 +12,19 @@ interface TechnoTopHeaderItemProps {
 
 export default function TechnoTopHeaderItem({ item }: TechnoTopHeaderItemProps) {
   const { headerActiveItem, setHeaderActiveItem } = useTopHeaderContext();
+  const router = useRouter(); 
   const isActive = item.title === headerActiveItem;
+
+  const handleClick = () => {
+    setHeaderActiveItem(item.title);
+    router.push(item.route); 
+  };
 
   return (
     <button
-      onClick={() => setHeaderActiveItem(item.title)}
-      className={`px-2 pb-4 rounded-[3px] transition-all cursor-pointer ${
-        isActive ? 'text-primary font-bold border-b-4 border-b-[#5B31D1]' : 'text-black'
+      onClick={handleClick}
+      className={`px-4 py-2 rounded-md transition-all cursor-pointer ${
+        isActive ? 'text-primary font-bold underline' : 'text-black'
       }`}
     >
       {item.title}

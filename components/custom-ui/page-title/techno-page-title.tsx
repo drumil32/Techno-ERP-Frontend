@@ -1,6 +1,6 @@
 import { useTopHeaderContext } from '../top-header/top-header-context';
 
-export default function TechnoPageTitle() {
+export default function TechnoPageTitle({title}: {title:string}) {
   const { headerActiveItem } = useTopHeaderContext();
 
   return (

@@ -12,6 +12,7 @@ import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import useAuthRedirect from '@/lib/useAuthRedirect';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 export default function LoginPage() {
   useAuthRedirect();
@@ -33,7 +34,7 @@ export default function LoginPage() {
       return response;
     },
     onSuccess: () => {
-      router.push('/');
+      router.push(SITE_MAP.HOME.DEFAULT);
     },
     onError: () => {
       setError('Invalid email or password');

@@ -266,3 +266,21 @@ export enum StatesOfIndia {
 }
 
 
+// Fee types
+
+export enum FeeType {
+  HOSTEL = "HOSTEL",
+  TRANSPORT = "TRANSPORT",
+  PROSPECTUS = "PROSPECTUS",
+  STUDENTID = "STUDENTID",
+  UNIFORM = "UNIFORM",
+  STUDENTWELFARE = "STUDENTWELFARE",
+  BOOKBANK = "BOOKBANK",
+  EXAMFEES = "EXAMFEES"
+}
+
+export enum FeeStatus {
+  FINAL = "FINAL",
+  DRAFT = "DRAFT"
+}
+

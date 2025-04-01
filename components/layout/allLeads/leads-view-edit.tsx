@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
-import { Course, CourseNameMapper, Gender, LeadType, Locations } from '@/static/enum';
+import { Course, CourseNameMapper, Gender, LeadType, Locations } from '@/types/enum';
 import TechnoLeadTypeTag, {
   TechnoLeadType
 } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
@@ -22,9 +22,9 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { Calendar } from '@/components/ui/calendar';
 import { parse, format, isValid } from 'date-fns';
 import { toast } from 'sonner';
-import { toPascal } from '../yellowLeads/final-conversion-tag';
+import { toPascal } from '@/lib/utils';
 import { updateLeadRequestSchema } from './validators';
-import z from 'zod';
+import { z } from 'zod';
 
 interface LeadData {
   _id: string;
@@ -246,8 +246,8 @@ export default function LeadViewEdit({ data }: any) {
           <p>{formData.email ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Gender</p>
-          <p>{toPascal(formData.gender) ?? '-'}</p>
+          <p className="w-1/4  text-[#666666]">Gender</p>
+          <p>{toPascal(formData.gender)}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Location</p>

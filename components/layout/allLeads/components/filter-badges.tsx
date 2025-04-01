@@ -1,7 +1,9 @@
+"use client"
+
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { format, parse } from 'date-fns';
-import { Course, CourseNameMapper, Locations } from '@/static/enum';
+import { Course, CourseNameMapper, Locations } from '@/types/enum';
 import { Badge } from '@/components/ui/badge';
 import { toPascal } from '@/lib/utils';
 

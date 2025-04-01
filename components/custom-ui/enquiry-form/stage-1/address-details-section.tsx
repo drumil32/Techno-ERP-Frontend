@@ -4,7 +4,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
-import { Countries, Districts, StatesOfIndia } from '@/static/enum';
+import { Countries, Districts, StatesOfIndia } from '@/types/enum';
 
 interface AddressDetailsSectionInterface {
     form: UseFormReturn<any>;

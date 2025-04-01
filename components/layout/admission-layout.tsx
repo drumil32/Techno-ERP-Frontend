@@ -2,33 +2,31 @@
 
 import TechnoTopHeader from '../custom-ui/top-header/techno-top-header';
 import TechnoBreadCrumb from '../custom-ui/breadcrump/techno-breadcrumb';
-import { TechnoFilterProvider } from '../custom-ui/filter/filter-context';
+import { useTopHeaderContext } from '../custom-ui/top-header/top-header-context';
 import { useEffect } from 'react';
-import { SIDEBAR_ITEMS } from '@/common/constants/sidebarItems';
 import { useSidebarContext } from '../custom-ui/sidebar/sidebar-context';
+import { SIDEBAR_ITEMS } from '@/common/constants/sidebarItems';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 const HEADER_ITEMS = {
-    ALL_LEADS: { title: "All Leads", route: SITE_MAP.MARKETING.ALL_LEADS },
-    YELLOW_LEADS: { title: "Yellow Leads", route: SITE_MAP.MARKETING.YELLOW_LEADS },
-    ADMIN_TRACKER: { title: "Admin Tracker", route: SITE_MAP.MARKETING.ADMIN_TRACKER }
-};
+    APPLICATION_PROCESS: { title: "Application Process", route: SITE_MAP.ADMISSIONS.DEFAULT }
+}
 
-
-export default function CRMLayout({ children }: { children: React.ReactNode }) {
+export default function AdmissionLayout({ children }: { children: React.ReactNode }) {
+    const { setHeaderActiveItem } = useTopHeaderContext()
     const { setSidebarActiveItem } = useSidebarContext()
     useEffect(() => {
-        setSidebarActiveItem(SIDEBAR_ITEMS.MARKETING)
+        setHeaderActiveItem(HEADER_ITEMS.APPLICATION_PROCESS.title);
+        setSidebarActiveItem(SIDEBAR_ITEMS.ADMISSIONS)
     }, []);
     return (
         <>
             <TechnoTopHeader headerItems={HEADER_ITEMS} />
             <div className="flex flex-col px-4 gap-4">
                 <TechnoBreadCrumb />
-                <TechnoFilterProvider>
-                    {children}
-                </TechnoFilterProvider>
+                {children}
             </div>
         </>
     );
 }
+

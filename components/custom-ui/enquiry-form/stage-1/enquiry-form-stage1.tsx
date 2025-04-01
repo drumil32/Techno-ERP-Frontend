@@ -1,4 +1,5 @@
-// UI components
+'use client'
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
@@ -6,8 +7,8 @@ import { z } from 'zod';
 import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from './schema';
 import {
   ApplicationStatus,
-  EducationLevel,
-} from '@/static/enum';
+  EducationLevel
+} from '@/types/enum';
 import { Form } from '@/components/ui/form';
 
 // Custom Components

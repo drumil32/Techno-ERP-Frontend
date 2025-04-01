@@ -1,3 +1,5 @@
+"use client"
+
 import TechnoAnalyticCardsGroup from '../../custom-ui/analytic-card/techno-analytic-cards-group';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
@@ -6,7 +8,7 @@ import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
-import { Course,  Locations } from '@/static/enum';
+import { Course, Locations } from '@/types/enum';
 import {
   fetchAssignedToDropdown,
   fetchYellowLeads,
@@ -18,6 +20,7 @@ import FinalConversionTag, { FinalConversionStatus } from './final-conversion-ta
 import FilterBadges from '../allLeads/components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import YellowLeadViewEdit from './yellow-view-edit';
+import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
 import { toast } from 'sonner';
 
 export default function YellowLeadsTracker() {

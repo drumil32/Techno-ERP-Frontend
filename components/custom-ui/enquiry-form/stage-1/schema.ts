@@ -16,7 +16,7 @@ import {
   EducationLevel,
   Gender,
   Religion
-} from '@/static/enum';
+} from '@/types/enum';
 import { z } from 'zod';
 
 export const academicDetailSchema = z.object({
