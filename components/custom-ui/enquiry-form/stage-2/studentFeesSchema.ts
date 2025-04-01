@@ -6,15 +6,15 @@ import { FeeStatus, FeeType } from "@/types/enum";
 
 export const otherFeesSchema = z.object({
   type: z.nativeEnum(FeeType),
-  feeAmount: z.number().min(0, 'Fee amount must be greater than 0'),
-  finalFee: z.number().min(0, 'Final fees to be paid must be greater than 0'),
-  feesDepositedTOA: z.number().min(0, 'Fees to be deposited must be greater then 0').default(0),
+  feeAmount: z.number().min(0, 'Fee amount must be greater than 0').optional().nullable(),
+  finalFee: z.number().min(0, 'Final fees must be non-negative').optional().nullable(),
+  feesDepositedTOA: z.number().min(0, 'Fees deposited must be non-negative').optional().nullable(),
   remarks: z.string()
 });
 
 export const singleSemSchema = z.object({
   feeAmount: z.number().min(0, 'Fee amount must be greater than 0'),
-  finalFee: z.number().min(0, 'Final fees to be paid must be Positive')
+  finalFee: z.number().min(0, 'Final fees must be non-negative').optional().nullable() 
 });
 
 const otherFeesSchemaWithoutFeeAmount = otherFeesSchema.omit({ feeAmount: true });
@@ -33,11 +33,17 @@ export const feesRequestSchema = studentFeesSchema.omit({ feeStatus: true }).ext
   otherFees: z.array(otherFeesSchemaWithoutFeeAmount),
   semWiseFees: z.array(singleSemSchemaWithoutFeeAmount),
   enquiryId: z.string().min(1, 'Reuired Field'),
-  feesClearanceDate: requestDateSchema,
+  feesClearanceDate: z.date().optional().nullable(),
   counsellorName: z.string().optional().nullable(),
   telecallerName: z.string().optional().nullable(),
   collegeSectionDate: z.date().optional().nullable(),
   collegeSectionRemarks: z.string().optional().nullable(),
+  confirmationCheck: z.boolean().refine(val => val === true, {
+    message: "You must confirm the terms before submitting."
+  }),
+  otpTarget: z.string().nullable().optional(),
+  otpVerificationEmail: z.string().nullable().optional(),
+
 });
 
 export const feesUpdateSchema = feesRequestSchema.extend({

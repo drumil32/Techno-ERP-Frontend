@@ -1,7 +1,7 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { TechnoLeadType } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
+import { toPascal } from '@/lib/utils';
 import { Course, CourseNameMapper } from '@/types/enum';
-import { toPascal } from '../../yellowLeads/final-conversion-tag';
 
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   // Modified parameters to get Assigned To Dropdown Data

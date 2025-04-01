@@ -47,7 +47,7 @@ export default function TechnoBreadCrumb() {
             </BreadcrumbItem>
         );
 
-        // Start from the third segment 
+        // Start from the third segment
         for (let i = 2; i < pathSegments.length; i++) {
             const segment = pathSegments[i];
             const formattedSegment = segment
@@ -75,7 +75,7 @@ export default function TechnoBreadCrumb() {
     };
 
     return (
-        <Breadcrumb className="my-4">
+        <Breadcrumb className="mt-20">
             <BreadcrumbList className="text-lg flex items-center">
                 {generateBreadcrumbs()}
             </BreadcrumbList>
