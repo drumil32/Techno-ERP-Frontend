@@ -29,7 +29,6 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
   commonFieldClass,
   commonFormItemClass
 }) => {
-
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">
@@ -104,7 +103,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                               <Input
                                 {...field}
                                 type="number"
-                                placeholder="Enter Passing Year"
+                                placeholder="Passing Year"
                                 onChange={(e) => field.onChange(Number(e.target.value))}
                               />
                             </FormControl>
@@ -125,7 +124,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                               <Input
                                 {...field}
                                 type="number"
-                                placeholder="Enter Percentage"
+                                placeholder="Out of 100%"
                                 onChange={(e) => field.onChange(Number(e.target.value))}
                                 min={0}
                                 max={100}
@@ -140,6 +139,14 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                       {form.formState.errors.academicDetails?.[0]?.passingYear && (
                         <p className="text-[#E7000B]">
                           {form.formState.errors.academicDetails?.[0]?.passingYear.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="row-start-1">
+                      {form.formState.errors.academicDetails?.[0]?.percentageObtained && (
+                        <p className="text-[#E7000B]">
+                          {form.formState.errors.academicDetails?.[0]?.percentageObtained.message}
                         </p>
                       )}
                     </div>
@@ -234,7 +241,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                               <Input
                                 {...field}
                                 type="number"
-                                placeholder="Enter Passing Year"
+                                placeholder="Passing Year"
                                 onChange={(e) => field.onChange(Number(e.target.value))}
                               />
                             </FormControl>
@@ -255,7 +262,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                               <Input
                                 {...field}
                                 type="number"
-                                placeholder="Enter Percentage"
+                                placeholder="Out of 100%"
                                 onChange={(e) => field.onChange(Number(e.target.value))}
                                 min={0}
                                 max={100}
@@ -270,6 +277,14 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                       {form.formState.errors.academicDetails?.[1]?.passingYear && (
                         <p className="text-[#E7000B]">
                           {form.formState.errors.academicDetails?.[1]?.passingYear.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="row-start-1">
+                      {form.formState.errors.academicDetails?.[1]?.percentageObtained && (
+                        <p className="text-[#E7000B]">
+                          {form.formState.errors.academicDetails?.[1]?.percentageObtained.message}
                         </p>
                       )}
                     </div>
@@ -364,7 +379,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                               <Input
                                 {...field}
                                 type="number"
-                                placeholder="Enter Passing Year"
+                                placeholder="Passing Year"
                                 onChange={(e) => field.onChange(Number(e.target.value))}
                               />
                             </FormControl>
@@ -385,7 +400,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                               <Input
                                 {...field}
                                 type="number"
-                                placeholder="Enter Percentage"
+                                placeholder="Out of 100%"
                                 onChange={(e) => field.onChange(Number(e.target.value))}
                                 min={0}
                                 max={100}
@@ -400,6 +415,14 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                       {form.formState.errors.academicDetails?.[2]?.passingYear && (
                         <p className="text-[#E7000B]">
                           {form.formState.errors.academicDetails?.[2]?.passingYear.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="row-start-1">
+                      {form.formState.errors.academicDetails?.[2]?.percentageObtained && (
+                        <p className="text-[#E7000B]">
+                          {form.formState.errors.academicDetails?.[2]?.percentageObtained.message}
                         </p>
                       )}
                     </div>

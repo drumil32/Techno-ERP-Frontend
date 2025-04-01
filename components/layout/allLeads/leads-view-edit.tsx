@@ -22,9 +22,9 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { Calendar } from '@/components/ui/calendar';
 import { parse, format, isValid } from 'date-fns';
 import { toast } from 'sonner';
-import { updateLeadRequestSchema } from './validators';
-import z from 'zod';
 import { toPascal } from '@/lib/utils';
+import { updateLeadRequestSchema } from './validators';
+import { z } from 'zod';
 
 interface LeadData {
   _id: string;

@@ -1,26 +1,31 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const requestDateSchema = z
   .string()
-    .regex(/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/, 'Date must be in DD/MM/YYYY format');
-  
-    export const contactNumberSchema = z
+  .regex(/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/, 'Date must be in DD/MM/YYYY format');
+
+export const contactNumberSchema = z
   .string()
   .regex(/^[1-9]\d{9}$/, 'Invalid contact number format. Expected: 1234567890');
 
 export const addressSchema = z.object({
   addressLine1: z.string().min(5, 'Permanent address must be at least 5 characters'),
   addressLine2: z.string().optional(),
-  district: z.string(),
   pincode: z
     .string()
     .regex(/^[1-9][0-9]{5}$/, 'Pincode must be a 6-digit number starting with a non-zero digit'),
-  state: z.string(),
-  country: z.string()
+
+  district: z.string().nonempty('District is required'),
+  state: z.string().nonempty('State is required'),
+  country: z.string().nonempty('Country is required')
 });
 
 export const previousCollegeDataSchema = z.object({
-  collegeName: z.string().min(3, 'College Name must be at least 3 characters').optional(),
+  collegeName: z
+    .string()
+    .min(3, 'College Name must be at least 3 characters')
+    .regex(/^[A-Za-z\s]+$/, 'College Name must only contain alphabets and spaces')
+    .optional(),
   district: z.string().optional(),
   boardUniversity: z.string().optional(),
   passingYear: z

@@ -5,7 +5,7 @@ interface EnquiryFormFooterProps {
   saveDraft: () => void;
 }
 
-const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft }) => {
+const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft}) => {
   return (
     <div className="fixed w-full bottom-0 bg-white shadow-md p-4 border-t flex justify-between items-center">
     <Button type="button" onClick={saveDraft}>
