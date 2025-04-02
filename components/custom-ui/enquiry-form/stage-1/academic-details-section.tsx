@@ -7,19 +7,14 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion';
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from '@/components/ui/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
 // Form and Validation
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 import { enquiryStep1RequestSchema } from './schema';
+import TagInput from './tag-input';
 
 // Form Schema
 const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
@@ -180,15 +175,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="text"
-                            className={commonFieldClass}
-                            placeholder="(Optional)"
-                            onChange={(e) =>
-                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
-                            }
-                          />
+                          <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -326,15 +313,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="text"
-                            className={commonFieldClass}
-                            placeholder="(Optional)"
-                            onChange={(e) =>
-                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
-                            }
-                          />
+                          <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -472,15 +451,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="text"
-                            className={commonFieldClass}
-                            placeholder="(Optional)"
-                            onChange={(e) =>
-                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
-                            }
-                          />
+                          <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
