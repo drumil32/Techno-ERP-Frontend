@@ -35,7 +35,11 @@ function removeNullValues(obj: any): any {
     return obj
       .map(removeNullValues)
       .filter(
-        (item) => item !== null && item !== undefined && !(Array.isArray(item) && item.length === 0)
+        (item) =>
+          item !== null &&
+          item !== undefined &&
+          item !== '' &&
+          !(Array.isArray(item) && item.length === 0)
       );
   } else if (typeof obj === 'object' && obj !== null) {
     return Object.fromEntries(
@@ -43,7 +47,10 @@ function removeNullValues(obj: any): any {
         .map(([key, value]) => [key, removeNullValues(value)])
         .filter(
           ([_, value]) =>
-            value !== null && value !== undefined && !(Array.isArray(value) && value.length === 0)
+            value !== null &&
+            value !== undefined &&
+            value !== '' &&
+            !(Array.isArray(value) && value.length === 0)
         )
     );
   } else {
@@ -293,7 +300,7 @@ const EnquiryFormStage1 = ({ id }: { id: string }) => {
         <ConfirmationCheckBox form={form} />
 
         {/* Sticky Footer */}
-        <EnquiryFormFooter saveDraft={saveDraft} />
+        <EnquiryFormFooter saveDraft={saveDraft} form={form} onSubmit={onSubmit} />
       </form>
     </Form>
   );

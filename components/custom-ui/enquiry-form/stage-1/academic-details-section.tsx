@@ -106,8 +106,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 placeholder="Passing Year"
                                 onChange={(e) => {
                                   const value = e.target.value;
-                                  field.onChange(value === "" ? undefined : Number(value));
+                                  field.onChange(value === '' ? '' : Number(value));
                                 }}
+                                value={field.value ?? ''}
                               />
                             </FormControl>
                           </FormItem>
@@ -130,8 +131,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 placeholder="Out of 100%"
                                 onChange={(e) => {
                                   const value = e.target.value;
-                                  field.onChange(value === "" ? undefined : Number(value));
+                                  field.onChange(value === '' ? '' : Number(value));
                                 }}
+                                value={field.value ?? ''}
                                 min={0}
                                 max={100}
                               />
@@ -250,8 +252,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 placeholder="Passing Year"
                                 onChange={(e) => {
                                   const value = e.target.value;
-                                  field.onChange(value === "" ? undefined : Number(value));
+                                  field.onChange(value === '' ? '' : Number(value));
                                 }}
+                                value={field.value ?? ''}
                               />
                             </FormControl>
                           </FormItem>
@@ -274,8 +277,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 placeholder="Out of 100%"
                                 onChange={(e) => {
                                   const value = e.target.value;
-                                  field.onChange(value === "" ? undefined : Number(value));
+                                  field.onChange(value === '' ? '' : Number(value));
                                 }}
+                                value={field.value ?? ''}
                                 min={0}
                                 max={100}
                               />
@@ -394,8 +398,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 placeholder="Passing Year"
                                 onChange={(e) => {
                                   const value = e.target.value;
-                                  field.onChange(value === '' ? undefined : Number(value));
+                                  field.onChange(value === '' ? '' : Number(value));
                                 }}
+                                value={field.value ?? ''}
                               />
                             </FormControl>
                           </FormItem>
@@ -418,8 +423,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 placeholder="Out of 100%"
                                 onChange={(e) => {
                                   const value = e.target.value;
-                                  field.onChange(value === "" ? undefined : Number(value));
+                                  field.onChange(value === '' ? '' : Number(value));
                                 }}
+                                value={field.value ?? ''}
                                 min={0}
                                 max={100}
                               />
