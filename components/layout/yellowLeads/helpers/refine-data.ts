@@ -50,11 +50,11 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
 };
 
 export const refineAnalytics = (analytics: any) => {
-  const totalLeads = analytics.totalLeads ?? 0;
+  const allLeadsCount = analytics.allLeadsCount ?? 0;
 
   const calculatePercentage = (count: number) => {
-    if (totalLeads === 0) return '0%';
-    return `${Math.round((count / totalLeads) * 100)}%`;
+    if (allLeadsCount === 0) return '0%';
+    return `${Math.round((count / allLeadsCount) * 100)}%`;
   };
   const analyticsCardsData: CardItem[] = [
     {

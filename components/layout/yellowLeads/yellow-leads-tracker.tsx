@@ -20,7 +20,6 @@ import FinalConversionTag, { FinalConversionStatus } from './final-conversion-ta
 import FilterBadges from '../allLeads/components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import YellowLeadViewEdit from './yellow-view-edit';
-import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
 import { toast } from 'sonner';
 
 export default function YellowLeadsTracker() {

@@ -74,7 +74,7 @@ const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
   })
 });
 
-const EnquiryFormStage1 = ({ id }: { id: string }) => {
+const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -97,6 +97,7 @@ const EnquiryFormStage1 = ({ id }: { id: string }) => {
     }
   });
 
+  // Fetch enquiry data if id is provided
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id],
     queryFn: () => getEnquiry(id ? id : ''),
