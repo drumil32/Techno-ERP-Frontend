@@ -1,21 +1,18 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
+// React and Next.js imports
 import React, { useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from './schema';
-import { ApplicationStatus, EducationLevel } from '@/types/enum';
-import { Form } from '@/components/ui/form';
+import { useRouter } from 'next/navigation';
 
-// Custom Components
-import EnquiryFormFooter from './enquiry-form-footer-section';
-import StudentDetailsForm from './student-details-section';
-import AddressDetailsSection from './address-details-section';
-import AcademicDetailsSection from './academic-details-section';
-import FilledByCollegeSection from './filled-by-college-section';
-import ConfirmationCheckBox from './confirmation-check-box';
+// React Hook Form and Zod imports
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+
+// React Query imports
 import { useQueries, useQuery } from '@tanstack/react-query';
+
+// API and schema imports
 import {
   createEnquiry,
   createEnquiryDraft,
@@ -25,10 +22,22 @@ import {
   updateEnquiryDraft,
   updateEnquiryStatus
 } from './enquiry-form-api';
-import { useSearchParams } from 'next/navigation';
+import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from './schema';
+
+// Component and UI imports
+import { Form } from '@/components/ui/form';
+import EnquiryFormFooter from './enquiry-form-footer-section';
+import StudentDetailsForm from './student-details-section';
+import AddressDetailsSection from './address-details-section';
+import AcademicDetailsSection from './academic-details-section';
+import FilledByCollegeSection from './filled-by-college-section';
+import ConfirmationCheckBox from './confirmation-check-box';
+
+// Utility and constants imports
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 import { API_ROUTES } from '@/common/constants/apiRoutes';
+import { ApplicationStatus, EducationLevel } from '@/types/enum';
+
 
 function removeNullValues(obj: any): any {
   if (Array.isArray(obj)) {

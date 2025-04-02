@@ -1,12 +1,22 @@
 import React from 'react';
+
+// UI Components
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+
+// Form and Validation
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 import { enquiryStep1RequestSchema } from './schema';

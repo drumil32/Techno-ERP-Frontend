@@ -1,3 +1,8 @@
+// React and Hooks
+import React from 'react';
+import { UseFormReturn } from 'react-hook-form';
+
+// UI Components
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -8,10 +13,9 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
-import { FaCircleExclamation } from 'react-icons/fa6';
 
-import React from 'react';
-import { UseFormReturn } from 'react-hook-form';
+// Icons
+import { FaCircleExclamation } from 'react-icons/fa6';
 
 interface EnquiryFormFooterProps {
   saveDraft: () => void;
