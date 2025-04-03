@@ -1,5 +1,6 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { TechnoLeadType } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
+import { toPascal } from '@/lib/utils';
 import { Course, CourseNameMapper } from '@/types/enum';
 
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
@@ -20,7 +21,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       altPhoneNumberView: lead.altPhoneNumber ?? '-',
       email: lead.email,
       emailView: lead.email ?? '-',
-      gender: lead.gender,
+      gender:  lead.gender,
+      genderView:  toPascal(lead.gender),
       location: lead.location,
       course: lead.course,
       courseView: CourseNameMapper[lead.course as Course] ?? '-',

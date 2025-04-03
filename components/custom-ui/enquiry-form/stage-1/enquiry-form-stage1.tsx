@@ -1,24 +1,20 @@
-'use client'
+'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
+// React and Next.js imports
 import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from '../schema/schema';
-import {
-  ApplicationStatus,
-  EducationLevel
-} from '@/types/enum';
-import { Form } from '@/components/ui/form';
 
-// Custom Components
-import EnquiryFormFooter from './enquiry-form-footer-section';
-import StudentDetailsForm from './student-details-section';
-import AddressDetailsSection from './address-details-section';
-import AcademicDetailsSection from './academic-details-section';
-import FilledByCollegeSection from './filled-by-college-section';
-import ConfirmationCheckBox from './confirmation-check-box';
+import { useRouter } from 'next/navigation';
+
+// React Hook Form and Zod imports
+import { zodResolver } from '@hookform/resolvers/zod';
+
+// React Query imports
 import { useQueries, useQuery } from '@tanstack/react-query';
+
+// API and schema imports
 import {
   createEnquiry,
   createEnquiryDraft,
@@ -28,25 +24,49 @@ import {
   updateEnquiryDraft,
   updateEnquiryStatus
 } from './enquiry-form-api';
-import { useSearchParams } from 'next/navigation';
+
+// Component and UI imports
+import { Form } from '@/components/ui/form';
+import EnquiryFormFooter from './enquiry-form-footer-section';
+import StudentDetailsForm from './student-details-section';
+import AddressDetailsSection from './address-details-section';
+import AcademicDetailsSection from './academic-details-section';
+import FilledByCollegeSection from './filled-by-college-section';
+import ConfirmationCheckBox from './confirmation-check-box';
+
+// Utility and constants imports
 import { toast } from 'sonner';
+import { API_ROUTES } from '@/common/constants/apiRoutes';
+import { ApplicationStatus, EducationLevel } from '@/types/enum';
+
 
 export function removeNullValues(obj: any): any {
   if (Array.isArray(obj)) {
     return obj
       .map(removeNullValues)
-      .filter((item) => item !== null && item !== undefined && !(Array.isArray(item) && item.length === 0));
+      .filter(
+        (item) =>
+          item !== null &&
+          item !== undefined &&
+          item !== '' &&
+          !(Array.isArray(item) && item.length === 0)
+      );
   } else if (typeof obj === 'object' && obj !== null) {
     return Object.fromEntries(
       Object.entries(obj)
         .map(([key, value]) => [key, removeNullValues(value)])
-        .filter(([_, value]) => value !== null && value !== undefined && !(Array.isArray(value) && value.length === 0))
+        .filter(
+          ([_, value]) =>
+            value !== null &&
+            value !== undefined &&
+            value !== '' &&
+            !(Array.isArray(value) && value.length === 0)
+        )
     );
   } else {
     return obj;
   }
 }
-
 
 // Form Schema
 const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
@@ -55,10 +75,8 @@ const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
   })
 });
 
-const EnquiryFormStage1 = () => {
-  // Get the enquiry / draft id from the URL
-  const searchParams = useSearchParams();
-  const id = searchParams.get('id');
+const EnquiryFormStage1 = ({ id }: { id?: string }) => {
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -68,18 +86,19 @@ const EnquiryFormStage1 = () => {
       confirmation: false,
       academicDetails: [
         {
-          educationLevel: EducationLevel.Tenth,
+          educationLevel: EducationLevel.Tenth
         },
         {
-          educationLevel: EducationLevel.Twelfth,
+          educationLevel: EducationLevel.Twelfth
         },
         {
-          educationLevel: EducationLevel.Graduation,
+          educationLevel: EducationLevel.Graduation
         }
       ]
     }
   });
 
+  // Fetch enquiry data if id is provided
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id],
     queryFn: () => getEnquiry(id ? id : ''),
@@ -95,55 +114,48 @@ const EnquiryFormStage1 = () => {
   const toastIdRef = useRef<string | number | null>(null);
 
   useEffect(() => {
-  
-      if (toastIdRef.current) {
-        if (isLoading || isFetching) {
-          toast.loading('Loading enquiry data...', {
-            id: toastIdRef.current,
-            duration: Infinity
-          });
-        }
-  
-        if (isError) {
-          toast.error('Failed to load enquiry data', {
-            id: toastIdRef.current,
-            duration: 3000
-          });
-          setTimeout(() => {
-            toastIdRef.current = null;
-          }, 3000);
-          toastIdRef.current = null;
-        }
-  
-        if (isSuccess) {
-          toast.success('Admin tracker enquiry successfully', {
-            id: toastIdRef.current!,
-            duration: 2000
-          });
-          toastIdRef.current = null;
-        }
-      } else if (isError) {
-        toastIdRef.current = toast.error('Failed to load enquiry data', {
-          duration: 3000
-        });
-      } else if (isLoading || isFetching) {
-        toastIdRef.current = toast.loading('Loading enquiry data...', {
+    if (toastIdRef.current) {
+      if (isLoading || isFetching) {
+        toast.loading('Loading enquiry data...', {
+          id: toastIdRef.current,
           duration: Infinity
         });
       }
-  
-      return () => {
-        if (toastIdRef.current) {
-          toast.dismiss(toastIdRef.current);
-        }
-      };
-    }, [
-      isLoading,
-      isError,
-      isSuccess,
-      isFetching,
-      data
-    ]);
+
+      if (isError) {
+        toast.error('Failed to load enquiry data', {
+          id: toastIdRef.current,
+          duration: 3000
+        });
+        setTimeout(() => {
+          toastIdRef.current = null;
+        }, 3000);
+        toastIdRef.current = null;
+      }
+
+      if (isSuccess) {
+        toast.success('Admin tracker enquiry successfully', {
+          id: toastIdRef.current!,
+          duration: 2000
+        });
+        toastIdRef.current = null;
+      }
+    } else if (isError) {
+      toastIdRef.current = toast.error('Failed to load enquiry data', {
+        duration: 3000
+      });
+    } else if (isLoading || isFetching) {
+      toastIdRef.current = toast.loading('Loading enquiry data...', {
+        duration: Infinity
+      });
+    }
+
+    return () => {
+      if (toastIdRef.current) {
+        toast.dismiss(toastIdRef.current);
+      }
+    };
+  }, [isLoading, isError, isSuccess, isFetching, data]);
 
   const results = useQueries({
     queries: [
@@ -160,7 +172,6 @@ const EnquiryFormStage1 = () => {
 
   const telecallersData = results[0].data ?? [];
   const counsellorsData = results[1].data ?? [];
-
   const commonFormItemClass = 'col-span-1 gap-y-0';
   const commonFieldClass = '';
 
@@ -216,30 +227,26 @@ const EnquiryFormStage1 = () => {
     }
 
     // Remove confirmation field from values
-    
-    const { confirmation,_id, ...rest } = values;
+    const { confirmation, _id, ...rest } = values;
 
     if (!id) {
-      const response = await createEnquiryDraft(rest);
+      const response: any = await createEnquiryDraft(rest);
+      if (!response) {
+        toast.error('Failed to create enquiry draft');
+        return;
+      }
 
-      if (!response)
-        {
-          toast.error('Failed to create enquiry draft');
-          return;
-        }
-        toast.success('Enquiry draft created successfully');
+      toast.success('Enquiry draft created successfully');
+
+      router.push(API_ROUTES.enquiryFormStage1(response._id));
     } else {
-
       const response = await updateEnquiryDraft({ ...rest, id });
-
-      if (!response)
-      {
+      if (!response) {
         toast.error('Failed to update enquiry draft');
         return;
       }
-      toast.success("Enquiry draft updated successfully");
+      toast.success('Enquiry draft updated successfully');
     }
-
     form.setValue('confirmation', false);
   }
 
@@ -259,7 +266,7 @@ const EnquiryFormStage1 = () => {
       return;
     }
     toast.success('Enquiry status updated successfully');
-    
+
     form.setValue('confirmation', false);
     form.reset();
   }
@@ -304,7 +311,7 @@ const EnquiryFormStage1 = () => {
         <ConfirmationCheckBox form={form} />
 
         {/* Sticky Footer */}
-        <EnquiryFormFooter saveDraft={saveDraft}/>
+        <EnquiryFormFooter saveDraft={saveDraft} form={form} onSubmit={onSubmit} />
       </form>
     </Form>
   );

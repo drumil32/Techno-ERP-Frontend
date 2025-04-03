@@ -1,9 +1,15 @@
+// External Libraries
+import { z } from 'zod';
+
+// Common Schemas
 import {
   addressSchema,
   contactNumberSchema,
   previousCollegeDataSchema,
   requestDateSchema
 } from '@/common/constants/schemas';
+
+// Enums
 import {
   AdmissionMode,
   AdmissionReference,
@@ -18,7 +24,6 @@ import {
   Religion,
   StatesOfIndia
 } from '@/types/enum';
-import { z } from 'zod';
 
 export const academicDetailSchema = z.object({
   educationLevel: z.nativeEnum(EducationLevel),
@@ -40,7 +45,7 @@ export const academicDetailSchema = z.object({
     .number()
     .min(0, 'Percentage must be at least 0')
     .max(100, 'Percentage cannot exceed 100'),
-  subjects: z.array(z.string().min(1, 'Subject name is required')).optional()
+  subjects: z.array(z.string().min(1, 'Subject name is required'))
 });
 
 export const singleDocumentSchema = z.object({

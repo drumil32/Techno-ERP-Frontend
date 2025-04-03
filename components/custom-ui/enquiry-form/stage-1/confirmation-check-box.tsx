@@ -1,7 +1,10 @@
+// React and related libraries
+import React from 'react';
+import { UseFormReturn } from 'react-hook-form';
+
+// UI components
 import { Checkbox } from '@/components/ui/checkbox';
 import { FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
-import React from 'react'
-import { UseFormReturn } from 'react-hook-form';
 
 interface ConfirmationCheckBoxInterface {
     form: UseFormReturn<any>;

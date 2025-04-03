@@ -104,7 +104,7 @@ const EnquiryFormStage3 = () => {
 
                 <ConfirmationCheckBoxStage3 form={form} />
 
-                <EnquiryFormFooter saveDraft={saveData} />
+                <EnquiryFormFooter form={form} onSubmit={saveData} saveDraft={saveData} />
             </form>
         </Form>
     );

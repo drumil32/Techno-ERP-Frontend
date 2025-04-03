@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import { fetchAdmissionsData } from "./helpers/fetch-data";
 import TechnoDataTable from "@/components/custom-ui/data-table/techno-data-table";
 import { refineAdmissions } from "./helpers/refine-data";
-import { AdmissionTableRowType } from "@/types/admissions";
+import { AdmissionTableRow } from "@/types/admissions";
 import AdmissionCard from "@/components/custom-ui/admission-card/techno-admission-card";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -18,7 +18,7 @@ export default function AdmissionsLandingPage() {
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const router = useRouter()
 
-    const handleViewMore = (row: AdmissionTableRowType) => {
+    const handleViewMore = (row: AdmissionTableRow) => {
         if(row && row.id) {
             router.push(`/c/admissions/admission-form/${row._id}/${row.applicationStatus.toLocaleLowerCase()}`)
         }
@@ -89,7 +89,9 @@ export default function AdmissionsLandingPage() {
                     heading="New Application"
                     subheading="Start a new admission application"
                 >
-                    <Button className="w-2/3"> Create New Admission</Button>
+                    <Button className="w-2/3" onClick={() => {
+                        router.push('/c/admissions/admission-form/new/step_1')
+                    }}> Create New Admission</Button>
                 </AdmissionCard>
 
                 <AdmissionCard

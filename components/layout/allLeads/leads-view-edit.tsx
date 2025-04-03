@@ -204,9 +204,11 @@ export default function LeadViewEdit({ data }: any) {
         return;
       }
 
-      const response = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateLead, filteredData);
+      const response :LeadData|null = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateLead, filteredData);
       if (response) {
         toast.success('Updated Lead Successfully');
+        setFormData(response);
+        console.log(response);
         setOriginalData(formData);
       } else {
         setFormData(originalData);
@@ -346,7 +348,7 @@ export default function LeadViewEdit({ data }: any) {
             <SelectContent>
               {Object.values(Gender).map((gender) => (
                 <SelectItem key={gender} value={gender}>
-                  {gender}
+                  {toPascal(gender)}
                 </SelectItem>
               ))}
             </SelectContent>

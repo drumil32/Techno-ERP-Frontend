@@ -1,6 +1,6 @@
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
-import { apiRequest, Response } from '@/lib/apiClient';
+import { apiRequest } from '@/lib/apiClient';
 
 export const getEnquiry = async (enquiry_id: string) => {
     return apiRequest(

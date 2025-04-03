@@ -20,7 +20,6 @@ import FinalConversionTag, { FinalConversionStatus } from './final-conversion-ta
 import FilterBadges from '../allLeads/components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import YellowLeadViewEdit from './yellow-view-edit';
-import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
 import { toast } from 'sonner';
 
 export default function YellowLeadsTracker() {
@@ -175,7 +174,7 @@ export default function YellowLeadsTracker() {
       }
 
       if (isSuccess) {
-        toast.success('Data loaded', {
+        toast.success('Yellow Leads data loaded successfully', {
           id: toastIdRef.current!,
           duration: 2000
         });
@@ -216,7 +215,7 @@ export default function YellowLeadsTracker() {
     { accessorKey: 'ltcDate', header: 'LTC Date' },
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'gender', header: 'Gender' },
+    { accessorKey: 'genderView', header: 'Gender' },
     { accessorKey: 'locationView', header: 'Location' },
     { accessorKey: 'courseView', header: 'Course' },
     {
@@ -341,7 +340,7 @@ export default function YellowLeadsTracker() {
         <TechnoDataTable
           columns={columns}
           data={leads.leads}
-          tableName="Yellow Leads Data"
+          tableName="Yellow Leads Table"
           currentPage={page}
           totalPages={totalPages}
           pageLimit={limit}

@@ -1,8 +1,12 @@
-import React from 'react'
+import React from 'react';
+
+// UI Components
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+
+// Types and Utilities
 import { UseFormReturn } from 'react-hook-form';
 import { Countries, Districts, StatesOfIndia } from '@/types/enum';
 
