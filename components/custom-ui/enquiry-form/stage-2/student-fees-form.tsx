@@ -298,10 +298,11 @@ export const StudentFeesForm = () => {
 
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="other-fees">
           <AccordionItem value="other-fees">
-            <AccordionTrigger className="px-4 py-3 text-lg font-semibold hover:no-underline">
-              Fees Category
+            <AccordionTrigger className="w-full items-center">
+              <h3 className="font-inter text-[16px] font-semibold">Fees Category</h3>
+              <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
-            <AccordionContent className="p-6 bg-white">
+            <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className='w-2/3'>
                 <div className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 px-2 pb-1 font-bold text-[16px]">
                   <div>Fees Details</div>
@@ -458,10 +459,11 @@ export const StudentFeesForm = () => {
 
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="sem-fees">
           <AccordionItem value="sem-fees">
-            <AccordionTrigger className="px-4 py-3 text-lg font-semibold hover:no-underline">
-              All Semester Details
+            <AccordionTrigger className="w-full items-center">
+              <h3 className="font-inter text-[16px] font-semibold"> All Semester Details</h3>
+              <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
-            <AccordionContent className="p-6 bg-white">
+            <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className='w-2/3'>
                 <div className="space-y-4">
                   <div className="grid grid-cols-[1fr_0.5fr_1fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 px-2 pb-1 border-b">
@@ -516,9 +518,11 @@ export const StudentFeesForm = () => {
 
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="college-details">
           <AccordionItem value="college-details" className="border-b-0">
-            <AccordionTrigger className="px-4 py-3 text-lg font-semibold hover:no-underline [&[data-state=open]>svg]:rotate-180">
-              To be filled by College
+            <AccordionTrigger className="w-full items-center">
+              <h3 className="font-inter text-[16px] font-semibold"> To be filled by College</h3>
+              <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
+             
             <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-y-4 gap-x-8 ">
                 <FormField
@@ -639,10 +643,11 @@ export const StudentFeesForm = () => {
 
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="college-info">
           <AccordionItem value="confirmation" className="border-b-0">
-            <AccordionTrigger className="px-4 py-3 text-lg font-semibold hover:no-underline [&[data-state=open]>svg]:rotate-180">
-              Confirmation
+            <AccordionTrigger className="w-full items-center">
+              <h3 className="font-inter text-[16px] font-semibold"> Confirmation</h3>
+              <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
-            <AccordionContent className="p-6 space-y-4 bg-white text-gray-600">
+            <AccordionContent className="p-6 space-y-4 bg-white text-gray-600 rounded-[10px]">
               <FormField
                 control={form.control}
                 name="otpTarget"

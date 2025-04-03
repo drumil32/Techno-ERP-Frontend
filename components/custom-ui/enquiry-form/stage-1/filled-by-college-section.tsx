@@ -1,4 +1,6 @@
+// React and Hooks
 import React from 'react';
+import { UseFormReturn } from 'react-hook-form';
 
 // UI Components
 import {
@@ -17,10 +19,13 @@ import {
 } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
-import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
-import { CalendarDaysIcon } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
+
+// Icons
+import { CalendarDaysIcon } from 'lucide-react';
+
+// Utilities
 import { format } from 'date-fns';
 
 interface UserRoleInterface {

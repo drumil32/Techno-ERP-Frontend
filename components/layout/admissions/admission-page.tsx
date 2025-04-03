@@ -18,20 +18,20 @@ export default function AdmissionsLandingPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const router = useRouter()
 
-  const handleViewMore = (row: AdmissionTableRow) => {
-    if (row && row.id) {
-      router.push(`/c/admissions/admission-form/${row._id}/${row.applicationStatus.toLocaleLowerCase()}`)
-    }
-  };
-  const columns = [
-    { accessorKey: 'id', header: 'S. No' },
-    { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry' },
-    { accessorKey: 'studentName', header: 'Name' },
-    { accessorKey: 'studentPhoneNumber', header: 'Phone Number' },
-    { accessorKey: 'genderDisplay', header: 'Gender' },
-    { accessorKey: 'district', header: 'District' },
-    { accessorKey: 'course', header: 'Course' },
-    { accessorKey: 'applicationStatus', header: 'Application Status' },
+    const handleViewMore = (row: AdmissionTableRow) => {
+        if(row && row.id) {
+            router.push(`/c/admissions/admission-form/${row._id}/${row.applicationStatus.toLocaleLowerCase()}`)
+        }
+    };
+    const columns = [
+        { accessorKey: 'id', header: 'S. No' },
+        { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry' },
+        { accessorKey: 'studentName', header: 'Name' },
+        { accessorKey: 'studentPhoneNumber', header: 'Phone Number' },
+        { accessorKey: 'genderDisplay', header: 'Gender' },
+        { accessorKey: 'district', header: 'District' },
+        { accessorKey: 'course', header: 'Course' },
+        { accessorKey: 'applicationStatus', header: 'Application Status' },
 
     { accessorKey: 'fatherPhoneNumber', header: 'Father P No.' },
     { accessorKey: 'motherPhoneNumber', header: 'Mother P No.' },
@@ -82,16 +82,18 @@ export default function AdmissionsLandingPage() {
   const admissionsData = admissionsQuery.data ? refineAdmissions(admissionsQuery.data) : []
   console.log(admissionsData)
 
-  return (
-    <>
-      <TechnoPageTitle title="Admission Application Process" />
-      <div className="flex gap-[32px]">
-        <AdmissionCard
-          heading="New Application"
-          subheading="Start a new admission application"
-        >
-          <Button className="w-2/3"> Create New Admission</Button>
-        </AdmissionCard>
+    return (
+        <>
+            <TechnoPageTitle title="Admission Application Process" />
+            <div className="flex gap-[32px]">
+                <AdmissionCard
+                    heading="New Application"
+                    subheading="Start a new admission application"
+                >
+                    <Button className="w-2/3" onClick={() => {
+                        router.push('/c/admissions/admission-form/new/step_1')
+                    }}> Create New Admission</Button>
+                </AdmissionCard>
 
         <AdmissionCard
           heading="Ongoing Application"
