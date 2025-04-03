@@ -47,15 +47,15 @@ export default function TechnoBreadCrumb() {
             </BreadcrumbItem>
         );
 
-        // Start from the third segment 
-        for (let i = 2; i < pathSegments.length; i++) {
+        // Start from the third segment
+        for (let i = 2; i < Math.min(pathSegments.length,3); i++) {
             const segment = pathSegments[i];
             const formattedSegment = segment
                 .replace(/-/g, ' ')
                 .replace(/\b\w/g, (char) => char.toUpperCase());
 
             const href = `/${pathSegments.slice(0, i + 1).join('/')}`;
-            const isLastItem = i === pathSegments.length - 1;
+            const isLastItem = i === Math.min(pathSegments.length-1,2);
 
             breadcrumbs.push(
                 <React.Fragment key={href}>
@@ -75,7 +75,7 @@ export default function TechnoBreadCrumb() {
     };
 
     return (
-        <Breadcrumb className="my-4">
+        <Breadcrumb className="mt-20">
             <BreadcrumbList className="text-lg flex items-center">
                 {generateBreadcrumbs()}
             </BreadcrumbList>

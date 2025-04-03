@@ -9,10 +9,10 @@ import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 export default function TechnoSidebarItem({
   icon: Icon,
-  text
+  text, onClick
 }: {
   icon: React.ComponentType<{ size: number, strokeWidth: number }>;
-  text: string
+  text: string, onClick?: () => {}
 }) {
   const hovered = useHoverContext();
   const router = useRouter();
@@ -58,8 +58,8 @@ export default function TechnoSidebarItem({
           : isActive
             ? 'justify-start rounded-l-lg w-[145%] bg-[#FAFAFA] text-primary'
             : 'justify-center w-full'
-        }`}
-      onClick={handleClick}
+          }`}
+      onClick={onClick ? onClick : handleClick}
     >
       <TechnoIcon className="transition-transform duration-100 ease-in-out">
         <Icon size={24} strokeWidth={1.5} />

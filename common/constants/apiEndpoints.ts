@@ -2,7 +2,7 @@ export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
 
 export const API_ENDPOINTS = {
 
-  // Auth 
+  // Auth
   login: `${API_DOMAIN}/auth/login`,
   profile: `${API_DOMAIN}/user/profile`,
   register: `${API_DOMAIN}/auth/register`,
@@ -25,7 +25,8 @@ export const API_ENDPOINTS = {
   getYellowLeadsAnalytics: `${API_DOMAIN}/crm/yellow-lead-analytics`,
   updateYellowLead: `${API_DOMAIN}/crm/update-yellow-lead`,
 
-  // Admissions 
+  // Admissions
+  admissionData: `${API_DOMAIN}/admission/enquiry/search`,
   getEnquiry: (enquiry_id : string) => `${API_DOMAIN}/admission/enquiry/${enquiry_id}`,
   createEnquiry: `${API_DOMAIN}/admission/enquiry/step-1`,
   updateEnquiry: `${API_DOMAIN}/admission/enquiry/step-1`,
@@ -39,7 +40,7 @@ export const API_ENDPOINTS = {
   fetchCounsellorsDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=COUNSELOR&moduleName=ADMISSION`,
   // Fees Details
   getOtherFees: `${API_DOMAIN}/fees-structure/other-fees`,
-  getFeesByCourse: (course_name: string) => `${API_DOMAIN}/fees-structure/${course_name}`,
+  getFeesByCourse: (course_name: string) => `${API_DOMAIN}/fees-structure/course/${course_name}`,
 
   createStudentFees: `${API_DOMAIN}/admission/enquiry/step-2`,
   updateStudentFees: `${API_DOMAIN}/admission/enquiry/step-2`,

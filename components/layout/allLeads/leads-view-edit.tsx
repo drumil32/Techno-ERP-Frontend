@@ -248,8 +248,8 @@ export default function LeadViewEdit({ data }: any) {
           <p>{formData.email ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4  text-[#666666]">Gender</p>
-          <p>{toPascal(formData.gender)}</p>
+          <p className="w-1/4 text-[#666666]">Gender</p>
+          <p>{toPascal(formData.gender) ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Location</p>
