@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from './schema';
+import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from '../schema/schema';
 import {
   ApplicationStatus,
   EducationLevel
@@ -31,7 +31,7 @@ import {
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
-function removeNullValues(obj: any): any {
+export function removeNullValues(obj: any): any {
   if (Array.isArray(obj)) {
     return obj
       .map(removeNullValues)

@@ -9,7 +9,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
-import { enquiryStep1RequestSchema } from './schema';
+import { enquiryStep1RequestSchema } from '../schema/schema';
 
 // Form Schema
 const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({

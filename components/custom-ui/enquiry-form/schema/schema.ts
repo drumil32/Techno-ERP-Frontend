@@ -15,7 +15,8 @@ import {
   DocumentType,
   EducationLevel,
   Gender,
-  Religion
+  Religion,
+  StatesOfIndia
 } from '@/types/enum';
 import { z } from 'zod';
 
@@ -167,3 +168,48 @@ export const enquiryDraftStep1UpdateSchema = enquiryDraftStep1RequestSchema
   })
   .partial()
   .strict();
+
+export enum Qualification {
+  Yes = 'Yes',
+  No = 'No'
+}
+export enum AreaType {
+  RURAL = 'RURAL',
+  URBAN = 'URBAN'
+}
+export enum Nationality {
+  INDIAN = 'INDIAN',
+  NRI = 'NRI',
+  PIO = 'PIO',
+  OCI = 'OCI',
+  FOREIGN_NATIONAL = 'FOREIGN_NATIONAL',
+  BHUTANESE = 'BHUTANESE',
+  NEPALESE = 'NEPALESE',
+  AFGHAN = 'AFGHAN',
+  BANGLADESHI = 'BANGLADESHI',
+  PAKISTANI = 'PAKISTANI',
+  SRI_LANKAN = 'SRI_LANKAN',
+  MALDIVIAN = 'MALDIVIAN',
+  TIBETAN_REFUGEE = 'TIBETAN_REFUGEE',
+  STATELESS = 'STATELESS',
+}
+
+
+export const entranceExamDetailsSchema = z.object({
+  examName: z.string(),
+  rollNumber: z.string(),
+  rank: z.number(),
+  qualification: z.nativeEnum(Qualification)
+})
+
+export const moreDetailsSchema = z.object({
+  state: z.nativeEnum(StatesOfIndia),
+  area: z.nativeEnum(AreaType),
+  nationality: z.nativeEnum(Nationality),
+})
+
+export const enquiryStep3UpdateRequestSchema = enquirySchema.omit({ documents: true, studentFee: true }).extend({
+  id: z.string(),
+  entranceExamDetails: z.array(entranceExamDetailsSchema.partial()).optional(),
+  moreDetails:z.array(moreDetailsSchema.partial()).optional()
+}).strict();
