@@ -6,8 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { getCounsellors, getEnquiry, getTeleCallers } from '../stage-1/enquiry-form-api';
 import { useEffect, useMemo, useState } from 'react';
-import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
-import EnquiryFormFooter from '../stage-1/enquiry-form-footer-section';
 import { useParams } from 'next/navigation';
 import {
   Form,
@@ -36,9 +34,8 @@ import { CalendarIcon } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { cleanDataForDraft } from './helpers/refine-data';
-import { createStudentFees, updateStudentFeesDraft } from './student-fees-api';
+import { createStudentFeesDraft, updateStudentFeesDraft } from './student-fees-api';
 
 const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -81,20 +78,22 @@ export const StudentFeesForm = () => {
   const [isOtpSending, setIsOtpSending] = useState(false);
 
   // Queries
-  const { data: otherFeesData, isLoading } = useQuery({
+  const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
     queryKey: ['otherFeesData'],
     queryFn: getOtherFees,
     staleTime: 1000 * 60 * 5
   });
+
 
   const { data, error, isLoading: isLoadingEnquiry } = useQuery<any>({
     queryKey: ['enquireFormData', enquiry_id],
     queryFn: () => (enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null')),
     enabled: !!enquiry_id
   });
+  console.log(data)
 
-  const studentEmail = data?.studentEnquiry?.personalDetails?.email;
-  const studentPhone = data?.studentEnquiry?.personalDetails?.phoneNumber;
+  const studentEmail = data?.emailId;
+  const studentPhone = data?.studentPhoneNumber;
   const courseName = data?.course
 
   const { data: semWiseFeesData, error: semWiseFeeError, isLoading: isLoadingSemFees } = useQuery<any>({
@@ -116,8 +115,13 @@ export const StudentFeesForm = () => {
     ]
   });
 
-  const telecallersData = results[0].data ?? [];
-  const counsellorsData = results[1].data ?? [];
+  const telecallersData = Array.isArray(results[0].data)
+    ? [...results[0].data, { _id: "other", name: "Other", email: "other@example.com" }]
+    : [{ _id: "other", name: "Other", email: "other@example.com" }];
+
+  const counsellorsData = Array.isArray(results[1].data)
+    ? [...results[1].data, { _id: "other", name: "Other", email: "other@example.com" }]
+    : [{ _id: "other", name: "Other", email: "other@example.com" }];
 
   const form = useForm<IFeesRequestSchema>({
     resolver: zodResolver(feesRequestSchema),
@@ -197,10 +201,10 @@ export const StudentFeesForm = () => {
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,
         semWiseFees: initialSemFees,
-        feesClearanceDate: existingFeeData.studentFee?.feesClearanceDate || '',
+        feesClearanceDate: existingFeeData?.studentFee?.feesClearanceDate || '',
         counsellorName: existingFeeData?.counsellorName ?? '',
         telecallerName: existingFeeData?.telecallerName ?? '',
-        collegeSectionDate: parseDateString(existingFeeData?.collegeSectionDate), // Parse date safely
+        collegeSectionDate: parseDateString(existingFeeData?.collegeSectionDate),
         collegeSectionRemarks: existingFeeData?.collegeSectionRemarks ?? '',
       });
 
@@ -246,17 +250,41 @@ export const StudentFeesForm = () => {
 
   async function handleSaveDraft() {
     const currentValues = form.getValues();
-    const cleanedPayload = cleanDataForDraft({ ...currentValues, enquiry_id });
-  
-    console.log("Cleaned Draft Payload (with formatted dates):", cleanedPayload);
-  
-    updateStudentFeesDraft(cleanedPayload)
+    const existingDraftId = data?.studentFee?.id;
+    const isUpdate = !!existingDraftId
+
+    const dataToClean = {
+      otherFees: currentValues.otherFees,
+      semWiseFees: currentValues.semWiseFees,
+    }
+
+    console.log(dataToClean)
+
+    const cleanedData = cleanDataForDraft(dataToClean);
+    let finalPayload: any = {}
+
+    if (isUpdate && existingDraftId) {
+      finalPayload = {
+        id: existingDraftId,
+        ...(cleanedData || {}),
+      };
+      updateStudentFeesDraft(finalPayload)
+    } else {
+      finalPayload = {
+        enquiryId: enquiry_id,
+        ...(cleanedData || {}),
+      };
+      createStudentFeesDraft(finalPayload)
+
+      delete finalPayload.id;
+    }
   }
+
   async function onSubmit(values: IFeesRequestSchema) {
     console.log(values);
   }
 
-  if (isLoading) {
+  if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
     return <div className="flex justify-center items-center h-full">Loading fee data...</div>;
   }
 
@@ -264,7 +292,7 @@ export const StudentFeesForm = () => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="py-8 mr-[25px] space-y-8 flex flex-col w-full"
+        className="pt-8 mr-[25px] space-y-8 flex flex-col w-full overflow-x-hidden relative"
       >
 
 
@@ -433,7 +461,7 @@ export const StudentFeesForm = () => {
             <AccordionTrigger className="px-4 py-3 text-lg font-semibold hover:no-underline">
               All Semester Details
             </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4 pt-2 bg-white">
+            <AccordionContent className="p-6 bg-white">
               <div className='w-2/3'>
                 <div className="space-y-4">
                   <div className="grid grid-cols-[1fr_0.5fr_1fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 px-2 pb-1 border-b">
@@ -491,7 +519,7 @@ export const StudentFeesForm = () => {
             <AccordionTrigger className="px-4 py-3 text-lg font-semibold hover:no-underline [&[data-state=open]>svg]:rotate-180">
               To be filled by College
             </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4 pt-0 bg-white p-4 rounded-[10px]">
+            <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-y-4 gap-x-8 ">
                 <FormField
                   control={form.control}
@@ -508,7 +536,7 @@ export const StudentFeesForm = () => {
                           </SelectTrigger>
                           <SelectContent>
                             {Array.isArray(counsellorsData) && counsellorsData?.map((counsellor: any) => (
-                              <SelectItem key={counsellor._id} value={counsellor.name}>
+                              <SelectItem key={counsellor._id} value={counsellor._id}>
                                 {counsellor.name}
                               </SelectItem>
                             ))}
@@ -535,7 +563,7 @@ export const StudentFeesForm = () => {
                           </SelectTrigger>
                           <SelectContent>
                             {Array.isArray(telecallersData) && telecallersData?.map((telecaller: any, index) => (
-                              <SelectItem key={telecaller._id} value={telecaller.name}>
+                              <SelectItem key={telecaller._id} value={telecaller._id}>
                                 {telecaller.name}
                               </SelectItem>
                             ))}
@@ -614,21 +642,20 @@ export const StudentFeesForm = () => {
             <AccordionTrigger className="px-4 py-3 text-lg font-semibold hover:no-underline [&[data-state=open]>svg]:rotate-180">
               Confirmation
             </AccordionTrigger>
-            <AccordionContent className="px-4 pb-4 pt-2 space-y-4 bg-white text-gray-600"> {/* Added bg-white */}
-              {/* 1. Radio Group for OTP Target Selection */}
+            <AccordionContent className="p-6 space-y-4 bg-white text-gray-600">
               <FormField
                 control={form.control}
                 name="otpTarget"
                 render={({ field }) => (
-                  <FormItem className="space-y-2"> {/* Adjusted spacing */}
-                    <FormLabel className="text-sm font-medium block">Select Contact for OTP Verification</FormLabel> {/* Added block */}
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm font-medium block">Select Contact for OTP Verification</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        value={field.value ?? ''} // Ensure value is controlled
-                        className="flex flex-col sm:flex-row gap-y-2 gap-x-6 pt-1" // Responsive layout and gap
+                        value={field.value ?? ''}
+                        className="flex flex-col sm:flex-row gap-y-2 gap-x-6 pt-1"
                       >
-                        <FormItem className="flex items-center space-x-2 space-y-0"> {/* Reduced space-x */}
+                        <FormItem className="flex items-center space-x-2 space-y-0">
                           <FormControl>
                             <RadioGroupItem value="email" id="otp-email" disabled={!studentEmail} />
                           </FormControl>
@@ -636,7 +663,7 @@ export const StudentFeesForm = () => {
                             Email: {studentEmail || '(Not Available)'}
                           </FormLabel>
                         </FormItem>
-                        <FormItem className="flex items-center space-x-2 space-y-0"> {/* Reduced space-x */}
+                        <FormItem className="flex items-center space-x-2 space-y-0">
                           <FormControl>
                             <RadioGroupItem value="phone" id="otp-phone" disabled={!studentPhone} />
                           </FormControl>
@@ -646,7 +673,7 @@ export const StudentFeesForm = () => {
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
-                    <FormMessage className="text-xs pt-1" /> {/* Added padding top */}
+                    <FormMessage className="text-xs pt-1" />
                   </FormItem>
                 )}
               />
@@ -656,17 +683,16 @@ export const StudentFeesForm = () => {
                   <FormLabel htmlFor="otp-display" className="text-sm mb-3 text-gray-600">Selected Contact</FormLabel>
                   <Input
                     id="otp-display"
-                    readOnly // Or disabled
-                    // value derived from watched state
+                    readOnly
                     value={otpDisplayValue}
                     placeholder="Select Email or Phone above"
-                    className="h-9 text-sm bg-gray-100 cursor-not-allowed" // Styling for read-only/disabled
+                    className="h-9 text-sm cursor-not-allowed"
                   />
                 </div>
 
                 <Button
                   type="button"
-                  onClick={()=>{}} 
+                  onClick={() => { }}
                   disabled={isOtpSending || !selectedOtpTarget}
                   className="h-9 text-sm mt-auto"
                 >
@@ -682,7 +708,7 @@ export const StudentFeesForm = () => {
           control={form.control}
           name="confirmationCheck"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md py-2">
+            <FormItem className="flex flex-row items-start bg-white rounded-md p-4">
               <FormControl>
                 <Checkbox
                   checked={field.value}
@@ -699,12 +725,12 @@ export const StudentFeesForm = () => {
           )}
         />
 
-        <div className="flex justify-end space-x-4 mt-6 pt-4">
+        <div className="sticky z-10 bottom-0 left-0 flex items-center justify-between space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
           <Button type="button" variant="outline" onClick={handleSaveDraft} disabled={form.formState.isSubmitting}>
             Save Draft
           </Button>
-          <Button type="submit" disabled={(!confirmationChecked || form.formState.isSubmitting) ?? form.formState.isSubmitting}> {/* Use submitDisabled */}
-            {form.formState.isSubmitting ? "Submitting..." : "Submit & Continue"} {/* Changed text */}
+          <Button type="submit" disabled={(!confirmationChecked || form.formState.isSubmitting) ?? form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? "Submitting..." : "Submit & Continue"}
           </Button>
         </div>
       </form>

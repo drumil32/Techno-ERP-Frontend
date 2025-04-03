@@ -30,6 +30,7 @@ const studentFeesSchema = z.object({
 });
 
 export const feesRequestSchema = studentFeesSchema.omit({ feeStatus: true }).extend({
+  id: z.string().nullable(),
   otherFees: z.array(otherFeesSchemaWithoutFeeAmount),
   semWiseFees: z.array(singleSemSchemaWithoutFeeAmount),
   enquiryId: z.string().min(1, 'Reuired Field'),

@@ -48,14 +48,14 @@ export default function TechnoBreadCrumb() {
         );
 
         // Start from the third segment
-        for (let i = 2; i < pathSegments.length; i++) {
+        for (let i = 2; i < Math.min(pathSegments.length,3); i++) {
             const segment = pathSegments[i];
             const formattedSegment = segment
                 .replace(/-/g, ' ')
                 .replace(/\b\w/g, (char) => char.toUpperCase());
 
             const href = `/${pathSegments.slice(0, i + 1).join('/')}`;
-            const isLastItem = i === pathSegments.length - 1;
+            const isLastItem = i === Math.min(pathSegments.length-1,2);
 
             breadcrumbs.push(
                 <React.Fragment key={href}>
