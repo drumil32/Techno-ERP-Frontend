@@ -9,7 +9,6 @@ import { enquiryStep3UpdateRequestSchema } from "../schema/schema";
 
 import { Form } from '@/components/ui/form';
 import AddressDetailsSection from "../stage-1/address-details-section";
-import { AcademicDetails } from "@/types/enum";
 import AcademicDetailsSection from "../stage-1/academic-details-section";
 import { getEnquiry } from "../stage-1/enquiry-form-api";
 import { useEffect } from "react";

@@ -9,7 +9,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
-import { enquiryStep3UpdateRequestSchema } from '../schema/schema';
+import { academicDetailSchema, enquiryStep3UpdateRequestSchema } from '../schema/schema';
 
 interface AcademicDetailsSectionInterface {
   form: UseFormReturn<z.infer<typeof enquiryStep3UpdateRequestSchema>>;
@@ -30,8 +30,10 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
 
     const requiredFieldsValid = [0, 1, 2].every(index => {
       const details = academicDetails[index];
-      if (!details) return false;
 
+      console.log("details", academicDetails)
+      if (!details) return false;
+ 
       return (
         details.schoolCollegeName &&
         details.universityBoardName &&
@@ -42,13 +44,15 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
       );
     });
 
-    const hasNoErrors = !form.formState.errors.academicDetails;
+    const hasNoErrors = academicDetailSchema.safeParse(form.getValues().academicDetails);
+    console.log(hasNoErrors);
 
-    return requiredFieldsValid && hasNoErrors;
+    return requiredFieldsValid;
   };
 
   useEffect(() => {
     const subscription = form.watch(() => {
+      console.log('I have been called here')
       setIsValid(checkValidity());
     });
 

@@ -1,6 +1,5 @@
 import { z } from 'zod';
-import { Course, Gender, LeadType, Locations, UserRoles } from '@/static/enum';
-
+import { Course, Gender, LeadType, Locations, UserRoles } from '@/types/enum';
 
 export const objectIdSchema = z.string();
 
