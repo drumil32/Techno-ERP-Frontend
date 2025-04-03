@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 import { academicDetailSchema, enquiryStep3UpdateRequestSchema } from '../schema/schema';
+import TagInput from '../stage-1/tag-input';
 
 interface AcademicDetailsSectionInterface {
   form: UseFormReturn<z.infer<typeof enquiryStep3UpdateRequestSchema>>;
@@ -153,9 +154,13 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Passing Year"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === '' ? '' : Number(value));
+                                }}
+                                value={field.value ?? ''}
                               />
                             </FormControl>
                           </FormItem>
@@ -174,9 +179,13 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === '' ? '' : Number(value));
+                                }}
+                                value={field.value ?? ''}
                                 min={0}
                                 max={100}
                               />
@@ -213,15 +222,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="text"
-                            className={commonFieldClass}
-                            placeholder="(Optional)"
-                            onChange={(e) =>
-                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
-                            }
-                          />
+                          <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -291,9 +292,13 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Passing Year"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === '' ? '' : Number(value));
+                                }}
+                                value={field.value ?? ''}
                               />
                             </FormControl>
                           </FormItem>
@@ -312,9 +317,13 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === '' ? '' : Number(value));
+                                }}
+                                value={field.value ?? ''}
                                 min={0}
                                 max={100}
                               />
@@ -351,15 +360,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="text"
-                            className={commonFieldClass}
-                            placeholder="(Optional)"
-                            onChange={(e) =>
-                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
-                            }
-                          />
+                          <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -429,9 +430,13 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Passing Year"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === '' ? '' : Number(value));
+                                }}
+                                value={field.value ?? ''}
                               />
                             </FormControl>
                           </FormItem>
@@ -450,9 +455,13 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             <FormControl>
                               <Input
                                 {...field}
-                                type="number"
+                                type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  field.onChange(value === '' ? '' : Number(value));
+                                }}
+                                value={field.value ?? ''}
                                 min={0}
                                 max={100}
                               />
@@ -489,15 +498,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            type="text"
-                            className={commonFieldClass}
-                            placeholder="(Optional)"
-                            onChange={(e) =>
-                              field.onChange(e.target.value.split(',').map((item) => item.trim()))
-                            }
-                          />
+                          <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

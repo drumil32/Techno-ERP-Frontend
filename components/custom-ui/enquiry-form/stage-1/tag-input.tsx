@@ -27,7 +27,7 @@ const TagInput: React.FC<TagInputProps> = ({ value = [], onChange }) => {
   return (
     <div className="flex flex-wrap gap-2 border rounded-lg p-2 min-h-[40px] ">
       {value.map((tag, index) => (
-        <div key={index} className="bg-blue-500 text-white px-2 py-1 rounded flex items-center">
+        <div key={index} className="bg-[#4E2ECC] text-white px-2 py-1 rounded flex items-center">
           {tag}
           <X
             size={16}

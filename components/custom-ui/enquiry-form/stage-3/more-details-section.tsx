@@ -3,9 +3,8 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
-import { AreaType, Nationality, Qualification } from '../schema/schema';
-import { BloodGroup, Category, Religion, StatesOfIndia } from '@/types/enum';
-
+import {  Nationality, Qualification } from '../schema/schema';
+import { AreaType, BloodGroup, Category, Religion, StatesOfIndia } from '@/types/enum';
 interface MoreDetailsSectionInterface {
   form: UseFormReturn<any>;
   commonFormItemClass: string;

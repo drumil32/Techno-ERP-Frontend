@@ -1,12 +1,15 @@
 /**
  * Marketing Module Enums
- */
+*/
 export enum UserRoles {
   ADMIN = 'ADMIN',
   LEAD_MARKETING = 'LEAD_MARKETING',
   EMPLOYEE_MARKETING = 'EMPLOYEE_MARKETING',
   BASIC_USER = 'BASIC_USER',
-  COUNSELOR = 'COUNSELOR'
+  COUNSELOR = 'COUNSELOR',
+  REGISTAR = 'REGISTAR',
+  HOD = 'HOD',
+  INSTRUCTOR = 'INSTRUCTOR'
 }
 
 export enum Gender {
@@ -15,6 +18,12 @@ export enum Gender {
   OTHER = 'OTHERS',
   NOT_TO_MENTION = 'NOT_TO_MENTION'
 }
+
+
+export enum Source {
+  SCHOOL = 'School'
+}
+
 
 export enum LeadType {
   ORANGE = 'OPEN',
@@ -26,88 +35,80 @@ export enum LeadType {
   WHITE = 'DID_NOT_PICK'
 }
 
-export enum finalConversion {
+
+export enum FinalConversionType {
   PINK = 'PENDING',
   GREEN = 'CONVERTED',
   RED = 'NOT_CONVERTED'
 }
 
-/**
+
+export enum Marketing_Source {
+  SCHOOL = 'School',
+  DIGITAL_MARKETING = 'Digital_Marketing'
+}
+
+/*
  * Admission Module Enums
- */
-
+*/
 export enum Category {
-  SC = 'SC',
-  ST = 'ST',
-  OBC = 'OBC',
-  GENERAL = 'General',
-  EWS = 'EWS',
-  OTHER = 'Other'
-}
-
-export enum AdmissionReference {
-  Advertising = 'Advertising',
-  BusinessAssociate = 'Business Associate',
-  DigitalMarketing = 'Digital Marketing',
-  DirectWalkIn = 'Direct Walk-in',
-  LUNPGExternalVenue = 'LU/NPG/External Venue',
-  StudentReference = 'Student Reference',
-  TechnoligenceStaffCalling = 'Technoligence/Staff Calling',
-  Other = 'Other'
-}
-
-export enum Course {
-  BCOM = 'BCOM',
-  BCOMH = 'BCOMH',
-  BAJMC = 'BAJMC',
-  BED = 'BED',
-  BSCM = 'BSCM',
-  BSCB = 'BSCB',
-  BBA = 'BBA',
-  BCA = 'BCA',
-  BVAA = 'BVAA',
-  BVAP = 'BVAP',
-  MAJMC = 'MAJMC',
-  MCOMC = 'MCOMC',
-  MBA = 'MBA',
-  LLB = 'LLB',
-  MCA = 'MCA',
-  MVAP = 'MVAP',
-  MSCC = 'MSCC'
-}
-
-export const CourseNameMapper: Record<Course, string> = {
-  [Course.BCOM]: 'B.COM',
-  [Course.BCOMH]: 'B.COM (HONS)',
-  [Course.BAJMC]: 'BA-JMC',
-  [Course.BED]: 'B.ED',
-  [Course.BSCM]: 'B.SC (PCM)',
-  [Course.BSCB]: 'B.SC (ZBC)',
-  [Course.BBA]: 'BBA',
-  [Course.BCA]: 'BCA',
-  [Course.BVAA]: 'BVA (App Art)',
-  [Course.BVAP]: 'BVA (Painting)',
-  [Course.MAJMC]: 'MA-JMC',
-  [Course.MCOMC]: 'M.COM (COM)',
-  [Course.MBA]: 'MBA',
-  [Course.LLB]: 'LLB',
-  [Course.MCA]: 'MCA',
-  [Course.MVAP]: 'MVA (Paint)',
-  [Course.MSCC]: 'M.SC (Chem)'
+  SC = "SC",
+  ST = "ST",
+  OBC = "OBC",
+  GENERAL = "General",
+  EWS = "EWS",
+  OTHER = "Other"
 };
 
-export enum AcademicDetails {
-  Tenth = '10th',
-  Twelfth = '12th',
-  Graduation = 'Graduation',
-  Others = 'Others'
+
+export enum AdmissionReference {
+  Advertising = "Advertising",
+  BusinessAssociate = "Business Associate",
+  DigitalMarketing = "Digital Marketing",
+  DirectWalkIn = "Direct Walk-in",
+  LUNPGExternalVenue = "LU/NPG/External Venue",
+  StudentReference = "Student Reference",
+  TechnoligenceStaffCalling = "Technoligence/Staff Calling",
+  Other = "Other"
+};
+
+
+export enum Course {
+  BCOM = "BCOM",
+  BCOMH = "BCOMH",
+  BAJMC = "BAJMC",
+  BED = "BED",
+  BSCM = "BSCM",
+  BSCB = "BSCB",
+  BBA = "BBA",
+  BCA = "BCA",
+  BVAA = "BVAA",
+  BVAP = "BVAP",
+  MAJMC = "MAJMC",
+  MCOMC = "MCOMC",
+  MBA = "MBA",
+  LLB = "LLB",
+  MCA = "MCA",
+  MVAP = "MVAP",
+  MSCC = "MSCC"
 }
 
-export enum ApplicationIdPrefix {
-  'TIHS' = 'TIHS',
-  'TIMS' = 'TIMS',
-  'TCL' = 'TCL'
+
+export enum EducationLevel {
+  Tenth = "10th",
+  Twelfth = "12th",
+  Graduation = "Graduation",
+  Others = "Others"
 }
+
+
+export enum FormNoPrefixes {
+  "TIHS" = "TIHS",
+  "TIMS" = "TIMS",
+  "TCL" = "TCL",
+  "PHOTO" = "PHOTO"
+}
+
 
 export enum Religion {
   HINDUISM = 'Hinduism',
@@ -116,8 +117,9 @@ export enum Religion {
   SIKHISM = 'Sikhism',
   BUDDHISM = 'Buddhism',
   JAINISM = 'Jainism',
-  OTHERS = 'Others'
+  OTHERS = 'Others',
 }
+
 
 export enum BloodGroup {
   A_POSITIVE = 'A+',
@@ -127,13 +129,15 @@ export enum BloodGroup {
   AB_POSITIVE = 'AB+',
   AB_NEGATIVE = 'AB-',
   O_POSITIVE = 'O+',
-  O_NEGATIVE = 'O-'
+  O_NEGATIVE = 'O-',
 }
+
 
 export enum AdmittedThrough {
   DIRECT = 'Direct',
   COUNSELLING = 'Counselling'
 }
+
 
 export enum DocumentType {
   TENTH_MARKSHEET = '10th_Marksheet',
@@ -158,6 +162,7 @@ export enum DocumentType {
   EWS_CERTIFICATE = 'EWS_Certificate'
 }
 
+
 export enum ApplicationStatus {
   STEP_1 = 'Step_1',
   STEP_2 = 'Step_2',
@@ -165,74 +170,50 @@ export enum ApplicationStatus {
   STEP_4 = 'Step_4'
 }
 
-export enum MimeType {
-  PNG = 'image/png',
-  JPG = 'image/jpeg',
-  JPEG = 'image/jpeg',
-  PDF = 'application/pdf'
-}
 
 export enum ModuleNames {
-  MARKETING = 'MARKETING'
+  MARKETING = "MARKETING",
+  ADMISSION = "ADMISSION",
+  COURSE = "COURSE"
 }
+
 
 export enum Locations {
-  KNP = 'Kanpur',
-  UNA = 'Unnao',
-  STP = 'Sitapur',
-  HRD = 'Hardoi',
-  BBK = 'Barabanki',
-  AMT = 'Amethi',
-  FTP = 'Fatehpur',
-  LKO = 'Lucknow'
+  KNP = "Kanpur",
+  UNA = "Unnao",
+  STP = "Sitapur",
+  HRD = "Hardoi",
+  BBK = "Barabanki",
+  AMT = "Amethi",
+  FTP = "Fatehpur",
+  LKO = "Lucknow"
 }
 
-export enum MarketingSources {
-  SCHOOL = 'SCHOOL',
-  DIGITAL_MARKETING = 'DIGITAL_MARKETING'
+
+export enum FeeType {
+  HOSTEL = "HOSTEL",
+  TRANSPORT = "TRANSPORT",
+  PROSPECTUS = "PROSPECTUS",
+  STUDENTID = "STUDENTID",
+  UNIFORM = "UNIFORM",
+  STUDENTWELFARE = "STUDENTWELFARE",
+  BOOKBANK = "BOOKBANK",
+  EXAMFEES = "EXAMFEES"
 }
 
-export const ADMISSION = 'admissions';
 
+export enum FeeStatus {
+  FINAL = "FINAL",
+  DRAFT = "DRAFT"
+}
 
-export const MARKETING_SHEET = 'Marketing Sheet'
-
-// Enquiry Form Stage - 1
 
 export enum AdmissionMode {
-  ONLINE = 'ONLINE',
-  OFFLINE = 'OFFLINE'
+  ONLINE = "ONLINE",
+  OFFLINE = "OFFLINE"
 }
 
-export enum EducationLevel {
-  Tenth = "10th",
-  Twelfth = "12th",
-  Graduation = "Graduation",
-  Others = "Others"
-}
 
-export enum Countries {
-  India = "India",
-  Pakistan = "Pakistan",
-  China = "China",
-  Nepal = "Nepal",
-  Bhutan = "Bhutan",
-  Bangladesh = "Bangladesh",
-  Myanmar = "Myanmar",
-  SriLanka = "Sri Lanka",
-  Afghanistan = "Afghanistan",
-  Maldives = "Maldives",
-  Thailand = "Thailand",
-}
-
-export enum Districts {
-  Lucknow = "Lucknow",
-  Sitapur = "Sitapur",
-  Hardoi = "Hardoi",
-  Barabanki = "Barabanki",
-  Raebareli = "Raebareli",
-  Unnao = "Unnao",
-}
 
 export enum StatesOfIndia {
   AndhraPradesh = "Andhra Pradesh",
@@ -265,22 +246,76 @@ export enum StatesOfIndia {
   WestBengal = "West Bengal",
 }
 
-
-// Fee types
-
-export enum FeeType {
-  HOSTEL = "HOSTEL",
-  TRANSPORT = "TRANSPORT",
-  PROSPECTUS = "PROSPECTUS",
-  STUDENTID = "STUDENTID",
-  UNIFORM = "UNIFORM",
-  STUDENTWELFARE = "STUDENTWELFARE",
-  BOOKBANK = "BOOKBANK",
-  EXAMFEES = "EXAMFEES"
+export enum Countries {
+  India = "India",
+  Pakistan = "Pakistan",
+  China = "China",
+  Nepal = "Nepal",
+  Bhutan = "Bhutan",
+  Bangladesh = "Bangladesh",
+  Myanmar = "Myanmar",
+  SriLanka = "Sri Lanka",
+  Afghanistan = "Afghanistan",
+  Maldives = "Maldives",
+  Thailand = "Thailand",
 }
 
-export enum FeeStatus {
-  FINAL = "FINAL",
-  DRAFT = "DRAFT"
+export enum Districts {
+  Lucknow = "Lucknow",
+  Sitapur = "Sitapur",
+  Hardoi = "Hardoi",
+  Barabanki = "Barabanki",
+  Raebareli = "Raebareli",
+  Unnao = "Unnao",
 }
 
+export enum AreaType{
+  URBAN = "URBAN",
+  RURAL = "RURAL",
+  OTHERS = "OTHERS"
+}
+
+
+export const ADMISSION = 'admissions'
+
+export const TGI = "TGI";
+export const PHOTO = "PHOTO";
+
+export const MARKETING_SHEET = 'Marketing Sheet'
+
+
+export enum COLLECTION_NAMES {
+  USER = 'User',
+  VERIFY_OTP = 'VerifyOtp',
+  ENQUIRY = 'Enquiry',
+  ENQUIRY_DRAFT = 'EnquiryDraft',
+  ENQUIRY_ID_META_DATA = 'EnquiryIdMetaData',
+  STUDENT_FEE = 'studentFee',
+  STUDENT_FEE_DRAFT = 'studentFeeDraft',
+  DEPARTMENT_COURSE = 'deptandcourse',
+  LEAD = 'Lead',
+  SPREADSHEET_META_DATA = 'spreadSheetMetaData',
+  YELLOW_LEAD = 'YellowLead',
+  COURSE_OTHER_FEES = 'CourseAndOtherFees',
+  STUDENT = 'Student'
+}
+
+export const CourseNameMapper: Record<Course, string> = {
+  [Course.BCOM]: 'B.COM',
+  [Course.BCOMH]: 'B.COM (HONS)',
+  [Course.BAJMC]: 'BA-JMC',
+  [Course.BED]: 'B.ED',
+  [Course.BSCM]: 'B.SC (PCM)',
+  [Course.BSCB]: 'B.SC (ZBC)',
+  [Course.BBA]: 'BBA',
+  [Course.BCA]: 'BCA',
+  [Course.BVAA]: 'BVA (App Art)',
+  [Course.BVAP]: 'BVA (Painting)',
+  [Course.MAJMC]: 'MA-JMC',
+  [Course.MCOMC]: 'M.COM (COM)',
+  [Course.MBA]: 'MBA',
+  [Course.LLB]: 'LLB',
+  [Course.MCA]: 'MCA',
+  [Course.MVAP]: 'MVA (Paint)',
+  [Course.MSCC]: 'M.SC (Chem)'
+};

@@ -15,6 +15,7 @@ import {
   AdmissionReference,
   AdmittedThrough,
   ApplicationStatus,
+  AreaType,
   BloodGroup,
   Category,
   Course,
@@ -178,10 +179,7 @@ export enum Qualification {
   Yes = 'Yes',
   No = 'No'
 }
-export enum AreaType {
-  RURAL = 'RURAL',
-  URBAN = 'URBAN'
-}
+
 export enum Nationality {
   INDIAN = 'INDIAN',
   NRI = 'NRI',

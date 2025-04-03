@@ -65,8 +65,10 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
       'reference'
     ];
 
+  
+
     const allFieldsValid = requiredFields.every(field => {
-      const value = form.getValues(field);
+      const value = form.getValues(field );
       return value !== undefined && value !== null && value !== '';
     });
 
