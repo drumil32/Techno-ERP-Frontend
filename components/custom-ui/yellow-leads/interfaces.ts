@@ -1,3 +1,7 @@
+import { CampusVisitStatus } from "@/components/layout/yellowLeads/campus-visit-tag";
+import { FinalConversionStatus } from "@/components/layout/yellowLeads/final-conversion-tag";
+import { finalConversion } from "@/static/enum";
+
 export interface YellowLead {
   _id: string;
   srNo: number;
@@ -9,8 +13,8 @@ export interface YellowLead {
   assignedTo: string;
   location: string;
   course: string;
-  campusVisit: boolean;
-  finalConversion: string;
+  campusVisit: CampusVisitStatus;
+  finalConversion: FinalConversionStatus;
   remarks: string;
   createdAt: string; // ISO Date string
   updatedAt: string; // ISO Date string
@@ -19,5 +23,4 @@ export interface YellowLead {
   ltcDate: string; // DD/MM/YYYY format
   nextDueDate: string; // DD/MM/YYYY format
   [key: string]: any;
-
 }

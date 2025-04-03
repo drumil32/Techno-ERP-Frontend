@@ -66,6 +66,7 @@ export default function YellowLeadViewEdit({ data }: any) {
 
   useEffect(() => {
     if (data) {
+      console.log('Initial Data', data)
       setFormData(data);
       setOriginalData(data);
     }
@@ -103,8 +104,7 @@ export default function YellowLeadViewEdit({ data }: any) {
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        // Collect all field errors
-        const newErrors: FormErrors = { ...errors }; // Preserve existing errors
+        const newErrors: FormErrors = { ...errors };
         error.errors.forEach((err) => {
           const key = err.path[0] as keyof FormErrors;
           newErrors[key] = err.message;
@@ -157,7 +157,8 @@ export default function YellowLeadViewEdit({ data }: any) {
       'gender',
       'location',
       'course',
-      'leadType',
+      'campusVisit',
+      'finalConversion',
       'remarks',
       'nextDueDate'
     ];
@@ -219,15 +220,18 @@ export default function YellowLeadViewEdit({ data }: any) {
 
       console.log(filteredData)
 
-      const response = await apiRequest(
+      const response: YellowLead | null = await apiRequest(
         API_METHODS.PUT,
         API_ENDPOINTS.updateYellowLead,
         filteredData
       );
 
+
       console.log(response)
 
       if (response) {
+        response.campusVisit = CampusVisitStatus[String(formData.campusVisit) as keyof typeof CampusVisitStatus] ?? formData.campusVisit;
+        setFormData(response as YellowLead);
         toast.success('Updated Lead Successfully');
         setOriginalData(formData);
       } else {
@@ -287,7 +291,7 @@ export default function YellowLeadViewEdit({ data }: any) {
           {formData.campusVisit ? <CampusVisitTag status={String(formData.campusVisit) as CampusVisitStatus} /> : <p>-</p>}
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Final Conversion</p>
+          <p className="w-1/4.5 text-[#666666]">Final Conversion</p>
           {formData.finalConversion ? <FinalConversionTag status={formData.finalConversion as FinalConversionStatus} /> : <p>-</p>}
         </div>
         <div className="flex gap-2">
@@ -374,7 +378,7 @@ export default function YellowLeadViewEdit({ data }: any) {
             <SelectContent>
               {Object.values(Gender).map((gender) => (
                 <SelectItem key={gender} value={gender}>
-                  {gender}
+                  {toPascal(gender)}
                 </SelectItem>
               ))}
             </SelectContent>

@@ -1,6 +1,7 @@
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { apiRequest } from '@/lib/apiClient';
+import { UserRoles } from '@/static/enum';
 
 export const fetchLeads = async ({ queryKey }: any) => {
   const [, params] = queryKey;
@@ -14,7 +15,7 @@ export const fetchLeadsAnalytics = async ({ queryKey }: any) => {
   return res;
 };
 
-export const fetchAssignedToDropdown = async ({ queryKey }: any) => {
-  const res = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchAssignedToDropdown);
-  return res;
+export const fetchAssignedToDropdown = async () => {
+  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchAssignedToDropdown);
+  return result;
 };

@@ -241,7 +241,7 @@ export default function AllLeadsPage() {
     { accessorKey: 'date', header: 'Date' },
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'gender', header: 'Gender' },
+    { accessorKey: 'genderView', header: 'Gender' },
     { accessorKey: 'location', header: 'Location' },
     { accessorKey: 'courseView', header: 'Course' },
     {
@@ -333,7 +333,7 @@ export default function AllLeadsPage() {
         <TechnoDataTable
           columns={columns}
           data={leads.leads}
-          tableName="All Leads Data"
+          tableName="All Leads Table"
           currentPage={page}
           totalPages={totalPages}
           pageLimit={limit}
