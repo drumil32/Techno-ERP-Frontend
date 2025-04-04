@@ -9,7 +9,7 @@ export const otherFeesSchema = z.object({
   feeAmount: z.number().min(0, 'Fee amount must be greater than 0').optional().nullable(),
   finalFee: z.number().min(0, 'Final fees must be non-negative').optional().nullable(),
   feesDepositedTOA: z.number().min(0, 'Fees deposited must be non-negative').optional().nullable(),
-  remarks: z.string()
+  remarks: z.string().optional().nullable(), 
 });
 
 export const singleSemSchema = z.object({
@@ -30,17 +30,15 @@ const studentFeesSchema = z.object({
 });
 
 export const feesRequestSchema = studentFeesSchema.omit({ feeStatus: true }).extend({
-  id: z.string().nullable(),
+  enquiryId: z.string().min(1, 'Reuired Field'),
+  
   otherFees: z.array(otherFeesSchemaWithoutFeeAmount),
   semWiseFees: z.array(singleSemSchemaWithoutFeeAmount),
-  enquiryId: z.string().min(1, 'Reuired Field'),
   feesClearanceDate: z.date().optional().nullable(),
   counsellorName: z.array(z.string())
-    .min(1, { message: "At least one counsellor must be selected" }) 
     .optional()
     .default([]),
   telecallerName: z.array(z.string())
-    .min(1, { message: "At least one telecaller must be selected" }) 
     .optional()
     .default([]),
   collegeSectionDate: z.date().optional().nullable(),
@@ -52,6 +50,17 @@ export const feesRequestSchema = studentFeesSchema.omit({ feeStatus: true }).ext
   otpVerificationEmail: z.string().nullable().optional(),
 
 });
+
+export const frontendFeesDraftValidationSchema = z.object({
+  enquiryId: z.string().min(1, 'Enquiry ID is required'),
+  otherFees: z.array(otherFeesSchemaWithoutFeeAmount.partial()).optional(), 
+  semWiseFees: z.array(singleSemSchemaWithoutFeeAmount.partial()).optional(), 
+  feesClearanceDate: z.string().optional().nullable(),
+  counsellorName: z.array(z.string()).optional(), 
+  telecallerName: z.array(z.string()).optional(), 
+  collegeSectionDate: z.date().optional().nullable(),
+  collegeSectionRemarks: z.string().optional().nullable(),
+}).partial(); 
 
 export const feesUpdateSchema = feesRequestSchema.extend({
   id: z.string().min(1, 'Reuired Field')
@@ -68,6 +77,8 @@ export const feesDraftRequestSchema = feesRequestSchema.extend({
 
 export const feesDraftUpdateSchema = feesDraftRequestSchema.extend({ id: z.string().min(1, 'Reuired Field') }).omit({ enquiryId: true }).partial().strict()
 
+
+export type IFrontendFeesDraftValidationSchema = z.infer<typeof frontendFeesDraftValidationSchema>;
 
 export type IOtherFeesSchema = z.infer<typeof otherFeesSchema>;
 export type ISingleSemSchema = z.infer<typeof singleSemSchema>;

@@ -144,7 +144,7 @@ export function MultiSelectDropdown({
               >
                 <Checkbox
                   checked={selected.includes(option.value)}
-                  className="mr-2"
+                  // className="mr-2 text-white"
                   aria-label={`Select ${option.label}`}
                 />
                 <span>{option.label}</span>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { feesRequestSchema, IFeesRequestSchema } from './studentFeesSchema';
+import { feesRequestSchema, frontendFeesDraftValidationSchema, IFeesRequestSchema } from './studentFeesSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { getCounsellors, getEnquiry, getTeleCallers } from '../stage-1/enquiry-form-api';
@@ -38,6 +38,7 @@ import { createStudentFeesDraft, updateStudentFeesDraft } from './student-fees-a
 import ShowStudentData from './data-show';
 import { FeeType } from '@/types/enum';
 import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
+import { toast } from 'sonner';
 
 const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -271,6 +272,26 @@ export const StudentFeesForm = () => {
     const existingDraftId = data?.studentFee?._id;
     const isUpdate = !!existingDraftId
 
+    const validationResult = frontendFeesDraftValidationSchema.safeParse(currentValues);
+
+    if (!validationResult.success) {
+        toast.error("Validation failed. Please check the fields.", {
+             
+        });
+
+        validationResult.error.errors.forEach(err => {
+          if (err.path.length > 0) {
+               const fieldName = err.path.join('.') as keyof IFeesRequestSchema; 
+               form.setError(fieldName, { type: 'manual', message: err.message });
+          }
+       });
+
+       return;
+    }
+
+    const validatedDataForCleaning = validationResult.data;
+
+
     const dataToClean = {
       otherFees: currentValues.otherFees,
       semWiseFees: currentValues.semWiseFees,
@@ -278,11 +299,11 @@ export const StudentFeesForm = () => {
       counsellor: currentValues.counsellorName,
     }
 
-    console.log("Hello")
+    // console.log("Hello")
     console.log("ID", existingDraftId)
-    console.log(dataToClean)
+    // console.log(dataToClean)
 
-    const cleanedData = cleanDataForDraft(dataToClean);
+    const cleanedData = cleanDataForDraft(validatedDataForCleaning);
     let finalPayload: any = {}
 
     if (isUpdate && existingDraftId) {
@@ -290,14 +311,18 @@ export const StudentFeesForm = () => {
         id: existingDraftId,
         ...(cleanedData || {}),
       };
-      console.log('Payload: ', finalPayload)
+      console.log('Final Payload:', finalPayload)
       updateStudentFeesDraft(finalPayload)
     } else {
       finalPayload = {
-        enquiryId: enquiry_id,
+        // enquiryId: enquiry_id,
         ...(cleanedData || {}),
       };
-      console.log('Payload: ', finalPayload)
+      if (!finalPayload.enquiryId) {
+        finalPayload.enquiryId = enquiry_id;
+    }
+   console.log('Creating Draft Payload: ', finalPayload);
+      // console.log('Payload: ', finalPayload)
       createStudentFeesDraft(finalPayload)
       delete finalPayload.id;
     }
@@ -568,7 +593,9 @@ export const StudentFeesForm = () => {
                           isLoading={results[1].isLoading}
                         />
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <div className='h-5'>
+                        <FormMessage className="text-xs" />
+                      </div>
                     </FormItem>
                   )}
                 />
@@ -591,7 +618,9 @@ export const StudentFeesForm = () => {
                           isLoading={results[0].isLoading}
                         />
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <div className='h-5'>
+                        <FormMessage className="text-xs" />
+                      </div>
                     </FormItem>
                   )}
                 />

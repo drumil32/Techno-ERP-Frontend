@@ -39,9 +39,9 @@ export default function AdmissionsLandingPage() {
       id: 'actions',
       header: 'Actions',
       cell: ({ row }: any) => (
-        <Button variant='ghost' onClick={() => handleViewMore({ ...row.original })}>
+        <Button variant='ghost' className='cursor-pointer' onClick={() => handleViewMore({ ...row.original })}>
           <span
-            className='font-inter font-semibold text-[12px] text-primary '
+            className='font-inter font-semibold text-[12px] text-primary'
           >View More</span>
         </Button>
       )
