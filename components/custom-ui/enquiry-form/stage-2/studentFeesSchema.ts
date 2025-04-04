@@ -35,8 +35,14 @@ export const feesRequestSchema = studentFeesSchema.omit({ feeStatus: true }).ext
   semWiseFees: z.array(singleSemSchemaWithoutFeeAmount),
   enquiryId: z.string().min(1, 'Reuired Field'),
   feesClearanceDate: z.date().optional().nullable(),
-  counsellorName: z.string().optional().nullable(),
-  telecallerName: z.string().optional().nullable(),
+  counsellorName: z.array(z.string())
+    .min(1, { message: "At least one counsellor must be selected" }) 
+    .optional()
+    .default([]),
+  telecallerName: z.array(z.string())
+    .min(1, { message: "At least one telecaller must be selected" }) 
+    .optional()
+    .default([]),
   collegeSectionDate: z.date().optional().nullable(),
   collegeSectionRemarks: z.string().optional().nullable(),
   confirmationCheck: z.boolean().refine(val => val === true, {

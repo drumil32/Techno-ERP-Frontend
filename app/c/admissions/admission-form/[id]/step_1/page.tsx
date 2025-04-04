@@ -1,5 +1,5 @@
 import EnquiryFormStage1 from "@/components/custom-ui/enquiry-form/stage-1/enquiry-form-stage1";
-import AdmissionLayout from "@/components/layout/admission-layout";
+import AdmissionFormLayout from "@/components/layout/admission-form-layout";
 
 export default async function AdmissionsPage({
     params,
@@ -9,8 +9,8 @@ export default async function AdmissionsPage({
 
     const { id } = await params;
     return (
-    <AdmissionLayout>
+    <AdmissionFormLayout>
         <EnquiryFormStage1 id={id} />
-    </AdmissionLayout>
+    </AdmissionFormLayout>
     );
 }

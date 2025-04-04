@@ -1,62 +1,87 @@
-export const cleanDataForDraft = (data: any): any => {
-    if (data === null || data === undefined) {
-        return undefined;
+import { format, isValid } from 'date-fns'; 
+
+const isEmpty = (value:any) => value === null || value === undefined || value === '';
+
+const formatDateDDMMYYYY = (dateInput:any) => {
+  if (isEmpty(dateInput)) {
+    return undefined;
+  }
+  let date;
+  if (typeof dateInput === 'string') {
+    try {
+       date = new Date(dateInput); 
+       if (!isValid(date)) {
+           return undefined;
+       }
+    } catch (e) {
+        return undefined; 
     }
 
-    // if (data instanceof Date) {
-    //     return isValid(data) ? format(data, 'dd/MM/yyyy') : undefined;
-    // }
+  } else if (dateInput instanceof Date) {
+    date = dateInput;
+  } else {
+      return undefined; 
+  }
 
-    // if (Array.isArray(data)) {
-    //     const cleanedArray = data
-    //         .map(item => cleanDataForDraft(item))
-    //         .filter(item => {
-    //             if (item === undefined) return false;
-
-    //             if (typeof item === 'object' && item !== null) {
-    //                 if ('type' in item && Object.values(FeeType).includes(item.type)) {
-    //                     if (item.finalFee === undefined && item.feesDepositedTOA === undefined && (!item.remarks || item.remarks === '')) {
-    //                         return false;
-    //                     }
-    //                 }
-    //                 else if ('finalFee' in item && Object.keys(item).length === 1) {
-    //                     if (item.finalFee === undefined) {
-    //                         return false;
-    //                     }
-    //                 }
-    //                 else if (Object.keys(item).length === 0) {
-    //                     return false;
-    //                 }
-    //             }
-    //             return true;
-    //         });
-    //     return cleanedArray.length > 0 ? cleanedArray : undefined;
-    // }
-
-    // if (typeof data === 'object') {
-    //     const cleanedObject: { [key: string]: any } = {};
-    //     let isEmpty = true;
-    //     for (const key in data) {
-    //         if (key === 'otpTarget' || key === 'confirmationCheck' || key === 'enquiry_id') {
-    //             continue;
-    //         }
-
-    //         const cleanedValue = cleanDataForDraft(data[key]);
-
-    //         if (cleanedValue !== undefined) {
-
-    //             cleanedObject[key] = cleanedValue;
-    //             isEmpty = false;
-    //         }
-    //     }
-    //     return isEmpty ? undefined : cleanedObject;
-    // }
-
-    // if (data === '') {
-    //     return undefined;
-    // }
+  if (isValid(date)) {
+    return format(date, 'dd/MM/yyyy');
+  }
+  return undefined;
+};
 
 
+export const cleanDataForDraft = (data:any) => {
+  if (data === null || data === undefined) {
+    return undefined;
+  }
 
-    return data;
+  const cleaned :any = {};
+
+  if (Array.isArray(data.otherFees)) {
+    const cleanedOtherFees = data.otherFees.filter((fee:any) =>
+      fee &&
+      !isEmpty(fee.type) && 
+      typeof fee.finalFee === 'number' && fee.finalFee >= 0
+    );
+    const minimalOtherFees = cleanedOtherFees.map((fee:any) => ({
+        type: fee.type,
+        finalFee: fee.finalFee,
+        ...(typeof fee.feesDepositedTOA === 'number' && { feesDepositedTOA: fee.feesDepositedTOA }), 
+        ...(fee.remarks && { remarks: fee.remarks }) 
+    }))
+
+    if (minimalOtherFees.length > 0) {
+      cleaned.otherFees = minimalOtherFees;
+    }
+  }
+
+  if (Array.isArray(data.semWiseFees)) {
+    const cleanedSemWiseFees = data.semWiseFees.filter((fee:any) =>
+      fee &&
+      typeof fee.finalFee === 'number' && fee.finalFee >= 0
+    );
+    const minimalSemWiseFees = cleanedSemWiseFees.map((fee:any) => ({
+        finalFee: fee.finalFee
+    }));
+
+    if (minimalSemWiseFees.length > 0) {
+      cleaned.semWiseFees = minimalSemWiseFees;
+    }
+  }
+
+  const formattedDate = formatDateDDMMYYYY(data.feesClearanceDate);
+  if (formattedDate) {
+      cleaned.feesClearanceDate = formattedDate;
+  }
+
+
+  if (Array.isArray(data.counsellor)) {
+      const validCounsellors = data.counsellor.filter((c:any) => !isEmpty(c)); 
+       if (validCounsellors.length > 0) {
+           cleaned.counsellor = validCounsellors;
+       }
+  }
+
+
+  return Object.keys(cleaned).length > 0 ? cleaned : undefined;
 };

@@ -15,7 +15,6 @@ import {
   FormControl,
   FormMessage
 } from '@/components/ui/form';
-import { FeeType } from '@/types/enum';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { getFeesByCourseName, getOtherFees } from './helpers/apirequests';
@@ -36,6 +35,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cleanDataForDraft } from './helpers/refine-data';
 import { createStudentFeesDraft, updateStudentFeesDraft } from './student-fees-api';
+import ShowStudentData from './data-show';
+import { FeeType } from '@/types/enum';
+import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
 
 const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -131,8 +133,8 @@ export const StudentFeesForm = () => {
       semWiseFees: [],
       enquiryId: enquiry_id,
       feesClearanceDate: null,
-      counsellorName: null,
-      telecallerName: null,
+      counsellorName: [],
+      telecallerName: [],
       collegeSectionDate: null,
       collegeSectionRemarks: '',
       confirmationCheck: false,
@@ -175,6 +177,10 @@ export const StudentFeesForm = () => {
       let initialOtherFees: any[] = [];
       const existingFeeData = data.studentFee;
 
+      let initialCounsellors: string[] = existingFeeData.counsellorName ?? [];
+
+      let initialTelecallers: string[] = existingFeeData.telecallerName ?? [];
+
       initialOtherFees = Object.values(FeeType).map((feeType) => {
         const baseFeeData = otherFeesData.find((item: any) => item.type === feeType);
         const existingFee = existingFeeData?.otherFees?.find((fee: any) => fee.type === feeType);
@@ -202,8 +208,8 @@ export const StudentFeesForm = () => {
         otherFees: initialOtherFees,
         semWiseFees: initialSemFees,
         feesClearanceDate: existingFeeData?.studentFee?.feesClearanceDate || '',
-        counsellorName: existingFeeData?.counsellorName ?? '',
-        telecallerName: existingFeeData?.telecallerName ?? '',
+        counsellorName: initialCounsellors,
+        telecallerName: initialTelecallers,
         collegeSectionDate: parseDateString(existingFeeData?.collegeSectionDate),
         collegeSectionRemarks: existingFeeData?.collegeSectionRemarks ?? '',
       });
@@ -236,6 +242,7 @@ export const StudentFeesForm = () => {
       totalDeposited += fee?.feesDepositedTOA ?? 0;
     });
 
+
     const totalDue = totalFinal - totalDeposited;
 
     return {
@@ -246,18 +253,33 @@ export const StudentFeesForm = () => {
     };
   }, [otherFeesWatched, otherFeesData]);
 
+  const counsellorOptions: MultiSelectOption[] = useMemo(() => {
+    return (Array.isArray(counsellorsData) ? counsellorsData : [])
+      .map((c: any) => ({ value: c._id, label: c.name }))
+      .filter(Boolean);
+  }, [counsellorsData]);
+
+  const telecallerOptions: MultiSelectOption[] = useMemo(() => {
+    return (Array.isArray(telecallersData) ? telecallersData : [])
+      .map((t: any) => ({ value: t._id, label: t.name }))
+      .filter(Boolean);
+  }, [telecallersData]);
 
 
   async function handleSaveDraft() {
     const currentValues = form.getValues();
-    const existingDraftId = data?.studentFee?.id;
+    const existingDraftId = data?.studentFee?._id;
     const isUpdate = !!existingDraftId
 
     const dataToClean = {
       otherFees: currentValues.otherFees,
       semWiseFees: currentValues.semWiseFees,
+      feesClearanceDate: currentValues.feesClearanceDate,
+      counsellor: currentValues.counsellorName,
     }
 
+    console.log("Hello")
+    console.log("ID", existingDraftId)
     console.log(dataToClean)
 
     const cleanedData = cleanDataForDraft(dataToClean);
@@ -268,14 +290,15 @@ export const StudentFeesForm = () => {
         id: existingDraftId,
         ...(cleanedData || {}),
       };
+      console.log('Payload: ', finalPayload)
       updateStudentFeesDraft(finalPayload)
     } else {
       finalPayload = {
         enquiryId: enquiry_id,
         ...(cleanedData || {}),
       };
+      console.log('Payload: ', finalPayload)
       createStudentFeesDraft(finalPayload)
-
       delete finalPayload.id;
     }
   }
@@ -295,6 +318,8 @@ export const StudentFeesForm = () => {
         className="pt-8 mr-[25px] space-y-8 flex flex-col w-full overflow-x-hidden relative"
       >
 
+
+        <ShowStudentData data={data} />
 
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="other-fees">
           <AccordionItem value="other-fees">
@@ -522,7 +547,7 @@ export const StudentFeesForm = () => {
               <h3 className="font-inter text-[16px] font-semibold"> To be filled by College</h3>
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
-             
+
             <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-y-4 gap-x-8 ">
                 <FormField
@@ -531,21 +556,17 @@ export const StudentFeesForm = () => {
                   render={({ field }) => (
                     <FormItem className="col-span-1">
                       <FormLabel className="font-inter font-normal text-sm text-gray-600">
-                        Counsellor’s Name
+                        Counsellor’s Name(s)
                       </FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value ?? ""}>
-                          <SelectTrigger className="h-11 text-sm w-full">
-                            <SelectValue placeholder="Select Counsellor's Name" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Array.isArray(counsellorsData) && counsellorsData?.map((counsellor: any) => (
-                              <SelectItem key={counsellor._id} value={counsellor._id}>
-                                {counsellor.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <MultiSelectDropdown
+                          options={counsellorOptions}
+                          selected={field.value ?? []}
+                          onChange={field.onChange}
+                          placeholder="Select Counsellor(s)"
+                          searchPlaceholder="Search Counsellors..."
+                          isLoading={results[1].isLoading}
+                        />
                       </FormControl>
                       <FormMessage className="text-xs" />
                     </FormItem>
@@ -558,21 +579,17 @@ export const StudentFeesForm = () => {
                   render={({ field }) => (
                     <FormItem className="col-span-1">
                       <FormLabel className="font-inter font-normal text-sm text-gray-600">
-                        Telecaller’s Name
+                        Telecaller’s Name(s)
                       </FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value ?? ""}>
-                          <SelectTrigger className="h-11 text-sm w-full">
-                            <SelectValue placeholder="Select Telecaller’s Name" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Array.isArray(telecallersData) && telecallersData?.map((telecaller: any, index) => (
-                              <SelectItem key={telecaller._id} value={telecaller._id}>
-                                {telecaller.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <MultiSelectDropdown
+                          options={telecallerOptions}
+                          selected={field.value ?? []}
+                          onChange={field.onChange}
+                          placeholder="Select Telecaller(s)"
+                          searchPlaceholder="Search Telecallers..."
+                          isLoading={results[0].isLoading}
+                        />
                       </FormControl>
                       <FormMessage className="text-xs" />
                     </FormItem>
