@@ -26,7 +26,10 @@ const studentFeesSchema = z.object({
   otherFees: z.array(otherFeesSchema).optional(),
   semWiseFees: z.array(singleSemSchema),
   feeStatus: z.nativeEnum(FeeStatus).default(FeeStatus.DRAFT).optional(),
-  feesClearanceDate: requestDateSchema
+  feesClearanceDate: z.string().nullable().optional(),
+  counsellor: z.array(z.string()).optional(),
+  telecaller: z.array(z.string()).optional(),
+  remarks: z.string().optional().nullable(),
 });
 
 export const feesRequestSchema = studentFeesSchema.omit({ feeStatus: true }).extend({
@@ -34,15 +37,6 @@ export const feesRequestSchema = studentFeesSchema.omit({ feeStatus: true }).ext
   
   otherFees: z.array(otherFeesSchemaWithoutFeeAmount),
   semWiseFees: z.array(singleSemSchemaWithoutFeeAmount),
-  feesClearanceDate: z.date().optional().nullable(),
-  counsellorName: z.array(z.string())
-    .optional()
-    .default([]),
-  telecallerName: z.array(z.string())
-    .optional()
-    .default([]),
-  collegeSectionDate: z.date().optional().nullable(),
-  collegeSectionRemarks: z.string().optional().nullable(),
   confirmationCheck: z.boolean().refine(val => val === true, {
     message: "You must confirm the terms before submitting."
   }),
@@ -56,16 +50,20 @@ export const frontendFeesDraftValidationSchema = z.object({
   otherFees: z.array(otherFeesSchemaWithoutFeeAmount.partial()).optional(), 
   semWiseFees: z.array(singleSemSchemaWithoutFeeAmount.partial()).optional(), 
   feesClearanceDate: z.string().optional().nullable(),
-  counsellorName: z.array(z.string()).optional(), 
-  telecallerName: z.array(z.string()).optional(), 
-  collegeSectionDate: z.date().optional().nullable(),
-  collegeSectionRemarks: z.string().optional().nullable(),
+  counsellor: z.array(z.string()).optional(), 
+  telecaller: z.array(z.string()).optional(), 
+  remarks: z.string().optional().nullable(),
 }).partial(); 
 
-export const feesUpdateSchema = feesRequestSchema.extend({
-  id: z.string().min(1, 'Reuired Field')
-}).omit({ enquiryId: true });
-
+export const feesUpdateSchema = z.object({
+  // id: z.string().min(1, 'Record ID is required'), 
+  otherFees: z.array(otherFeesSchemaWithoutFeeAmount),
+  semWiseFees: z.array(singleSemSchemaWithoutFeeAmount),
+  feesClearanceDate: z.string().optional().nullable(),
+  counsellor: z.array(z.string()).optional(),
+  telecaller: z.array(z.string()).optional(),
+  collegeSectionRemarks: z.string().optional().nullable(),
+});
 
 export const feesDraftRequestSchema = feesRequestSchema.extend({
   otherFees: z.array(otherFeesSchema.partial()).optional(),
@@ -73,6 +71,8 @@ export const feesDraftRequestSchema = feesRequestSchema.extend({
   enquiryId: z.string().min(1, 'Reuired Field'),
   feesClearanceDate: requestDateSchema,
 }).strict();
+
+
 
 
 export const feesDraftUpdateSchema = feesDraftRequestSchema.extend({ id: z.string().min(1, 'Reuired Field') }).omit({ enquiryId: true }).partial().strict()

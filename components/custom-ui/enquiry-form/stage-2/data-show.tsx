@@ -10,7 +10,7 @@ export default function ShowStudentData({ data }: { data: Admission }) {
                         Student Name
                     </div>
                     <div className="w-1/2 ">
-                        {data.studentName}
+                        {data?.studentName}
                     </div>
                 </div>
                 <div className="flex">
@@ -18,7 +18,7 @@ export default function ShowStudentData({ data }: { data: Admission }) {
                         Student's Phone Number
                     </div>
                     <div className="w-1/2">
-                        {data.studentPhoneNumber}
+                        {data?.studentPhoneNumber}
                     </div>
                 </div>
                 <div className="flex">
@@ -26,7 +26,7 @@ export default function ShowStudentData({ data }: { data: Admission }) {
                         Father Name
                     </div>
                     <div className="w-1/2">
-                        {data.fatherName}
+                        {data?.fatherName}
                     </div>
                 </div>
             </div>
@@ -36,7 +36,7 @@ export default function ShowStudentData({ data }: { data: Admission }) {
                         Course Applied
                     </div>
                     <div className="w-1/2">
-                        {CourseNameMapper[data.course as Course] || 'Unknown Course'}
+                        {CourseNameMapper[data?.course as Course] || 'Unknown Course'}
                     </div>
                 </div>
                 <div className="flex">
@@ -44,7 +44,7 @@ export default function ShowStudentData({ data }: { data: Admission }) {
                         College Name
                     </div>
                     <div className="w-1/2">
-                        {data.collegeName}
+                        {data?.collegeName}
                     </div>
                 </div>
                 <div className="flex">
@@ -52,7 +52,7 @@ export default function ShowStudentData({ data }: { data: Admission }) {
                         Affiliation
                     </div>
                     <div className="w-1/2">
-                        {data.affiliation}
+                        {data?.affiliation}
                     </div>
                 </div>
             </div>

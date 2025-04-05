@@ -276,7 +276,8 @@ export enum FeeType {
   UNIFORM = "UNIFORM",
   STUDENTWELFARE = "STUDENTWELFARE",
   BOOKBANK = "BOOKBANK",
-  EXAMFEES = "EXAMFEES"
+  EXAMFEES = "EXAMFEES",
+  SEM1FEE = "SEM1FEE"
 }
 
 export enum FeeStatus {
