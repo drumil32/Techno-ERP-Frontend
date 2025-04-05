@@ -27,11 +27,12 @@ import { CalendarDaysIcon } from 'lucide-react';
 
 // Utilities
 import { format } from 'date-fns';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface UserRoleInterface {
   _id: string;
   name: string;
-  email : string;
+  email: string;
 }
 
 // Props Interface
@@ -72,18 +73,45 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                       Counsellor’s Name
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue placeholder="Select Counseller's Name" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {counsellors?.map((counsellor,index) => (
-                            <SelectItem key={index} value={counsellor._id}>
-                              {counsellor.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          
+                          <Button
+                            variant="outline"
+                            className={`${commonFieldClass} w-full text-left bg-inherit`}
+                          >
+                            <span className='block overflow-hidden text-ellipsis whitespace-nowrap'>
+
+                            {field.value && field.value.length > 0
+                              ? counsellors
+                              .filter((counsellor) => field.value.includes(counsellor._id))
+                              .map((counsellor) => counsellor.name)
+                              .join(', ')
+                              : "Select Counsellor's Name"}
+                            </span>
+                          </Button>
+
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[180px] p-2 rounded-sm">
+                          <div className="max-h-60 overflow-y-auto">
+                            {counsellors?.map((counsellor) => (
+                              <div key={counsellor._id} className="flex items-center space-x-2 space-y-1">
+                                <Checkbox
+                                  checked={field.value?.includes(counsellor._id)}
+                                  onCheckedChange={(checked) => {
+                                    const newValues = checked
+                                      ? [...(field.value || []), counsellor._id]
+                                      : field.value?.filter((id:string) => id !== counsellor._id);
+                                    field.onChange(newValues);
+                                  }}
+                                  className='rounded-none'
+                                />
+                                <span className='text-[12px]'>{counsellor.name}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -100,18 +128,48 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                       Telecaller’s Name
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue placeholder="Select Telecaller’s Name" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {telecallers?.map((telecaller,index) => (
-                            <SelectItem key={index} value={telecaller._id}>
-                              {telecaller.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                          
+                          <Button
+                            variant="outline"
+                            className={`${commonFieldClass} text-left bg-inherit`}
+                          >
+                            <span className='block  overflow-hidden text-ellipsis whitespace-nowrap'>
+
+                              {field.value && field.value.length > 0
+                                ? telecallers
+                                .filter((telecaller) => field.value.includes(telecaller._id))
+                                .map((telecaller) => telecaller.name)
+                                .join(', ')
+                                :
+                                "Select Telecaller's Name"
+                              }
+                              
+                            </span>
+                          </Button>
+
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[180px] p-2 rounded-sm">
+                          <div className="max-h-60 overflow-y-auto">
+                            {telecallers?.map((telecaller) => (
+                              <div key={telecaller._id} className="flex items-center space-x-2 space-y-2">
+                                <Checkbox
+                                  checked={field.value?.includes(telecaller._id)}
+                                  onCheckedChange={(checked) => {
+                                    const newValues = checked
+                                      ? [...(field.value || []), telecaller._id]
+                                      : field.value?.filter((id:string) => id !== telecaller._id);
+                                    field.onChange(newValues);
+                                  }}
+                                  className='rounded-none'
+                                />
+                                <span className='text-[12px]'>{telecaller.name}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     </FormControl>
                     <FormMessage />
                   </FormItem>

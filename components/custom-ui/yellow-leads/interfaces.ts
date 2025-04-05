@@ -1,6 +1,5 @@
 import { CampusVisitStatus } from "@/components/layout/yellowLeads/campus-visit-tag";
 import { FinalConversionStatus } from "@/components/layout/yellowLeads/final-conversion-tag";
-import { finalConversion } from "@/static/enum";
 
 export interface YellowLead {
   _id: string;

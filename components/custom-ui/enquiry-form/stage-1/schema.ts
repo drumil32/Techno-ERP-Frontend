@@ -131,8 +131,8 @@ export const enquirySchema = z.object({
   dateOfCounselling: requestDateSchema,
   remarks: z.string().optional(),
   approvedBy: z.string().optional(),
-  telecaller: z.string().optional(),
-  counsellor: z.string().optional()
+  telecaller: z.array(z.string()).optional(),
+  counsellor: z.array(z.string()).optional()
 });
 
 export const enquiryStep1RequestSchema = enquirySchema

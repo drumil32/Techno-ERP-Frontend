@@ -1,7 +1,7 @@
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { apiRequest } from '@/lib/apiClient';
-import { UserRoles } from '@/static/enum';
+import { UserRoles } from '@/types/enum';
 
 export const fetchLeads = async ({ queryKey }: any) => {
   const [, params] = queryKey;
