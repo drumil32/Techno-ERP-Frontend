@@ -17,14 +17,14 @@ export const displayFeeMapper = (feeType: FeeType | string | undefined): string 
 
 export const scheduleFeeMapper = (feeType: FeeType | string | undefined): string => {
   switch (feeType) {
-    case FeeType.HOSTEL: return "Yearly";
-    case FeeType.TRANSPORT: return "Yearly";
+    case FeeType.HOSTEL: return "One-time";
+    case FeeType.TRANSPORT: return "One-time";
     case FeeType.PROSPECTUS: return "One-time";
     case FeeType.STUDENTID: return "One-time";
     case FeeType.UNIFORM: return "One-time";
-    case FeeType.STUDENTWELFARE: return "Yearly";
-    case FeeType.BOOKBANK: return "One-time";
-    case FeeType.EXAMFEES: return "Per Exam";
+    case FeeType.STUDENTWELFARE: return "One-time";
+    case FeeType.BOOKBANK: return "Yearly";
+    case FeeType.EXAMFEES: return "One-time";
     case FeeType.SEM1FEE: return "One-time";
     default: return "N/A";
   }
