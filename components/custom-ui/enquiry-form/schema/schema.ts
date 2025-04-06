@@ -26,6 +26,13 @@ import {
   StatesOfIndia
 } from '@/types/enum';
 
+export const entranceExamDetailSchema = z.object({
+  nameOfExamination: z.string().optional(),
+  rollNumber: z.string().optional(),
+  rank: z.number().optional(),
+  qualified: z.boolean().optional()
+});
+
 export const academicDetailSchema = z.object({
   educationLevel: z.nativeEnum(EducationLevel),
   schoolCollegeName: z
@@ -46,32 +53,30 @@ export const academicDetailSchema = z.object({
     .number({ message: 'Percentage Obtained  required' })
     .min(0, 'Percentage must be at least 0')
     .max(100, 'Percentage cannot exceed 100'),
-  subjects: z.array(z.string().min(1, 'Subject name is required'))
+  subjects: z.array(z.string().min(1, 'Subject name is required')).nonempty('Subjects cannot be empty').optional()
 });
 
 export const singleDocumentSchema = z.object({
-  enquiryId: z.string(),
   type: z.nativeEnum(DocumentType),
-  documentBuffer: z
-    .object({
-      buffer: z.instanceof(Buffer),
-      mimetype: z.string(),
-      size: z
-        .number()
-        .positive()
-        .max(5 * 1024 * 1024, { message: 'File size must be less than 5MB' }),
-      originalname: z.string()
-    })
-    .refine(
-      (file) => ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'].includes(file.mimetype),
-      { message: 'Invalid file type. Only PNG, JPG, JPEG, and PDF are allowed.' }
-    )
+  documentBuffer: z.object({
+    buffer: z.instanceof(Buffer),
+    mimetype: z.string(),
+    size: z.number()
+      .positive()
+      .max(5 * 1024 * 1024, { message: 'File size must be less than 5MB' }),
+    originalname: z.string(),
+  }).refine(
+    (file) => ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'].includes(file.mimetype),
+    { message: 'Invalid file type. Only PNG, JPG, JPEG, and PDF are allowed.' }
+  ).optional(),
+  dueBy: requestDateSchema.optional(),
+  fileUrl: z.string().optional(),
 });
 
 export const academicDetailsArraySchema = z.array(academicDetailSchema);
 
 export const enquirySchema = z.object({
-  _id: z.string().optional(),
+
   // Student Details
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
   dateOfEnquiry: requestDateSchema,
@@ -79,7 +84,6 @@ export const enquirySchema = z.object({
     .string({ required_error: 'Student Name is required' })
     .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
     .nonempty('Student Name is required'),
-
   studentPhoneNumber: contactNumberSchema,
   emailId: z.string().email('Invalid email format').optional(),
   fatherName: z
@@ -100,19 +104,27 @@ export const enquirySchema = z.object({
     .string({ required_error: 'Mother occupation is required' })
     .regex(/^[A-Za-z\s]+$/, 'Mother occupation must only contain alphabets and spaces')
     .nonempty('Mother occupation is required'),
+  gender: z.nativeEnum(Gender).default(Gender.NOT_TO_MENTION),
   dateOfBirth: requestDateSchema,
   category: z.nativeEnum(Category),
-  gender: z.nativeEnum(Gender).default(Gender.NOT_TO_MENTION),
   course: z.nativeEnum(Course),
   reference: z.nativeEnum(AdmissionReference),
 
   // Address Details
   address: addressSchema,
 
-  previousCollegeData: previousCollegeDataSchema.optional(),
-
+  // Academic Details
   academicDetails: academicDetailsArraySchema.optional(),
 
+  // Filled By College Details
+  telecaller: z.array(z.string()).optional(),
+  counsellor: z.array(z.string()).optional(),
+  remarks: z.string().optional(),
+
+
+
+
+  approvedBy: z.string().optional(),
   applicationStatus: z.nativeEnum(ApplicationStatus).default(ApplicationStatus.STEP_1),
 
   studentFee: z.string().optional(),
@@ -121,10 +133,21 @@ export const enquirySchema = z.object({
 
   documents: z.array(singleDocumentSchema).optional(),
 
-  aadharNumber: z.string().regex(/^\d{12}$/, 'Aadhar Number must be exactly 12 digits').optional(),
+
+  aadharNumber: z
+    .string()
+    .regex(/^\d{12}$/, 'Aadhar Number must be exactly 12 digits')
+    .optional(),
+
   religion: z.nativeEnum(Religion).optional(),
   bloodGroup: z.nativeEnum(BloodGroup).optional(),
+  previousCollegeData: previousCollegeDataSchema.optional(),
+  stateOfDomicile: z.nativeEnum(StatesOfIndia).optional(),
+  areaType: z.nativeEnum(AreaType).optional(),
+  nationality: z.string().optional(),
+  entranceExamDetails: entranceExamDetailSchema.optional(),
   admittedBy: z.union([z.string(), z.enum(['other'])]).optional(),
+
 });
 
 
@@ -152,7 +175,24 @@ export enum Nationality {
 }
 
 export const enquiryStep1RequestSchema = enquirySchema
-  .omit({ studentFee: true, studentFeeDraft: true, dateOfAdmission: true, bloodGroup: true, aadharNumber: true, religion: true, previousCollegeData: true, documents: true, applicationStatus: true, entranceExamDetails: true, nationality: true, stateOfDomicile: true, areaType: true, admittedBy: true })
+
+  .omit({
+    studentFee: true,
+    studentFeeDraft: true,
+    dateOfAdmission: true,
+    bloodGroup: true,
+    aadharNumber: true,
+    religion: true,
+    previousCollegeData: true,
+    documents: true,
+    applicationStatus: true,
+    entranceExamDetails: true,
+    nationality: true,
+    stateOfDomicile: true,
+    areaType: true,
+    admittedBy: true
+  })
+
   .extend({ id: z.string().optional() })
   .strict();
 
@@ -167,12 +207,7 @@ export const enquiryStep3UpdateRequestSchema = enquirySchema.omit({ documents: t
   id: z.string(),
 }).strict();
 
-export const entranceExamDetailSchema = z.object({
-  nameOfExamination: z.string().optional(),
-  rollNumber: z.string().optional(),
-  rank: z.number().optional(),
-  qualified: z.boolean().optional()
-});
+
 
 export type IEntranceExamDetailSchema = z.infer<typeof entranceExamDetailSchema>;
 
@@ -199,8 +234,11 @@ export const enquiryDraftStep1RequestSchema = enquiryStep1RequestSchema
   .extend({
     studentName: z.string({ required_error: "Student Name is required", }).nonempty('Student Name is required'),
     studentPhoneNumber: contactNumberSchema,
+
     counsellor: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     telecaller: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
+
+
     address: addressSchema.partial().optional(),
     academicDetails: z.array(academicDetailSchema.partial()).optional(),
   }).omit({ id: true }).partial().strict();

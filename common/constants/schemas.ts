@@ -1,3 +1,4 @@
+import { Countries, Districts, StatesOfIndia } from '@/types/enum';
 import { z } from 'zod';
 
 export const requestDateSchema = z
@@ -10,22 +11,18 @@ export const contactNumberSchema = z
 
 export const addressSchema = z.object({
   addressLine1: z.string().min(5, 'Permanent address must be at least 5 characters'),
-  addressLine2: z.string().optional(),
+  addressLine2: z.string().min(5, 'Permanent address must be at least 5 characters'),
   pincode: z
     .string()
     .regex(/^[1-9][0-9]{5}$/, 'Pincode must be a 6-digit number starting with a non-zero digit'),
 
-  district: z.string().nonempty('District is required'),
-  state: z.string().nonempty('State is required'),
-  country: z.string().nonempty('Country is required')
+  district: z.nativeEnum(Districts),
+  state: z.nativeEnum(StatesOfIndia),
+  country: z.nativeEnum(Countries)
 });
 
 export const previousCollegeDataSchema = z.object({
-  collegeName: z
-    .string()
-    .min(3, 'College Name must be at least 3 characters')
-    .regex(/^[A-Za-z\s]+$/, 'College Name must only contain alphabets and spaces')
-    .optional(),
+  collegeName: z.string().min(3, 'College Name must be at least 3 characters').optional(),
   district: z.string().optional(),
   boardUniversity: z.string().optional(),
   passingYear: z
