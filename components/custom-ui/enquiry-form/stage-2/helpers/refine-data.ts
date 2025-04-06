@@ -1,62 +1,66 @@
-export const cleanDataForDraft = (data: any): any => {
-    if (data === null || data === undefined) {
-        return undefined;
+const isEmpty = (value: any) => value === null || value === undefined || value === '';
+
+export const cleanDataForDraft = (data: any) => {
+  if (data === null || data === undefined) {
+    return undefined;
+  }
+
+  const cleaned: any = {};
+
+  if (Array.isArray(data.otherFees)) {
+    const cleanedOtherFees = data.otherFees.filter((fee: any) =>
+      fee &&
+      !isEmpty(fee.type) &&
+      typeof fee.finalFee === 'number' && fee.finalFee >= 0
+    );
+    const minimalOtherFees = cleanedOtherFees.map((fee: any) => ({
+      type: fee.type,
+      finalFee: fee.finalFee,
+      ...(typeof fee.feesDepositedTOA === 'number' && { feesDepositedTOA: fee.feesDepositedTOA }),
+      ...(fee.remarks && { remarks: fee.remarks })
+    }))
+
+    if (minimalOtherFees.length > 0) {
+      cleaned.otherFees = minimalOtherFees;
     }
+  }
 
-    // if (data instanceof Date) {
-    //     return isValid(data) ? format(data, 'dd/MM/yyyy') : undefined;
-    // }
+  if (Array.isArray(data.semWiseFees)) {
+    const cleanedSemWiseFees = data.semWiseFees.filter((fee: any) =>
+      fee &&
+      typeof fee.finalFee === 'number' && fee.finalFee >= 0
+    );
+    const minimalSemWiseFees = cleanedSemWiseFees.map((fee: any) => ({
+      finalFee: fee.finalFee
+    }));
 
-    // if (Array.isArray(data)) {
-    //     const cleanedArray = data
-    //         .map(item => cleanDataForDraft(item))
-    //         .filter(item => {
-    //             if (item === undefined) return false;
+    if (minimalSemWiseFees.length > 0) {
+      cleaned.semWiseFees = minimalSemWiseFees;
+    }
+  }
 
-    //             if (typeof item === 'object' && item !== null) {
-    //                 if ('type' in item && Object.values(FeeType).includes(item.type)) {
-    //                     if (item.finalFee === undefined && item.feesDepositedTOA === undefined && (!item.remarks || item.remarks === '')) {
-    //                         return false;
-    //                     }
-    //                 }
-    //                 else if ('finalFee' in item && Object.keys(item).length === 1) {
-    //                     if (item.finalFee === undefined) {
-    //                         return false;
-    //                     }
-    //                 }
-    //                 else if (Object.keys(item).length === 0) {
-    //                     return false;
-    //                 }
-    //             }
-    //             return true;
-    //         });
-    //     return cleanedArray.length > 0 ? cleanedArray : undefined;
-    // }
+  if (data.feesClearanceDate) {
+    cleaned.feesClearanceDate = data.feesClearanceDate;
+  }
 
-    // if (typeof data === 'object') {
-    //     const cleanedObject: { [key: string]: any } = {};
-    //     let isEmpty = true;
-    //     for (const key in data) {
-    //         if (key === 'otpTarget' || key === 'confirmationCheck' || key === 'enquiry_id') {
-    //             continue;
-    //         }
-
-    //         const cleanedValue = cleanDataForDraft(data[key]);
-
-    //         if (cleanedValue !== undefined) {
-
-    //             cleanedObject[key] = cleanedValue;
-    //             isEmpty = false;
-    //         }
-    //     }
-    //     return isEmpty ? undefined : cleanedObject;
-    // }
-
-    // if (data === '') {
-    //     return undefined;
-    // }
+  if (Array.isArray(data.counsellor)) {
+    const validCounsellors = data.counsellor.filter((c: any) => !isEmpty(c));
+    if (validCounsellors.length > 0) {
+      cleaned.counsellor = validCounsellors;
+    }
+  }
 
 
+  if (Array.isArray(data.telecaller)) {
+    const validTelecaller = data.telecaller.filter((c: any) => !isEmpty(c));
+    if (validTelecaller.length > 0) {
+      cleaned.telecaller = validTelecaller;
+    }
+  }
 
-    return data;
+  if(data.remarks) {
+    cleaned.remarks = data.remarks
+  }
+
+  return Object.keys(cleaned).length > 0 ? cleaned : undefined;
 };

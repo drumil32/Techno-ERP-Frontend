@@ -190,17 +190,6 @@ export enum Locations {
 }
 
 
-export enum FeeType {
-  HOSTEL = "HOSTEL",
-  TRANSPORT = "TRANSPORT",
-  PROSPECTUS = "PROSPECTUS",
-  STUDENTID = "STUDENTID",
-  UNIFORM = "UNIFORM",
-  STUDENTWELFARE = "STUDENTWELFARE",
-  BOOKBANK = "BOOKBANK",
-  EXAMFEES = "EXAMFEES"
-}
-
 
 export enum FeeStatus {
   FINAL = "FINAL",
@@ -215,7 +204,7 @@ export enum AdmissionMode {
 
 
 
-export enum AreaType{
+export enum AreaType {
   URBAN = "URBAN",
   RURAL = "RURAL",
   OTHERS = "OTHERS"
@@ -252,6 +241,7 @@ export enum StatesOfIndia {
   WestBengal = "West Bengal",
 }
 
+
 export enum Countries {
   India = "India",
   Pakistan = "Pakistan",
@@ -265,6 +255,20 @@ export enum Countries {
   Maldives = "Maldives",
   Thailand = "Thailand",
 }
+// Fee types
+
+export enum FeeType {
+  HOSTEL = "HOSTEL",
+  TRANSPORT = "TRANSPORT",
+  PROSPECTUS = "PROSPECTUS",
+  STUDENTID = "STUDENTID",
+  UNIFORM = "UNIFORM",
+  STUDENTWELFARE = "STUDENTWELFARE",
+  BOOKBANK = "BOOKBANK",
+  EXAMFEES = "EXAMFEES",
+  SEM1FEE = "SEM1FEE"
+
+}
 
 export enum Districts {
   Lucknow = "Lucknow",
@@ -273,12 +277,6 @@ export enum Districts {
   Barabanki = "Barabanki",
   Raebareli = "Raebareli",
   Unnao = "Unnao",
-}
-
-export enum AreaType{
-  URBAN = "URBAN",
-  RURAL = "RURAL",
-  OTHERS = "OTHERS"
 }
 
 

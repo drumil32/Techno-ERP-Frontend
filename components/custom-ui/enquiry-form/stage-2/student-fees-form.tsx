@@ -1,12 +1,12 @@
 'use client';
 
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { feesRequestSchema, IFeesRequestSchema } from './studentFeesSchema';
+import { feesRequestSchema, feesUpdateSchema, frontendFeesDraftValidationSchema, IFeesRequestSchema } from './studentFeesSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
 import { getCounsellors, getEnquiry, getTeleCallers } from '../stage-1/enquiry-form-api';
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import {
   Form,
   FormField,
@@ -15,10 +15,9 @@ import {
   FormControl,
   FormMessage
 } from '@/components/ui/form';
-import { FeeType } from '@/types/enum';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { getFeesByCourseName, getOtherFees } from './helpers/apirequests';
+import { createStudentFees, getFeesByCourseName, getOtherFees, updateEnquiryStatus, updateStudentFees } from './helpers/apirequests';
 import { displayFeeMapper, scheduleFeeMapper } from './helpers/mappers';
 import { format, parse, isValid } from 'date-fns';
 import {
@@ -33,9 +32,13 @@ import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cleanDataForDraft } from './helpers/refine-data';
 import { createStudentFeesDraft, updateStudentFeesDraft } from './student-fees-api';
+import ShowStudentData from './data-show';
+import { FeeType } from '@/types/enum';
+import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
+import { toast } from 'sonner';
+import { queryClient } from '@/lib/queryClient';
 
 const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -56,13 +59,20 @@ const calculateDiscountPercentage = (
   return Math.max(0, roundedDiscount);
 };
 
-const parseDateString = (dateString: string | null | undefined): Date | null => {
-  if (!dateString) return null;
-  let parsedDate = parse(dateString, 'dd/MM/yyyy', new Date());
-  if (!isValid(parsedDate)) {
-    parsedDate = new Date(dateString); // Try ISO format
+const parseDisplayDate = (dateString: string | null | undefined): Date | undefined => {
+  if (!dateString) return undefined;
+  const parsed = parse(dateString, 'dd/MM/yyyy', new Date());
+  if (isValid(parsed) && /^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
+    return parsed;
   }
-  return isValid(parsedDate) ? parsedDate : null;
+  return undefined;
+};
+
+const formatDisplayDate = (date: Date | null | undefined): string | null => {
+  if (date instanceof Date && isValid(date)) {
+    return format(date, 'dd/MM/yyyy');
+  }
+  return null;
 };
 
 const formatCurrency = (value: number | undefined | null): string => {
@@ -76,6 +86,10 @@ export const StudentFeesForm = () => {
   const params = useParams();
   const enquiry_id = params.id as string;
   const [isOtpSending, setIsOtpSending] = useState(false);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [dataUpdated, setDataUpdated] = useState(true);
+  const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
+  const router = useRouter()
 
   // Queries
   const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
@@ -84,17 +98,32 @@ export const StudentFeesForm = () => {
     staleTime: 1000 * 60 * 5
   });
 
-
-  const { data, error, isLoading: isLoadingEnquiry } = useQuery<any>({
-    queryKey: ['enquireFormData', enquiry_id],
+  const { data: enquiryData, error, isLoading: isLoadingEnquiry } = useQuery<any>({
+    queryKey: ['enquireFormData', enquiry_id, dataUpdated],
     queryFn: () => (enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null')),
     enabled: !!enquiry_id
   });
-  console.log(data)
+  console.log(enquiryData)
 
-  const studentEmail = data?.emailId;
-  const studentPhone = data?.studentPhoneNumber;
-  const courseName = data?.course
+  const existingFinalFee = enquiryData?.studentFee;
+  const existingFeeDraft = enquiryData?.studentFeeDraft;
+
+  // Determine the current status
+  const feeStatus: 'none' | 'draft' | 'final' = useMemo(() => {
+    if (existingFinalFee) return 'final';
+    if (existingFeeDraft) return 'draft';
+    return 'none';
+  }, [existingFinalFee, existingFeeDraft]);
+
+  const draftExists = feeStatus === 'draft';
+  const finalFeeExists = feeStatus === 'final';
+
+  const draftId = existingFeeDraft?._id;
+  const finalFeeId = existingFinalFee?._id;
+
+  const studentEmail = enquiryData?.emailId;
+  const studentPhone = enquiryData?.studentPhoneNumber;
+  const courseName = enquiryData?.course
 
   const { data: semWiseFeesData, error: semWiseFeeError, isLoading: isLoadingSemFees } = useQuery<any>({
     queryKey: ['courseFees', courseName],
@@ -115,13 +144,9 @@ export const StudentFeesForm = () => {
     ]
   });
 
-  const telecallersData = Array.isArray(results[0].data)
-    ? [...results[0].data, { _id: "other", name: "Other", email: "other@example.com" }]
-    : [{ _id: "other", name: "Other", email: "other@example.com" }];
+  const telecallersData = Array.isArray(results[0].data) ? results[0].data : []
 
-  const counsellorsData = Array.isArray(results[1].data)
-    ? [...results[1].data, { _id: "other", name: "Other", email: "other@example.com" }]
-    : [{ _id: "other", name: "Other", email: "other@example.com" }];
+  const counsellorsData = Array.isArray(results[1].data) ? results[1].data : []
 
   const form = useForm<IFeesRequestSchema>({
     resolver: zodResolver(feesRequestSchema),
@@ -131,10 +156,9 @@ export const StudentFeesForm = () => {
       semWiseFees: [],
       enquiryId: enquiry_id,
       feesClearanceDate: null,
-      counsellorName: null,
-      telecallerName: null,
-      collegeSectionDate: null,
-      collegeSectionRemarks: '',
+      counsellor: [],
+      telecaller: [],
+      remarks: '',
       confirmationCheck: false,
       otpTarget: undefined,
       otpVerificationEmail: null,
@@ -158,62 +182,99 @@ export const StudentFeesForm = () => {
 
   const selectedOtpTarget = useWatch({ control: form.control, name: 'otpTarget' });
 
-  // Derive the value to display in the input
   const otpDisplayValue = useMemo(() => {
     if (selectedOtpTarget === 'email') {
       return studentEmail || '(Email not available)';
     } else if (selectedOtpTarget === 'phone') {
       return studentPhone || '(Phone not available)';
     }
-    return ''; // Default placeholder if nothing is selected yet
+    return '';
   }, [selectedOtpTarget, studentEmail, studentPhone]);
 
 
   useEffect(() => {
-    if (data && semWiseFeesData && otherFeesData) {
+    if (enquiryData && semWiseFeesData && otherFeesData && !form.formState.isDirty) {
+      const feeDataSource = existingFinalFee || existingFeeDraft;
+      const isDataFromFinal = !!existingFinalFee;
+
       let initialSemFees: any[] = [];
       let initialOtherFees: any[] = [];
-      const existingFeeData = data.studentFee;
 
-      initialOtherFees = Object.values(FeeType).map((feeType) => {
-        const baseFeeData = otherFeesData.find((item: any) => item.type === feeType);
-        const existingFee = existingFeeData?.otherFees?.find((fee: any) => fee.type === feeType);
+      const baseSem1Fee = semWiseFeesData.fee?.[0]
+      console.log("Base Sem1 Fee: ", baseSem1Fee)
 
-        return {
-          type: feeType,
-          finalFee: existingFee ? existingFee.finalFee : (baseFeeData ? baseFeeData.fee : undefined),
-          feesDepositedTOA: existingFee ? existingFee.feesDepositedTOA : undefined,
-          remarks: existingFee ? existingFee.remarks : ''
-        };
+      const existingSem1FeeDataInOther = feeDataSource?.otherFees?.find((fee: any) => fee.type === FeeType.SEM1FEE);
+      const existingSem1FeeDataInSemWise = feeDataSource?.semWiseFees?.[0];
+
+
+      const sem1FeeObject = {
+        type: FeeType.SEM1FEE,
+        finalFee: existingSem1FeeDataInOther?.finalFee ?? existingSem1FeeDataInSemWise?.finalFee ?? baseSem1Fee ?? undefined,
+        fee: baseSem1Fee,
+        feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined,
+      };
+
+
+      let initialCounsellors: string[] = enquiryData.counsellor ?? [];
+
+      let initialTelecallers: string[] = enquiryData.telecaller ?? [];
+
+      const initialCollegeRemarks: string = enquiryData?.remarks
+
+      initialOtherFees = Object.values(FeeType)
+        .filter(ft => ft !== FeeType.SEM1FEE) 
+        .map((feeType) => {
+          const baseFeeInfo = otherFeesData.find((item: any) => item.type === feeType);
+          const existingFee = feeDataSource?.otherFees?.find((fee: any) => fee.type === feeType);
+
+          return {
+            type: feeType,
+            finalFee: existingFee?.finalFee ?? baseFeeInfo?.fee ?? undefined,
+            feesDepositedTOA: existingFee?.feesDepositedTOA ?? undefined,
+          };
       });
+
+      initialOtherFees.unshift(sem1FeeObject);
+      otherFeesData.unshift(sem1FeeObject)
+
 
       const courseSemFeeStructure = semWiseFeesData.fee || [];
-      const existingSemFees = existingFeeData?.semWiseFees || [];
+      const existingSemFees = feeDataSource?.semWiseFees || [];
 
-      initialSemFees = courseSemFeeStructure.map((feeAmount: number, index: number) => {
+      initialSemFees = courseSemFeeStructure.map((baseFeeAmount: number, index: number) => {
         const existingData = existingSemFees[index];
         return {
-          finalFee: existingData ? existingData.finalFee : feeAmount
+          finalFee: existingData?.finalFee ?? baseFeeAmount,
         };
       });
+
+      const existingDateString = feeDataSource?.feesClearanceDate;
+      let initialFeesClearanceDate: string | null = null;
+
+      if (existingDateString) {
+        initialFeesClearanceDate = existingDateString;
+      } else {
+        initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
+      }
+
 
       form.reset({
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,
         semWiseFees: initialSemFees,
-        feesClearanceDate: existingFeeData?.studentFee?.feesClearanceDate || '',
-        counsellorName: existingFeeData?.counsellorName ?? '',
-        telecallerName: existingFeeData?.telecallerName ?? '',
-        collegeSectionDate: parseDateString(existingFeeData?.collegeSectionDate),
-        collegeSectionRemarks: existingFeeData?.collegeSectionRemarks ?? '',
+        feesClearanceDate: initialFeesClearanceDate,
+        counsellor: initialCounsellors,
+        telecaller: initialTelecallers,
+        remarks: initialCollegeRemarks,
       });
 
 
     } else if (error) {
-      console.error('Error fetching enquiry data:', error);
+      console.error('Error fetching enquiry enquiryData:', error);
+      toast.error("Failed to load student data.");
     }
   }, [
-    data,
+    enquiryData,
     error,
     semWiseFeesData,
     semWiseFeeError,
@@ -236,6 +297,7 @@ export const StudentFeesForm = () => {
       totalDeposited += fee?.feesDepositedTOA ?? 0;
     });
 
+
     const totalDue = totalFinal - totalDeposited;
 
     return {
@@ -246,55 +308,200 @@ export const StudentFeesForm = () => {
     };
   }, [otherFeesWatched, otherFeesData]);
 
+  const counsellorOptions: MultiSelectOption[] = useMemo(() => {
+    return (Array.isArray(counsellorsData) ? counsellorsData : [])
+      .map((c: any) => ({ value: c._id, label: c.name }))
+      .filter(Boolean);
+  }, [counsellorsData]);
 
+  const telecallerOptions: MultiSelectOption[] = useMemo(() => {
+    return (Array.isArray(telecallersData) ? telecallersData : [])
+      .map((t: any) => ({ value: t._id, label: t.name }))
+      .filter(Boolean);
+  }, [telecallersData]);
+
+
+  const createFinalFeeMutation = useMutation({
+    mutationFn: createStudentFees,
+    onSuccess: async (data, variables) => { 
+      toast.success("Fee record created successfully!");
+      queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
+      console.log("HELLLLOOO")
+      try {
+        if (!enquiry_id) {
+           console.error("Enquiry ID missing, cannot update status.");
+           toast.error("Could not update enquiry status: Missing ID.");
+           return; 
+        }
+
+        const statusPayload = {
+          id: enquiry_id,
+          newStatus: "Step_3"
+        };
+
+        const status_update = await updateEnquiryStatus(statusPayload);
+
+        console.log("Status Code: ",status_update)
+        toast.success("Enquiry status updated to Step 3.");
+
+         queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
+
+      } catch (statusError) {
+        console.error("Failed to update enquiry status after fee creation:", statusError);
+        const errorMsg = (statusError as any)?.response?.data?.message || (statusError as Error)?.message || "Unknown error";
+        toast.error(`Fee record created, but failed to update enquiry status: ${errorMsg}`);
+      }
+    }
+  })
 
   async function handleSaveDraft() {
-    const currentValues = form.getValues();
-    const existingDraftId = data?.studentFee?.id;
-    const isUpdate = !!existingDraftId
+    setIsSavingDraft(true);
 
-    const dataToClean = {
-      otherFees: currentValues.otherFees,
-      semWiseFees: currentValues.semWiseFees,
+    const currentValues = form.getValues();
+    const existingDraftId = enquiryData?.studentFeeDraft?._id;
+
+    console.log("Current Values", currentValues)
+
+    const validationResult = frontendFeesDraftValidationSchema.safeParse(currentValues);
+
+    if (!validationResult.success) {
+      toast.error("Validation failed. Please check the fields.", {
+
+      });
+
+      validationResult.error.errors.forEach(err => {
+        if (err.path.length > 0) {
+          const fieldName = err.path.join('.') as keyof IFeesRequestSchema;
+          form.setError(fieldName, { type: 'manual', message: err.message });
+        }
+      });
+      setIsSavingDraft(false);
+
+      return;
     }
 
-    console.log(dataToClean)
+    const validatedDataForCleaning = validationResult.data;
 
-    const cleanedData = cleanDataForDraft(dataToClean);
+
+    const cleanedData = cleanDataForDraft(validatedDataForCleaning);
     let finalPayload: any = {}
-
-    if (isUpdate && existingDraftId) {
+    if (draftExists && draftId) {
       finalPayload = {
-        id: existingDraftId,
-        ...(cleanedData || {}),
+        id: draftId,
+        ...cleanedData,
       };
+      delete finalPayload.enquiryId;
       updateStudentFeesDraft(finalPayload)
     } else {
       finalPayload = {
-        enquiryId: enquiry_id,
-        ...(cleanedData || {}),
+        enquiryId: cleanedData.enquiryId || enquiry_id,
+        ...cleanedData,
       };
-      createStudentFeesDraft(finalPayload)
-
       delete finalPayload.id;
+      createStudentFeesDraft(finalPayload)
     }
+
+    setIsSavingDraft(false);
+    setDataUpdated((prev) => !prev)
   }
 
-  async function onSubmit(values: IFeesRequestSchema) {
-    console.log(values);
+  async function onSubmit() {
+    setIsSubmittingFinal(true);
+    const values = form.getValues();
+
+    const isUpdate = finalFeeExists;
+    const recordId = finalFeeId;
+
+    console.log("Values", values)
+
+    if (isUpdate && recordId) {
+      console.log("Update")
+      const validationResult = feesRequestSchema.safeParse(values);
+
+      if (!validationResult.success) {
+        toast.error("Validation failed. Please check the fields.", {
+        });
+
+        console.log("Validatioan Result: ", validationResult)
+  
+        validationResult.error.errors.forEach(err => {
+          if (err.path.length > 0) {
+            const fieldName = err.path.join('.') as keyof IFeesRequestSchema;
+            form.setError(fieldName, { type: 'manual', message: err.message });
+          }
+        });
+  
+        return;
+      }
+  
+      const validatedDataForCleaning = validationResult.data;
+      const cleanedData = cleanDataForDraft(validatedDataForCleaning);
+
+      const finalPayLoad: any = {
+        id: recordId,
+        ...cleanedData
+      }
+      console.log("Update", finalPayLoad)
+
+      updateStudentFees(finalPayLoad)
+
+    } else {
+      console.log("Create")
+
+      const validationResult = feesUpdateSchema.safeParse(values);
+
+      console.log("Validatioan Result: ", validationResult)
+
+      if (!validationResult.success) {
+        toast.error("Validation failed. Please check the fields.", {
+  
+        });
+  
+        validationResult.error.errors.forEach(err => {
+          if (err.path.length > 0) {
+            const fieldName = err.path.join('.') as keyof IFeesRequestSchema;
+            form.setError(fieldName, { type: 'manual', message: err.message });
+          }
+        });
+        // console.log("hello")
+        return;
+      }
+  
+      const validatedDataForCleaning = validationResult.data;
+      const cleanedData = cleanDataForDraft(validatedDataForCleaning);
+
+      const finalPayLoad: any = {
+        enquiryId: enquiry_id,
+        ...cleanedData
+      }
+
+      await createFinalFeeMutation.mutateAsync(finalPayLoad);
+
+
+      setDataUpdated((prev) => !prev)
+      console.log("Final Payload", finalPayLoad)
+
+      console.log("Create", finalPayLoad)
+
+    }
+
+    router.push(`/c/admissions/admission-form/${enquiry_id}/step_3`)
+
   }
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
-    return <div className="flex justify-center items-center h-full">Loading fee data...</div>;
+    return <div className="flex justify-center items-center h-full">Loading fee enquiryData...</div>;
   }
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        // onSubmit={form.handleSubmit(onSubmit)}
         className="pt-8 mr-[25px] space-y-8 flex flex-col w-full overflow-x-hidden relative"
       >
 
+
+        <ShowStudentData data={enquiryData} />
 
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="other-fees">
           <AccordionItem value="other-fees">
@@ -425,15 +632,12 @@ export const StudentFeesForm = () => {
                               <Button
                                 variant={"outline"}
                                 className={cn(
-                                  "w-full pl-3 text-left font-normal h-9 text-sm",
+                                  "w-full pl-3 text-left font-normal h-9 text-sm", // Adjusted height
                                   !field.value && "text-muted-foreground"
                                 )}
                               >
-                                {field.value ? (
-                                  format(field.value, "dd/MM/yy") // Shorter format
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
+                                {/* Display the string value directly */}
+                                {field.value ? field.value : <span>Pick a date</span>}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                               </Button>
                             </FormControl>
@@ -441,17 +645,30 @@ export const StudentFeesForm = () => {
                           <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                               mode="single"
-                              selected={field.value ?? undefined} // Handle null
-                              onSelect={(date) => field.onChange(date ?? null)} // Pass null if date is cleared
+                              // Parse the stored string ('dd/MM/yyyy') into a Date for the Calendar
+                              selected={parseDisplayDate(field.value)}
+                              onSelect={(selectedDate: Date | undefined) => {
+                                // Format the selected Date back into 'dd/MM/yyyy' string for storage
+                                const formattedDate = formatDisplayDate(selectedDate);
+                                // Update the form field with the string value or null
+                                field.onChange(formattedDate);
+                              }}
+                              // Optional: Disable dates if needed
+                              // disabled={(date) => date < new Date("1900-01-01")}
                               initialFocus
                             />
                           </PopoverContent>
                         </Popover>
-                        <FormMessage className="text-xs mt-1" />
+                        {/* Ensure FormMessage is displayed */}
+                        <div className='h-5 mt-1'> {/* Allocate space for message */}
+                          <FormMessage className="text-xs" />
+                        </div>
                       </FormItem>
                     )}
                   />
                 </div>
+
+
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -504,8 +721,10 @@ export const StudentFeesForm = () => {
                           )}
                         />
 
-                        <div className="flex items-center justify-center text-sm h-12 border border-input rounded-md px-2">
-                          {discountDisplay}
+                        <div className="flex items-center text-sm h-11 border border-input rounded-md px-2">
+                          <p className='ml-auto'>
+                            {discountDisplay}
+                          </p>
                         </div>
                       </div>
                     )
@@ -522,105 +741,64 @@ export const StudentFeesForm = () => {
               <h3 className="font-inter text-[16px] font-semibold"> To be filled by College</h3>
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
-             
+
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-y-4 gap-x-8 ">
+              <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-x-8 gap-y-4"> {/* Added gap-y-4 for vertical spacing */}
                 <FormField
                   control={form.control}
-                  name="counsellorName"
+                  name="counsellor"
                   render={({ field }) => (
                     <FormItem className="col-span-1">
                       <FormLabel className="font-inter font-normal text-sm text-gray-600">
-                        Counsellor’s Name
+                        Counsellor’s Name(s)
                       </FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value ?? ""}>
-                          <SelectTrigger className="h-11 text-sm w-full">
-                            <SelectValue placeholder="Select Counsellor's Name" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Array.isArray(counsellorsData) && counsellorsData?.map((counsellor: any) => (
-                              <SelectItem key={counsellor._id} value={counsellor._id}>
-                                {counsellor.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <MultiSelectDropdown
+                          options={counsellorOptions}
+                          selected={field.value ?? []}
+                          onChange={field.onChange}
+                          placeholder="Select Counsellor(s)"
+                          searchPlaceholder="Search Counsellors..."
+                          isLoading={results[1].isLoading}
+                        />
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <div className='h-5'>
+                        <FormMessage className="text-xs" />
+                      </div>
                     </FormItem>
                   )}
                 />
 
                 <FormField
                   control={form.control}
-                  name="telecallerName"
+                  name="telecaller"
                   render={({ field }) => (
                     <FormItem className="col-span-1">
                       <FormLabel className="font-inter font-normal text-sm text-gray-600">
-                        Telecaller’s Name
+                        Telecaller’s Name(s)
                       </FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value ?? ""}>
-                          <SelectTrigger className="h-11 text-sm w-full">
-                            <SelectValue placeholder="Select Telecaller’s Name" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Array.isArray(telecallersData) && telecallersData?.map((telecaller: any, index) => (
-                              <SelectItem key={telecaller._id} value={telecaller._id}>
-                                {telecaller.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <MultiSelectDropdown
+                          options={telecallerOptions}
+                          selected={field.value ?? []}
+                          onChange={field.onChange}
+                          placeholder="Select Telecaller(s)"
+                          searchPlaceholder="Search Telecallers..."
+                          isLoading={results[0].isLoading}
+                        />
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <div className='h-5'>
+                        <FormMessage className="text-xs" />
+                      </div>
                     </FormItem>
                   )}
                 />
 
                 <FormField
                   control={form.control}
-                  name="collegeSectionDate"
+                  name="remarks"
                   render={({ field }) => (
                     <FormItem className="col-span-1">
-                      <FormLabel className="font-inter font-normal text-sm text-gray-600">
-                        Date
-                      </FormLabel>
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "h-11 text-sm w-full justify-start text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? format(field.value, 'dd/MM/yyyy') : <span>Select the Date</span>}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-full p-0">
-                            <Calendar
-                              mode="single"
-                              selected={field.value ?? undefined}
-                              onSelect={(date) => field.onChange(date ?? null)}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="collegeSectionRemarks"
-                  render={({ field }) => (
-                    <FormItem className="col-span-1 h-11">
                       <FormLabel className="font-inter font-normal text-sm text-gray-600">
                         Remarks
                       </FormLabel>
@@ -632,7 +810,9 @@ export const StudentFeesForm = () => {
                           value={field.value ?? ''}
                         />
                       </FormControl>
-                      <FormMessage className="text-xs" />
+                      <div className='h-5'>
+                        <FormMessage className="text-xs" />
+                      </div>
                     </FormItem>
                   )}
                 />
@@ -731,10 +911,17 @@ export const StudentFeesForm = () => {
         />
 
         <div className="sticky z-10 bottom-0 left-0 flex items-center justify-between space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
-          <Button type="button" variant="outline" onClick={handleSaveDraft} disabled={form.formState.isSubmitting}>
-            Save Draft
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleSaveDraft}
+            disabled={isSavingDraft || form.formState.isSubmitting}
+          >
+            {isSavingDraft ? 'Saving...' : (draftExists ? 'Update Draft' : 'Save Draft')}
           </Button>
-          <Button type="submit" disabled={(!confirmationChecked || form.formState.isSubmitting) ?? form.formState.isSubmitting}>
+          <Button  type="button"
+          onClick={onSubmit}
+             disabled={(!confirmationChecked || form.formState.isSubmitting) ?? form.formState.isSubmitting}>
             {form.formState.isSubmitting ? "Submitting..." : "Submit & Continue"}
           </Button>
         </div>
