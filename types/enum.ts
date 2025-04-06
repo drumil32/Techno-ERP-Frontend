@@ -234,6 +234,12 @@ export enum Districts {
   Unnao = "Unnao",
 }
 
+export enum AreaType{
+  URBAN = "URBAN",
+  RURAL = "RURAL",
+  OTHERS = "OTHERS"
+}
+
 export enum StatesOfIndia {
   AndhraPradesh = "Andhra Pradesh",
   ArunachalPradesh = "Arunachal Pradesh",

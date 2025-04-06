@@ -38,7 +38,6 @@ import { toast } from 'sonner';
 import { API_ROUTES } from '@/common/constants/apiRoutes';
 import { ApplicationStatus, EducationLevel } from '@/types/enum';
 
-
 function removeNullValues(obj: any): any {
   if (Array.isArray(obj)) {
     return obj
@@ -178,8 +177,14 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     let values = form.getValues();
     // Remove null values from the entire object
     values = removeNullValues(values);
+
     // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep1RequestSchema.shape);
+
+    // Filter out values not in the schema
+    const filteredValues = Object.fromEntries(
+      Object.entries(values).filter(([key]) => schemaKeys.includes(key))
+    );
     const filteredKeys = Object.keys(values).filter((key) => schemaKeys.includes(key));
 
     const partialSchema = enquiryDraftStep1RequestSchema.pick(
@@ -192,7 +197,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       )
     );
 
-    const validationResult = partialSchema.safeParse(values);
+    const validationResult = partialSchema.safeParse(filteredValues);
 
     // Clear previous errors before setting new ones
     form.clearErrors();
@@ -226,7 +231,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     }
 
     // Remove confirmation field from values
-    const { confirmation, _id, ...rest } = values;
+    const { confirmation, _id, ...rest } = filteredValues;
 
     if (!id) {
       const response: any = await createEnquiryDraft(rest);

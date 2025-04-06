@@ -24,6 +24,11 @@ interface EnquiryFormFooterProps {
 }
 
 const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft, form, onSubmit }) => {
+
+  function onError() {
+    console.log(form.formState);
+  }
+
   return (
     <div className="fixed w-full bottom-0 bg-white shadow-md p-4 border-t flex justify-between items-center">
       <Dialog>
@@ -73,7 +78,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft, form, 
                 Close
               </Button>
             </DialogClose>
-            <Button type="submit" onClick={form.handleSubmit(onSubmit)}>
+            <Button type="submit" onClick={form.handleSubmit(onSubmit, onError)}>
               Ok
             </Button>
           </DialogFooter>
