@@ -46,6 +46,7 @@ interface FormErrors {
   email?: string;
   area?:string;
   nextDueDate?: string;
+  schoolName?: string;
 }
 
 export default function LeadViewEdit({ data }: any) {
@@ -271,6 +272,10 @@ export default function LeadViewEdit({ data }: any) {
           </p>
         </div>
         <div className="flex gap-2">
+          <p className="w-1/4 text-[#666666]">School Name</p>
+          <p>{formData.schoolName ?? '-'}</p>
+        </div>
+        <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Remarks</p>
           <p>{formData.remarks ?? '-'}</p>
         </div>
@@ -431,6 +436,18 @@ export default function LeadViewEdit({ data }: any) {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <EditLabel htmlFor="schoolName" title={'School Name'} />
+        <Input
+          id="schoolName"
+          name="schoolName"
+          value={formData.schoolName || ''}
+          onChange={handleChange}
+          className="rounded-[5px]"
+        />
+        {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
       </div>
 
       <div className="space-y-2">

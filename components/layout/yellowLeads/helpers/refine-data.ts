@@ -55,7 +55,8 @@ export interface YellowLeadAnalytics {
   campusVisitTrueCount: number;
   activeYellowLeadsCount: number;
   deadLeadCount: number;
-  convertedLeadCount: number;
+  admissions: number;
+  unconfirmed: number;
 }
 
 export const refineAnalytics = (analytics: YellowLeadAnalytics) => {
@@ -85,17 +86,23 @@ export const refineAnalytics = (analytics: YellowLeadAnalytics) => {
       color: 'text-yellow-600'
     },
     {
+      heading: String(analytics.unconfirmed ?? ''),
+      subheading: calculatePercentage(analytics.unconfirmed ?? 0),
+      title: 'Unconfirmed',
+      color: 'text-[#D40072]'
+    },
+    {
       heading: String(analytics.deadLeadCount ?? ''),
       subheading: calculatePercentage(analytics.deadLeadCount ?? 0),
       title: 'Dead Leads',
       color: 'text-red-700'
     },
     {
-      heading: String(analytics.convertedLeadCount ?? ''),
-      subheading: calculatePercentage(analytics.convertedLeadCount ?? 0),
+      heading: String(analytics.admissions ?? ''),
+      subheading: calculatePercentage(analytics.admissions ?? 0),
       title: 'Admissions',
       color: 'text-[#0EA80E]'
-    }
+    },
   ];
   return analyticsCardsData;
 };
