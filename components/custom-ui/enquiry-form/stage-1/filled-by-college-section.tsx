@@ -82,9 +82,9 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                             <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full font-normal">
                               {field.value && field.value.length > 0
                                 ? counsellors
-                                    .filter((counsellor) => field.value.includes(counsellor._id))
-                                    .map((counsellor) => counsellor.name)
-                                    .join(', ')
+                                  .filter((counsellor) => field.value.includes(counsellor._id))
+                                  .map((counsellor) => counsellor.name)
+                                  .join(', ')
                                 : "Select Counsellor's Name"}
                             </span>
                           </Button>
@@ -140,9 +140,9 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                             <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full font-normal">
                               {field.value && field.value.length > 0
                                 ? telecallers
-                                    .filter((telecaller) => field.value.includes(telecaller._id))
-                                    .map((telecaller) => telecaller.name)
-                                    .join(', ')
+                                  .filter((telecaller) => field.value.includes(telecaller._id))
+                                  .map((telecaller) => telecaller.name)
+                                  .join(', ')
                                 : "Select Telecaller's Name"}
                             </span>
                           </Button>

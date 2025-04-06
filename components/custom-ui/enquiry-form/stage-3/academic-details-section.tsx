@@ -35,7 +35,6 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
       return;
     }
 
-
     const validationResults = academicDetails.map((detail, index) => {
       const result = academicDetailSchema.safeParse(detail);
       if (!result.success) {
@@ -47,7 +46,6 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
       }
       return { index, valid: true, errors: [] };
     });
-
 
     const allValid = validationResults.every(r => r.valid);
     setIsValid(allValid);
@@ -65,7 +63,6 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
     setValidationLog(prev => [...prev, ...newLogs]);
   };
 
-
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
       if (name && name.startsWith('academicDetails')) {
@@ -75,12 +72,15 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
     return () => subscription.unsubscribe();
   }, [form]);
 
-
   useEffect(() => {
     checkValidity();
   }, []);
 
-
+  useEffect(() => {
+    if (validationLog.length > 0) {
+      console.log('Validation Log:\n' + validationLog.join('\n'));
+    }
+  }, [validationLog]);
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">

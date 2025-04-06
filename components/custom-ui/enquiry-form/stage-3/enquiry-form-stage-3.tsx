@@ -1,12 +1,10 @@
 'use client'
-
 import { useParams, useSearchParams } from "next/navigation";
 import StudentDetailsSection from "../stage-1/student-details-section";
 import { useForm } from "react-hook-form";
 import { z } from 'zod';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { enquiryStep3UpdateRequestSchema } from "../schema/schema";
-
 import { Form } from '@/components/ui/form';
 import AddressDetailsSection from "../stage-1/address-details-section";
 import AcademicDetailsSection from "../stage-1/academic-details-section";
@@ -23,6 +21,11 @@ import ConfirmationCheckBoxStage3 from "./acknowledgement-section";
 import EntranceExamDetailsSection from "./entrance-exam-details-section";
 import MoreDetailsSection from "./more-details-section";
 import { EducationLevel } from "@/types/enum";
+import OfficeUseSection from "./office-use-section";
+import ScholarshipDetailsSection from "./scholarship-details-section";
+import ConfirmationSection from "./confirmation-section";
+import ShowStudentData from "../stage-2/data-show";
+import { Admission } from "@/types/admissions";
 
 const EnquiryFormStage3 = () => {
 
@@ -80,46 +83,52 @@ const EnquiryFormStage3 = () => {
 
 
     return (
-        <Form {...form} >
-            <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="py-8 mr-[25px] space-y-8 flex flex-col w-full "
-            >
-                {/* <DropBox className=" w-[25px] " label="hello there"/> */}
-                {/* Student Details */}
-                <StudentDetailsSectionStage3
-                    form={form}
-                    commonFieldClass={commonFieldClass}
-                    commonFormItemClass={commonFormItemClass}
-                />
+        <>
+            <ShowStudentData data={data as Admission} />
+            <Form {...form} >
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="py-8 mr-[25px] space-y-8 flex flex-col w-full "
+                >
+                    {/* <DropBox className=" w-[25px] " label="hello there"/> */}
+                    {/* Student Details */}
+                    <StudentDetailsSectionStage3
+                        form={form}
+                        commonFieldClass={commonFieldClass}
+                        commonFormItemClass={commonFormItemClass}
+                    />
 
-                <MoreDetailsSection
-                    form={form}
-                    commonFieldClass={commonFieldClass}
-                    commonFormItemClass={commonFormItemClass}
-                />
+                    <MoreDetailsSection
+                        form={form}
+                        commonFieldClass={commonFieldClass}
+                        commonFormItemClass={commonFormItemClass}
+                    />
 
-                {/* Address details */}
-                <AddressDetailsSectionStage3
-                    form={form}
-                    commonFieldClass={commonFieldClass}
-                    commonFormItemClass={commonFormItemClass}
-                />
+                    {/* Address details */}
+                    <AddressDetailsSectionStage3
+                        form={form}
+                        commonFieldClass={commonFieldClass}
+                        commonFormItemClass={commonFormItemClass}
+                    />
 
-                {/* Academic Details */}
-                <AcademicDetailsSectionStage3
-                    form={form}
-                    commonFieldClass={commonFieldClass}
-                    commonFormItemClass={commonFormItemClass}
-                />
-                <EntranceExamDetailsSection form={form} commonFieldClass={commonFieldClass}
-                    commonFormItemClass={commonFormItemClass} />
+                    {/* Academic Details */}
+                    <AcademicDetailsSectionStage3
+                        form={form}
+                        commonFieldClass={commonFieldClass}
+                        commonFormItemClass={commonFormItemClass}
+                    />
+                    <EntranceExamDetailsSection form={form} commonFieldClass={commonFieldClass}
+                        commonFormItemClass={commonFormItemClass} />
 
-                <ConfirmationCheckBoxStage3 form={form} />
+                    <ConfirmationCheckBoxStage3 form={form} />
+                    <ConfirmationSection form={form} />
+                    <OfficeUseSection form={form} />
+                    <ScholarshipDetailsSection form={form} />
 
-                <EnquiryFormFooter form={form} onSubmit={saveData} saveDraft={saveData} />
-            </form>
-        </Form>
+                    <EnquiryFormFooter form={form} onSubmit={saveData} saveDraft={saveData} />
+                </form>
+            </Form>
+        </>
     );
 };
 

@@ -222,7 +222,7 @@ export const StudentFeesForm = () => {
       const initialCollegeRemarks: string = enquiryData?.remarks
 
       initialOtherFees = Object.values(FeeType)
-        .filter(ft => ft !== FeeType.SEM1FEE) 
+        .filter(ft => ft !== FeeType.SEM1FEE)
         .map((feeType) => {
           const baseFeeInfo = otherFeesData.find((item: any) => item.type === feeType);
           const existingFee = feeDataSource?.otherFees?.find((fee: any) => fee.type === feeType);
@@ -232,7 +232,7 @@ export const StudentFeesForm = () => {
             finalFee: existingFee?.finalFee ?? baseFeeInfo?.fee ?? undefined,
             feesDepositedTOA: existingFee?.feesDepositedTOA ?? undefined,
           };
-      });
+        });
 
       initialOtherFees.unshift(sem1FeeObject);
       otherFeesData.unshift(sem1FeeObject)
@@ -323,15 +323,15 @@ export const StudentFeesForm = () => {
 
   const createFinalFeeMutation = useMutation({
     mutationFn: createStudentFees,
-    onSuccess: async (data, variables) => { 
+    onSuccess: async (data, variables) => {
       toast.success("Fee record created successfully!");
       queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
       console.log("HELLLLOOO")
       try {
         if (!enquiry_id) {
-           console.error("Enquiry ID missing, cannot update status.");
-           toast.error("Could not update enquiry status: Missing ID.");
-           return; 
+          console.error("Enquiry ID missing, cannot update status.");
+          toast.error("Could not update enquiry status: Missing ID.");
+          return;
         }
 
         const statusPayload = {
@@ -341,10 +341,10 @@ export const StudentFeesForm = () => {
 
         const status_update = await updateEnquiryStatus(statusPayload);
 
-        console.log("Status Code: ",status_update)
+        console.log("Status Code: ", status_update)
         toast.success("Enquiry status updated to Step 3.");
 
-         queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
+        queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
 
       } catch (statusError) {
         console.error("Failed to update enquiry status after fee creation:", statusError);
@@ -423,17 +423,17 @@ export const StudentFeesForm = () => {
         });
 
         console.log("Validatioan Result: ", validationResult)
-  
+
         validationResult.error.errors.forEach(err => {
           if (err.path.length > 0) {
             const fieldName = err.path.join('.') as keyof IFeesRequestSchema;
             form.setError(fieldName, { type: 'manual', message: err.message });
           }
         });
-  
+
         return;
       }
-  
+
       const validatedDataForCleaning = validationResult.data;
       const cleanedData = cleanDataForDraft(validatedDataForCleaning);
 
@@ -454,9 +454,9 @@ export const StudentFeesForm = () => {
 
       if (!validationResult.success) {
         toast.error("Validation failed. Please check the fields.", {
-  
+
         });
-  
+
         validationResult.error.errors.forEach(err => {
           if (err.path.length > 0) {
             const fieldName = err.path.join('.') as keyof IFeesRequestSchema;
@@ -466,7 +466,7 @@ export const StudentFeesForm = () => {
         // console.log("hello")
         return;
       }
-  
+
       const validatedDataForCleaning = validationResult.data;
       const cleanedData = cleanDataForDraft(validatedDataForCleaning);
 
@@ -919,9 +919,9 @@ export const StudentFeesForm = () => {
           >
             {isSavingDraft ? 'Saving...' : (draftExists ? 'Update Draft' : 'Save Draft')}
           </Button>
-          <Button  type="button"
-          onClick={onSubmit}
-             disabled={(!confirmationChecked || form.formState.isSubmitting) ?? form.formState.isSubmitting}>
+          <Button type="button"
+            onClick={onSubmit}
+            disabled={(!confirmationChecked || form.formState.isSubmitting) ?? form.formState.isSubmitting}>
             {form.formState.isSubmitting ? "Submitting..." : "Submit & Continue"}
           </Button>
         </div>

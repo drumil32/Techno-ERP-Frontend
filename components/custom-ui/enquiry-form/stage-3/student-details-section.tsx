@@ -30,13 +30,15 @@ import {
 } from '@/types/enum';
 import { FieldErrors, FieldValue, FieldValues, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
-import { enquiryStep3UpdateRequestSchema } from '../schema/schema';
+import { enquirySchema, enquiryStep3UpdateRequestSchema } from '../schema/schema';
 
 interface StudentDetailsFormPropInterface {
   form: UseFormReturn<z.infer<typeof enquiryStep3UpdateRequestSchema>>;
   commonFormItemClass: string;
   commonFieldClass: string;
 }
+
+const StudentDetailsSchema = enquirySchema;
 
 const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = ({
   form,
@@ -46,61 +48,58 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
   const [isValid, setIsValid] = useState(false);
 
   const checkValidity = () => {
-    const requiredFields = [
-      'admissionMode',
-      'dateOfAdmission',
-      'studentName',
-      'studentPhoneNumber',
-      'emailId',
-      'fatherName',
-      'fatherPhoneNumber',
-      'fatherOccupation',
-      'motherName',
-      'motherPhoneNumber',
-      'motherOccupation',
-      'dateOfBirth',
-      'category',
-      'gender',
-      'course',
-      'reference'
-    ];
+    const studentDetails = {
+      admissionMode: form.getValues('admissionMode'),
+      dateOfAdmission: form.getValues('dateOfAdmission'),
+      studentName: form.getValues('studentName'),
+      studentPhoneNumber: form.getValues('studentPhoneNumber'),
+      emailId: form.getValues('emailId'),
+      fatherName: form.getValues('fatherName'),
+      fatherPhoneNumber: form.getValues('fatherPhoneNumber'),
+      fatherOccupation: form.getValues('fatherOccupation'),
+      motherName: form.getValues('motherName'),
+      motherPhoneNumber: form.getValues('motherPhoneNumber'),
+      motherOccupation: form.getValues('motherOccupation'),
+      dateOfBirth: form.getValues('dateOfBirth'),
+      category: form.getValues('category'),
+      gender: form.getValues('gender'),
+      course: form.getValues('course'),
+      reference: form.getValues('reference')
+    };
 
 
+    const result = enquiryStep3UpdateRequestSchema.pick({
+      admissionMode: true,
+      dateOfAdmission: true,
+      studentName: true,
+      studentPhoneNumber: true,
+      emailId: true,
+      fatherName: true,
+      fatherPhoneNumber: true,
+      fatherOccupation: true,
+      motherName: true,
+      motherPhoneNumber: true,
+      motherOccupation: true,
+      dateOfBirth: true,
+      category: true,
+      gender: true,
+      course: true,
+      reference: true
+    }).safeParse(studentDetails);
 
-    const allFieldsValid = requiredFields.every(field => {
-      const value = form.getValues(field);
-      return value !== undefined && value !== null && value !== '';
-    });
-
-    const sectionErrors = [
-      'admissionMode',
-      'dateOfAdmission',
-      'studentName',
-      'studentPhoneNumber',
-      'emailId',
-      'fatherName',
-      'fatherPhoneNumber',
-      'fatherOccupation',
-      'motherName',
-      'motherPhoneNumber',
-      'motherOccupation',
-      'dateOfBirth',
-      'category',
-      'gender',
-      'course',
-      'reference'
-    ].some(field => form.formState.errors[field]);
-
-    return allFieldsValid && !sectionErrors;
+    setIsValid(result.success);
   };
 
   useEffect(() => {
     const subscription = form.watch(() => {
-      setIsValid(checkValidity());
+      checkValidity();
     });
-
     return () => subscription.unsubscribe();
   }, [form]);
+
+  useEffect(() => {
+    checkValidity();
+  }, []);
 
   return (
     <Accordion type="single" collapsible>
