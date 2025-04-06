@@ -51,6 +51,14 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
   };
 };
 
+export interface AllLeadsAnalytics {
+  totalLeads: number;
+  openLeads: number;
+  interestedLeads: number;
+  notInterestedLeads: number;
+  neutralLeads: number;
+}
+
 export const refineAnalytics = (analytics: any) => {
   const totalLeads = analytics.totalLeads ?? 0;
 
@@ -82,6 +90,12 @@ export const refineAnalytics = (analytics: any) => {
       subheading: calculatePercentage(analytics.notInterestedLeads),
       title: 'Not Interested',
       color: 'text-red-700'
+    },
+    {
+      heading: analytics.neutralLeads ?? '',
+      subheading: calculatePercentage(analytics.neutralLeads),
+      title: 'Neutral Data',
+      color: 'text-[#006ED8]'
     }
   ];
   return analyticsCardsData;
