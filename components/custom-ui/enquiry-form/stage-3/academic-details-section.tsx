@@ -9,7 +9,7 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
-import { academicDetailSchema, enquiryStep3UpdateRequestSchema } from '../schema/schema';
+import { academicDetailsArraySchema, academicDetailSchema, enquiryStep3UpdateRequestSchema } from '../schema/schema';
 import TagInput from '../stage-1/tag-input';
 
 interface AcademicDetailsSectionInterface {
@@ -24,41 +24,62 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
   commonFormItemClass
 }) => {
   const [isValid, setIsValid] = useState(false);
+  const [validationLog, setValidationLog] = useState<string[]>([]);
 
   const checkValidity = () => {
     const academicDetails = form.getValues().academicDetails;
-    if (!academicDetails) return false;
 
-    const requiredFieldsValid = [0, 1, 2].every(index => {
-      const details = academicDetails[index];
+    if (!academicDetails || academicDetails.length === 0) {
+      setIsValid(false);
+      setValidationLog(prev => [...prev, 'No academic details found - validation failed']);
+      return;
+    }
 
-      console.log("details", academicDetails)
-      if (!details) return false;
- 
-      return (
-        details.schoolCollegeName &&
-        details.universityBoardName &&
-        details.passingYear &&
-        details.percentageObtained !== undefined &&
-        details.percentageObtained >= 0 &&
-        details.percentageObtained <= 100
-      );
+
+    const validationResults = academicDetails.map((detail, index) => {
+      const result = academicDetailSchema.safeParse(detail);
+      if (!result.success) {
+        return {
+          index,
+          valid: false,
+          errors: result.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`)
+        };
+      }
+      return { index, valid: true, errors: [] };
     });
 
-    const hasNoErrors = academicDetailSchema.safeParse(form.getValues().academicDetails);
-    console.log(hasNoErrors);
 
-    return requiredFieldsValid;
+    const allValid = validationResults.every(r => r.valid);
+    setIsValid(allValid);
+
+    const newLogs = [
+      `Validation check at ${new Date().toLocaleTimeString()}`,
+      ...validationResults.flatMap(r =>
+        r.valid
+          ? [`Item ${r.index + 1}: Valid`]
+          : [`Item ${r.index + 1}: Invalid - ${r.errors.join(', ')}`]
+      ),
+      `Overall validation: ${allValid ? 'PASSED' : 'FAILED'}`
+    ];
+
+    setValidationLog(prev => [...prev, ...newLogs]);
   };
 
-  useEffect(() => {
-    const subscription = form.watch(() => {
-      console.log('I have been called here')
-      setIsValid(checkValidity());
-    });
 
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name && name.startsWith('academicDetails')) {
+        checkValidity();
+      }
+    });
     return () => subscription.unsubscribe();
   }, [form]);
+
+
+  useEffect(() => {
+    checkValidity();
+  }, []);
+
 
   return (
     <Accordion type="single" collapsible>

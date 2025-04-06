@@ -37,13 +37,13 @@ export const academicDetailSchema = z.object({
     .min(1, 'University/Board Name is required')
     .regex(/^[A-Za-z\s]+$/, 'University/Board Name must only contain alphabets and spaces'),
   passingYear: z
-    .number()
+    .number({ message: 'Passing Year required' })
     .int()
     .refine((year) => year.toString().length === 4, {
       message: 'Passing Year must be a valid 4-digit year'
     }),
   percentageObtained: z
-    .number()
+    .number({ message: 'Percentage Obtained  required' })
     .min(0, 'Percentage must be at least 0')
     .max(100, 'Percentage cannot exceed 100'),
   subjects: z.array(z.string().min(1, 'Subject name is required'))
@@ -121,59 +121,13 @@ export const enquirySchema = z.object({
 
   documents: z.array(singleDocumentSchema).optional(),
 
-  aadharNumber: z
-    .string()
-    .regex(/^\d{12}$/, 'Aadhar Number must be exactly 12 digits')
-    .optional(),
+  aadharNumber: z.string().regex(/^\d{12}$/, 'Aadhar Number must be exactly 12 digits').optional(),
   religion: z.nativeEnum(Religion).optional(),
   bloodGroup: z.nativeEnum(BloodGroup).optional(),
-  admittedThrough: z.nativeEnum(AdmittedThrough),
-
-  // Filled By College Details
-  dateOfCounselling: requestDateSchema,
-  remarks: z.string().optional(),
-  approvedBy: z.string().optional(),
-  telecaller: z.string().optional(),
-  counsellor: z.string().optional()
+  admittedBy: z.union([z.string(), z.enum(['other'])]).optional(),
 });
 
-export const enquiryStep1RequestSchema = enquirySchema
-  .omit({
-    studentFee: true,
-    dateOfAdmission: true,
-    bloodGroup: true,
-    admittedThrough: true,
-    aadharNumber: true,
-    religion: true,
-    previousCollegeData: true,
-    documents: true,
-    applicationStatus: true
-  })
-  .strict();
 
-export const enquiryDraftStep1RequestSchema = enquiryStep1RequestSchema
-  .extend({
-    _id: z.string().optional(),
-    studentName: z
-      .string({ required_error: 'Student Name is required' })
-      .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
-      .nonempty('Student Name is required'),
-    studentPhoneNumber: contactNumberSchema,
-    counsellor: z.string().optional(),
-    telecaller: z.string().optional(),
-    dateOfCounselling: requestDateSchema.optional(),
-    address: addressSchema.partial().optional(),
-    academicDetails: z.array(academicDetailSchema.partial()).optional()
-  })
-  .partial()
-  .strip();
-
-export const enquiryDraftStep1UpdateSchema = enquiryDraftStep1RequestSchema
-  .extend({
-    id: z.string().optional() // This is referring to _id in the enquiryDraftsTable
-  })
-  .partial()
-  .strict();
 
 export enum Qualification {
   Yes = 'Yes',
@@ -197,22 +151,66 @@ export enum Nationality {
   STATELESS = 'STATELESS',
 }
 
+export const enquiryStep1RequestSchema = enquirySchema
+  .omit({ studentFee: true, studentFeeDraft: true, dateOfAdmission: true, bloodGroup: true, aadharNumber: true, religion: true, previousCollegeData: true, documents: true, applicationStatus: true, entranceExamDetails: true, nationality: true, stateOfDomicile: true, areaType: true, admittedBy: true })
+  .extend({ id: z.string().optional() })
+  .strict();
 
-export const entranceExamDetailsSchema = z.object({
-  examName: z.string(),
-  rollNumber: z.string(),
-  rank: z.number(),
-  qualification: z.nativeEnum(Qualification)
-})
 
-export const moreDetailsSchema = z.object({
-  state: z.nativeEnum(StatesOfIndia),
-  area: z.nativeEnum(AreaType),
-  nationality: z.nativeEnum(Nationality),
-})
+export const enquiryStep1UpdateRequestSchema = enquiryStep1RequestSchema.extend({
+  id: z.string()
+}).strict();
+
+
 
 export const enquiryStep3UpdateRequestSchema = enquirySchema.omit({ documents: true, studentFee: true }).extend({
   id: z.string(),
-  entranceExamDetails: z.array(entranceExamDetailsSchema.partial()).optional(),
-  moreDetails:z.array(moreDetailsSchema.partial()).optional()
 }).strict();
+
+export const entranceExamDetailSchema = z.object({
+  nameOfExamination: z.string().optional(),
+  rollNumber: z.string().optional(),
+  rank: z.number().optional(),
+  qualified: z.boolean().optional()
+});
+
+export type IEntranceExamDetailSchema = z.infer<typeof entranceExamDetailSchema>;
+
+export const enquiryDraftStep3Schema = enquiryStep3UpdateRequestSchema
+  .extend({
+    address: addressSchema.partial().optional(),
+    academicDetails: z.array(academicDetailSchema.partial()).optional(),
+    studentName: z.string({ required_error: "Student Name is required", }).nonempty('Student Name is required'),
+    studentPhoneNumber: contactNumberSchema,
+    counsellor: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
+    telecaller: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
+    dateOfAdmission: requestDateSchema,
+    dateOfBirth: requestDateSchema
+      .optional(),
+    entranceExamDetails: entranceExamDetailSchema
+      .partial()
+      .optional()
+  })
+  .partial()
+  .strict();
+
+
+export const enquiryDraftStep1RequestSchema = enquiryStep1RequestSchema
+  .extend({
+    studentName: z.string({ required_error: "Student Name is required", }).nonempty('Student Name is required'),
+    studentPhoneNumber: contactNumberSchema,
+    counsellor: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
+    telecaller: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
+    address: addressSchema.partial().optional(),
+    academicDetails: z.array(academicDetailSchema.partial()).optional(),
+  }).omit({ id: true }).partial().strict();
+
+export const enquiryDraftStep1UpdateSchema = enquiryDraftStep1RequestSchema.extend({
+  id: z.string()
+}).partial().strict();
+
+export type IEnquiryStep1RequestSchema = z.infer<typeof enquiryStep1RequestSchema>;
+export type IEnquiryDraftStep1RequestSchema = z.infer<typeof enquiryDraftStep1RequestSchema>;
+export type IEnquiryDraftStep1UpdateSchema = z.infer<typeof enquiryDraftStep1UpdateSchema>;
+export type IEnquirySchema = z.infer<typeof enquirySchema>;
+export type IEnquiryDraftStep3Schema = z.infer<typeof enquiryDraftStep3Schema>;

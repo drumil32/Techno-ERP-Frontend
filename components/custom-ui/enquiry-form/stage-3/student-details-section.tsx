@@ -65,10 +65,10 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
       'reference'
     ];
 
-  
+
 
     const allFieldsValid = requiredFields.every(field => {
-      const value = form.getValues(field );
+      const value = form.getValues(field);
       return value !== undefined && value !== null && value !== '';
     });
 
@@ -173,7 +173,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} border-none`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                    Date of Admission
+                      Date of Admission
                     </FormLabel>
                     <FormControl>
                       <Popover>

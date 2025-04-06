@@ -22,6 +22,7 @@ import { format } from 'date-fns';
 import ConfirmationCheckBoxStage3 from "./acknowledgement-section";
 import EntranceExamDetailsSection from "./entrance-exam-details-section";
 import MoreDetailsSection from "./more-details-section";
+import { EducationLevel } from "@/types/enum";
 
 const EnquiryFormStage3 = () => {
 
@@ -31,7 +32,19 @@ const EnquiryFormStage3 = () => {
     const form = useForm<z.infer<typeof enquiryStep3UpdateRequestSchema>>(
         {
             resolver: zodResolver(enquiryStep3UpdateRequestSchema),
-
+            defaultValues: {
+                academicDetails: [
+                    {
+                        educationLevel: EducationLevel.Tenth
+                    },
+                    {
+                        educationLevel: EducationLevel.Twelfth
+                    },
+                    {
+                        educationLevel: EducationLevel.Graduation
+                    }
+                ]
+            }
 
         }
     );

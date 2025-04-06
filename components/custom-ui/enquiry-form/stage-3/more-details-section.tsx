@@ -200,7 +200,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commo
 
 
               <FormField
-                key="state"
+                key="aadharNumber"
                 control={form.control}
                 name="aadharNumber"
                 render={({ field }) => (
