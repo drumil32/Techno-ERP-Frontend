@@ -19,16 +19,16 @@ interface AddressDetailsSectionInterface {
   commonFieldClass: string;
 }
 
-const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({ 
-  form, 
-  commonFieldClass, 
-  commonFormItemClass 
+const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
+  form,
+  commonFieldClass,
+  commonFormItemClass
 }) => {
   const [isValid, setIsValid] = useState(false);
 
   const checkValidity = () => {
     const addressDetails = form.getValues().address;
-    
+
     if (!addressDetails) {
       setIsValid(false);
       return;
@@ -43,9 +43,9 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
 
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
-      if (name && name.startsWith('address')) {
-        checkValidity();
-      }
+
+      checkValidity();
+
     });
     return () => subscription.unsubscribe();
   }, [form]);
