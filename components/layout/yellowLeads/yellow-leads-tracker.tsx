@@ -220,7 +220,7 @@ export default function YellowLeadsTracker() {
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'genderView', header: 'Gender' },
-    { accessorKey: 'locationView', header: 'Location' },
+    { accessorKey: 'cityView', header: 'City' },
     { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'footFall',
@@ -262,8 +262,8 @@ export default function YellowLeadsTracker() {
         isDateFilter: true
       },
       {
-        filterKey: 'location',
-        label: 'Location',
+        filterKey: 'city',
+        label: 'City',
         options: Object.values(Locations),
         hasSearch: true,
         multiSelect: true

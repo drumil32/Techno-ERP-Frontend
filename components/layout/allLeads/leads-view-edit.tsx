@@ -13,9 +13,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
 import { Course, CourseNameMapper, Gender, LeadType, Locations } from '@/static/enum';
-import TechnoLeadTypeTag, {
-  TechnoLeadType
-} from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
+import TechnoLeadTypeTag from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
@@ -46,6 +44,7 @@ interface FormErrors {
   phoneNumber?: string;
   altPhoneNumber?: string;
   email?: string;
+  area?:string;
   nextDueDate?: string;
 }
 
@@ -148,7 +147,8 @@ export default function LeadViewEdit({ data }: any) {
       'altPhoneNumber',
       'email',
       'gender',
-      'location',
+      'area',
+      'city',
       'course',
       'leadType',
       'remarks',
@@ -181,7 +181,8 @@ export default function LeadViewEdit({ data }: any) {
         'altPhoneNumber',
         'email',
         'gender',
-        'location',
+        'area',
+        'city',
         'course',
         'leadType',
         'remarks',
@@ -204,7 +205,7 @@ export default function LeadViewEdit({ data }: any) {
         return;
       }
 
-      const response :LeadData|null = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateLead, filteredData);
+      const response: LeadData | null = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateLead, filteredData);
       if (response) {
         toast.success('Updated Lead Successfully');
         setFormData(response);
@@ -252,8 +253,12 @@ export default function LeadViewEdit({ data }: any) {
           <p>{toPascal(formData.gender) ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Location</p>
-          <p>{formData.location ?? '-'}</p>
+          <p className="w-1/4 text-[#666666]">Area</p>
+          <p>{formData.area ?? '-'}</p>
+        </div>
+        <div className="flex gap-2">
+          <p className="w-1/4 text-[#666666]">City</p>
+          <p>{formData.city ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Course</p>
@@ -262,7 +267,7 @@ export default function LeadViewEdit({ data }: any) {
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Lead Type</p>
           <p>
-            <TechnoLeadTypeTag type={formData.leadType as TechnoLeadType ?? '-'} />
+            <TechnoLeadTypeTag type={formData.leadType as LeadType ?? '-'} />
           </p>
         </div>
         <div className="flex gap-2">
@@ -356,10 +361,23 @@ export default function LeadViewEdit({ data }: any) {
         </div>
 
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="location" title={'Location'} />
+          <EditLabel htmlFor="area" title={'Area'} />
+          <Input
+          id="area"
+          name="area"
+          type="area"
+          value={formData.area || ''}
+          onChange={handleChange}
+          className="rounded-[5px]"
+        />
+        {errors.area && <p className="text-red-500 text-xs mt-1">{errors.area}</p>}
+      </div>
+
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="city" title={'City'} />
           <Select
-            defaultValue={formData.location}
-            onValueChange={(value) => handleSelectChange('location', value)}
+            defaultValue={formData.city}
+            onValueChange={(value) => handleSelectChange('city', value)}
           >
             <SelectTrigger id="location" className="w-full rounded-[5px]">
               <SelectValue placeholder="Select location" />
@@ -386,7 +404,7 @@ export default function LeadViewEdit({ data }: any) {
               <SelectValue placeholder="Select lead type" />
             </SelectTrigger>
             <SelectContent>
-              {Object.values(TechnoLeadType).map((type) => (
+              {Object.values(LeadType).map((type) => (
                 <SelectItem key={type} value={type}>
                   <TechnoLeadTypeTag type={type} />
                 </SelectItem>
@@ -492,7 +510,7 @@ export default function LeadViewEdit({ data }: any) {
       ) : (
         <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
           <div className="w-full flex">
-            {formData.leadType != LeadType.YELLOW ? (
+            {formData.leadType != LeadType.INTERESTED ? (
               <>
                 <Button onClick={() => toggleIsEditing(true)} className="ml-auto" icon={Pencil}>
                   Edit Lead

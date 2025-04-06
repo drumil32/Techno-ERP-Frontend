@@ -2,15 +2,14 @@ import TechnoAnalyticCardsGroup from '../../custom-ui/analytic-card/techno-analy
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
-import TechnoLeadTypeTag, {
-  TechnoLeadType
-} from '../../custom-ui/lead-type-tag/techno-lead-type-tag';
+import TechnoLeadTypeTag from '../../custom-ui/lead-type-tag/techno-lead-type-tag';
+
 import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
 import LeadViewEdit from './leads-view-edit';
-import { Course, Locations } from '@/static/enum';
+import { Course, LeadType, Locations } from '@/static/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
@@ -246,15 +245,17 @@ export default function AllLeadsPage() {
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'genderView', header: 'Gender' },
-    { accessorKey: 'location', header: 'Location' },
+    { accessorKey: 'areaView', header: 'Area' },
+    { accessorKey: 'city', header: 'City' },
     { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'leadType',
       header: 'Lead Type',
-      cell: ({ row }: any) => <TechnoLeadTypeTag type={row.original.leadType as TechnoLeadType} />
+      cell: ({ row }: any) => <TechnoLeadTypeTag type={row.original.leadType as LeadType} />
     },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
     { accessorKey: 'nextDueDateView', header: 'Next Due Date' },
+    { accessorKey: 'leadsFollowUpCount', header: 'Follow Ups' },
     { accessorKey: 'leadTypeModifiedDate', header: 'Timestamp' },
     {
       id: 'actions',
@@ -279,8 +280,8 @@ export default function AllLeadsPage() {
         isDateFilter: true
       },
       {
-        filterKey: 'location',
-        label: 'Location',
+        filterKey: 'city',
+        label: 'City',
         options: Object.values(Locations),
         placeholder: 'location',
         hasSearch: true,
@@ -297,7 +298,7 @@ export default function AllLeadsPage() {
       {
         filterKey: 'leadType',
         label: 'Lead Type',
-        options: Object.values(TechnoLeadType),
+        options: Object.values(LeadType),
         multiSelect: true
       },
       {

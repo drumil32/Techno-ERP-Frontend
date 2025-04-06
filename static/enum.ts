@@ -16,22 +16,39 @@ export enum Gender {
   NOT_TO_MENTION = 'NOT_TO_MENTION'
 }
 
+
+export enum FinalConversionType {
+  PENDING = 'PENDING',
+  CONVERTED = 'CONVERTED',
+  DEAD = 'DEAD',
+}
+
 export enum LeadType {
-  ORANGE = 'OPEN',
-  RED = 'NOT_INTERESTED',
-  BLACK = 'COURSE_UNAVAILABLE',
-  BLUE = 'NO_CLARITY',
-  YELLOW = 'INTERESTED',
-  GREEN = 'ADMISSION',
-  WHITE = 'DID_NOT_PICK'
+  OPEN = 'OPEN',
+  DEAD = 'DEAD',
+  COURSE_UNAVAILABLE = 'COURSE_UNAVAILABLE',
+  NO_CLARITY = 'NO_CLARITY',
+  INTERESTED = 'INTERESTED',
+  DID_NOT_PICK = 'DID_NOT_PICK',
+  INVALID = 'INVALID'
+}
+export const LeadTypeMapper:Record<LeadType,string>={
+  [LeadType.OPEN]:'Left Over Data',
+  [LeadType.DEAD]:'Dead Data',
+  [LeadType.COURSE_UNAVAILABLE]:'Course NA',
+  [LeadType.INTERESTED]:'Active Data',
+  [LeadType.NO_CLARITY]:'Neutral Data',
+  [LeadType.DID_NOT_PICK]:'Did Not Pick',
+  [LeadType.INVALID]:'Invalid Data'
 }
 
-export enum finalConversion {
-  PINK = 'PENDING',
-  GREEN = 'CONVERTED',
-  RED = 'NOT_CONVERTED'
-}
-
+// Open Lead - Left Over Data	
+// Not Interested - Dead Data	
+// Interested - Active Data	
+// No Clarity - Neutral Data	
+// Did not pick - Not Connected	
+// Invalid Data	
+// Course Unavailable	
 /**
  * Admission Module Enums
  */
@@ -187,10 +204,11 @@ export enum Locations {
   LKO = 'Lucknow'
 }
 
-export enum MarketingSources {
-  SCHOOL = 'SCHOOL',
-  DIGITAL_MARKETING = 'DIGITAL_MARKETING'
+export enum Marketing_Source {
+  SCHOOL = 'School',
+  DIGITAL_MARKETING = 'Digital_Marketing'
 }
+
 
 export const ADMISSION = 'admissions';
 

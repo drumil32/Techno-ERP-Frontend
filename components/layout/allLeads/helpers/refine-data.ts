@@ -1,8 +1,6 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
-import { TechnoLeadType } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
-import { Course, CourseNameMapper } from '@/static/enum';
+import { Course, CourseNameMapper, LeadType } from '@/static/enum';
 import { toPascal } from '../../yellowLeads/final-conversion-tag';
-
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   // Modified parameters to get Assigned To Dropdown Data
   const refinedLeads = data.leads?.map((lead: any, index: number) => {
@@ -23,10 +21,12 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       emailView: lead.email ?? '-',
       gender:  lead.gender,
       genderView:  toPascal(lead.gender),
-      location: lead.location,
+      city: lead.city,
+      area:lead.area,
+      areaView:lead.area ?? '-',
       course: lead.course,
       courseView: CourseNameMapper[lead.course as Course] ?? '-',
-      leadType: TechnoLeadType[lead.leadType as keyof typeof TechnoLeadType] ?? lead.leadType,
+      leadType: LeadType[lead.leadType as keyof typeof LeadType] ?? lead.leadType,
       _leadType: lead.leadType,
       source: lead.source,
       sourceView: lead.source ?? '-',
@@ -35,6 +35,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       assignedToName: assignedToName,
       nextDueDate: lead.nextDueDate ,
       nextDueDateView: lead.nextDueDate ?? '-' ,
+      leadsFollowUpCount:lead.leadsFollowUpCount ?? 0,
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: new Date(lead.updatedAt).toLocaleString(),
       remarks: lead.remarks ,

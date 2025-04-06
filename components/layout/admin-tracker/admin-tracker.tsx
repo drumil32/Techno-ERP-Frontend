@@ -5,7 +5,7 @@ import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import { AdminAnalyticsResponse } from './interfaces';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
-import { Locations, MarketingSources } from '@/static/enum';
+import { Locations, Marketing_Source } from '@/static/enum';
 import TechnoAnalyticCardsGroup, {
   CardItem
 } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
@@ -44,12 +44,12 @@ const AdminTracker = () => {
       {
         filterKey: 'source',
         label: 'Source',
-        options: Object.values(MarketingSources),
+        options: Object.values(Marketing_Source),
         multiSelect: true
       },
       {
-        filterKey: 'location',
-        label: 'Location',
+        filterKey: 'city',
+        label: 'City',
         options: Object.values(Locations),
         hasSearch: true,
         multiSelect: true
