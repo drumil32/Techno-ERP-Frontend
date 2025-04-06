@@ -76,7 +76,7 @@ export const singleDocumentSchema = z.object({
 export const academicDetailsArraySchema = z.array(academicDetailSchema);
 
 export const enquirySchema = z.object({
-
+  _id:z.string().optional(),
   // Student Details
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
   dateOfEnquiry: requestDateSchema,
