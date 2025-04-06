@@ -1,4 +1,4 @@
-import TechnoAnalyticCardsGroup from '../../custom-ui/analytic-card/techno-analytic-cards-group';
+import TechnoAnalyticCardsGroup, { CardItem } from '../../custom-ui/analytic-card/techno-analytic-cards-group';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
@@ -12,8 +12,8 @@ import {
   fetchYellowLeads,
   fetchYellowLeadsAnalytics
 } from './helpers/fetch-data';
-import { refineAnalytics, refineLeads } from './helpers/refine-data';
-import CampusVisitTag, { CampusVisitStatus } from './campus-visit-tag';
+import { refineAnalytics, refineLeads, YellowLeadAnalytics } from './helpers/refine-data';
+import FootFallTag, { FootFallStatus } from './foot-fall-tag';
 import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
 import FilterBadges from '../allLeads/components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
@@ -32,6 +32,11 @@ export default function YellowLeadsTracker() {
   const [orderBy, setOrderBy] = useState<string>('asc');
 
   const handleSortChange = (column: string, order: string) => {
+
+    if (column === "nextDueDateView") {
+      column = "nextDueDate"
+    }
+
     setSortBy(column);
     setOrderBy(order);
     setPage(1);
@@ -125,14 +130,15 @@ export default function YellowLeadsTracker() {
     enabled: true
   });
 
-  const analyticsQuery = useQuery({
+  const analyticsQuery = useQuery<YellowLeadAnalytics>({
     queryKey: ['leadsAnalytics', analyticsParams, appliedFilters],
     queryFn: fetchYellowLeadsAnalytics,
     placeholderData: (previousData) => previousData,
     enabled: true
   });
 
-  const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data) : [];
+  const analytics: CardItem[] = analyticsQuery.data ? refineAnalytics(analyticsQuery?.data) : [];
+  
   const assignedToDropdownData = Array.isArray(assignedToQuery?.data) ? assignedToQuery?.data : [];
   const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
 
@@ -217,10 +223,10 @@ export default function YellowLeadsTracker() {
     { accessorKey: 'locationView', header: 'Location' },
     { accessorKey: 'courseView', header: 'Course' },
     {
-      accessorKey: 'campusVisit',
-      header: 'Campus Visit',
+      accessorKey: 'footFall',
+      header: 'Foot Fall',
       cell: ({ row }: any) => (
-        <CampusVisitTag status={row.original.campusVisit as CampusVisitStatus} />
+        <FootFallTag status={row.original.footFall as FootFallStatus} />
       )
     },
     { accessorKey: 'nextDueDateView', header: 'Next Call Date' },

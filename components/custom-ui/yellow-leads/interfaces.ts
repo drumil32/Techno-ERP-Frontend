@@ -1,4 +1,4 @@
-import { CampusVisitStatus } from "@/components/layout/yellowLeads/campus-visit-tag";
+import { FootFallStatus } from "@/components/layout/yellowLeads/foot-fall-tag";
 import { FinalConversionStatus } from "@/components/layout/yellowLeads/final-conversion-tag";
 import { finalConversion } from "@/static/enum";
 
@@ -13,7 +13,7 @@ export interface YellowLead {
   assignedTo: string;
   location: string;
   course: string;
-  campusVisit: CampusVisitStatus;
+  footFall: FootFallStatus;
   finalConversion: FinalConversionStatus;
   remarks: string;
   createdAt: string; // ISO Date string

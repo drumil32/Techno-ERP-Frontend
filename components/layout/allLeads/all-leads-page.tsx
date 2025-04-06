@@ -34,6 +34,11 @@ export default function AllLeadsPage() {
   }
 
   const handleSortChange = (column: string, order: string) => {
+
+    if (column === "nextDueDateView") {
+      column = "nextDueDate"
+    }
+
     setSortBy(column);
     setOrderBy(order);
     setPage(1);

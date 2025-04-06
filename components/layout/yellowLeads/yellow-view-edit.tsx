@@ -16,7 +16,7 @@ import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
-import CampusVisitTag, { CampusVisitStatus } from './campus-visit-tag';
+import { FootFallStatus } from './foot-fall-tag';
 import FinalConversionTag, { FinalConversionStatus, toPascal } from './final-conversion-tag';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { parse, format, isValid } from 'date-fns';
@@ -24,6 +24,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { toast } from 'sonner';
 
 import z from 'zod';
+import FootFallTag from './foot-fall-tag';
 
 interface FormErrors {
   name?: string;
@@ -48,7 +49,7 @@ const updateLeadRequestSchema = z.object({
   gender: z.string().optional(),
   location: z.string().optional(),
   course: z.string().optional(),
-  campusVisit: z.string().optional(),
+  footFall: z.string().optional(),
   finalConversion: z.string().optional(),
   remarks: z.string().optional(),
   nextDueDate: z.string().optional()
@@ -87,7 +88,7 @@ export default function YellowLeadViewEdit({ data }: any) {
         gender: tempData.gender,
         location: tempData.location,
         course: tempData.course,
-        campusVisit: tempData.campusVisit,
+        footFall: tempData.footFall,
         finalConversion: tempData.finalConversion,
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate
@@ -156,7 +157,7 @@ export default function YellowLeadViewEdit({ data }: any) {
       'gender',
       'location',
       'course',
-      'campusVisit',
+      'footFall',
       'finalConversion',
       'remarks',
       'nextDueDate'
@@ -190,7 +191,7 @@ export default function YellowLeadViewEdit({ data }: any) {
         'gender',
         'location',
         'course',
-        'campusVisit',
+        'footFall',
         'finalConversion',
         'remarks',
         'nextDueDate'
@@ -214,7 +215,7 @@ export default function YellowLeadViewEdit({ data }: any) {
       }
 
 
-      filteredData.campusVisit = filteredData.campusVisit === 'YES';
+      filteredData.footFall = filteredData.footFall === 'YES';
 
 
       console.log(filteredData)
@@ -229,7 +230,7 @@ export default function YellowLeadViewEdit({ data }: any) {
       console.log(response)
 
       if (response) {
-        response.campusVisit = CampusVisitStatus[String(formData.campusVisit) as keyof typeof CampusVisitStatus] ?? formData.campusVisit;
+        response.footFall = FootFallStatus[String(formData.footFall) as keyof typeof FootFallStatus] ?? formData.footFall;
         setFormData(response as YellowLead);
         toast.success('Updated Lead Successfully');
         setOriginalData(formData);
@@ -286,8 +287,8 @@ export default function YellowLeadViewEdit({ data }: any) {
           <p>{formData.course ? CourseNameMapper[formData.course as Course] : '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Campus Visit</p>
-          {formData.campusVisit ? <CampusVisitTag status={String(formData.campusVisit) as CampusVisitStatus} /> : <p>-</p>}
+          <p className="w-1/4 text-[#666666]">Foot Fall</p>
+          {formData.footFall ? <FootFallTag status={String(formData.footFall) as FootFallStatus} /> : <p>-</p>}
         </div>
         <div className="flex gap-2">
           <p className="w-1/4.5 text-[#666666]">Final Conversion</p>
@@ -425,18 +426,18 @@ export default function YellowLeadViewEdit({ data }: any) {
         </div>
 
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="campusVisit" title={'Campus Visit'} />
+          <EditLabel htmlFor="footFall" title={'Foot Fall'} />
           <Select
-            defaultValue={String(formData.campusVisit) || CampusVisitStatus.false}
-            onValueChange={(value) => handleSelectChange('campusVisit', value)}
+            defaultValue={String(formData.footFall) || FootFallStatus.false}
+            onValueChange={(value) => handleSelectChange('footFall', value)}
           >
-            <SelectTrigger id="campusVisit" className="w-full rounded-[5px]">
-              <SelectValue placeholder="Select Campus Visit" />
+            <SelectTrigger id="footFall" className="w-full rounded-[5px]">
+              <SelectValue placeholder="Select Foot Fall" />
             </SelectTrigger>
             <SelectContent>
-              {Object.values(CampusVisitStatus).map((status) => (
+              {Object.values(FootFallStatus).map((status) => (
                 <SelectItem key={status} value={status}>
-                  <CampusVisitTag status={status} />
+                  <FootFallTag status={status} />
                 </SelectItem>
               ))}
             </SelectContent>

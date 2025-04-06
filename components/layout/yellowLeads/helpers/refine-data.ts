@@ -1,7 +1,7 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
-import { CampusVisitStatus } from '../campus-visit-tag';
+import { FootFallStatus } from '../foot-fall-tag';
 import { FinalConversionStatus, toPascal } from '../final-conversion-tag';
-import { Course, CourseNameMapper } from '@/static/enum';
+import { Course, CourseNameMapper } from '@/static/enum'; 
 
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   const refinedLeads = data.yellowLeads?.map((lead: any, index: number) => {
@@ -26,8 +26,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       locationView: lead.location ?? '-',
       course: lead.course,
       courseView:CourseNameMapper[lead.course as Course] ?? '-',
-      campusVisit:
-        CampusVisitStatus[lead.campusVisit as keyof typeof CampusVisitStatus] ?? lead.campusVisit,
+      footFall:
+        FootFallStatus[lead.footFall as keyof typeof FootFallStatus] ?? lead.footFall,
       finalConversion:
         FinalConversionStatus[lead.finalConversion as keyof typeof FinalConversionStatus] ??
         lead.finalConversion,
@@ -50,12 +50,20 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
   };
 };
 
-export const refineAnalytics = (analytics: any) => {
-  const totalLeads = analytics.totalLeads ?? 0;
+export interface YellowLeadAnalytics {
+  allLeadsCount: number;
+  campusVisitTrueCount: number;
+  activeYellowLeadsCount: number;
+  deadLeadCount: number;
+  convertedLeadCount: number;
+}
+
+export const refineAnalytics = (analytics: YellowLeadAnalytics) => {
+  const allLeadsCount = analytics.allLeadsCount ?? 0;
 
   const calculatePercentage = (count: number) => {
-    if (totalLeads === 0) return '0%';
-    return `${Math.round((count / totalLeads) * 100)}%`;
+    if (allLeadsCount === 0) return '0%';
+    return `${Math.round((count / allLeadsCount) * 100)}%`;
   };
   const analyticsCardsData: CardItem[] = [
     {
@@ -67,7 +75,7 @@ export const refineAnalytics = (analytics: any) => {
     {
       heading: String(analytics.campusVisitTrueCount ?? ''),
       subheading: calculatePercentage(analytics.campusVisitTrueCount ?? 0),
-      title: 'Campus Visits',
+      title: 'Footfall',
       color: 'text-orange-600'
     },
     {
@@ -81,6 +89,12 @@ export const refineAnalytics = (analytics: any) => {
       subheading: calculatePercentage(analytics.deadLeadCount ?? 0),
       title: 'Dead Leads',
       color: 'text-red-700'
+    },
+    {
+      heading: String(analytics.convertedLeadCount ?? ''),
+      subheading: calculatePercentage(analytics.convertedLeadCount ?? 0),
+      title: 'Admissions',
+      color: 'text-[#0EA80E]'
     }
   ];
   return analyticsCardsData;
