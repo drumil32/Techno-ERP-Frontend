@@ -8,13 +8,16 @@ import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
-import LeadViewEdit from './leads-view-edit';
+import LeadViewEdit, { LeadData } from './leads-view-edit';
 import { Course, LeadType, Locations } from '@/static/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { toast } from 'sonner';
+import { API_METHODS } from '@/common/constants/apiMethods';
+import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import { apiRequest } from '@/lib/apiClient';
 
 
 export default function AllLeadsPage() {
@@ -254,7 +257,48 @@ export default function AllLeadsPage() {
     },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
     { accessorKey: 'nextDueDateView', header: 'Next Due Date' },
-    { accessorKey: 'leadsFollowUpCount', header: 'Follow Ups' },
+    {
+      accessorKey: 'leadsFollowUpCount',
+      header: 'Follow Ups',
+      cell: ({ row }: any) => {
+        const handleDropdownChange = async (value: number) => {
+
+          const filteredData = {
+            ...row.original,
+            leadsFollowUpCount: value,
+          }
+
+          const response: LeadData | null = await apiRequest(
+            API_METHODS.PUT,
+            API_ENDPOINTS.updateLead,
+            filteredData
+          );
+
+          if (response) {
+            toast.success('Follow-up count updated successfully');
+            setRefreshKey((prevKey) => prevKey + 1);
+          } else {
+            toast.error('Failed to update follow-up count');
+          }
+
+        };
+
+        return (
+          <select
+            defaultValue={row.original.leadsFollowUpCount.toString().padStart(2, '0')}
+            onChange={(e) => handleDropdownChange(Number(e.target.value))}
+            className="border rounded px-2 py-1"
+            aria-label="Follow-up count"
+          >
+            {[1, 2, 3, 4, 5].map((option) => (
+              <option key={option} value={option}>
+                {option.toString().padStart(2, '0')}
+              </option>
+            ))}
+          </select>
+        );
+      },
+    },
     { accessorKey: 'leadTypeModifiedDate', header: 'Timestamp' },
     {
       id: 'actions',
@@ -262,13 +306,13 @@ export default function AllLeadsPage() {
       cell: ({ row }: any) => (
         <Button
           variant="ghost"
-          className='cursor-pointer'
+          className="cursor-pointer"
           onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
         >
-          <span className="font-inter font-semibold text-[12px] text-primary ">View More</span>
+          <span className="font-inter font-semibold text-[12px] text-primary">View More</span>
         </Button>
-      )
-    }
+      ),
+    },
   ];
 
   const getFiltersData = () => {

@@ -19,6 +19,10 @@ import FilterBadges from '../allLeads/components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import YellowLeadViewEdit from './yellow-view-edit';
 import { toast } from 'sonner';
+import { LeadData } from '../allLeads/leads-view-edit';
+import { API_METHODS } from '@/common/constants/apiMethods';
+import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import { apiRequest } from '@/lib/apiClient';
 
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -231,6 +235,48 @@ export default function YellowLeadsTracker() {
     },
     { accessorKey: 'nextDueDateView', header: 'Next Call Date' },
     {
+          accessorKey: 'yellowLeadsFollowUpCount',
+          header: 'Follow Ups',
+          cell: ({ row }: any) => {
+            const handleDropdownChange = async (value: number) => {
+    
+              const filteredData = {
+                ...row.original,
+                yellowLeadsFollowUpCount: value,
+              }
+    
+              const response: LeadData | null = await apiRequest(
+                API_METHODS.PUT,
+                API_ENDPOINTS.updateYellowLead,
+                filteredData
+              );
+    
+              if (response) {
+                toast.success('Follow-up count updated successfully');
+                setRefreshKey((prevKey) => prevKey + 1);
+              } else {
+                toast.error('Failed to update follow-up count');
+              }
+    
+            };
+    
+            return (
+              <select
+                defaultValue={row.original?.yellowLeadsFollowUpCount?.toString()?.padStart(2, '0')}
+                onChange={(e) => handleDropdownChange(Number(e.target.value))}
+                className="border rounded px-2 py-1"
+                aria-label="Follow-up count"
+              >
+                {[1, 2, 3, 4, 5].map((option) => (
+                  <option key={option} value={option}>
+                    {option.toString().padStart(2, '0')}
+                  </option>
+                ))}
+              </select>
+            );
+          },
+        },
+    {
       accessorKey: 'finalConversion',
       header: 'Final Conversion',
       cell: ({ row }: any) => (
@@ -331,6 +377,7 @@ export default function YellowLeadsTracker() {
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
+  
 
   return (
     <>

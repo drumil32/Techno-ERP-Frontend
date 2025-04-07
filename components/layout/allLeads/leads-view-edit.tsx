@@ -26,7 +26,7 @@ import z from 'zod';
 import { useQuery } from '@tanstack/react-query';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
 
-interface LeadData {
+export interface LeadData {
   _id: string;
   name: string;
   phoneNumber: string;
@@ -98,12 +98,8 @@ export default function LeadViewEdit({ data }: any) {
         leadTypeModifiedDate: tempData.leadTypeModifiedDate,
       };
 
-      console.log('validationData', validationData);
-
       // First, validate the entire schema
       updateLeadRequestSchema.parse(validationData);
-
-      console.log("Hi")
 
       // If validation passes, remove any existing error for this field
       setErrors((prevErrors: any) => {
@@ -123,7 +119,6 @@ export default function LeadViewEdit({ data }: any) {
           const key = err.path[0] as keyof FormErrors;
           newErrors[key] = err.message;
         });
-        console.log('newErrors', newErrors);
         setErrors(newErrors);
       }
     }
