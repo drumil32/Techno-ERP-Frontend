@@ -39,6 +39,7 @@ import { FeeType } from '@/types/enum';
 import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
 import { toast } from 'sonner';
 import { queryClient } from '@/lib/queryClient';
+import { validateCustomFeeLogic } from './helpers/validateFees';
 
 const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -384,8 +385,23 @@ export const StudentFeesForm = () => {
   async function handleSaveDraft() {
     setIsSavingDraft(true);
 
+
     const currentValues = form.getValues();
     const existingDraftId = enquiryData?.studentFeeDraft?._id;
+
+    const isCustomValid = validateCustomFeeLogic(
+      currentValues,
+      otherFeesData, // Pass base data for original fees
+      semWiseFeesData, // Pass base data for original fees
+      form.setError,
+      form.clearErrors
+    );
+
+    if (!isCustomValid) {
+      toast.error("Fee validation failed. Please check highlighted fields (e.g., Final Fee vs Original, Deposit vs Final Fee).");
+      setIsSavingDraft(false);
+      return; // Stop if custom validation fails
+    }
 
 
     const validationResult = frontendFeesDraftValidationSchema.safeParse(currentValues);
@@ -433,6 +449,20 @@ export const StudentFeesForm = () => {
   async function onSubmit() {
     setIsSubmittingFinal(true);
     const values = form.getValues();
+
+    const isCustomValid = validateCustomFeeLogic(
+      values,
+      otherFeesData, // Pass base data for original fees
+      semWiseFeesData, // Pass base data for original fees
+      form.setError,
+      form.clearErrors
+    );
+
+    if (!isCustomValid) {
+      toast.error("Fee validation failed. Please check highlighted fields (e.g., Final Fee vs Original, Deposit vs Final Fee).");
+      setIsSubmittingFinal(false);
+      return; // Stop if custom validation fails
+    }
 
     const isUpdate = finalFeeExists;
     const recordId = finalFeeId;
@@ -925,7 +955,7 @@ export const StudentFeesForm = () => {
           )}
         />
 
-        <div className="sticky z-10 bottom-0 left-0 flex items-center justify-between space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
+        <div className="z-10 bottom-0 left-0 flex items-center justify-between space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
           <Button
             type="button"
             variant="outline"
