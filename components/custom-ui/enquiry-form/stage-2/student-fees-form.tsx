@@ -39,6 +39,7 @@ import { FeeType } from '@/types/enum';
 import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
 import { toast } from 'sonner';
 import { queryClient } from '@/lib/queryClient';
+import { validateCustomFeeLogic } from './helpers/validateFees';
 
 const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -103,6 +104,7 @@ export const StudentFeesForm = () => {
     queryFn: () => (enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null')),
     enabled: !!enquiry_id
   });
+
   console.log(enquiryData)
 
   const existingFinalFee = enquiryData?.studentFee;
@@ -201,7 +203,6 @@ export const StudentFeesForm = () => {
       let initialOtherFees: any[] = [];
 
       const baseSem1Fee = semWiseFeesData.fee?.[0]
-      console.log("Base Sem1 Fee: ", baseSem1Fee)
 
       const existingSem1FeeDataInOther = feeDataSource?.otherFees?.find((fee: any) => fee.type === FeeType.SEM1FEE);
       const existingSem1FeeDataInSemWise = feeDataSource?.semWiseFees?.[0];
@@ -270,7 +271,6 @@ export const StudentFeesForm = () => {
 
 
     } else if (error) {
-      console.error('Error fetching enquiry enquiryData:', error);
       toast.error("Failed to load student data.");
     }
   }, [
@@ -320,16 +320,46 @@ export const StudentFeesForm = () => {
       .filter(Boolean);
   }, [telecallersData]);
 
+  const createDraftMutation = useMutation({
+    mutationFn: createStudentFeesDraft,
+    onSuccess: () => {
+      toast.success("Draft saved successfully!");
+      queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
+      setDataUpdated((prev) => !prev);
+    },
+    onError: (error) => {
+      const errorMsg = (error as any)?.response?.data?.message || (error as Error)?.message || "Unknown error";
+      toast.error(`Failed to save draft: ${errorMsg}`);
+    },
+    onSettled: () => {
+      setIsSavingDraft(false);
+    }
+  });
+
+  const updateDraftMutation = useMutation({
+    mutationFn: updateStudentFeesDraft,
+    onSuccess: () => {
+      toast.success("Draft updated successfully!");
+      queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
+      setDataUpdated((prev) => !prev);
+    },
+    onError: (error) => {
+      const errorMsg = (error as any)?.response?.data?.message || (error as Error)?.message || "Unknown error";
+      toast.error(`Failed to update draft: ${errorMsg}`);
+    },
+    onSettled: () => {
+      setIsSavingDraft(false);
+    }
+  });
+
 
   const createFinalFeeMutation = useMutation({
     mutationFn: createStudentFees,
     onSuccess: async (data, variables) => {
       toast.success("Fee record created successfully!");
       queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-      console.log("HELLLLOOO")
       try {
         if (!enquiry_id) {
-          console.error("Enquiry ID missing, cannot update status.");
           toast.error("Could not update enquiry status: Missing ID.");
           return;
         }
@@ -341,13 +371,11 @@ export const StudentFeesForm = () => {
 
         const status_update = await updateEnquiryStatus(statusPayload);
 
-        console.log("Status Code: ", status_update)
         toast.success("Enquiry status updated to Step 3.");
 
         queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
 
       } catch (statusError) {
-        console.error("Failed to update enquiry status after fee creation:", statusError);
         const errorMsg = (statusError as any)?.response?.data?.message || (statusError as Error)?.message || "Unknown error";
         toast.error(`Fee record created, but failed to update enquiry status: ${errorMsg}`);
       }
@@ -357,10 +385,24 @@ export const StudentFeesForm = () => {
   async function handleSaveDraft() {
     setIsSavingDraft(true);
 
+
     const currentValues = form.getValues();
     const existingDraftId = enquiryData?.studentFeeDraft?._id;
 
-    console.log("Current Values", currentValues)
+    const isCustomValid = validateCustomFeeLogic(
+      currentValues,
+      otherFeesData, // Pass base data for original fees
+      semWiseFeesData, // Pass base data for original fees
+      form.setError,
+      form.clearErrors
+    );
+
+    if (!isCustomValid) {
+      toast.error("Fee validation failed. Please check highlighted fields (e.g., Final Fee vs Original, Deposit vs Final Fee).");
+      setIsSavingDraft(false);
+      return; // Stop if custom validation fails
+    }
+
 
     const validationResult = frontendFeesDraftValidationSchema.safeParse(currentValues);
 
@@ -388,41 +430,51 @@ export const StudentFeesForm = () => {
     if (draftExists && draftId) {
       finalPayload = {
         id: draftId,
+        enquiryId: enquiry_id,
         ...cleanedData,
       };
-      delete finalPayload.enquiryId;
-      updateStudentFeesDraft(finalPayload)
+      updateDraftMutation.mutateAsync(finalPayload)
+      // updateStudentFeesDraft(finalPayload)
     } else {
       finalPayload = {
         enquiryId: cleanedData.enquiryId || enquiry_id,
         ...cleanedData,
       };
       delete finalPayload.id;
-      createStudentFeesDraft(finalPayload)
+      createDraftMutation.mutateAsync(finalPayload)
+      // createStudentFeesDraft(finalPayload)
     }
-
-    setIsSavingDraft(false);
-    setDataUpdated((prev) => !prev)
   }
 
   async function onSubmit() {
     setIsSubmittingFinal(true);
     const values = form.getValues();
 
+    const isCustomValid = validateCustomFeeLogic(
+      values,
+      otherFeesData, // Pass base data for original fees
+      semWiseFeesData, // Pass base data for original fees
+      form.setError,
+      form.clearErrors
+    );
+
+    if (!isCustomValid) {
+      toast.error("Fee validation failed. Please check highlighted fields (e.g., Final Fee vs Original, Deposit vs Final Fee).");
+      setIsSubmittingFinal(false);
+      return; // Stop if custom validation fails
+    }
+
     const isUpdate = finalFeeExists;
     const recordId = finalFeeId;
 
-    console.log("Values", values)
 
     if (isUpdate && recordId) {
-      console.log("Update")
       const validationResult = feesRequestSchema.safeParse(values);
 
       if (!validationResult.success) {
         toast.error("Validation failed. Please check the fields.", {
         });
 
-        console.log("Validatioan Result: ", validationResult)
 
         validationResult.error.errors.forEach(err => {
           if (err.path.length > 0) {
@@ -441,16 +493,13 @@ export const StudentFeesForm = () => {
         id: recordId,
         ...cleanedData
       }
-      console.log("Update", finalPayLoad)
 
       updateStudentFees(finalPayLoad)
 
     } else {
-      console.log("Create")
 
       const validationResult = feesUpdateSchema.safeParse(values);
 
-      console.log("Validatioan Result: ", validationResult)
 
       if (!validationResult.success) {
         toast.error("Validation failed. Please check the fields.", {
@@ -463,7 +512,6 @@ export const StudentFeesForm = () => {
             form.setError(fieldName, { type: 'manual', message: err.message });
           }
         });
-        // console.log("hello")
         return;
       }
 
@@ -479,9 +527,6 @@ export const StudentFeesForm = () => {
 
 
       setDataUpdated((prev) => !prev)
-      console.log("Final Payload", finalPayLoad)
-
-      console.log("Create", finalPayLoad)
 
     }
 
@@ -910,7 +955,7 @@ export const StudentFeesForm = () => {
           )}
         />
 
-        <div className="sticky z-10 bottom-0 left-0 flex items-center justify-between space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
+        <div className="z-10 bottom-0 left-0 flex items-center justify-between space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
           <Button
             type="button"
             variant="outline"
