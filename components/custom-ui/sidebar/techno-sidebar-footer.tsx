@@ -24,7 +24,6 @@ export default function TechnoSidebarFooter() {
 
     if (data &&
       data.SUCCESS === true) {
-      console.log("User is authenticated, redirecting to home");
       router.replace("/auth/login");
     }
   }

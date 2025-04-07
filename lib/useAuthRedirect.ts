@@ -23,7 +23,6 @@ const useAuthRedirect = () => {
         if (data &&
           data.MESSAGE === "User is authenticated" &&
           data.SUCCESS === true) {
-          console.log("User is authenticated, redirecting to home");
           router.replace("/");
         }
       } catch (error) {

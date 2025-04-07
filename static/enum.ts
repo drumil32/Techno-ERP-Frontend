@@ -18,7 +18,8 @@ export enum Gender {
 
 
 export enum FinalConversionType {
-  PENDING = 'PENDING',
+  NO_FOOTFALL = 'NO_FOOTFALL',
+  UNCONFIRMED = 'UNCONFIRMED',
   CONVERTED = 'CONVERTED',
   DEAD = 'DEAD',
 }

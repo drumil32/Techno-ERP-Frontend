@@ -53,6 +53,7 @@ interface FormErrors {
   area?: string;
   nextDueDate?: string;
   schoolName?: string;
+  remarks?: string;
 }
 
 export default function LeadViewEdit({ data }: any) {
@@ -76,8 +77,6 @@ export default function LeadViewEdit({ data }: any) {
     try {
       const tempData = { ...formData, [name]: value };
 
-      // console.log('tempData', tempData);
-
       const validationData = {
         _id: tempData._id,
         date: tempData.date,
@@ -95,17 +94,16 @@ export default function LeadViewEdit({ data }: any) {
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate,
         assignedTo: tempData.assignedTo,
-      leadTypeModifiedDate: tempData.leadTypeModifiedDate,
+        leadTypeModifiedDate: tempData.leadTypeModifiedDate,
       };
 
       // First, validate the entire schema
-      updateLeadRequestSchema.parse(validationData);
-
+      const response = updateLeadRequestSchema.parse(validationData);
+      
       // If validation passes, remove any existing error for this field
       setErrors((prevErrors: any) => {
         const newErrors = { ...prevErrors };
         delete newErrors[name];
-        console.log(newErrors);
         return newErrors;
       });
 
@@ -248,7 +246,6 @@ export default function LeadViewEdit({ data }: any) {
       if (response) {
         toast.success('Updated Lead Successfully');
         setFormData(response);
-        console.log(response);
         setOriginalData(formData);
       } else {
         setFormData(originalData);
@@ -305,13 +302,16 @@ export default function LeadViewEdit({ data }: any) {
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Lead Type</p>
-          <p>
+          <div>
             <TechnoLeadTypeTag type={(formData.leadType as LeadType) ?? '-'} />
-          </p>
+          </div>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Assigned To</p>
-          <p>{formData.assignedTo ?? '-'}</p>
+          <p>
+            {assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)?.name ??
+              '-'}
+          </p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Follow-ups</p>
