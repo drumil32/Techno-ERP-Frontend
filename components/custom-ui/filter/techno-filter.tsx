@@ -10,14 +10,14 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar1, ChevronDown, Search } from 'lucide-react';
 import { format, parse } from 'date-fns';
-import TechnoLeadTypeTag, { TechnoLeadType } from '../lead-type-tag/techno-lead-type-tag';
+import TechnoLeadTypeTag from '../lead-type-tag/techno-lead-type-tag';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import FinalConversionTag, {
   FinalConversionStatus,
   toPascal
 } from '@/components/layout/yellowLeads/final-conversion-tag';
-import { Course, CourseNameMapper, finalConversion, MarketingSources } from '@/static/enum';
+import { Course, CourseNameMapper, LeadType } from '@/static/enum';
 
 export interface FilterOption {
   id: string;
@@ -249,8 +249,8 @@ export default function TechnoFilter({
                   <TechnoLeadTypeTag
                     type={
                       typeof option === 'string'
-                        ? (option as TechnoLeadType)
-                        : (option.label as TechnoLeadType)
+                        ? (option as LeadType)
+                        : (option.label as LeadType)
                     }
                   />
                 ) : filterKey === 'finalConversionType' ? (

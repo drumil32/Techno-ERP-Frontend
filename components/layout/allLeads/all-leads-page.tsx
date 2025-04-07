@@ -244,7 +244,6 @@ export default function AllLeadsPage() {
     { accessorKey: 'date', header: 'Date' },
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'genderView', header: 'Gender' },
     { accessorKey: 'areaView', header: 'Area' },
     { accessorKey: 'city', header: 'City' },
     { accessorKey: 'courseView', header: 'Course' },
@@ -348,6 +347,7 @@ export default function AllLeadsPage() {
           searchTerm={search}
           onSort={handleSortChange}
           totalEntries={totalEntries}
+          handleViewMore={handleViewMore}
         >
           <FilterBadges
             onFilterRemove={handleFilterRemove}

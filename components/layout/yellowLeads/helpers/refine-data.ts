@@ -22,6 +22,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       genderView: toPascal(lead.gender),
       assignedTo: lead.assignedTo ?? '-',
       assignedToName: assignedToName,
+      area: lead.area,
+      areaView: lead.area ?? '-',
       city: lead.city,
       cityView: lead.city ?? '-',
       course: lead.course,

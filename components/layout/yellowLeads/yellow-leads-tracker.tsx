@@ -219,7 +219,7 @@ export default function YellowLeadsTracker() {
     { accessorKey: 'ltcDate', header: 'LTC Date' },
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'genderView', header: 'Gender' },
+    { accessorKey: 'areaView', header: 'Area' },
     { accessorKey: 'cityView', header: 'City' },
     { accessorKey: 'courseView', header: 'Course' },
     {
@@ -354,6 +354,7 @@ export default function YellowLeadsTracker() {
           searchTerm={search}
           onSort={handleSortChange}
           totalEntries={totalEntries}
+          handleViewMore={handleViewMore}
         >
           <FilterBadges
             onFilterRemove={handleFilterRemove}

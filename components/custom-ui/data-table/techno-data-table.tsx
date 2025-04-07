@@ -25,8 +25,6 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import {
-  ArrowLeft,
-  ArrowRight,
   ChevronDown,
   ArrowUp,
   ArrowDown,
@@ -51,6 +49,7 @@ export default function TechnoDataTable({
   searchTerm = '',
   onSort,
   totalEntries,
+  handleViewMore,
   children
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -163,9 +162,11 @@ export default function TechnoDataTable({
           </TableHeader>
           <TableBody className="[&_tr]:h-[39px]">
             {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="h-[39px]">
-                  {row.getVisibleCells().map((cell) => (
+              table.getRowModel().rows.map((row:any) => (
+                <TableRow key={row.id} className="h-[39px]"
+                onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
+                >
+                  {row.getVisibleCells().map((cell:any) => (
                     <TableCell
                       key={cell.id}
                       className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-'
