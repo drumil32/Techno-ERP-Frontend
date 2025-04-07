@@ -36,7 +36,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       remarks: lead.remarks,
       remarksView: lead.remarks ?? '-',
       date: lead.date,
-      ltcDate: lead.ltcDate ?? '-',
+      leadTypeModifiedDate: lead.leadTypeModifiedDate ?? '-',
       nextDueDate: lead.nextDueDate,
       nextDueDateView: lead.nextDueDate ?? '-',
       createdAt: new Date(lead.createdAt).toLocaleString(),

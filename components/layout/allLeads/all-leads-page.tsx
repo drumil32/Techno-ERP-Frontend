@@ -3,7 +3,7 @@ import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import TechnoLeadTypeTag from '../../custom-ui/lead-type-tag/techno-lead-type-tag';
-
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { apiRequest } from '@/lib/apiClient';
+import LeadTypeSelect from '@/components/custom-ui/lead-type-select/lead-type-select';
 
 
 export default function AllLeadsPage() {
@@ -253,8 +254,38 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'leadType',
       header: 'Lead Type',
-      cell: ({ row }: any) => <TechnoLeadTypeTag type={row.original.leadType as LeadType} />
+      cell: ({ row }: any) => {
+        const [selectedType, setSelectedType] = useState<LeadType>(row.original.leadType);
+    
+        const handleDropdownChange = async (value: LeadType) => {
+          setSelectedType(value);
+    
+          const updatedData = {
+            ...row.original,
+            leadType: value,
+          };
+    
+          const response: LeadData | null = await apiRequest(
+            API_METHODS.PUT,
+            API_ENDPOINTS.updateLead,
+            updatedData
+          );
+    
+          if (response) {
+            toast.success('Lead type updated successfully');
+            setRefreshKey((prevKey) => prevKey + 1);
+          } else {
+            toast.error('Failed to update lead type');
+            setSelectedType(row.original.leadType); // rollback
+          }
+        };
+    
+        return (
+          <LeadTypeSelect value={selectedType} onChange={handleDropdownChange} />
+        );
+      },
     },
+    
     { accessorKey: 'assignedToName', header: 'Assigned To' },
     { accessorKey: 'nextDueDateView', header: 'Next Due Date' },
     {

@@ -47,7 +47,7 @@ const updateLeadRequestSchema = z.object({
     .optional(),
   email: z.string().email('Invalid Email Format').optional(),
   gender: z.string().optional(),
-  location: z.string().optional(),
+  city: z.string().optional(),
   course: z.string().optional(),
   footFall: z.string().optional(),
   finalConversion: z.string().optional(),
@@ -86,13 +86,14 @@ export default function YellowLeadViewEdit({ data }: any) {
         altPhoneNumber: tempData.altPhoneNumber,
         email: tempData.email,
         gender: tempData.gender,
-        location: tempData.location,
+        city: tempData.city,
         course: tempData.course,
         footFall: tempData.footFall,
         finalConversion: tempData.finalConversion,
+        schoolName:tempData.schoolName,
+        yellowLeadsFollowUpCount:tempData.yellowLeadsFollowUpCount,
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate
-
       }
 
       updateLeadRequestSchema.parse(validationData)
@@ -155,10 +156,12 @@ export default function YellowLeadViewEdit({ data }: any) {
       'altPhoneNumber',
       'email',
       'gender',
-      'location',
+      'city',
       'course',
       'footFall',
       'finalConversion',
+      'yellowLeadsFollowUpCount',
+      'schoolName',
       'remarks',
       'nextDueDate'
     ];
@@ -189,7 +192,7 @@ export default function YellowLeadViewEdit({ data }: any) {
         'altPhoneNumber',
         'email',
         'gender',
-        'location',
+        'city',
         'course',
         'footFall',
         'finalConversion',
@@ -256,7 +259,7 @@ export default function YellowLeadViewEdit({ data }: any) {
       <div className="flex flex-col gap-6 text-sm">
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">LTC Date</p>
-          <p>{formData.ltcDate ?? '-'}</p>
+          <p>{formData.leadTypeModifiedDate ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Name</p>
@@ -279,8 +282,8 @@ export default function YellowLeadViewEdit({ data }: any) {
           <p>{toPascal(formData.gender) ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Location</p>
-          <p>{formData.location ?? '-'}</p>
+          <p className="w-1/4 text-[#666666]">City</p>
+          <p>{formData.city ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Course</p>
@@ -311,19 +314,8 @@ export default function YellowLeadViewEdit({ data }: any) {
     <>
       <div className="flex flex-col gap-2">
         <p className="text-[#666666] font-normal">LTC Date</p>
-        <p>{data.ltcDate}</p>
-      </div>
-
-      <div className="space-y-2">
-        <EditLabel htmlFor="name" title={'Name'} />
-        <Input
-          id="name"
-          name="name"
-          value={formData.name || ''}
-          onChange={handleChange}
-          className={`rounded-[5px] ${errors.name ? 'border-red-500' : ''}`}
-        />
-        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+        <p>{data.leadTypeModifiedDate}</p>
+    {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
       </div>
 
       <div className="flex gap-5">
@@ -386,13 +378,13 @@ export default function YellowLeadViewEdit({ data }: any) {
         </div>
 
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="location" title={'Location'} />
+          <EditLabel htmlFor="city" title={'Location'} />
           <Select
-            defaultValue={formData.location}
-            onValueChange={(value) => handleSelectChange('location', value)}
+            defaultValue={formData.city}
+            onValueChange={(value) => handleSelectChange('city', value)}
           >
-            <SelectTrigger id="location" className="w-full rounded-[5px]">
-              <SelectValue placeholder="Select location" />
+            <SelectTrigger id="city" className="w-full rounded-[5px]">
+              <SelectValue placeholder="Select City" />
             </SelectTrigger>
             <SelectContent>
               {Object.values(Locations).map((location) => (

@@ -40,7 +40,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       updatedAt: new Date(lead.updatedAt).toLocaleString(),
       remarks: lead.remarks ,
       remarksView: lead.remarks ?? '-',
-      leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'NA'
+    leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'NA'
     };
   });
 

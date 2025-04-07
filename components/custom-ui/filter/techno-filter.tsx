@@ -108,7 +108,7 @@ export default function TechnoFilter({
       updateFilter('date', undefined);
     }
 
-    const variant = filterKey === 'ltcDate' ? 'LTC' : '';
+    const variant = filterKey === 'leadTypeModifiedDate' ? 'LTC' : '';
 
     updateFilter(`${type}${variant}Date`, formatDateForAPI(selectedDate));
 

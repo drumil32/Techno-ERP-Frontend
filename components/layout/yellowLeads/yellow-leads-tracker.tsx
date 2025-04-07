@@ -23,6 +23,7 @@ import { LeadData } from '../allLeads/leads-view-edit';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { apiRequest } from '@/lib/apiClient';
+import FinalConversionSelect from './final-conversion-select';
 
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -220,7 +221,7 @@ export default function YellowLeadsTracker() {
 
   const columns = [
     { accessorKey: 'id', header: 'S. No.' },
-    { accessorKey: 'ltcDate', header: 'LTC Date' },
+    { accessorKey: 'leadTypeModifiedDate', header: 'LTC Date' },
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'areaView', header: 'Area' },
@@ -276,13 +277,35 @@ export default function YellowLeadsTracker() {
             );
           },
         },
-    {
-      accessorKey: 'finalConversion',
-      header: 'Final Conversion',
-      cell: ({ row }: any) => (
-        <FinalConversionTag status={row.original.finalConversion as FinalConversionStatus} />
-      )
-    },
+        {
+          accessorKey: 'finalConversion',
+          header: 'Final Conversion',
+          cell: ({ row }: any) => {
+            const value = row.original.finalConversion as FinalConversionStatus;
+        
+            const handleChange = async (newValue: FinalConversionStatus) => {
+              const updatedData = {
+                ...row.original,
+                finalConversion: newValue,
+              };
+        
+              const response: LeadData | null = await apiRequest(
+                API_METHODS.PUT,
+                API_ENDPOINTS.updateYellowLead,
+                updatedData
+              );
+        
+              if (response) {
+                toast.success('Final conversion updated successfully');
+                setRefreshKey((prevKey) => prevKey + 1);
+              } else {
+                toast.error('Failed to update final conversion');
+              }
+            };
+        
+            return <FinalConversionSelect value={value} onChange={handleChange} />;
+          },
+        },
     { accessorKey: 'remarksView', header: 'Remarks' },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
     {
@@ -303,7 +326,7 @@ export default function YellowLeadsTracker() {
   const getFiltersData = () => {
     return [
       {
-        filterKey: 'ltcDate',
+        filterKey: 'leadTypeModifiedDate',
         label: 'LTC Date',
         isDateFilter: true
       },
@@ -345,10 +368,10 @@ export default function YellowLeadsTracker() {
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
 
-    if (filterKey === 'ltcDate') {
+    if (filterKey === 'leadTypeModifiedDate') {
       delete updatedFilters.startLTCDate;
       delete updatedFilters.endLTCDate;
-      updateFilter('ltcDate', undefined);
+      updateFilter('leadTypeModifiedDate', undefined);
       updateFilter('startLTCDate', undefined);
       updateFilter('endLTCDate', undefined);
     } else {
@@ -363,8 +386,8 @@ export default function YellowLeadsTracker() {
 
   const clearFilters = () => {
     getFiltersData().forEach((filter) => {
-      if (filter.filterKey == 'ltcDate') {
-        updateFilter('ltcDate', undefined);
+      if (filter.filterKey == 'leadTypeModifiedDate') {
+        updateFilter('leadTypeModifiedDate', undefined);
         updateFilter('startLTCDate', undefined);
         updateFilter('endLTCDate', undefined);
       } else {

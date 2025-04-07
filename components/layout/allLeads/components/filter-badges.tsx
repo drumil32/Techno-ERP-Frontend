@@ -68,7 +68,7 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
 
     if (appliedFilters.startLTCDate || appliedFilters.endLTCDate) {
       newBadges.push({
-        key: 'ltcDate',
+        key: 'leadTypeModifiedDate',
         label: 'LTC Date',
         value: formatDateRange(appliedFilters.startLTCDate, appliedFilters.endLTCDate)
       });

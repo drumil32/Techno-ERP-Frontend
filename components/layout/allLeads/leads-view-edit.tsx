@@ -95,7 +95,7 @@ export default function LeadViewEdit({ data }: any) {
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate,
         assignedTo: tempData.assignedTo,
-        leadTypeModifiedDate: tempData.leadTypeModifiedDate,
+      leadTypeModifiedDate: tempData.leadTypeModifiedDate,
       };
 
       // First, validate the entire schema

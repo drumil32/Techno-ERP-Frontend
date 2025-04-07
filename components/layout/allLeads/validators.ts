@@ -51,7 +51,7 @@ export const contactNumberSchema = z
 //     assignedTo: objectIdSchema, // TODO: need to test this
 //     leadType: z.nativeEnum(LeadType).default(LeadType.ORANGE),
 //     remarks: z.string().optional(),
-//     leadTypeModifiedDate: z.date().optional(),
+//   leadTypeModifiedDate: z.date().optional(),
 //     nextDueDate: z
 //         .date()
 //         .optional()
@@ -73,7 +73,7 @@ export const contactNumberSchema = z
 //     assignedTo: objectIdSchema, // TODO: need to test this
 //     leadType: z.nativeEnum(LeadType).default(LeadType.ORANGE),
 //     remarks: z.string().optional(),
-//     leadTypeModifiedDate: z.date().optional(),
+//   leadTypeModifiedDate: z.date().optional(),
 //     nextDueDate: requestDateSchema
 //         .optional()
 // });
@@ -116,7 +116,7 @@ export const leadMasterSchema = z.object({
     course: z.nativeEnum(Course).optional(),
     assignedTo: objectIdSchema, // TODO: need to test this
     leadType: z.nativeEnum(LeadType).default(LeadType.OPEN),
-    leadTypeModifiedDate: z.date().optional(),
+  leadTypeModifiedDate: z.date().optional(),
     nextDueDate: z.date().optional(),
     footFall: z.boolean().optional(),   //This is referring to Campus Visit
     finalConversion: z.nativeEnum(FinalConversionType).optional().default(FinalConversionType.PENDING),
