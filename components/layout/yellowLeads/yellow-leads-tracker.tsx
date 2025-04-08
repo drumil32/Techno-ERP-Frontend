@@ -44,7 +44,6 @@ export default function YellowLeadsTracker() {
       column = "nextDueDate"
     }
 
-    console.log(column)
     setSortState(
       (prevState: any) => {
         const currentIndex = prevState.sortBy.indexOf(column)
@@ -326,7 +325,6 @@ export default function YellowLeadsTracker() {
         return <FinalConversionSelect value={value} onChange={handleChange} />;
       },
     },
-    { accessorKey: 'remarksView', header: 'Remarks' },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
     {
       id: 'actions',

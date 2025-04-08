@@ -94,7 +94,6 @@ export default function YellowLeadViewEdit({ data }: any) {
         nextDueDate: tempData.nextDueDate
       };
 
-      console.log(validationData);
       const response = yellowLeadUpdateSchema.parse(validationData);
 
       setErrors((prevErrors: any) => {
@@ -229,7 +228,6 @@ export default function YellowLeadViewEdit({ data }: any) {
           newErrors[key] = err.message;
         });
         setErrors(newErrors);
-        console.log(newErrors);
         toast.error('Please fix the errors in the form');
         return;
       }
