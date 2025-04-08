@@ -209,7 +209,9 @@ export default function YellowLeadViewEdit({ data }: any) {
         'city',
         'course',
         'footFall',
+        'schoolName',
         'finalConversion',
+        'yellowLeadsFollowUpCount',
         'remarks',
         'nextDueDate',
         'leadTypeModifiedDate'

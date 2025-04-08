@@ -379,7 +379,7 @@ export default function AllLeadsPage() {
             className="border cursor-pointer rounded px-2 py-1"
             aria-label="Follow-up count"
           >
-            {[1, 2, 3, 4, 5].map((option) => (
+            {[0,1, 2, 3, 4, 5].map((option) => (
               <option key={option} value={option}>
                 {option.toString().padStart(2, '0')}
               </option>

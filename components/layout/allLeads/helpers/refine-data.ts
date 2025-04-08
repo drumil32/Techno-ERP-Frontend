@@ -31,6 +31,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       source: lead.source,
       sourceView: lead.source ?? '-',
       assignedTo: lead.assignedTo,
+      schoolName:lead.schoolName,
       assignedToView: lead.assignedTo ?? '-',
       assignedToName: assignedToName,
       nextDueDate: lead.nextDueDate ,
