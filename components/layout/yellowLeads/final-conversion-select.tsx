@@ -28,7 +28,7 @@ export default function FinalConversionSelect({
   return (
     <Select value={value} onValueChange={(val) => onChange(val as FinalConversionStatus)}>
       <SelectTrigger
-        className={`rounded-md text-sm font-medium px-2 py-1 w-[180px] ${selectedStyle}`}
+        className={`cursor-pointer rounded-md text-sm font-medium px-2 py-1 w-[180px] ${selectedStyle}`}
       >
         <SelectValue placeholder="Select Status" />
       </SelectTrigger>

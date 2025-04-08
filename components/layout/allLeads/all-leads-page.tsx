@@ -326,13 +326,17 @@ export default function AllLeadsPage() {
       accessorKey: 'leadsFollowUpCount',
       header: 'Follow Ups',
       cell: ({ row }: any) => {
-        const handleDropdownChange = async (value: number) => {
-
+        const [selectedValue, setSelectedValue] = useState(row.original.leadsFollowUpCount);
+    
+        const handleDropdownChange = async (newValue: number) => {
+          const previousValue = selectedValue;
+          setSelectedValue(newValue); // optimistic update
+    
           const filteredData = {
             ...row.original,
-            leadsFollowUpCount: value,
-          }
-
+            leadsFollowUpCount: newValue,
+          };
+    
           const {
             id,
             altPhoneNumberView,
@@ -353,29 +357,26 @@ export default function AllLeadsPage() {
             leadTypeModifiedDate,
             ...cleanedRow
           } = filteredData;
-
-
-
+    
           const response: LeadData | null = await apiRequest(
             API_METHODS.PUT,
             API_ENDPOINTS.updateLead,
             cleanedRow
           );
-
+    
           if (response) {
             toast.success('Follow-up count updated successfully');
             setRefreshKey((prevKey) => prevKey + 1);
           } else {
             toast.error('Failed to update follow-up count');
+            setSelectedValue(previousValue); 
           }
-
         };
-
         return (
           <select
-            defaultValue={row.original.leadsFollowUpCount}
+            value={selectedValue}
             onChange={(e) => handleDropdownChange(Number(e.target.value))}
-            className="border rounded px-2 py-1"
+            className="border cursor-pointer rounded px-2 py-1"
             aria-label="Follow-up count"
           >
             {[1, 2, 3, 4, 5].map((option) => (
@@ -386,7 +387,8 @@ export default function AllLeadsPage() {
           </select>
         );
       },
-    },
+    }
+,    
     { accessorKey: 'leadTypeModifiedDate', header: 'Timestamp' },
     {
       id: 'actions',

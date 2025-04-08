@@ -27,13 +27,13 @@ import FinalConversionSelect from './final-conversion-select';
 
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState < any > ({});
+  const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [editRow, setEditRow] = useState < any > (null);
+  const [editRow, setEditRow] = useState<any>(null);
 
-  const [sortState, setSortState] = useState < any > ({
+  const [sortState, setSortState] = useState<any>({
     sortBy: ["leadTypeModifiedDate", "nextDueDate"],
     orderBy: ["desc", "desc"]
   })
@@ -70,7 +70,7 @@ export default function YellowLeadsTracker() {
     queryFn: fetchAssignedToDropdown
   });
 
-  const searchTimerRef = useRef < NodeJS.Timeout | null > (null);
+  const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleViewMore = (row: any) => {
     setEditRow(row);
@@ -79,7 +79,7 @@ export default function YellowLeadsTracker() {
 
   const { filters, updateFilter } = useTechnoFilterContext();
 
-  const currentFiltersRef = useRef < { [key: string]: any } | null > (null);
+  const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
 
   const applyFilter = () => {
     currentFiltersRef.current = { ...filters };
@@ -151,7 +151,7 @@ export default function YellowLeadsTracker() {
     enabled: true
   });
 
-  const analyticsQuery = useQuery < YellowLeadAnalytics > ({
+  const analyticsQuery = useQuery<YellowLeadAnalytics>({
     queryKey: ['leadsAnalytics', analyticsParams, appliedFilters],
     queryFn: fetchYellowLeadsAnalytics,
     placeholderData: (previousData) => previousData,
@@ -170,7 +170,7 @@ export default function YellowLeadsTracker() {
     }
   }, [leads]);
 
-  const toastIdRef = useRef < string | number | null > (null);
+  const toastIdRef = useRef<string | number | null>(null);
 
   useEffect(() => {
     const isLoading = leadsQuery.isLoading || analyticsQuery.isLoading || assignedToQuery.isLoading;
@@ -255,12 +255,17 @@ export default function YellowLeadsTracker() {
       accessorKey: 'yellowLeadsFollowUpCount',
       header: 'Follow Ups',
       cell: ({ row }: any) => {
-        const handleDropdownChange = async (value: number) => {
+        const [selectedValue, setSelectedValue] = useState(row.original.yellowLeadsFollowUpCount);
+
+        const handleDropdownChange = async (newValue: number) => {
+          const previousValue = selectedValue;
+          setSelectedValue(newValue); 
 
           const filteredData = {
             _id: row.original._id,
-            yellowLeadsFollowUpCount: value,
-          }
+            yellowLeadsFollowUpCount: newValue,
+          };
+
           const response: LeadData | null = await apiRequest(
             API_METHODS.PUT,
             API_ENDPOINTS.updateYellowLead,
@@ -272,15 +277,15 @@ export default function YellowLeadsTracker() {
             setRefreshKey((prevKey) => prevKey + 1);
           } else {
             toast.error('Failed to update follow-up count');
+            setSelectedValue(previousValue); 
           }
-
         };
 
         return (
           <select
-            defaultValue={row.original.yellowLeadsFollowUpCount}
+            value={selectedValue}
             onChange={(e) => handleDropdownChange(Number(e.target.value))}
-            className="border rounded px-2 py-1"
+            className=" border rounded px-2 py-1 cursor-pointer"
             aria-label="Follow-up count"
           >
             {[1, 2, 3, 4, 5].map((option) => (
@@ -291,7 +296,8 @@ export default function YellowLeadsTracker() {
           </select>
         );
       },
-    },
+    }
+    ,
     {
       accessorKey: 'finalConversion',
       header: 'Final Conversion',

@@ -28,7 +28,7 @@ export default function LeadTypeSelect({ value, onChange }: LeadTypeSelectProps)
   return (
     <Select value={value} onValueChange={(val) => onChange(val as LeadType)}>
       <SelectTrigger
-        className={`rounded-[5px] text-sm font-medium  w-[180px] px-2 py-1 ${selectedStyle}`}
+        className={` cursor-pointer rounded-[5px] text-sm font-medium  w-[180px] px-2 py-1 ${selectedStyle}`}
       >
         <SelectValue placeholder="Select Type" />
       </SelectTrigger>
