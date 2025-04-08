@@ -12,7 +12,7 @@ export interface YellowLead {
   assignedTo: string;
   location: string;
   course: string;
-  footFall: FootFallStatus;
+  footFall: boolean;
   finalConversion: FinalConversionStatus;
   remarks: string;
   createdAt: string; // ISO Date string

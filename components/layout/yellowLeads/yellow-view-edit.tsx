@@ -26,7 +26,7 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { parse, format, isValid } from 'date-fns';
 import { toast } from 'sonner';
-import z from 'zod';
+import z, { boolean } from 'zod';
 
 // Custom components and helpers
 import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
@@ -86,7 +86,7 @@ export default function YellowLeadViewEdit({ data }: any) {
         area: tempData.area,
         city: tempData.city,
         course: tempData.course,
-        footFall: tempData.footFall === 'YES',
+        footFall: tempData.footFall,
         finalConversion: tempData.finalConversion,
         schoolName: tempData.schoolName,
         yellowLeadsFollowUpCount: tempData.yellowLeadsFollowUpCount,
@@ -94,6 +94,7 @@ export default function YellowLeadViewEdit({ data }: any) {
         nextDueDate: tempData.nextDueDate
       };
 
+      console.log(validationData);
       const response = yellowLeadUpdateSchema.parse(validationData);
 
       setErrors((prevErrors: any) => {
@@ -137,7 +138,8 @@ export default function YellowLeadViewEdit({ data }: any) {
     validateField(name, value);
   };
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string | boolean) => {
+
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
     validateField(name, value);
   };
@@ -195,6 +197,7 @@ export default function YellowLeadViewEdit({ data }: any) {
 
     setIsSubmitting(true);
     try {
+      formData.footFall = formData.footFall;
       const allowedFields = [
         '_id',
         'name',
@@ -224,22 +227,22 @@ export default function YellowLeadViewEdit({ data }: any) {
           newErrors[key] = err.message;
         });
         setErrors(newErrors);
+        console.log(newErrors);
         toast.error('Please fix the errors in the form');
         return;
       }
 
-      filteredData.footFall = filteredData.footFall === 'YES';
+
+      const { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
 
       const response: YellowLead | null = await apiRequest(
         API_METHODS.PUT,
         API_ENDPOINTS.updateYellowLead,
-        filteredData
+        toBeUpdatedData
       );
 
       if (response) {
-        response.footFall =
-          FootFallStatus[String(formData.footFall) as keyof typeof FootFallStatus] ??
-          formData.footFall;
+        // response.footFall =formData.footFall;
         setFormData(response as YellowLead);
         toast.success('Updated Lead Successfully');
         setOriginalData(formData);
@@ -300,8 +303,8 @@ export default function YellowLeadViewEdit({ data }: any) {
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Foot Fall</p>
-          {formData.footFall ? (
-            <FootFallTag status={String(formData.footFall) as FootFallStatus} />
+          {formData.footFall!=undefined ? (
+            <FootFallTag status={formData.footFall === true ? FootFallStatus.true : FootFallStatus.false} />
           ) : (
             <p>-</p>
           )}
@@ -477,16 +480,16 @@ export default function YellowLeadViewEdit({ data }: any) {
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="footFall" title={'Foot Fall'} />
           <Select
-            defaultValue={String(formData.footFall) || FootFallStatus.false}
-            onValueChange={(value) => handleSelectChange('footFall', value)}
+            defaultValue={formData.footFall ? "true" : "false"}
+            onValueChange={(value) => handleSelectChange('footFall', value === "true")}
           >
             <SelectTrigger id="footFall" className="w-full rounded-[5px]">
               <SelectValue placeholder="Select Foot Fall" />
             </SelectTrigger>
             <SelectContent>
-              {Object.values(FootFallStatus).map((status) => (
-                <SelectItem key={status} value={status}>
-                  <FootFallTag status={status} />
+              {Object.entries(FootFallStatus).map(([key, label]) => (
+                <SelectItem key={key} value={key}>
+                  <FootFallTag status={label} />
                 </SelectItem>
               ))}
             </SelectContent>

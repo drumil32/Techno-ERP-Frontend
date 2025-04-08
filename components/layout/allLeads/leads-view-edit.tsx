@@ -99,7 +99,7 @@ export default function LeadViewEdit({ data }: any) {
 
       // First, validate the entire schema
       const response = updateLeadRequestSchema.parse(validationData);
-      
+
       // If validation passes, remove any existing error for this field
       setErrors((prevErrors: any) => {
         const newErrors = { ...prevErrors };
@@ -107,8 +107,8 @@ export default function LeadViewEdit({ data }: any) {
         return newErrors;
       });
 
-      
-    
+
+
     } catch (error) {
       if (error instanceof z.ZodError) {
         // Collect all field errors
@@ -219,12 +219,13 @@ export default function LeadViewEdit({ data }: any) {
         'leadsFollowUpCount',
         'remarks',
         'nextDueDate',
-        'leadTypeModifiedDate'
       ];
 
       const filteredData = Object.fromEntries(
         Object.entries(formData).filter(([key]) => allowedFields.includes(key))
       );
+
+      const { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
 
       const validation = updateLeadRequestSchema.safeParse(filteredData);
       if (!validation.success) {
@@ -241,7 +242,7 @@ export default function LeadViewEdit({ data }: any) {
       const response: LeadData | null = await apiRequest(
         API_METHODS.PUT,
         API_ENDPOINTS.updateLead,
-        filteredData
+        toBeUpdatedData
       );
       if (response) {
         toast.success('Updated Lead Successfully');
@@ -388,19 +389,19 @@ export default function LeadViewEdit({ data }: any) {
 
       <div className="flex gap-5 w-full">
 
-      <div className="space-y-2  w-1/2">
-        <EditLabel htmlFor="email" title={'Email'} />
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          value={formData.email || ''}
-          onChange={handleChange}
-          className="rounded-[5px]"
-        />
-        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+        <div className="space-y-2  w-1/2">
+          <EditLabel htmlFor="email" title={'Email'} />
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={formData.email || ''}
+            onChange={handleChange}
+            className="rounded-[5px]"
+          />
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
         </div>
-        
+
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="gender" title={'Gender'} />
           <Select
@@ -420,11 +421,11 @@ export default function LeadViewEdit({ data }: any) {
           </Select>
         </div>
 
-        
+
       </div>
 
       <div className="flex gap-5 w-full">
-      <div className="space-y-2 w-1/2">
+        <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="area" title={'Area'} />
           <Input
             id="area"
@@ -528,11 +529,11 @@ export default function LeadViewEdit({ data }: any) {
               <SelectValue placeholder="Select follow-up count" />
             </SelectTrigger>
             <SelectContent>
-                {[1, 2, 3, 4, 5].map((count) => (
+              {[1, 2, 3, 4, 5].map((count) => (
                 <SelectItem key={count} value={count.toString()}>
                   {count.toString().padStart(2, '0')}
                 </SelectItem>
-                ))}
+              ))}
             </SelectContent>
           </Select>
         </div>

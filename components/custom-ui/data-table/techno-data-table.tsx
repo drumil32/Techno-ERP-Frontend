@@ -104,7 +104,7 @@ export default function TechnoDataTable({
     return null;
   };
 
-  const nonClickableColumns = ['actions', 'leadType', 'finalConversion',"leadsFollowUpCount",'yellowLeadsFollowUpCount'];
+  const nonClickableColumns = ['actions', 'leadType', 'finalConversion', "leadsFollowUpCount", 'yellowLeadsFollowUpCount'];
 
   return (
     <div className="w-full bg-white space-y-4 my-[16px] mb-0 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -143,14 +143,13 @@ export default function TechnoDataTable({
                 {headerGroup.headers.map((header, index) => (
                   <TableHead
                     key={header.id}
-                    className={`text-center font-light h-10 ${index === 0 ? 'rounded-l-[5px]' : ''} ${
-                      index === headerGroup.headers.length - 1 ? 'rounded-r-[5px]' : ''
-                    }`}
+                    className={`text-center font-light h-10 ${index === 0 ? 'rounded-l-[5px]' : ''} ${index === headerGroup.headers.length - 1 ? 'rounded-r-[5px]' : ''
+                      }`}
                   >
                     {header.column.columnDef.header === 'Date' ||
-                    header.column.columnDef.header === 'Next Due Date' ||
-                    header.column.columnDef.header === 'Next Call Date' ||
-                    header.column.columnDef.header === 'LTC Date' ? (
+                      header.column.columnDef.header === 'Next Due Date' ||
+                      header.column.columnDef.header === 'Next Call Date' ||
+                      header.column.columnDef.header === 'LTC Date' ? (
                       <Button variant="ghost" onClick={() => handleSort(header.column.id)}>
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {getSortIcon(header.column.id)}
@@ -179,11 +178,10 @@ export default function TechnoDataTable({
                     return (
                       <TableCell
                         key={cell.id}
-                        className={`h-[39px] py-2 ${
-                          cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-'
+                        className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-'
                             ? 'text-left max-w-[225px] truncate'
                             : 'text-center'
-                        }`}
+                          }`}
                         onClick={(e) => {
                           if (isExcluded) e.stopPropagation(); // Block row click from excluded cells
                         }}

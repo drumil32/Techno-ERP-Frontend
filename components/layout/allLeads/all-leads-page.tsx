@@ -19,6 +19,7 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { apiRequest } from '@/lib/apiClient';
 import LeadTypeSelect from '@/components/custom-ui/lead-type-select/lead-type-select';
+import { updateLeadRequestSchema } from './validators';
 
 
 export default function AllLeadsPage() {
@@ -154,7 +155,7 @@ export default function AllLeadsPage() {
     };
 
     if (sortBy) {
-      params.sortBy = sortBy;
+      params.sortBy =sortBy;
       params.orderBy = orderBy;
     }
 
@@ -256,21 +257,46 @@ export default function AllLeadsPage() {
       header: 'Lead Type',
       cell: ({ row }: any) => {
         const [selectedType, setSelectedType] = useState<LeadType>(row.original.leadType);
-    
+
         const handleDropdownChange = async (value: LeadType) => {
           setSelectedType(value);
-    
+
+          const {
+            id,
+            altPhoneNumberView,
+            emailView,
+            genderView,
+            areaView,
+            courseView,
+            _leadType,
+            source,
+            sourceView,
+            assignedToView,
+            assignedToName,
+            nextDueDateView,
+            createdAt,
+            updatedAt,
+            remarks,
+            remarksView,
+            leadTypeModifiedDate,
+            ...cleanedRow
+          } = row.original;
+
           const updatedData = {
-            ...row.original,
+            ...cleanedRow,
             leadType: value,
           };
-    
+          // const{leadTypeModifiedDate, ...updatedData} = {
+          //   ...row.original,
+          //   leadType: value,
+          // };
+
           const response: LeadData | null = await apiRequest(
             API_METHODS.PUT,
             API_ENDPOINTS.updateLead,
             updatedData
           );
-    
+
           if (response) {
             toast.success('Lead type updated successfully');
             setRefreshKey((prevKey) => prevKey + 1);
@@ -279,13 +305,13 @@ export default function AllLeadsPage() {
             setSelectedType(row.original.leadType); // rollback
           }
         };
-    
+
         return (
           <LeadTypeSelect value={selectedType} onChange={handleDropdownChange} />
         );
       },
     },
-    
+
     { accessorKey: 'assignedToName', header: 'Assigned To' },
     { accessorKey: 'nextDueDateView', header: 'Next Due Date' },
     {
@@ -299,10 +325,33 @@ export default function AllLeadsPage() {
             leadsFollowUpCount: value,
           }
 
+          const {
+            id,
+            altPhoneNumberView,
+            emailView,
+            genderView,
+            areaView,
+            courseView,
+            _leadType,
+            source,
+            sourceView,
+            assignedToView,
+            assignedToName,
+            nextDueDateView,
+            createdAt,
+            updatedAt,
+            remarks,
+            remarksView,
+            leadTypeModifiedDate,
+            ...cleanedRow
+          } = filteredData;
+
+
+
           const response: LeadData | null = await apiRequest(
             API_METHODS.PUT,
             API_ENDPOINTS.updateLead,
-            filteredData
+            cleanedRow
           );
 
           if (response) {
@@ -316,7 +365,7 @@ export default function AllLeadsPage() {
 
         return (
           <select
-            defaultValue={row.original.leadsFollowUpCount.toString().padStart(2, '0')}
+            defaultValue={row.original.leadsFollowUpCount}
             onChange={(e) => handleDropdownChange(Number(e.target.value))}
             className="border rounded px-2 py-1"
             aria-label="Follow-up count"

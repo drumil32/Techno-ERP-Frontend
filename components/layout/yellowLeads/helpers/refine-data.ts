@@ -1,7 +1,7 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { FootFallStatus } from '../foot-fall-tag';
 import { FinalConversionStatus, toPascal } from '../final-conversion-tag';
-import { Course, CourseNameMapper } from '@/static/enum'; 
+import { Course, CourseNameMapper } from '@/static/enum';
 
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   const refinedLeads = data.yellowLeads?.map((lead: any, index: number) => {
@@ -15,7 +15,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       id: index + 1,
       name: lead.name,
       phoneNumber: lead.phoneNumber,
-      altPhoneNumber: lead.altPhoneNumber ,
+      altPhoneNumber: lead.altPhoneNumber,
       altPhoneNumberView: lead.altPhoneNumber ?? '-',
       email: lead.email ?? '-',
       gender: lead.gender,
@@ -27,12 +27,12 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       city: lead.city,
       cityView: lead.city ?? '-',
       course: lead.course,
-      courseView:CourseNameMapper[lead.course as Course] ?? '-',
-      footFall:
-        FootFallStatus[lead.footFall as keyof typeof FootFallStatus] ?? lead.footFall,
+      courseView: CourseNameMapper[lead.course as Course] ?? '-',
+      footFall:lead.footFall,
       finalConversion:
         FinalConversionStatus[lead.finalConversion as keyof typeof FinalConversionStatus] ??
         lead.finalConversion,
+      yellowLeadsFollowUpCount: lead.yellowLeadsFollowUpCount,
       remarks: lead.remarks,
       remarksView: lead.remarks ?? '-',
       date: lead.date,

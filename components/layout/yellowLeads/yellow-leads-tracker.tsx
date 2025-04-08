@@ -6,7 +6,7 @@ import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
-import { Course,  Locations } from '@/static/enum';
+import { Course, FinalConversionType, Locations } from '@/static/enum';
 import {
   fetchAssignedToDropdown,
   fetchYellowLeads,
@@ -143,7 +143,7 @@ export default function YellowLeadsTracker() {
   });
 
   const analytics: CardItem[] = analyticsQuery.data ? refineAnalytics(analyticsQuery?.data) : [];
-  
+
   const assignedToDropdownData = Array.isArray(assignedToQuery?.data) ? assignedToQuery?.data : [];
   const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
 
@@ -231,81 +231,79 @@ export default function YellowLeadsTracker() {
       accessorKey: 'footFall',
       header: 'Foot Fall',
       cell: ({ row }: any) => (
-        <FootFallTag status={row.original.footFall as FootFallStatus} />
+        <FootFallTag status={row.original.footFall === true ? FootFallStatus.true : FootFallStatus.false} />
       )
     },
     { accessorKey: 'nextDueDateView', header: 'Next Call Date' },
     {
-          accessorKey: 'yellowLeadsFollowUpCount',
-          header: 'Follow Ups',
-          cell: ({ row }: any) => {
-            const handleDropdownChange = async (value: number) => {
-    
-              const filteredData = {
-                ...row.original,
-                yellowLeadsFollowUpCount: value,
-              }
-    
-              const response: LeadData | null = await apiRequest(
-                API_METHODS.PUT,
-                API_ENDPOINTS.updateYellowLead,
-                filteredData
-              );
-    
-              if (response) {
-                toast.success('Follow-up count updated successfully');
-                setRefreshKey((prevKey) => prevKey + 1);
-              } else {
-                toast.error('Failed to update follow-up count');
-              }
-    
-            };
-    
-            return (
-              <select
-                defaultValue={row.original?.yellowLeadsFollowUpCount?.toString()?.padStart(2, '0')}
-                onChange={(e) => handleDropdownChange(Number(e.target.value))}
-                className="border rounded px-2 py-1"
-                aria-label="Follow-up count"
-              >
-                {[1, 2, 3, 4, 5].map((option) => (
-                  <option key={option} value={option}>
-                    {option.toString().padStart(2, '0')}
-                  </option>
-                ))}
-              </select>
-            );
-          },
-        },
-        {
-          accessorKey: 'finalConversion',
-          header: 'Final Conversion',
-          cell: ({ row }: any) => {
-            const value = row.original.finalConversion as FinalConversionStatus;
-        
-            const handleChange = async (newValue: FinalConversionStatus) => {
-              const updatedData = {
-                ...row.original,
-                finalConversion: newValue,
-              };
-        
-              const response: LeadData | null = await apiRequest(
-                API_METHODS.PUT,
-                API_ENDPOINTS.updateYellowLead,
-                updatedData
-              );
-        
-              if (response) {
-                toast.success('Final conversion updated successfully');
-                setRefreshKey((prevKey) => prevKey + 1);
-              } else {
-                toast.error('Failed to update final conversion');
-              }
-            };
-        
-            return <FinalConversionSelect value={value} onChange={handleChange} />;
-          },
-        },
+      accessorKey: 'yellowLeadsFollowUpCount',
+      header: 'Follow Ups',
+      cell: ({ row }: any) => {
+        const handleDropdownChange = async (value: number) => {
+
+          const filteredData = {
+            _id: row.original._id,
+            yellowLeadsFollowUpCount: value,
+          }
+          const response: LeadData | null = await apiRequest(
+            API_METHODS.PUT,
+            API_ENDPOINTS.updateYellowLead,
+            filteredData
+          );
+
+          if (response) {
+            toast.success('Follow-up count updated successfully');
+            setRefreshKey((prevKey) => prevKey + 1);
+          } else {
+            toast.error('Failed to update follow-up count');
+          }
+
+        };
+
+        return (
+          <select
+            defaultValue={row.original.yellowLeadsFollowUpCount}
+            onChange={(e) => handleDropdownChange(Number(e.target.value))}
+            className="border rounded px-2 py-1"
+            aria-label="Follow-up count"
+          >
+            {[1, 2, 3, 4, 5].map((option) => (
+              <option key={option} value={option}>
+                {option.toString().padStart(2, '0')}
+              </option>
+            ))}
+          </select>
+        );
+      },
+    },
+    {
+      accessorKey: 'finalConversion',
+      header: 'Final Conversion',
+      cell: ({ row }: any) => {
+        const value = row.original.finalConversion as FinalConversionStatus;
+
+        const handleChange = async (newValue: FinalConversionStatus) => {
+          const updatedData = {
+            _id: row.original._id,
+            finalConversion: newValue,
+          };
+          const response: LeadData | null = await apiRequest(
+            API_METHODS.PUT,
+            API_ENDPOINTS.updateYellowLead,
+            updatedData
+          );
+
+          if (response) {
+            toast.success('Final conversion updated successfully');
+            setRefreshKey((prevKey) => prevKey + 1);
+          } else {
+            toast.error('Failed to update final conversion');
+          }
+        };
+
+        return <FinalConversionSelect value={value} onChange={handleChange} />;
+      },
+    },
     { accessorKey: 'remarksView', header: 'Remarks' },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
     {
@@ -400,7 +398,7 @@ export default function YellowLeadsTracker() {
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
-  
+
 
   return (
     <>
@@ -441,7 +439,7 @@ export default function YellowLeadsTracker() {
           setRefreshKey((prev) => prev + 1);
         }}
       >
-      {isDrawerOpen && editRow && (
+        {isDrawerOpen && editRow && (
           <YellowLeadViewEdit
             key={editRow._id}
             data={editRow}
