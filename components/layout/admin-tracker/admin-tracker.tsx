@@ -140,10 +140,10 @@ const AdminTracker = () => {
       reached: data?.allLeadsAnalytics?.reached,
       white: data?.allLeadsAnalytics?.white,
       black: data?.allLeadsAnalytics?.black,
+      invalidType: data?.allLeadsAnalytics?.invalidType,
       red: data?.allLeadsAnalytics?.red,
       blue: data?.allLeadsAnalytics?.blue,
       activeLeads: data?.allLeadsAnalytics?.activeLeads,
-      invalidType: data?.allLeadsAnalytics?.invalidType
     },
     'reached',
     {
@@ -162,8 +162,8 @@ const AdminTracker = () => {
       red: 'text-red-600',
       blue: 'text-blue-600',
       orange: 'text-orange-600',
-      activeLeads: 'text-yellow-600',
-      invalidType: 'text-red-600'
+      activeLeads: 'text-green-600',
+      invalidType: 'text-yellow-600'
     }
   );
 
