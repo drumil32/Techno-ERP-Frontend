@@ -50,6 +50,7 @@ export default function TechnoDataTable({
   onSort,
   totalEntries,
   handleViewMore,
+  rowCursor = true,
   children
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -167,7 +168,7 @@ export default function TechnoDataTable({
               table.getRowModel().rows.map((row: any) => (
                 <TableRow
                   key={row.id}
-                  className="h-[39px]"
+                  className="h-[39px] cursor-pointer"
                   onClick={() =>
                     handleViewMore({ ...row.original, leadType: row.original._leadType })
                   }
@@ -228,7 +229,7 @@ export default function TechnoDataTable({
           <span>Rows per page:</span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className='cursor-pointer'>
                 {pageSize} <ChevronDown className="ml-1" />
               </Button>
             </DropdownMenuTrigger>
@@ -260,6 +261,7 @@ export default function TechnoDataTable({
             onClick={() => onPageChange(1)}
             disabled={currentPage === 1}
             aria-label="Go to first page"
+            className='cursor-pointer'
           >
             <ChevronsLeft />
           </Button>
@@ -269,6 +271,7 @@ export default function TechnoDataTable({
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
             aria-label="Go to previous page"
+            className='cursor-pointer'
           >
             <ChevronLeft />
           </Button>
@@ -281,6 +284,7 @@ export default function TechnoDataTable({
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             aria-label="Go to next page"
+            className='cursor-pointer'
           >
             <ChevronRight />
           </Button>
@@ -290,6 +294,7 @@ export default function TechnoDataTable({
             onClick={() => onPageChange(totalPages)}
             disabled={currentPage === totalPages}
             aria-label="Go to last page"
+            className='cursor-pointer'
           >
             <ChevronsRight />
           </Button>

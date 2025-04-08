@@ -29,13 +29,10 @@ export default function AllLeadsPage() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editRow, setEditRow] = useState<any>(null);
-  const [sortBy, setSortBy] = useState<string | null>(null);
-  const [orderBy, setOrderBy] = useState<string>('asc');
-  const [isEditing, setIsEditing] = useState(false);
-
-  const toggleIsEditing = () => {
-    setIsEditing(prev => !prev)
-  }
+  const [sortState, setSortState] = useState<any>({
+    sortBy: ["date", "nextDueDate"],
+    orderBy: ["desc", "desc"]
+  })
 
   const handleSortChange = (column: string, order: string) => {
 
@@ -43,8 +40,21 @@ export default function AllLeadsPage() {
       column = "nextDueDate"
     }
 
-    setSortBy(column);
-    setOrderBy(order);
+    setSortState(
+      (prevState: any) => {
+        const currentIndex = prevState.sortBy.indexOf(column)
+        let newOrderBy = [...prevState.orderBy]
+        if(currentIndex != -1) {
+          newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == "asc" ? "desc" : "asc"
+        }
+
+        return {
+          ...prevState,
+          orderBy: newOrderBy
+        }
+      }
+    )
+
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
@@ -154,10 +164,8 @@ export default function AllLeadsPage() {
       refreshKey
     };
 
-    if (sortBy) {
-      params.sortBy =sortBy;
-      params.orderBy = orderBy;
-    }
+    params.sortBy = sortState.sortBy
+    params.orderBy = sortState.orderBy
 
     return params;
   };

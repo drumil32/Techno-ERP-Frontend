@@ -27,14 +27,16 @@ import FinalConversionSelect from './final-conversion-select';
 
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const [appliedFilters, setAppliedFilters] = useState<any>({});
+  const [appliedFilters, setAppliedFilters] = useState < any > ({});
   const [refreshKey, setRefreshKey] = useState(0);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [editRow, setEditRow] = useState<any>(null);
+  const [editRow, setEditRow] = useState < any > (null);
 
-  const [sortBy, setSortBy] = useState<string | null>(null);
-  const [orderBy, setOrderBy] = useState<string>('asc');
+  const [sortState, setSortState] = useState < any > ({
+    sortBy: ["leadTypeModifiedDate", "nextDueDate"],
+    orderBy: ["desc", "desc"]
+  })
 
   const handleSortChange = (column: string, order: string) => {
 
@@ -42,18 +44,33 @@ export default function YellowLeadsTracker() {
       column = "nextDueDate"
     }
 
-    setSortBy(column);
-    setOrderBy(order);
+    console.log(column)
+    setSortState(
+      (prevState: any) => {
+        const currentIndex = prevState.sortBy.indexOf(column)
+        let newOrderBy = [...prevState.orderBy]
+        if (currentIndex != -1) {
+          newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == "asc" ? "desc" : "asc"
+        }
+
+        return {
+          ...prevState,
+          orderBy: newOrderBy
+        }
+      }
+    )
+
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
+
 
   const assignedToQuery = useQuery({
     queryKey: ['assignedToDropdown'],
     queryFn: fetchAssignedToDropdown
   });
 
-  const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const searchTimerRef = useRef < NodeJS.Timeout | null > (null);
 
   const handleViewMore = (row: any) => {
     setEditRow(row);
@@ -62,7 +79,7 @@ export default function YellowLeadsTracker() {
 
   const { filters, updateFilter } = useTechnoFilterContext();
 
-  const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
+  const currentFiltersRef = useRef < { [key: string]: any } | null > (null);
 
   const applyFilter = () => {
     currentFiltersRef.current = { ...filters };
@@ -117,10 +134,9 @@ export default function YellowLeadsTracker() {
       refreshKey
     };
 
-    if (sortBy) {
-      params.sortBy = sortBy;
-      params.orderBy = orderBy;
-    }
+
+    params.sortBy = sortState.sortBy
+    params.orderBy = sortState.orderBy
 
     return params;
   };
@@ -135,7 +151,7 @@ export default function YellowLeadsTracker() {
     enabled: true
   });
 
-  const analyticsQuery = useQuery<YellowLeadAnalytics>({
+  const analyticsQuery = useQuery < YellowLeadAnalytics > ({
     queryKey: ['leadsAnalytics', analyticsParams, appliedFilters],
     queryFn: fetchYellowLeadsAnalytics,
     placeholderData: (previousData) => previousData,
@@ -154,7 +170,7 @@ export default function YellowLeadsTracker() {
     }
   }, [leads]);
 
-  const toastIdRef = useRef<string | number | null>(null);
+  const toastIdRef = useRef < string | number | null > (null);
 
   useEffect(() => {
     const isLoading = leadsQuery.isLoading || analyticsQuery.isLoading || assignedToQuery.isLoading;
