@@ -258,7 +258,7 @@ export default function YellowLeadsTracker() {
 
         const handleDropdownChange = async (newValue: number) => {
           const previousValue = selectedValue;
-          setSelectedValue(newValue); 
+          setSelectedValue(newValue);
 
           const filteredData = {
             _id: row.original._id,
@@ -276,7 +276,7 @@ export default function YellowLeadsTracker() {
             setRefreshKey((prevKey) => prevKey + 1);
           } else {
             toast.error('Failed to update follow-up count');
-            setSelectedValue(previousValue); 
+            setSelectedValue(previousValue);
           }
         };
 
@@ -287,7 +287,7 @@ export default function YellowLeadsTracker() {
             className=" border rounded px-2 py-1 cursor-pointer"
             aria-label="Follow-up count"
           >
-            {[0,1, 2, 3, 4, 5].map((option) => (
+            {[0, 1, 2, 3, 4, 5].map((option) => (
               <option key={option} value={option}>
                 {option.toString().padStart(2, '0')}
               </option>
@@ -386,12 +386,19 @@ export default function YellowLeadsTracker() {
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
 
-    if (filterKey === 'leadTypeModifiedDate') {
-      delete updatedFilters.startLTCDate;
-      delete updatedFilters.endLTCDate;
-      updateFilter('leadTypeModifiedDate', undefined);
-      updateFilter('startLTCDate', undefined);
-      updateFilter('endLTCDate', undefined);
+
+    if (filterKey === 'date' || filterKey.includes('Date')) {
+
+      const dateKeys = [
+        'startDate', 'endDate',
+        'startLTCDate', 'endLTCDate',
+        'date'
+      ];
+
+      dateKeys.forEach(key => {
+        delete updatedFilters[key];
+        updateFilter(key, undefined);
+      });
     } else {
       delete updatedFilters[filterKey];
       updateFilter(filterKey, undefined);
@@ -404,10 +411,14 @@ export default function YellowLeadsTracker() {
 
   const clearFilters = () => {
     getFiltersData().forEach((filter) => {
-      if (filter.filterKey == 'leadTypeModifiedDate') {
-        updateFilter('leadTypeModifiedDate', undefined);
-        updateFilter('startLTCDate', undefined);
-        updateFilter('endLTCDate', undefined);
+      if (filter.filterKey === 'date' || filter.isDateFilter) {
+        const dateKeys = [
+          'startDate', 'endDate',
+          'startLTCDate', 'endLTCDate',
+          'date'
+        ];
+
+        dateKeys.forEach(key => updateFilter(key, undefined));
       } else {
         updateFilter(filter.filterKey, undefined);
       }
@@ -418,7 +429,6 @@ export default function YellowLeadsTracker() {
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
-
 
   return (
     <>

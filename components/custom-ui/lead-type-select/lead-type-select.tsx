@@ -37,7 +37,7 @@ export default function LeadTypeSelect({ value, onChange }: LeadTypeSelectProps)
           <SelectItem
             key={type}
             value={type}
-            className={`rounded-[5px] text-sm font-medium px-3 py-2 transition-all ${typeStyles[type]} hover:opacity-80`}
+            className={`hover:border-slate-600 border-2 cursor-pointer rounded-[5px] text-sm font-medium px-3 py-2 transition-all ${typeStyles[type]} `}
           >
             {LeadTypeMapper[type]}
           </SelectItem>

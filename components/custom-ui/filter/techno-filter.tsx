@@ -101,16 +101,18 @@ export default function TechnoFilter({
       updateFilter(filterKey, value);
     }
   };
-
   const handleDateChange = (type: 'start' | 'end', selectedDate: Date | undefined) => {
     if (isThisMonth) {
       setIsThisMonth(false);
-      updateFilter('date', undefined);
+      updateFilter(filterKey, undefined);
     }
 
-    const variant = filterKey === 'leadTypeModifiedDate' ? 'LTC' : '';
+    const datePrefix = filterKey === 'leadTypeModifiedDate' ? 'LTC' : '';
+    const startDateKey = `start${datePrefix}Date`;
+    const endDateKey = `end${datePrefix}Date`;
 
-    updateFilter(`${type}${variant}Date`, formatDateForAPI(selectedDate));
+    updateFilter(startDateKey, type === 'start' ? formatDateForAPI(selectedDate) : filters[startDateKey]);
+    updateFilter(endDateKey, type === 'end' ? formatDateForAPI(selectedDate) : filters[endDateKey]);
 
     if (type === 'start') {
       setStartDate(selectedDate);
@@ -133,17 +135,35 @@ export default function TechnoFilter({
       setStartDate(firstDay);
       setEndDate(lastDay);
 
+      const datePrefix = filterKey === 'leadTypeModifiedDate' ? 'LTC' : '';
+      updateFilter(`start${datePrefix}Date`, formatDateForAPI(firstDay));
+      updateFilter(`end${datePrefix}Date`, formatDateForAPI(lastDay));
       updateFilter(filterKey, 'This Month');
-      handleDateChange('start', firstDay);
-      handleDateChange('end', lastDay);
     } else {
+      const datePrefix = filterKey === 'leadTypeModifiedDate' ? 'LTC' : '';
+      updateFilter(`start${datePrefix}Date`, undefined);
+      updateFilter(`end${datePrefix}Date`, undefined);
+      updateFilter(filterKey, undefined);
       setStartDate(undefined);
       setEndDate(undefined);
-      updateFilter(filterKey, undefined);
-      handleDateChange('start', undefined);
-      handleDateChange('end', undefined);
     }
   };
+
+  useEffect(() => {
+    const datePrefix = filterKey === 'leadTypeModifiedDate' ? 'LTC' : '';
+    const startDateKey = `start${datePrefix}Date`;
+    const endDateKey = `end${datePrefix}Date`;
+
+    setIsThisMonth(filters[filterKey] === 'This Month');
+    setStartDate(parseDateFromAPI(filters[startDateKey]));
+    setEndDate(parseDateFromAPI(filters[endDateKey]));
+
+    if (!filters[startDateKey] && !filters[endDateKey] && filters[filterKey] !== 'This Month') {
+      setStartDate(undefined);
+      setEndDate(undefined);
+      setIsThisMonth(false);
+    }
+  }, [filters, filterKey]);
 
   return (
     <DropdownMenu>
@@ -162,7 +182,7 @@ export default function TechnoFilter({
             </div>
             <div
               className={`flex flex-col gap-4 ${isThisMonth ? 'opacity-50 pointer-events-none' : ''}`}
-              >
+            >
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">
                   <Calendar1 className="h-4 w-4" />
@@ -173,7 +193,7 @@ export default function TechnoFilter({
                     <Button
                       variant="outline"
                       className="w-full justify-start text-left font-normal"
-                      >
+                    >
                       {startDate ? formatDateForAPI(startDate) : 'Select start date'}
                     </Button>
                   </PopoverTrigger>
@@ -183,7 +203,7 @@ export default function TechnoFilter({
                       selected={startDate}
                       onSelect={(date) => handleDateChange('start', date)}
                       initialFocus
-                      />
+                    />
                   </PopoverContent>
                 </Popover>
               </div>
@@ -198,7 +218,7 @@ export default function TechnoFilter({
                     <Button
                       variant="outline"
                       className="w-full justify-start text-left font-normal"
-                      >
+                    >
                       {endDate ? formatDateForAPI(endDate) : 'Select end date'}
                     </Button>
                   </PopoverTrigger>
@@ -209,7 +229,7 @@ export default function TechnoFilter({
                       onSelect={(date) => handleDateChange('end', date)}
                       initialFocus
                       disabled={(date) => (startDate ? date < startDate : false)}
-                      />
+                    />
                   </PopoverContent>
                 </Popover>
               </div>
@@ -224,7 +244,7 @@ export default function TechnoFilter({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="max-w-full h-[32px] rounded-md bg-[#f3f3f3]  text-gray-600 placeholder-gray-400"
-                  />
+                />
                 <span className="absolute inset-y-0 right-0 flex items-center pr-5">
                   <Search className="h-4 w-4 text-gray-500" />
                 </span>
@@ -232,34 +252,34 @@ export default function TechnoFilter({
             )}
             {filteredOptions.map((option, index) => (
               <div
-              key={index}
-              className="flex items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer"
-              onClick={() => handleSelect(option)}
+                key={index}
+                className="flex items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => handleSelect(option)}
               >
                 <Checkbox
                   checked={
                     multiSelect
-                    ? filters[filterKey]?.includes(
-                      typeof option === 'string' ? option : option.id
-                    )
-                    : filters[filterKey] === (typeof option === 'string' ? option : option.id)
+                      ? filters[filterKey]?.includes(
+                        typeof option === 'string' ? option : option.id
+                      )
+                      : filters[filterKey] === (typeof option === 'string' ? option : option.id)
                   }
-                  />
+                />
                 {filterKey === 'leadType' ? (
                   <TechnoLeadTypeTag
-                  type={
-                    typeof option === 'string'
-                    ? (option as LeadType)
-                    : (option.label as LeadType)
-                  }
+                    type={
+                      typeof option === 'string'
+                        ? (option as LeadType)
+                        : (option.label as LeadType)
+                    }
                   />
                 ) : filterKey === 'finalConversionType' ? (
                   <FinalConversionTag
-                  status={
-                    typeof option === 'string'
-                    ? (option as FinalConversionStatus)
-                    : (option.label as FinalConversionStatus)
-                  }
+                    status={
+                      typeof option === 'string'
+                        ? (option as FinalConversionStatus)
+                        : (option.label as FinalConversionStatus)
+                    }
                   />
                 ) : filterKey === 'course' ? (
                   <span>{CourseNameMapper[option as Course]}</span>

@@ -84,40 +84,48 @@ export default function AllLeadsPage() {
 
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
-
-    if (filterKey === 'date') {
-      delete updatedFilters.startDate;
-      delete updatedFilters.endDate;
-      delete updatedFilters.date;
-      updateFilter('date', undefined);
-      updateFilter('startDate', undefined);
-      updateFilter('endDate', undefined);
+  
+    if (filterKey === 'date' || filterKey.includes('Date')) {
+      const dateKeys = [
+        'startDate', 'endDate',
+        'startLTCDate', 'endLTCDate',
+        'date' 
+      ];
+  
+      dateKeys.forEach(key => {
+        delete updatedFilters[key];
+        updateFilter(key, undefined);
+      });
     } else {
       delete updatedFilters[filterKey];
       updateFilter(filterKey, undefined);
     }
-
+  
     setAppliedFilters(updatedFilters);
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
+  
   const clearFilters = () => {
     getFiltersData().forEach((filter) => {
-      if (filter.filterKey === 'date') {
-        updateFilter('date', undefined);
-        updateFilter('startDate', undefined);
-        updateFilter('endDate', undefined);
+      if (filter.filterKey === 'date' || filter.isDateFilter) {
+        const dateKeys = [
+          'startDate', 'endDate',
+          'startLTCDate', 'endLTCDate',
+          'date'
+        ];
+        
+        dateKeys.forEach(key => updateFilter(key, undefined));
       } else {
         updateFilter(filter.filterKey, undefined);
       }
     });
-
+  
     setAppliedFilters({});
     currentFiltersRef.current = {};
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
-
   const handleSearch = (value: string) => {
     setSearch(value);
 

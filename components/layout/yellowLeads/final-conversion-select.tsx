@@ -37,7 +37,7 @@ export default function FinalConversionSelect({
           <SelectItem
             key={status}
             value={status}
-            className={`rounded-md text-sm font-medium px-3 py-2 transition-all ${conversionStyles[status]} hover:opacity-80`}
+            className={`hover:border-slate-600 border-2 cursor-pointer rounded-md text-sm font-medium px-3 py-2 transition-all ${conversionStyles[status]}`}
           >
             {FinalConversionStatusMapper[status]}
           </SelectItem>
