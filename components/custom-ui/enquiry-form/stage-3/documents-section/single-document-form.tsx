@@ -1,36 +1,61 @@
-import { format } from "date-fns";
-import { useCallback, useRef, useState, DragEvent } from "react";
-import { uploadDocumentAPI } from "./helpers/apiRequest";
-import { DocumentType } from "@/types/enum";
-import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import { CalendarIcon, CheckCircle2, FileText, Loader2, Upload, XCircle } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { format, isBefore, parseISO, startOfDay } from 'date-fns';
+import { useCallback, useRef, useState, DragEvent, ChangeEvent, useEffect } from 'react';
+import { uploadDocumentAPI } from './helpers/apiRequest'; // Assuming this exists
+import { DocumentType } from '@/types/enum'; // Assuming this exists
+import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import {
+  Calendar as CalendarIcon,
+  CheckCircle2,
+  FileText,
+  LinkIcon,
+  Loader2,
+  Upload,
+  UploadCloud,
+  X,
+  XCircle
+} from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { getReadableDocumentName } from './helpers/mapperFunction';
 
 interface SingleEnquiryUploadDocumentProps {
   enquiryId: string;
   documentType: DocumentType;
+  existingDocument?: EnquiryDocument;
   acceptedFileTypes?: string;
-
   onUploadSuccess?: (response: any) => void;
-  onUploadError?: (response: any) => void;
+  onUploadError?: (error: any) => void;
+}
+
+export interface EnquiryDocument {
+  _id: string;
+  type: string;
+  fileUrl: string;
+  dueBy: string;
+}
+
+function getFilenameFromUrl(url: string): string {
+  try {
+    const parsedUrl = new URL(url);
+    const pathname = parsedUrl.pathname;
+    return decodeURIComponent(pathname.substring(pathname.lastIndexOf('/') + 1));
+  } catch (e) {
+    const parts = url.split('/');
+    return parts[parts.length - 1] || 'unknown_file';
+  }
 }
 
 function formatFileSize(bytes: number, si = false, dp = 1) {
   const thresh = si ? 1000 : 1024;
-
-  if (Math.abs(bytes) < thresh) {
-    return bytes + ' B';
-  }
+  if (Math.abs(bytes) < thresh) return bytes + ' B';
   const units = si
     ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
     : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
   let u = -1;
   const r = 10 ** dp;
-
   do {
     bytes /= thresh;
     ++u;
@@ -38,210 +63,398 @@ function formatFileSize(bytes: number, si = false, dp = 1) {
   return bytes.toFixed(dp) + ' ' + units[u];
 }
 
-
 export const SingleEnquiryUploadDocument = ({
   enquiryId,
   documentType,
-  acceptedFileTypes = "application/pdf,image/jpeg,image/png",
+  existingDocument,
+  acceptedFileTypes = '.pdf,.jpeg,.jpg,.png',
   onUploadSuccess,
   onUploadError
 }: SingleEnquiryUploadDocumentProps) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [dueDate, setDueDate] = useState<Date | null>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
-  const [isDragging, setIsDragging] = useState<boolean>(false);
-  const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setStatus(null);
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
-    } else {
-      setSelectedFile(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [dueDate, setDueDate] = useState<Date | undefined>(() => {
+    if (existingDocument?.dueBy) {
+      try {
+        const parsedDate = parseISO(existingDocument.dueBy);
+        return parsedDate;
+      } catch (e) {
+        console.error('Error parsing due date:', existingDocument.dueBy, e);
+        return undefined;
+      }
     }
-  };
+    return undefined;
+  });
 
-  const handleRemoveFile = () => {
-    setSelectedFile(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const uniqueInputId = `file-upload-${documentType.toString().replace(/_/g, '-')}-${enquiryId}`;
+
+  const resetFileInput = useCallback(() => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  }, []);
+
+  useEffect(() => {
+    setSelectedFile(null);
+    setDueDate(existingDocument?.dueBy ? parseISO(existingDocument.dueBy) : undefined);
+    setStatus(null);
+    resetFileInput();
+  }, [existingDocument, resetFileInput]);
+
+  const handleFileSelection = useCallback(
+    (file: File | null) => {
+      setStatus(null);
+      if (file) {
+        const fileExtension = file.name.split('.').pop()?.toLowerCase();
+        const allowedExtensions = acceptedFileTypes
+          .split(',')
+          .map((ext) => ext.trim().replace('.', ''));
+        if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
+          setStatus({
+            type: 'error',
+            message: `Invalid file type. Please upload: ${allowedExtensions.join(', ').toUpperCase()}`
+          });
+          setSelectedFile(null);
+          resetFileInput();
+          return;
+        }
+        setSelectedFile(file);
+      } else {
+        setSelectedFile(null);
+      }
+    },
+    [acceptedFileTypes, resetFileInput]
+  );
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    handleFileSelection(event.target.files?.[0] || null);
+    event.target.value = '';
   };
 
-  const handleDragOver = useCallback((event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragging(true);
-  }, []);
+  const handleRemoveFile = useCallback(() => {
+    handleFileSelection(null);
+    resetFileInput();
+  }, [handleFileSelection, resetFileInput]);
 
-  const handleDragLeave = useCallback((event: DragEvent<HTMLDivElement>) => {
+  const handleDragOver = useCallback(
+    (event: DragEvent<HTMLLabelElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (!isLoading) setIsDragging(true);
+    },
+    [isLoading]
+  );
+
+  const handleDragLeave = useCallback((event: DragEvent<HTMLLabelElement>) => {
     event.preventDefault();
     event.stopPropagation();
     setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragging(false);
-
-    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
-      setSelectedFile(event.dataTransfer.files[0]);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+  const handleDrop = useCallback(
+    (event: DragEvent<HTMLLabelElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      setIsDragging(false);
+      if (isLoading) return;
+      const file = event.dataTransfer.files?.[0] || null;
+      handleFileSelection(file);
+      if (fileInputRef.current && event.dataTransfer.files) {
+        fileInputRef.current.files = event.dataTransfer.files;
       }
+    },
+    [isLoading, handleFileSelection]
+  );
+
+  const handleDueDateSelect = (date: Date | undefined) => {
+    setStatus(null); 
+    if (date && isBefore(date, startOfDay(new Date()))) {
+      setStatus({ type: 'error', message: 'Due date cannot be in the past.' });
+      setDueDate(date); 
+    } else {
+      setDueDate(date);
     }
-  }, []);
+  };
 
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setStatus({ type: 'error', message: 'Please select a file first.' });
+    if (!selectedFile && !dueDate) {
+      setStatus({ type: 'error', message: 'Please select a file and a due date.' });
       return;
     }
-    if (!dueDate) {
-      setStatus({ type: 'error', message: 'Please select a due date.' });
+
+    if (dueDate && isBefore(dueDate, startOfDay(new Date()))) {
+      setStatus({ type: 'error', message: 'Due date cannot be in the past.' });
       return;
     }
 
     setIsLoading(true);
     setStatus(null);
 
-    const formatedDate = format(dueDate, 'dd/MM/yyyy')
-
     try {
-      const formData = {
-        id: enquiryId,
-        type: documentType,
-        document: selectedFile,
-        dueBy: formatedDate
+      const formDataPayload = new FormData();
+      formDataPayload.append('id', enquiryId);
+      formDataPayload.append('type', documentType);
+      if (selectedFile) {
+        formDataPayload.append('document', selectedFile);
       }
-      const response = await uploadDocumentAPI(formData)
-      console.log(response)
-      setSelectedFile(null);
-      setDueDate(undefined);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+
+      if (dueDate) {
+        const formatedDate = format(dueDate, 'dd/MM/yyyy');
+        formDataPayload.append('dueBy', formatedDate);
       }
+
+      const response = await uploadDocumentAPI(formDataPayload);
 
       if (onUploadSuccess) {
         onUploadSuccess(response);
       }
-
+      setStatus({
+        type: 'success',
+        message: `${getReadableDocumentName(documentType)} uploaded successfully!`
+      });
+      if (onUploadSuccess) onUploadSuccess(response);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
-      setStatus({ type: 'error', message: errorMessage });
-      if (onUploadError) {
-        onUploadError(error instanceof Error ? error : new Error(errorMessage));
+      console.error('Upload failed:', error);
+      let errorMessage = 'File upload failed. Please try again.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (
+        error &&
+        typeof error === 'object' &&
+        'message' in error &&
+        typeof error.message === 'string'
+      ) {
+        errorMessage = error.message;
+      } else if (
+        error &&
+        typeof error === 'object' &&
+        'ERROR' in error &&
+        typeof error.ERROR === 'string'
+      ) {
+        errorMessage = error.ERROR;
       }
+      setStatus({ type: 'error', message: errorMessage });
+      if (onUploadError) onUploadError(error);
     } finally {
       setIsLoading(false);
     }
+  };
 
-  }
+  const canUpload =
+    !isLoading && (!!selectedFile || (!!dueDate && !isBefore(dueDate, startOfDay(new Date()))));
+
+  const displayExistingDocument = existingDocument && !selectedFile;
+  const existingFilename = existingDocument ? getFilenameFromUrl(existingDocument.fileUrl) : '';
+  const existingDueDateFormatted = existingDocument?.dueBy
+    ? format(parseISO(existingDocument.dueBy), 'MMM dd, yyyy')
+    : 'No due date set';
+
   return (
-    <div className="flex items-end gap-4 py-2">
-      <div className="w-[150px] flex-shrink-0"> i
-        {/*Need Mapper to display type of the */}
-         <Label className="text-sm font-medium text-gray-700">{documentType}</Label>
-      </div>
-      <div>
-        <Label htmlFor="file-upload-input-trigger" className="text-sm font-medium">
-          Select Document
+    <div className="w-full py-3 border-b border-gray-200 last:border-b-0">
+      <div className="flex justify-between items-start mb-2">
+        <Label className="text-sm font-semibold text-gray-800 block">
+          {getReadableDocumentName(documentType)}
         </Label>
-        <div className="flex items-center space-x-2 mt-1">
-          <Label
-            htmlFor="file-upload-input"
-            className={cn(
-              "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 cursor-pointer",
-              isLoading && "opacity-50 cursor-not-allowed"
+        {displayExistingDocument && (
+          <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded border border-blue-200 flex items-center gap-2 max-w-[60%] sm:max-w-[40%]">
+            <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />
+            <div className="overflow-hidden">
+              <a
+                href={existingDocument.fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-blue-700 hover:underline truncate block"
+                title={`View ${existingFilename}`}
+              >
+                {existingFilename}
+              </a>
+              <span className="text-gray-500 block">Due: {existingDueDateFormatted}</span>
+            </div>
+            <a
+              href={existingDocument.fileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Open document in new tab"
+              className="ml-1 text-blue-500 hover:text-blue-700 flex-shrink-0"
+            >
+              <LinkIcon className="h-4 w-4" />
+            </a>
+          </div>
+        )}
+      </div>
+      <div className="flex flex-col sm:flex-row sm:items-end gap-3 w-full">
+        <div className="flex-grow">
+          <div className={cn(isLoading ? 'hidden' : 'flex')}>
+            {!selectedFile && (
+              <Label
+                htmlFor={uniqueInputId}
+                className={cn(
+                  'flex flex-col items-center justify-center w-full sm:w-64 md:w-80 lg:w-96', // Responsive width
+                  'border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200 ease-in-out',
+                  'relative h-20', // Fixed height
+                  isDragging
+                    ? 'border-indigo-500 bg-indigo-50'
+                    : 'border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-gray-400'
+                )}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
+                <div className="flex gap-3 items-center justify-center text-center pointer-events-none px-3 py-2">
+                  <UploadCloud
+                    className={cn('w-6 h-6', isDragging ? 'text-indigo-500' : 'text-gray-400')}
+                    aria-hidden="true"
+                  />
+                  <div className="text-left">
+                    <p className="text-xs text-gray-600">
+                      <span className="font-medium">Drop file or</span>{' '}
+                      <span className="font-semibold text-indigo-600 hover:underline">Choose</span>
+                      {existingDocument && <span className="font-medium"> to add/replace</span>}
+                    </p>
+                    <p className="text-[11px] text-gray-500">PDF, JPG, PNG supported</p>
+                  </div>
+                </div>
+                <Input
+                  id={uniqueInputId}
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  className="sr-only"
+                  disabled={isLoading}
+                  accept={acceptedFileTypes}
+                />
+              </Label>
             )}
-            id="file-upload-input-trigger"
-          >
-            <FileText className="mr-2 h-4 w-4" />
-            {selectedFile ? 'Change File' : 'Choose File'}
-          </Label>
-          <Input
-            id="file-upload-input"
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            className="sr-only"
-            disabled={isLoading}
-          />
-          {selectedFile && !isLoading && (
-            <span className="text-sm text-muted-foreground truncate max-w-[200px]" title={selectedFile.name}>
-              {selectedFile.name}
-            </span>
+            {selectedFile && (
+              <div
+                className={cn(
+                  'flex items-center justify-between gap-3 p-2 h-20', 
+                  'border border-purple-200 bg-purple-50 rounded-lg',
+                  'w-full sm:w-64 md:w-80 lg:w-96'
+                )}
+              >
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <FileText className="h-5 w-5 text-purple-600 flex-shrink-0" />
+                  <div className="flex flex-col overflow-hidden">
+                    <span
+                      className="text-sm font-medium text-purple-800 truncate"
+                      title={selectedFile.name}
+                    >
+                      {selectedFile.name}
+                    </span>
+                    <span className="text-xs text-purple-600">
+                      {formatFileSize(selectedFile.size)}
+                    </span>
+                  </div>
+                </div>
+                {/* Remove Button */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 text-purple-500 hover:bg-purple-100 hover:text-purple-700 flex-shrink-0 rounded-full"
+                  onClick={handleRemoveFile}
+                  aria-label="Remove file"
+                  disabled={isLoading}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
+          {isLoading && (
+            <div className="flex items-center justify-center h-20 w-full sm:w-64 md:w-80 lg:w-96 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 text-sm">
+              Processing...
+            </div>
           )}
         </div>
-      </div>
 
-       {/* Due Date Area */}
-      <div className="flex-shrink-0">
-        <Label htmlFor={`due-date-picker-${enquiryId}-${documentType}`} className="text-sm font-medium text-gray-700">
-          Due by
-        </Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              id={`due-date-picker-${enquiryId}-${documentType}`} // Unique ID
-              variant={"outline"}
-              className={cn(
-                // Adjust width as needed, removed w-full
-                "w-[140px] justify-start text-left font-normal mt-1 h-10", // Set fixed height like others
-                !dueDate && "text-muted-foreground"
-              )}
-              disabled={isLoading}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {/* Display format MM/dd/yy */}
-              {dueDate ? format(dueDate, "MM/dd/yy") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={dueDate}
-              onSelect={(date) => {
-                setDueDate(date || undefined);
-                // setStatus(null); // No longer needed
-              }}
-              initialFocus
-              disabled={isLoading}
-            />
-          </PopoverContent>
-        </Popover>
+        {/* Due Date Area */}
+        <div className="flex-shrink-0 w-full sm:w-auto">
+          <Label
+            htmlFor={`due-date-picker-${uniqueInputId}`}
+            className="text-xs font-medium text-gray-600 mb-1 block sm:hidden"
+          >
+            Due by (Optional)
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                id={`due-date-picker-${uniqueInputId}`}
+                variant={'outline'}
+                className={cn(
+                  'w-full sm:w-[140px] justify-start text-left font-normal h-10',
+                  !dueDate && 'text-muted-foreground',
+                  // Add red border if date is selected but invalid
+                  dueDate &&
+                    isBefore(dueDate, startOfDay(new Date())) &&
+                    'border-red-500 focus-visible:ring-red-500'
+                )}
+                disabled={isLoading}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {dueDate ? (
+                  format(dueDate, 'MM/dd/yy')
+                ) : (
+                  <span className="text-xs">Pick Due Date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={dueDate}
+                onSelect={handleDueDateSelect} // Use the new handler
+                initialFocus
+                disabled={isLoading || ((date) => isBefore(date, startOfDay(new Date())))} // Disable past dates
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {/* Upload Button */}
+        <div className="flex-shrink-0 w-full sm:w-auto">
+          {/* Spacer for alignment on small screens */}
+          <Label className="text-sm font-medium text-transparent select-none mb-1 block sm:hidden">
+            .
+          </Label>
+          <Button
+            onClick={handleUpload}
+            disabled={!canUpload} // Use the calculated canUpload state
+            className="w-full sm:w-auto h-10"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...
+              </>
+            ) : (
+              <>
+                <Upload className="mr-2 h-4 w-4" /> Update {/* Changed text to Update */}
+              </>
+            )}
+          </Button>
+        </div>
       </div>
+      {/* Status Messages - Placed below the controls */}
       {status && (
-        <div className={`flex items-center text-sm p-3 rounded-md ${status.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+        <div
+          className={cn(
+            'mt-2 flex items-center text-xs px-1', // Reduced font size
+            status.type === 'error' ? 'text-red-600' : 'text-green-600'
+          )}
+        >
           {status.type === 'success' ? (
-            <CheckCircle2 className="h-5 w-5 mr-2 flex-shrink-0" />
+            <CheckCircle2 className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
           ) : (
-            <XCircle className="h-5 w-5 mr-2 flex-shrink-0" />
+            <XCircle className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
           )}
           <span>{status.message}</span>
         </div>
       )}
-
-      <Button
-        onClick={handleUpload}
-        disabled={!selectedFile || !dueDate || isLoading} // <-- Disable if no file OR no date OR loading
-        className="w-full" // Make button full width for consistency
-      >
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Uploading...
-          </>
-        ) : (
-          <>
-            <Upload className="mr-2 h-4 w-4" />
-            Upload File
-          </>
-        )}
-      </Button>
-
     </div>
-  )
-}
+  );
+};
