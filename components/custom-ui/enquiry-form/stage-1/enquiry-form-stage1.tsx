@@ -108,7 +108,8 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
   useEffect(() => {
     if (data) {
-      form.reset(data);
+      const sanitizedData = removeNullValues(data); 
+      form.reset(sanitizedData);
     }
   }, [data, form]);
 

@@ -1,13 +1,25 @@
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { apiRequest } from '@/lib/apiClient';
+import { Admission } from '@/types/admissions';
 
 export const getEnquiry = async (enquiry_id: string) => {
-    return apiRequest(
+    if (!enquiry_id) {
+        throw new Error('Enquiry ID is required');
+    }
+
+    const response = await apiRequest<Admission>(
         API_METHODS.GET,
         API_ENDPOINTS.getEnquiry(enquiry_id)
     );
-}
+
+    if (!response) {
+        throw new Error('Failed to fetch enquiry data');
+    }
+
+    return response;
+};
+
 
 export const createEnquiry = async (data: any) => {
     return apiRequest(

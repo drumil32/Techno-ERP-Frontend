@@ -30,10 +30,10 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft, form, 
   }
 
   return (
-    <div className="fixed w-full bottom-0 bg-white shadow-md p-4 border-t flex justify-between items-center">
+    <div className="z-10 bottom-0 left-0 flex items-center justify-between space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
       <Dialog>
         <DialogTrigger asChild>
-          <Button type="button">
+          <Button type="button" variant='outline'>
             <span className="font-inter font-semibold text-[12px]">Save Draft</span>
           </Button>
         </DialogTrigger>

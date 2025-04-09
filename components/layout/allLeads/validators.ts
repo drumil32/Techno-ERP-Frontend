@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Course, Gender, LeadType, Locations, UserRoles } from '@/types/enum';
+import { addressSchema } from '@/common/constants/schemas';
 
 export const objectIdSchema = z.string();
 
@@ -16,16 +17,6 @@ export const contactNumberSchema = z
 export const emailSchema = z
     .string()
     .email();
-
-export const addressSchema = z.object({
-    landmark: z.string().min(5, 'Permanent address must be at least 5 characters'),
-    district: z.string(),
-    pincode: z
-        .string()
-        .regex(/^[1-9][0-9]{5}$/, 'Pincode must be a 6-digit number starting with a non-zero digit'),
-    state: z.string(),
-    country: z.string()
-});
 
 export type IAddressSchema = z.infer<typeof addressSchema>;
 
