@@ -48,4 +48,7 @@ export const API_ENDPOINTS = {
   createStudentFeesDraft: `${API_DOMAIN}/admission/enquiry/create-draft-step-2`,
   updateStudentFeesDraft: `${API_DOMAIN}/admission/enquiry/update-draft-step-2`,
 
+  // Document Upload
+  uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,
+
 };

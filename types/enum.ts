@@ -323,3 +323,4 @@ export const CourseNameMapper: Record<Course, string> = {
   [Course.MVAP]: 'MVA (Paint)',
   [Course.MSCC]: 'M.SC (Chem)'
 };
+
