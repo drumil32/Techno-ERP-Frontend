@@ -1,42 +1,57 @@
-import { FeeType, FeeStatus } from "./enum";
+import { FeeType, FeeStatus, Districts, Countries, StatesOfIndia, AdmissionMode, Gender, AreaType, Category, Course, AdmissionReference, EducationLevel } from "./enum";
+
+interface EntranceExamDetails{
+  nameOfExamination?: string;
+  rollNumber?: string;
+  rank?: string;
+  qualified?: boolean;
+}
+
+export interface PreviousCollegeData {
+  _id: string;
+  collegeName?: string;
+  district?: string;
+  boardUniversity?: string;
+  passingYear: number;
+  aggregatePercentage: number;
+}
 
 /** Address Type */
 export interface Address {
   _id: string;
-  country: string;
-  district: string;
-  landMark?: string;
+  country: Countries;
+  district: Districts;
+  addressLine1: string;
+  addressLine2: string;
   pincode: string;
-  state: string;
+  state: StatesOfIndia;
 }
 
 /** Academic Details */
 export interface AcademicDetail {
   _id: string;
-  educationLevel: string;
+  educationLevel: EducationLevel;
   schoolCollegeName: string;
   universityBoardName: string;
   passingYear: number;
   percentageObtained: number;
-  subjects: string[];
+  subjects?: string[];
+}
+
+interface DocumentBuffer {
+  buffer: Buffer;
+  mimetype: 'image/png' | 'image/jpeg' | 'image/jpg' | 'application/pdf';
+  size: number;
+  originalname: string;
 }
 
 /** Document Details */
 export interface Document {
   _id: string;
   type: string;
-  fileUrl: string;
-  dueBy: string; // Date in ISO string format
-}
-
-/** Other Fees Structure */
-export interface OtherFees {
-  _id: string;
-  type: FeeType;
-  feeAmount: number | undefined;
-  finalFee: number | undefined;
-  feesDepositedTOA: number | undefined;
-  remarks?: string;
+  documentBuffer?: DocumentBuffer;
+  fileUrl?: string;
+  dueBy?: string; // Date in ISO string format
 }
 
 /** Semester-wise Fees */
@@ -51,18 +66,41 @@ export interface StudentFee {
   otherFees: OtherFees[];
   semWiseFees: SemesterFees[];
   feeStatus: FeeStatus;
-  feesClearanceDate: string; // Date in string format (DD/MM/YYYY)
+  feesClearanceDate: string;
+  counsellor: string[];
+  telecaller: string[];
 }
+
+export interface OtherFees {
+  type: FeeType;
+  fee: number;
+  finalFee?: number;
+  feesDepositedTOA?: number;
+}
+
+interface SingleSem {
+  feeAmount: number;
+  finalFee: number;
+}
+
+interface StudentFees {
+  otherFees?: OtherFees[];
+  semWiseFees: SingleSem[];
+  feeStatus?: string;
+  feesClearanceDate: string;
+  counsellor?: string;
+  telecaller?: string;
+  remarks?: string;
+}
+
 
 /** Admission Type */
 export interface Admission {
   _id: string;
-  admissionMode: string;
-  affiliation: string;
-  dateOfEnquiry: string;
+  admissionMode: AdmissionMode;
   studentName: string;
   studentPhoneNumber: string;
-  emailId: string;
+  emailId?: string;
   fatherName: string;
   fatherPhoneNumber: string;
   fatherOccupation: string;
@@ -70,21 +108,30 @@ export interface Admission {
   motherPhoneNumber: string;
   motherOccupation: string;
   dateOfBirth: string;
-  category: string;
-  course: string;
-  reference: string;
-  collegeName: string;
+  category: Category;
+  course: Course;
+  reference: AdmissionReference;
   address: Address;
-  academicDetails: AcademicDetail[];
-  counsellorName: string[];
-  telecallerName: string[];
-  dateOfCounselling: string;
+  academicDetails?: AcademicDetail[];
+  dateOfEnquiry?: string;
+  gender: Gender;
+  previousCollegeData?: PreviousCollegeData;
+  stateOfDomicile?: string;
+  areaType?: AreaType;
+  nationality?: string;
+  entranceExamDetails?: EntranceExamDetails;
+  counsellor: string[];
+  telecaller: string[];
   remarks?: string;
-  gender: string;
   applicationStatus: string;
-  documents: Document[];
-  studentFeeDraft?: string;
   studentFee?: StudentFee;
+  studentFeeDraft?: StudentFee;
+  dateOfAdmission?: string;
+  documents?: Document[];
+  aadharNumber?: string;
+  religion?: string;
+  bloodGroup?: string;
+  admittedBy?: string;
 }
 
 /** Admission Table Row Type */

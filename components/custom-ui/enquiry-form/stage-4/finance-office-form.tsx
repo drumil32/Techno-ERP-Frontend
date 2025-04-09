@@ -1,12 +1,16 @@
 'use client';
-
-import { useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { feesRequestSchema, feesUpdateSchema, frontendFeesDraftValidationSchema, IFeesRequestSchema } from './studentFeesSchema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
-import { getCounsellors, getEnquiry, getTeleCallers } from '../stage-1/enquiry-form-api';
+// React and React Hook Form imports
 import { useEffect, useMemo, useState } from 'react';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+// React Query imports
+import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
+
+// Next.js navigation imports
 import { useParams, useRouter } from 'next/navigation';
+
+// UI components imports
 import {
   Form,
   FormField,
@@ -17,80 +21,70 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { createStudentFees, getFeesByCourseName, getOtherFees, updateEnquiryStatus, updateStudentFees } from './helpers/apirequests';
-import { displayFeeMapper, scheduleFeeMapper } from './helpers/mappers';
-import { format, parse, isValid } from 'date-fns';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  AccordionTrigger
+} from '@/components/ui/accordion';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
 import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
-import { cleanDataForDraft } from './helpers/refine-data';
-import { createStudentFeesDraft, updateStudentFeesDraft } from './student-fees-api';
-import ShowStudentData from './data-show';
-import { FeeType } from '@/types/enum';
 import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
+
+// Utility imports
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { queryClient } from '@/lib/queryClient';
-import { validateCustomFeeLogic } from './helpers/validateFees';
 
-export const calculateDiscountPercentage = (
-  totalFee: number | undefined | null,
-  finalFee: number | undefined | null
-): number => {
-  const numericTotalFee = totalFee ?? 0;
-  const numericFinalFee = finalFee ?? 0;
+// API and data-fetching imports
+import {
+  getCounsellors,
+  getEnquiry,
+  getTeleCallers,
+  updateEnquiryStatus
+} from '../stage-1/enquiry-form-api';
+import {
+  createStudentFees,
+  getFeesByCourseName,
+  getOtherFees,
+  updateStudentFees
+} from '../stage-2/helpers/apirequests';
 
-  if (numericTotalFee <= 0) {
-    return 0;
-  }
+// Schema and validation imports
+import {
+  feesRequestSchema,
+  feesUpdateSchema,
+  IFeesRequestSchema
+} from '../stage-2/studentFeesSchema';
+import { validateCustomFeeLogic } from '../stage-2/helpers/validateFees';
+import { cleanDataForDraft } from '../stage-2/helpers/refine-data';
 
-  const effectiveFinalFee = Math.min(numericFinalFee, numericTotalFee);
+// Helper functions and constants imports
+import {
+  calculateDiscountPercentage,
+  formatCurrency,
+  formatDisplayDate,
+  parseDisplayDate
+} from '../stage-2/student-fees-form';
+import { displayFeeMapper, scheduleFeeMapper } from '../stage-2/helpers/mappers';
+import { FeeType } from '@/types/enum';
+import { API_ROUTES } from '@/common/constants/apiRoutes';
 
-  const discount = 100 - (effectiveFinalFee / numericTotalFee) * 100;
-  const roundedDiscount = Math.round(discount);
+// Component imports
+import ShowStudentData from '../stage-2/data-show';
 
-  return Math.max(0, roundedDiscount);
-};
+const FinanceOfficeForm = () => {
 
-export const parseDisplayDate = (dateString: string | null | undefined): Date | undefined => {
-  if (!dateString) return undefined;
-  const parsed = parse(dateString, 'dd/MM/yyyy', new Date());
-  if (isValid(parsed) && /^\d{2}\/\d{2}\/\d{4}$/.test(dateString)) {
-    return parsed;
-  }
-  return undefined;
-};
-
-export const formatDisplayDate = (date: Date | null | undefined): string | null => {
-  if (date instanceof Date && isValid(date)) {
-    return format(date, 'dd/MM/yyyy');
-  }
-  return null;
-};
-
-export const formatCurrency = (value: number | undefined | null): string => {
-  if (value === undefined || value === null || isNaN(value)) {
-    return '₹0';
-  }
-  return `₹${value.toLocaleString('en-IN')}`;
-}
-
-export const StudentFeesForm = () => {
   const params = useParams();
   const enquiry_id = params.id as string;
   const [isOtpSending, setIsOtpSending] = useState(false);
-  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [dataUpdated, setDataUpdated] = useState(true);
   const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
-  const router = useRouter()
+  const router = useRouter();
 
   // Queries
   const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
@@ -99,13 +93,15 @@ export const StudentFeesForm = () => {
     staleTime: 1000 * 60 * 5
   });
 
-  const { data: enquiryData, error, isLoading: isLoadingEnquiry } = useQuery<any>({
+  const {
+    data: enquiryData,
+    error,
+    isLoading: isLoadingEnquiry
+  } = useQuery<any>({
     queryKey: ['enquireFormData', enquiry_id, dataUpdated],
     queryFn: () => (enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null')),
     enabled: !!enquiry_id
   });
-
-  console.log(enquiryData)
 
   const existingFinalFee = enquiryData?.studentFee;
   const existingFeeDraft = enquiryData?.studentFeeDraft;
@@ -117,20 +113,21 @@ export const StudentFeesForm = () => {
     return 'none';
   }, [existingFinalFee, existingFeeDraft]);
 
-  const draftExists = feeStatus === 'draft';
   const finalFeeExists = feeStatus === 'final';
-
-  const draftId = existingFeeDraft?._id;
   const finalFeeId = existingFinalFee?._id;
-
   const studentEmail = enquiryData?.emailId;
   const studentPhone = enquiryData?.studentPhoneNumber;
-  const courseName = enquiryData?.course
+  const courseName = enquiryData?.course;
 
-  const { data: semWiseFeesData, error: semWiseFeeError, isLoading: isLoadingSemFees } = useQuery<any>({
+  const {
+    data: semWiseFeesData,
+    error: semWiseFeeError,
+    isLoading: isLoadingSemFees
+  } = useQuery<any>({
     queryKey: ['courseFees', courseName],
-    queryFn: () => (courseName ? getFeesByCourseName(courseName) : Promise.reject('Course name not available')),
-    enabled: !!courseName,
+    queryFn: () =>
+      courseName ? getFeesByCourseName(courseName) : Promise.reject('Course name not available'),
+    enabled: !!courseName
   });
 
   const results = useQueries({
@@ -146,8 +143,8 @@ export const StudentFeesForm = () => {
     ]
   });
 
-  const telecallersData = Array.isArray(results[0].data) ? results[0].data : []
-  const counsellorsData = Array.isArray(results[1].data) ? results[1].data : []
+  const telecallersData = Array.isArray(results[0].data) ? results[0].data : [];
+  const counsellorsData = Array.isArray(results[1].data) ? results[1].data : [];
 
   const form = useForm<IFeesRequestSchema>({
     resolver: zodResolver(feesRequestSchema),
@@ -162,12 +159,11 @@ export const StudentFeesForm = () => {
       remarks: '',
       confirmationCheck: false,
       otpTarget: undefined,
-      otpVerificationEmail: null,
+      otpVerificationEmail: null
     }
   });
 
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmationCheck' });
-
   const otherFeesWatched = useWatch({ control: form.control, name: 'otherFees' });
   const semWiseFeesWatched = useWatch({ control: form.control, name: 'semWiseFees' });
 
@@ -192,7 +188,6 @@ export const StudentFeesForm = () => {
     return '';
   }, [selectedOtpTarget, studentEmail, studentPhone]);
 
-
   useEffect(() => {
     if (enquiryData && semWiseFeesData && otherFeesData && !form.formState.isDirty) {
       const feeDataSource = existingFinalFee || existingFeeDraft;
@@ -201,42 +196,45 @@ export const StudentFeesForm = () => {
       let initialSemFees: any[] = [];
       let initialOtherFees: any[] = [];
 
-      const baseSem1Fee = semWiseFeesData.fee?.[0]
+      const baseSem1Fee = semWiseFeesData.fee?.[0];
 
-      const existingSem1FeeDataInOther = feeDataSource?.otherFees?.find((fee: any) => fee.type === FeeType.SEM1FEE);
+      const existingSem1FeeDataInOther = feeDataSource?.otherFees?.find(
+        (fee: any) => fee.type === FeeType.SEM1FEE
+      );
       const existingSem1FeeDataInSemWise = feeDataSource?.semWiseFees?.[0];
-
 
       const sem1FeeObject = {
         type: FeeType.SEM1FEE,
-        finalFee: existingSem1FeeDataInOther?.finalFee ?? existingSem1FeeDataInSemWise?.finalFee ?? baseSem1Fee ?? undefined,
+        finalFee:
+          existingSem1FeeDataInOther?.finalFee ??
+          existingSem1FeeDataInSemWise?.finalFee ??
+          baseSem1Fee ??
+          undefined,
         fee: baseSem1Fee,
-        feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined,
+        feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined
       };
-
 
       let initialCounsellors: string[] = enquiryData.counsellor ?? [];
 
       let initialTelecallers: string[] = enquiryData.telecaller ?? [];
 
-      const initialCollegeRemarks: string = enquiryData?.remarks
+      const initialCollegeRemarks: string = enquiryData?.remarks;
 
       initialOtherFees = Object.values(FeeType)
-        .filter(ft => ft !== FeeType.SEM1FEE)
+        .filter((ft) => ft !== FeeType.SEM1FEE)
         .map((feeType) => {
-          const baseFeeInfo:any = otherFeesData.find((item: any) => item.type === feeType);
+          const baseFeeInfo: any = otherFeesData.find((item: any) => item.type === feeType);
           const existingFee = feeDataSource?.otherFees?.find((fee: any) => fee.type === feeType);
 
           return {
             type: feeType,
             finalFee: existingFee?.finalFee ?? baseFeeInfo?.fee ?? undefined,
-            feesDepositedTOA: existingFee?.feesDepositedTOA ?? undefined,
+            feesDepositedTOA: existingFee?.feesDepositedTOA ?? undefined
           };
         });
 
       initialOtherFees.unshift(sem1FeeObject);
-      otherFeesData.unshift(sem1FeeObject)
-
+      otherFeesData.unshift(sem1FeeObject);
 
       const courseSemFeeStructure = semWiseFeesData.fee || [];
       const existingSemFees = feeDataSource?.semWiseFees || [];
@@ -244,7 +242,7 @@ export const StudentFeesForm = () => {
       initialSemFees = courseSemFeeStructure.map((baseFeeAmount: number, index: number) => {
         const existingData = existingSemFees[index];
         return {
-          finalFee: existingData?.finalFee ?? baseFeeAmount,
+          finalFee: existingData?.finalFee ?? baseFeeAmount
         };
       });
 
@@ -257,7 +255,6 @@ export const StudentFeesForm = () => {
         initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
       }
 
-
       form.reset({
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,
@@ -265,22 +262,12 @@ export const StudentFeesForm = () => {
         feesClearanceDate: initialFeesClearanceDate,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
-        remarks: initialCollegeRemarks,
+        remarks: initialCollegeRemarks
       });
-
-
     } else if (error) {
-      toast.error("Failed to load student data.");
+      toast.error('Failed to load student data.');
     }
-  }, [
-    enquiryData,
-    error,
-    semWiseFeesData,
-    semWiseFeeError,
-    form,
-    enquiry_id,
-    otherFeesData
-  ]);
+  }, [enquiryData, error, semWiseFeesData, semWiseFeeError, form, enquiry_id, otherFeesData]);
 
   const otherFeesTotals = useMemo(() => {
     let totalOriginal = 0;
@@ -291,11 +278,10 @@ export const StudentFeesForm = () => {
       totalOriginal = otherFeesData.reduce((sum: any, fee: any) => sum + (fee.fee ?? 0), 0);
     }
 
-    (otherFeesWatched ?? []).forEach(fee => {
+    (otherFeesWatched ?? []).forEach((fee) => {
       totalFinal += fee?.finalFee ?? 0;
       totalDeposited += fee?.feesDepositedTOA ?? 0;
     });
-
 
     const totalDue = totalFinal - totalDeposited;
 
@@ -319,131 +305,14 @@ export const StudentFeesForm = () => {
       .filter(Boolean);
   }, [telecallersData]);
 
-  const createDraftMutation = useMutation({
-    mutationFn: createStudentFeesDraft,
-    onSuccess: () => {
-      toast.success("Draft saved successfully!");
-      queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-      setDataUpdated((prev) => !prev);
-    },
-    onError: (error) => {
-      const errorMsg = (error as any)?.response?.data?.message || (error as Error)?.message || "Unknown error";
-      toast.error(`Failed to save draft: ${errorMsg}`);
-    },
-    onSettled: () => {
-      setIsSavingDraft(false);
-    }
-  });
-
-  const updateDraftMutation = useMutation({
-    mutationFn: updateStudentFeesDraft,
-    onSuccess: () => {
-      toast.success("Draft updated successfully!");
-      queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-      setDataUpdated((prev) => !prev);
-    },
-    onError: (error) => {
-      const errorMsg = (error as any)?.response?.data?.message || (error as Error)?.message || "Unknown error";
-      toast.error(`Failed to update draft: ${errorMsg}`);
-    },
-    onSettled: () => {
-      setIsSavingDraft(false);
-    }
-  });
-
-
   const createFinalFeeMutation = useMutation({
     mutationFn: createStudentFees,
-    onSuccess: async (data, variables) => {
-      toast.success("Fee record created successfully!");
+    onSuccess: () => {
+      toast.success('Fee record created successfully!');
       queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-      try {
-        if (!enquiry_id) {
-          toast.error("Could not update enquiry status: Missing ID.");
-          return;
-        }
-
-        const statusPayload = {
-          id: enquiry_id,
-          newStatus: "Step_3"
-        };
-
-        const status_update = await updateEnquiryStatus(statusPayload);
-
-        toast.success("Enquiry status updated to Step 3.");
-
-        queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-
-      } catch (statusError) {
-        const errorMsg = (statusError as any)?.response?.data?.message || (statusError as Error)?.message || "Unknown error";
-        toast.error(`Fee record created, but failed to update enquiry status: ${errorMsg}`);
-      }
+      router.push(API_ROUTES.admissions);
     }
-  })
-
-  async function handleSaveDraft() {
-    setIsSavingDraft(true);
-
-
-    const currentValues = form.getValues();
-    const existingDraftId = enquiryData?.studentFeeDraft?._id;
-
-    const isCustomValid = validateCustomFeeLogic(
-      currentValues,
-      otherFeesData, // Pass base data for original fees
-      semWiseFeesData, // Pass base data for original fees
-      form.setError,
-      form.clearErrors
-    );
-
-    if (!isCustomValid) {
-      toast.error("Fee validation failed. Please check highlighted fields (e.g., Final Fee vs Original, Deposit vs Final Fee).");
-      setIsSavingDraft(false);
-      return; // Stop if custom validation fails
-    }
-
-
-    const validationResult = frontendFeesDraftValidationSchema.safeParse(currentValues);
-
-    if (!validationResult.success) {
-      toast.error("Validation failed. Please check the fields.", {
-
-      });
-
-      validationResult.error.errors.forEach(err => {
-        if (err.path.length > 0) {
-          const fieldName = err.path.join('.') as keyof IFeesRequestSchema;
-          form.setError(fieldName, { type: 'manual', message: err.message });
-        }
-      });
-      setIsSavingDraft(false);
-
-      return;
-    }
-
-    const validatedDataForCleaning = validationResult.data;
-
-
-    const cleanedData = cleanDataForDraft(validatedDataForCleaning);
-    let finalPayload: any = {}
-    if (draftExists && draftId) {
-      finalPayload = {
-        id: draftId,
-        enquiryId: enquiry_id,
-        ...cleanedData,
-      };
-      updateDraftMutation.mutateAsync(finalPayload)
-      // updateStudentFeesDraft(finalPayload)
-    } else {
-      finalPayload = {
-        enquiryId: cleanedData.enquiryId || enquiry_id,
-        ...cleanedData,
-      };
-      delete finalPayload.id;
-      createDraftMutation.mutateAsync(finalPayload)
-      // createStudentFeesDraft(finalPayload)
-    }
-  }
+  });
 
   async function onSubmit() {
     setIsSubmittingFinal(true);
@@ -451,31 +320,28 @@ export const StudentFeesForm = () => {
 
     const isCustomValid = validateCustomFeeLogic(
       values,
-      otherFeesData, // Pass base data for original fees
-      semWiseFeesData, // Pass base data for original fees
+      otherFeesData, 
+      semWiseFeesData, 
       form.setError,
       form.clearErrors
     );
 
     if (!isCustomValid) {
-      toast.error("Fee validation failed. Please check highlighted fields (e.g., Final Fee vs Original, Deposit vs Final Fee).");
+      toast.error('Fee validation failed. Please check highlighted fields');
       setIsSubmittingFinal(false);
-      return; // Stop if custom validation fails
+      return; 
     }
 
     const isUpdate = finalFeeExists;
     const recordId = finalFeeId;
 
-
     if (isUpdate && recordId) {
       const validationResult = feesRequestSchema.safeParse(values);
 
       if (!validationResult.success) {
-        toast.error("Validation failed. Please check the fields.", {
-        });
+        toast.error('Validation failed. Please check the fields.', {});
 
-
-        validationResult.error.errors.forEach(err => {
+        validationResult.error.errors.forEach((err) => {
           if (err.path.length > 0) {
             const fieldName = err.path.join('.') as keyof IFeesRequestSchema;
             form.setError(fieldName, { type: 'manual', message: err.message });
@@ -491,21 +357,16 @@ export const StudentFeesForm = () => {
       const finalPayLoad: any = {
         id: recordId,
         ...cleanedData
-      }
+      };
 
-      updateStudentFees(finalPayLoad)
-
+      updateStudentFees(finalPayLoad);
     } else {
-
       const validationResult = feesUpdateSchema.safeParse(values);
 
-
       if (!validationResult.success) {
-        toast.error("Validation failed. Please check the fields.", {
+        toast.error('Validation failed. Please check the fields.', {});
 
-        });
-
-        validationResult.error.errors.forEach(err => {
+        validationResult.error.errors.forEach((err) => {
           if (err.path.length > 0) {
             const fieldName = err.path.join('.') as keyof IFeesRequestSchema;
             form.setError(fieldName, { type: 'manual', message: err.message });
@@ -520,31 +381,25 @@ export const StudentFeesForm = () => {
       const finalPayLoad: any = {
         enquiryId: enquiry_id,
         ...cleanedData
-      }
+      };
 
       await createFinalFeeMutation.mutateAsync(finalPayLoad);
 
-
-      setDataUpdated((prev) => !prev)
-
+      setDataUpdated((prev) => !prev);
     }
-
-    router.push(`/c/admissions/admission-form/${enquiry_id}/step_3`)
-
   }
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
-    return <div className="flex justify-center items-center h-full">Loading fee enquiryData...</div>;
+    return (
+      <div className="flex justify-center items-center h-full">Loading fee enquiryData...</div>
+    );
   }
 
   return (
     <Form {...form}>
       <form
-        // onSubmit={form.handleSubmit(onSubmit)}
         className="pt-8 mr-[25px] space-y-8 flex flex-col w-full overflow-x-hidden relative"
       >
-
-
         <ShowStudentData data={enquiryData} />
 
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="other-fees">
@@ -554,7 +409,7 @@ export const StudentFeesForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className='w-2/3'>
+              <div className="w-2/3">
                 <div className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 px-2 pb-1 font-bold text-[16px]">
                   <div>Fees Details</div>
                   <div className="text-right">Schedule</div>
@@ -572,12 +427,15 @@ export const StudentFeesForm = () => {
                   const finalFee = otherFeesWatched?.[index]?.finalFee;
                   const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
                   const discountValue = calculateDiscountPercentage(totalFee, finalFee);
-                  const discountDisplay = typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
+                  const discountDisplay =
+                    typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
                   const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
 
-
                   return (
-                    <div key={field.id} className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-8 gap-y-8 items-start px-2 py-1 my-4">
+                    <div
+                      key={field.id}
+                      className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-8 gap-y-8 items-start px-2 py-1 my-4"
+                    >
                       <div className="pt-2 text-sm">{displayFeeMapper(feeType)}</div>
                       <div className="pt-2 text-sm text-right">{scheduleFeeMapper(feeType)}</div>
                       <div className="pt-2 text-sm text-right">{formatCurrency(totalFee)}</div>
@@ -601,7 +459,7 @@ export const StudentFeesForm = () => {
                                 value={formField.value ?? ''}
                               />
                             </FormControl>
-                            <div className='h-3'>
+                            <div className="h-3">
                               <FormMessage className="text-xs mt-0" /> {/* Smaller message */}
                             </div>
                           </FormItem>
@@ -609,9 +467,7 @@ export const StudentFeesForm = () => {
                       />
 
                       <div className="flex items-center text-sm h-11 border border-input rounded-md px-2">
-                        <p className='ml-auto'>
-                          {discountDisplay}
-                        </p>
+                        <p className="ml-auto">{discountDisplay}</p>
                       </div>
 
                       <FormField
@@ -633,7 +489,7 @@ export const StudentFeesForm = () => {
                                 value={formField.value ?? ''}
                               />
                             </FormControl>
-                            <div className='h-3'>
+                            <div className="h-3">
                               <FormMessage className="text-xs mt-0" /> {/* Smaller message */}
                             </div>
                           </FormItem>
@@ -650,17 +506,28 @@ export const StudentFeesForm = () => {
                 <div className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mt-2 px-2 py-2 border-t font-semibold">
                   <div className="text-sm">Total Fees</div>
                   <div>{/* Empty cell for Schedule */}</div>
-                  <div className="text-sm text-right">{formatCurrency(otherFeesTotals.totalOriginal)}</div>
-                  <div className="text-sm text-right pr-2">{formatCurrency(otherFeesTotals.totalFinal)}</div>
+                  <div className="text-sm text-right">
+                    {formatCurrency(otherFeesTotals.totalOriginal)}
+                  </div>
+                  <div className="text-sm text-right pr-2">
+                    {formatCurrency(otherFeesTotals.totalFinal)}
+                  </div>
                   <div>{/* Empty cell for Discount */}</div>
-                  <div className="text-sm text-right pr-2">{formatCurrency(otherFeesTotals.totalDeposited)}</div>
-                  <div className="text-sm text-right pr-2">{formatCurrency(otherFeesTotals.totalDue)}</div>
+                  <div className="text-sm text-right pr-2">
+                    {formatCurrency(otherFeesTotals.totalDeposited)}
+                  </div>
+                  <div className="text-sm text-right pr-2">
+                    {formatCurrency(otherFeesTotals.totalDue)}
+                  </div>
                 </div>
 
                 <div className="mt-4 px-2 text-xs text-gray-600 space-y-1">
                   <p>Book Bank - *50% adjustable at the end of final semester</p>
                   <p>Book Bank - *Applicable only in BBA, MBA, BAJMC, MAJMC & BCom (Hons)</p>
-                  <p>Exam Fees - To be given at the time of exact form submission as per LU/AKTU Norms</p>
+                  <p>
+                    Exam Fees - To be given at the time of exact form submission as per LU/AKTU
+                    Norms
+                  </p>
                 </div>
 
                 <div className="mt-6 px-2">
@@ -674,10 +541,10 @@ export const StudentFeesForm = () => {
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
-                                variant={"outline"}
+                                variant={'outline'}
                                 className={cn(
-                                  "w-full pl-3 text-left font-normal h-9 text-sm", // Adjusted height
-                                  !field.value && "text-muted-foreground"
+                                  'w-full pl-3 text-left font-normal h-9 text-sm', // Adjusted height
+                                  !field.value && 'text-muted-foreground'
                                 )}
                               >
                                 {/* Display the string value directly */}
@@ -704,15 +571,15 @@ export const StudentFeesForm = () => {
                           </PopoverContent>
                         </Popover>
                         {/* Ensure FormMessage is displayed */}
-                        <div className='h-5 mt-1'> {/* Allocate space for message */}
+                        <div className="h-5 mt-1">
+                          {' '}
+                          {/* Allocate space for message */}
                           <FormMessage className="text-xs" />
                         </div>
                       </FormItem>
                     )}
                   />
                 </div>
-
-
               </div>
             </AccordionContent>
           </AccordionItem>
@@ -725,24 +592,32 @@ export const StudentFeesForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className='w-2/3'>
+              <div className="w-2/3">
                 <div className="space-y-4">
                   <div className="grid grid-cols-[1fr_0.5fr_1fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 px-2 pb-1 border-b">
                     <div className="font-medium text-sm text-gray-600">Semester</div>
                     <div className="font-medium text-sm text-gray-600 text-right">Fees</div>
                     <div className="font-medium text-sm text-gray-600 text-center">Final Fees</div>
-                    <div className="font-medium text-sm text-gray-600 text-center">Applicable Discount</div>
+                    <div className="font-medium text-sm text-gray-600 text-center">
+                      Applicable Discount
+                    </div>
                   </div>
 
                   {semFields.map((field, index) => {
                     const originalFeeAmount = semWiseFeesData?.fee?.[index];
                     const finalFee = semWiseFeesWatched?.[index]?.finalFee;
                     const discountValue = calculateDiscountPercentage(originalFeeAmount, finalFee);
-                    const discountDisplay = typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
+                    const discountDisplay =
+                      typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
                     return (
-                      <div key={field.id} className="grid grid-cols-[1fr_0.5fr_1fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 items-start px-2 py-1">
+                      <div
+                        key={field.id}
+                        className="grid grid-cols-[1fr_0.5fr_1fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 items-start px-2 py-1"
+                      >
                         <div className="pt-2 text-sm">Semester {index + 1}</div>
-                        <div className="pt-2 text-sm text-right">{formatCurrency(originalFeeAmount)}</div>
+                        <div className="pt-2 text-sm text-right">
+                          {formatCurrency(originalFeeAmount)}
+                        </div>
 
                         <FormField
                           control={form.control}
@@ -756,8 +631,12 @@ export const StudentFeesForm = () => {
                                   min="0"
                                   placeholder="Enter fees"
                                   {...formField} // Use formField here
-                                  onChange={(e) => formField.onChange(e.target.value === "" ? undefined : Number(e.target.value))}
-                                  value={formField.value ?? ""}
+                                  onChange={(e) =>
+                                    formField.onChange(
+                                      e.target.value === '' ? undefined : Number(e.target.value)
+                                    )
+                                  }
+                                  value={formField.value ?? ''}
                                 />
                               </FormControl>
                               <FormMessage className="text-xs mt-1" />
@@ -766,12 +645,10 @@ export const StudentFeesForm = () => {
                         />
 
                         <div className="flex items-center text-sm h-11 border border-input rounded-md px-2">
-                          <p className='ml-auto'>
-                            {discountDisplay}
-                          </p>
+                          <p className="ml-auto">{discountDisplay}</p>
                         </div>
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -779,7 +656,12 @@ export const StudentFeesForm = () => {
           </AccordionItem>
         </Accordion>
 
-        <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="college-details">
+        <Accordion
+          type="single"
+          collapsible
+          className="w-full space-y-4"
+          defaultValue="college-details"
+        >
           <AccordionItem value="college-details" className="border-b-0">
             <AccordionTrigger className="w-full items-center">
               <h3 className="font-inter text-[16px] font-semibold"> To be filled by College</h3>
@@ -787,7 +669,9 @@ export const StudentFeesForm = () => {
             </AccordionTrigger>
 
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-x-8 gap-y-4"> {/* Added gap-y-4 for vertical spacing */}
+              <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-x-8 gap-y-4">
+                {' '}
+                {/* Added gap-y-4 for vertical spacing */}
                 <FormField
                   control={form.control}
                   name="counsellor"
@@ -806,13 +690,12 @@ export const StudentFeesForm = () => {
                           isLoading={results[1].isLoading}
                         />
                       </FormControl>
-                      <div className='h-5'>
+                      <div className="h-5">
                         <FormMessage className="text-xs" />
                       </div>
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="telecaller"
@@ -831,13 +714,12 @@ export const StudentFeesForm = () => {
                           isLoading={results[0].isLoading}
                         />
                       </FormControl>
-                      <div className='h-5'>
+                      <div className="h-5">
                         <FormMessage className="text-xs" />
                       </div>
                     </FormItem>
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="remarks"
@@ -854,7 +736,7 @@ export const StudentFeesForm = () => {
                           value={field.value ?? ''}
                         />
                       </FormControl>
-                      <div className='h-5'>
+                      <div className="h-5">
                         <FormMessage className="text-xs" />
                       </div>
                     </FormItem>
@@ -865,7 +747,12 @@ export const StudentFeesForm = () => {
           </AccordionItem>
         </Accordion>
 
-        <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="college-info">
+        <Accordion
+          type="single"
+          collapsible
+          className="w-full space-y-4"
+          defaultValue="college-info"
+        >
           <AccordionItem value="confirmation" className="border-b-0">
             <AccordionTrigger className="w-full items-center">
               <h3 className="font-inter text-[16px] font-semibold"> Confirmation</h3>
@@ -877,7 +764,9 @@ export const StudentFeesForm = () => {
                 name="otpTarget"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium block">Select Contact for OTP Verification</FormLabel>
+                    <FormLabel className="text-sm font-medium block">
+                      Select Contact for OTP Verification
+                    </FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -888,7 +777,10 @@ export const StudentFeesForm = () => {
                           <FormControl>
                             <RadioGroupItem value="email" id="otp-email" disabled={!studentEmail} />
                           </FormControl>
-                          <FormLabel htmlFor="otp-email" className={`font-normal text-sm cursor-pointer ${!studentEmail ? 'text-gray-400 cursor-not-allowed' : ''}`}>
+                          <FormLabel
+                            htmlFor="otp-email"
+                            className={`font-normal text-sm cursor-pointer ${!studentEmail ? 'text-gray-400 cursor-not-allowed' : ''}`}
+                          >
                             Email: {studentEmail || '(Not Available)'}
                           </FormLabel>
                         </FormItem>
@@ -896,7 +788,10 @@ export const StudentFeesForm = () => {
                           <FormControl>
                             <RadioGroupItem value="phone" id="otp-phone" disabled={!studentPhone} />
                           </FormControl>
-                          <FormLabel htmlFor="otp-phone" className={`font-normal text-sm cursor-pointer ${!studentPhone ? 'text-gray-400 cursor-not-allowed' : ''}`}>
+                          <FormLabel
+                            htmlFor="otp-phone"
+                            className={`font-normal text-sm cursor-pointer ${!studentPhone ? 'text-gray-400 cursor-not-allowed' : ''}`}
+                          >
                             Phone: {studentPhone || '(Not Available)'}
                           </FormLabel>
                         </FormItem>
@@ -907,9 +802,11 @@ export const StudentFeesForm = () => {
                 )}
               />
 
-              <div className='flex gap-8 items-stretch'>
+              <div className="flex gap-8 items-stretch">
                 <div>
-                  <FormLabel htmlFor="otp-display" className="text-sm mb-3 text-gray-600">Selected Contact</FormLabel>
+                  <FormLabel htmlFor="otp-display" className="text-sm mb-3 text-gray-600">
+                    Selected Contact
+                  </FormLabel>
                   <Input
                     id="otp-display"
                     readOnly
@@ -921,14 +818,13 @@ export const StudentFeesForm = () => {
 
                 <Button
                   type="button"
-                  onClick={() => { }}
+                  onClick={() => {}}
                   disabled={isOtpSending || !selectedOtpTarget}
                   className="h-9 text-sm mt-auto"
                 >
                   {isOtpSending ? 'Sending...' : 'Send OTP'}
                 </Button>
               </div>
-
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -939,14 +835,12 @@ export const StudentFeesForm = () => {
           render={({ field }) => (
             <FormItem className="flex flex-row items-start bg-white rounded-md p-4">
               <FormControl>
-                <Checkbox
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
               <div className="space-y-1 leading-none">
                 <FormLabel className="text-sm font-normal">
-                  All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will be charged extra based on LU/AKTU norms.
+                  All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will
+                  be charged extra based on LU/AKTU norms.
                 </FormLabel>
                 <FormMessage className="text-xs" />
               </div>
@@ -954,22 +848,20 @@ export const StudentFeesForm = () => {
           )}
         />
 
-        <div className="z-10 bottom-0 left-0 flex items-center justify-between space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
+        <div className="z-10 bottom-0 left-0 flex items-center justify-end space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
           <Button
             type="button"
-            variant="outline"
-            onClick={handleSaveDraft}
-            disabled={isSavingDraft || form.formState.isSubmitting}
-          >
-            {isSavingDraft ? 'Saving...' : (draftExists ? 'Update Draft' : 'Save Draft')}
-          </Button>
-          <Button type="button"
             onClick={onSubmit}
-            disabled={(!confirmationChecked || form.formState.isSubmitting) ?? form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Submitting..." : "Submit & Continue"}
+            disabled={
+              (!confirmationChecked || form.formState.isSubmitting) ?? form.formState.isSubmitting
+            }
+          >
+            {form.formState.isSubmitting ? 'Submitting...' : 'Submit & Continue'}
           </Button>
         </div>
       </form>
     </Form>
   );
 };
+
+export default FinanceOfficeForm;
