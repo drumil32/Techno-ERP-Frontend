@@ -38,6 +38,9 @@ export interface EnquiryDocument {
 }
 
 function getFilenameFromUrl(url: string): string {
+  if (!url) {
+    return '';
+  }
   try {
     const parsedUrl = new URL(url);
     const pathname = parsedUrl.pathname;
@@ -170,10 +173,10 @@ export const SingleEnquiryUploadDocument = ({
   );
 
   const handleDueDateSelect = (date: Date | undefined) => {
-    setStatus(null); 
+    setStatus(null);
     if (date && isBefore(date, startOfDay(new Date()))) {
       setStatus({ type: 'error', message: 'Due date cannot be in the past.' });
-      setDueDate(date); 
+      setDueDate(date);
     } else {
       setDueDate(date);
     }
@@ -255,13 +258,33 @@ export const SingleEnquiryUploadDocument = ({
     : 'No due date set';
 
   return (
-    <div className="w-full py-3 border-b border-gray-200 last:border-b-0">
+    <div className="w-2/3 py-3 border-b border-gray-200 last:border-b-0">
       <div className="flex justify-between items-start mb-2">
-        <Label className="text-sm font-semibold text-gray-800 block">
+        <Label className="text-sm font-semibold text-gray-800 flex">
           {getReadableDocumentName(documentType)}
+          {existingDocument && (
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                    fill="#22C55E"
+                  />
+                  <path
+                    d="M8 12L11 15L16 9"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
         </Label>
         {displayExistingDocument && (
-          <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded border border-blue-200 flex items-center gap-2 max-w-[60%] sm:max-w-[40%]">
+          <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded border border-blue-200 flex items-center gap-2">
             <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />
             <div className="overflow-hidden">
               <a
@@ -287,10 +310,9 @@ export const SingleEnquiryUploadDocument = ({
           </div>
         )}
       </div>
-      <div className="flex flex-col sm:flex-row sm:items-end gap-3 w-full">
-        <div className="flex-grow">
-          <div className={cn(isLoading ? 'hidden' : 'flex')}>
-            {!selectedFile && (
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-3 w-full">
+        <div className="">
+          <div className='flex gap-2 mt-2'>
               <Label
                 htmlFor={uniqueInputId}
                 className={cn(
@@ -329,11 +351,10 @@ export const SingleEnquiryUploadDocument = ({
                   accept={acceptedFileTypes}
                 />
               </Label>
-            )}
             {selectedFile && (
               <div
                 className={cn(
-                  'flex items-center justify-between gap-3 p-2 h-20', 
+                  'flex items-center justify-between gap-3 p-2 h-20',
                   'border border-purple-200 bg-purple-50 rounded-lg',
                   'w-full sm:w-64 md:w-80 lg:w-96'
                 )}
@@ -373,77 +394,80 @@ export const SingleEnquiryUploadDocument = ({
           )}
         </div>
 
-        {/* Due Date Area */}
-        <div className="flex-shrink-0 w-full sm:w-auto">
-          <Label
-            htmlFor={`due-date-picker-${uniqueInputId}`}
-            className="text-xs font-medium text-gray-600 mb-1 block sm:hidden"
-          >
-            Due by (Optional)
-          </Label>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                id={`due-date-picker-${uniqueInputId}`}
-                variant={'outline'}
-                className={cn(
-                  'w-full sm:w-[140px] justify-start text-left font-normal h-10',
-                  !dueDate && 'text-muted-foreground',
-                  // Add red border if date is selected but invalid
-                  dueDate &&
-                    isBefore(dueDate, startOfDay(new Date())) &&
-                    'border-red-500 focus-visible:ring-red-500'
-                )}
-                disabled={isLoading}
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {dueDate ? (
-                  format(dueDate, 'MM/dd/yy')
-                ) : (
-                  <span className="text-xs">Pick Due Date</span>
-                )}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={dueDate}
-                onSelect={handleDueDateSelect} // Use the new handler
-                initialFocus
-                disabled={isLoading || ((date) => isBefore(date, startOfDay(new Date())))} // Disable past dates
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
+        <div className='flex gap-4'>
+          {/* Due Date Area */}
+          <div className="flex-shrink-0 w-full sm:w-auto">
+            <Label
+              htmlFor={`due-date-picker-${uniqueInputId}`}
+              className="text-xs font-medium text-gray-600 mb-1 block "
+            >
+              Due by 
+            </Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id={`due-date-picker-${uniqueInputId}`}
+                  variant={'outline'}
+                  className={cn(
+                    'w-full sm:w-[197px] justify-start text-left font-normal h-10 rounded-[5px]',
+                    !dueDate && 'text-muted-foreground',
+                    // Add red border if date is selected but invalid
+                    dueDate &&
+                      isBefore(dueDate, startOfDay(new Date())) &&
+                      'border-red-500 focus-visible:ring-red-500'
+                  )}
+                  disabled={isLoading}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dueDate ? (
+                    format(dueDate, 'MM/dd/yy')
+                  ) : (
+                    <span className="text-xs">Pick Due Date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={dueDate}
+                  onSelect={handleDueDateSelect} // Use the new handler
+                  initialFocus
+                  disabled={isLoading || ((date) => isBefore(date, startOfDay(new Date())))} // Disable past dates
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
 
-        {/* Upload Button */}
-        <div className="flex-shrink-0 w-full sm:w-auto">
-          {/* Spacer for alignment on small screens */}
-          <Label className="text-sm font-medium text-transparent select-none mb-1 block sm:hidden">
-            .
-          </Label>
-          <Button
-            onClick={handleUpload}
-            disabled={!canUpload} // Use the calculated canUpload state
-            className="w-full sm:w-auto h-10"
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...
-              </>
-            ) : (
-              <>
-                <Upload className="mr-2 h-4 w-4" /> Update {/* Changed text to Update */}
-              </>
-            )}
-          </Button>
+          {/* Upload Button */}
+          <div className="flex-shrink-0 w-full sm:w-auto">
+            {/* Spacer for alignment on small screens */}
+            <Label className="text-xs font-medium text-transparent select-none mb-1 block">
+              .
+            </Label>
+            <Button
+            variant={'outline'}
+              onClick={handleUpload}
+              disabled={!canUpload} // Use the calculated canUpload state
+              className="w-full sm:w-auto h-10"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...
+                </>
+              ) : (
+                <>
+                  <Upload className="mr-2 h-4 w-4" /> Update {/* Changed text to Update */}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
       {/* Status Messages - Placed below the controls */}
       {status && (
         <div
           className={cn(
-            'mt-2 flex items-center text-xs px-1', // Reduced font size
+            'mt-2 flex items-center text-xs px-1',
             status.type === 'error' ? 'text-red-600' : 'text-green-600'
           )}
         >

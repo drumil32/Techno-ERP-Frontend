@@ -23,6 +23,8 @@ import ConfirmationSection from "./confirmation-section";
 import ShowStudentData from "../stage-2/data-show";
 import { Admission } from "@/types/admissions";
 import MandatoryDocuments from "./documents-section/mandatory-documents";
+import OtherDocuments from "./documents-section/other-documentation";
+import AllDocuments from "./documents-section/all-documents";
 
 const EnquiryFormStage3 = () => {
 
@@ -117,7 +119,7 @@ const EnquiryFormStage3 = () => {
           <EntranceExamDetailsSection form={form} commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass} />
 
-          <MandatoryDocuments />
+          <AllDocuments/>
 
           <ConfirmationCheckBoxStage3 form={form} />
           <ConfirmationSection form={form} />
