@@ -73,7 +73,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       Admission Mode
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue
                             className="text-[#9D9D9D]"
@@ -150,6 +150,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <Input
                         type="text"
                         {...field}
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter the student name"
                       />
@@ -172,6 +173,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <Input
                         type="tel"
                         {...field}
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter the student phone number"
                       />
@@ -194,6 +196,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <Input
                         type="text"
                         {...field}
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter the email ID"
                       />
@@ -216,6 +219,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <Input
                         type="text"
                         {...field}
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter father's name"
                       />
@@ -238,6 +242,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <Input
                         type="tel"
                         {...field}
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter father's phone number"
                       />
@@ -260,6 +265,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <Input
                         type="text"
                         {...field}
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter father's occupation"
                       />
@@ -282,6 +288,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <Input
                         type="text"
                         {...field}
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter mother's name"
                       />
@@ -304,6 +311,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <Input
                         type="tel"
                         {...field}
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter mother's phone number"
                       />
@@ -326,6 +334,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <Input
                         type="text"
                         {...field}
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter mother's occupation"
                       />
@@ -389,7 +398,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       Category
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Category" />
                         </SelectTrigger>
@@ -417,7 +426,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       Gender
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Gender" />
                         </SelectTrigger>
@@ -445,7 +454,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       Course
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Course" />
                         </SelectTrigger>
@@ -473,7 +482,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       Reference
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Reference" />
                         </SelectTrigger>

@@ -38,36 +38,7 @@ import ConfirmationCheckBox from './confirmation-check-box';
 import { toast } from 'sonner';
 import { API_ROUTES } from '@/common/constants/apiRoutes';
 import { ApplicationStatus, EducationLevel } from '@/types/enum';
-
-
-
-export function removeNullValues(obj: any): any {
-  if (Array.isArray(obj)) {
-    return obj
-      .map(removeNullValues)
-      .filter(
-        (item) =>
-          item !== null &&
-          item !== undefined &&
-          item !== '' &&
-          !(Array.isArray(item) && item.length === 0)
-      );
-  } else if (typeof obj === 'object' && obj !== null) {
-    return Object.fromEntries(
-      Object.entries(obj)
-        .map(([key, value]) => [key, removeNullValues(value)])
-        .filter(
-          ([_, value]) =>
-            value !== null &&
-            value !== undefined &&
-            value !== '' &&
-            !(Array.isArray(value) && value.length === 0)
-        )
-    );
-  } else {
-    return obj;
-  }
-}
+import { filterBySchema, removeNullValues } from '@/lib/utils';
 
 // Form Schema
 const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
@@ -108,7 +79,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
   useEffect(() => {
     if (data) {
-      const sanitizedData = removeNullValues(data); 
+      const sanitizedData = removeNullValues(data);
       form.reset(sanitizedData);
     }
   }, [data, form]);
@@ -179,18 +150,29 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
   async function saveDraft() {
     let values = form.getValues();
+    
     // Remove null values from the entire object
     values = removeNullValues(values);
 
+    
     // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep1RequestSchema.shape);
-
+    
     // Filter out values not in the schema
     const filteredValues = Object.fromEntries(
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
     );
-    const filteredKeys = Object.keys(values).filter((key) => schemaKeys.includes(key));
 
+    const alwaysIncludeKeys = [
+      'studentName',
+      'studentPhoneNumber'
+    ];
+    
+    const filteredKeys = Array.from(new Set([
+      ...Object.keys(values),
+      ...alwaysIncludeKeys
+    ])).filter((key) => schemaKeys.includes(key));    
+    
     const partialSchema = enquiryDraftStep1RequestSchema.pick(
       filteredKeys.reduce(
         (acc, key) => {
@@ -202,13 +184,11 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     );
 
     const validationResult = partialSchema.safeParse(filteredValues);
-
     // Clear previous errors before setting new ones
     form.clearErrors();
 
     if (!validationResult.success) {
       const errors = validationResult.error.format();
-
       form.setError('root', {
         type: 'manual',
         message: 'Validation failed. Please check the form fields.'
@@ -261,9 +241,14 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   async function onSubmit() {
     let values = form.getValues();
     values = removeNullValues(values);
+
+    const filteredData = filterBySchema(formSchema, values);
+
     // remove confirmation field from values
-    const { confirmation, _id, ...rest } = values;
+    const { confirmation, _id, ...rest } = filteredData;
+    
     const enquiry: any = await createEnquiry(rest);
+
     const response = await updateEnquiryStatus({
       id: enquiry?._id,
       newStatus: ApplicationStatus.STEP_2
@@ -277,6 +262,8 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
     form.setValue('confirmation', false);
     form.reset();
+
+    router.push(API_ROUTES.enquiryFormStage2(enquiry._id));
   }
 
   return (

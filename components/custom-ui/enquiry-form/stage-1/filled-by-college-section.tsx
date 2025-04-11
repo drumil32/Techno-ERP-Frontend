@@ -79,12 +79,12 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                             variant="outline"
                             className={`${commonFieldClass} text-left bg-inherit w-full max-w-full truncate`}
                           >
-                            <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full font-normal">
+                            <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full font-normal text-[#666666]">
                               {field.value && field.value.length > 0
                                 ? counsellors
-                                  .filter((counsellor) => field.value.includes(counsellor._id))
-                                  .map((counsellor) => counsellor.name)
-                                  .join(', ')
+                                    .filter((counsellor) => field.value.includes(counsellor._id))
+                                    .map((counsellor) => counsellor.name)
+                                    .join(', ')
                                 : "Select Counsellor's Name"}
                             </span>
                           </Button>
@@ -134,15 +134,14 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                             variant="outline"
                             className={`
                               ${commonFieldClass}
-                              text-left bg-inherit w-full max-w-full truncate`
-                            }
+                              text-left bg-inherit w-full max-w-full truncate`}
                           >
-                            <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full font-normal">
+                            <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full font-normal text-[#666666]">
                               {field.value && field.value.length > 0
                                 ? telecallers
-                                  .filter((telecaller) => field.value.includes(telecaller._id))
-                                  .map((telecaller) => telecaller.name)
-                                  .join(', ')
+                                    .filter((telecaller) => field.value.includes(telecaller._id))
+                                    .map((telecaller) => telecaller.name)
+                                    .join(', ')
                                 : "Select Telecaller's Name"}
                             </span>
                           </Button>
@@ -186,7 +185,12 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                       Remarks
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} className={commonFieldClass} placeholder="Optional" />
+                      <Input
+                        {...field}
+                        value={field.value ?? ''}
+                        className={commonFieldClass}
+                        placeholder="Optional"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

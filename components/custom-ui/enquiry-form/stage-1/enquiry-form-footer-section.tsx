@@ -24,7 +24,6 @@ interface EnquiryFormFooterProps {
 }
 
 const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft, form, onSubmit }) => {
-
   function onError() {
     console.log(form.formState);
   }
@@ -33,7 +32,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft, form, 
     <div className="z-10 bottom-0 left-0 flex items-center justify-between space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
       <Dialog>
         <DialogTrigger asChild>
-          <Button type="button" variant='outline'>
+          <Button type="button" variant="outline">
             <span className="font-inter font-semibold text-[12px]">Save Draft</span>
           </Button>
         </DialogTrigger>
@@ -51,9 +50,11 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft, form, 
                 Close
               </Button>
             </DialogClose>
-            <Button type="button" onClick={saveDraft}>
-              Ok
-            </Button>
+            <DialogClose asChild>
+              <Button type="button" onClick={saveDraft}>
+                Ok
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>

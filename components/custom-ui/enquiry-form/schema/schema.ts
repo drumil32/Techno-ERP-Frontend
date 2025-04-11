@@ -53,30 +53,37 @@ export const academicDetailSchema = z.object({
     .number({ message: 'Percentage Obtained  required' })
     .min(0, 'Percentage must be at least 0')
     .max(100, 'Percentage cannot exceed 100'),
-  subjects: z.array(z.string().min(1, 'Subject name is required')).nonempty('Subjects cannot be empty').optional()
+  subjects: z
+    .array(z.string().min(1, 'Subject name is required'))
+    .nonempty('Subjects cannot be empty')
+    .optional()
 });
 
 export const singleDocumentSchema = z.object({
   type: z.nativeEnum(DocumentType),
-  documentBuffer: z.object({
-    buffer: z.instanceof(Buffer),
-    mimetype: z.string(),
-    size: z.number()
-      .positive()
-      .max(5 * 1024 * 1024, { message: 'File size must be less than 5MB' }),
-    originalname: z.string(),
-  }).refine(
-    (file) => ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'].includes(file.mimetype),
-    { message: 'Invalid file type. Only PNG, JPG, JPEG, and PDF are allowed.' }
-  ).optional(),
+  documentBuffer: z
+    .object({
+      buffer: z.instanceof(Buffer),
+      mimetype: z.string(),
+      size: z
+        .number()
+        .positive()
+        .max(5 * 1024 * 1024, { message: 'File size must be less than 5MB' }),
+      originalname: z.string()
+    })
+    .refine(
+      (file) => ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'].includes(file.mimetype),
+      { message: 'Invalid file type. Only PNG, JPG, JPEG, and PDF are allowed.' }
+    )
+    .optional(),
   dueBy: requestDateSchema.optional(),
-  fileUrl: z.string().optional(),
+  fileUrl: z.string().optional()
 });
 
 export const academicDetailsArraySchema = z.array(academicDetailSchema);
 
 export const enquirySchema = z.object({
-  _id:z.string().optional(),
+  _id: z.string().optional(),
   // Student Details
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
   dateOfEnquiry: requestDateSchema,
@@ -121,9 +128,6 @@ export const enquirySchema = z.object({
   counsellor: z.array(z.string()).optional(),
   remarks: z.string().optional(),
 
-
-
-
   approvedBy: z.string().optional(),
   applicationStatus: z.nativeEnum(ApplicationStatus).default(ApplicationStatus.STEP_1),
 
@@ -132,7 +136,6 @@ export const enquirySchema = z.object({
   dateOfAdmission: requestDateSchema,
 
   documents: z.array(singleDocumentSchema).optional(),
-
 
   aadharNumber: z
     .string()
@@ -146,11 +149,8 @@ export const enquirySchema = z.object({
   areaType: z.nativeEnum(AreaType).optional(),
   nationality: z.string().optional(),
   entranceExamDetails: entranceExamDetailSchema.optional(),
-  admittedBy: z.union([z.string(), z.enum(['other'])]).optional(),
-
+  admittedBy: z.union([z.string(), z.enum(['other'])]).optional()
 });
-
-
 
 export enum Qualification {
   Yes = 'Yes',
@@ -171,7 +171,7 @@ export enum Nationality {
   SRI_LANKAN = 'SRI_LANKAN',
   MALDIVIAN = 'MALDIVIAN',
   TIBETAN_REFUGEE = 'TIBETAN_REFUGEE',
-  STATELESS = 'STATELESS',
+  STATELESS = 'STATELESS'
 }
 
 export const enquiryStep1RequestSchema = enquirySchema
@@ -196,18 +196,18 @@ export const enquiryStep1RequestSchema = enquirySchema
   .extend({ id: z.string().optional() })
   .strict();
 
+export const enquiryStep1UpdateRequestSchema = enquiryStep1RequestSchema
+  .extend({
+    id: z.string()
+  })
+  .strict();
 
-export const enquiryStep1UpdateRequestSchema = enquiryStep1RequestSchema.extend({
-  id: z.string()
-}).strict();
-
-
-
-export const enquiryStep3UpdateRequestSchema = enquirySchema.omit({ documents: true, studentFee: true }).extend({
-  id: z.string(),
-}).strict();
-
-
+export const enquiryStep3UpdateRequestSchema = enquirySchema
+  .omit({ documents: true, studentFee: true })
+  .extend({
+    id: z.string()
+  })
+  .strict();
 
 export type IEntranceExamDetailSchema = z.infer<typeof entranceExamDetailSchema>;
 
@@ -215,37 +215,43 @@ export const enquiryDraftStep3Schema = enquiryStep3UpdateRequestSchema
   .extend({
     address: addressSchema.partial().optional(),
     academicDetails: z.array(academicDetailSchema.partial()).optional(),
-    studentName: z.string({ required_error: "Student Name is required", }).nonempty('Student Name is required'),
+    studentName: z
+      .string({ required_error: 'Student Name is required' })
+      .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
+      .nonempty('Student Name is required'),
     studentPhoneNumber: contactNumberSchema,
     counsellor: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     telecaller: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     dateOfAdmission: requestDateSchema,
-    dateOfBirth: requestDateSchema
-      .optional(),
-    entranceExamDetails: entranceExamDetailSchema
-      .partial()
-      .optional()
+    dateOfBirth: requestDateSchema.optional(),
+    entranceExamDetails: entranceExamDetailSchema.partial().optional()
   })
   .partial()
   .strict();
 
-
 export const enquiryDraftStep1RequestSchema = enquiryStep1RequestSchema
   .extend({
-    studentName: z.string({ required_error: "Student Name is required", }).nonempty('Student Name is required'),
+    studentName: z
+      .string({ required_error: 'Student Name is required' })
+      .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
+      .nonempty('Student Name is required'),
     studentPhoneNumber: contactNumberSchema,
 
     counsellor: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     telecaller: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
 
-
     address: addressSchema.partial().optional(),
-    academicDetails: z.array(academicDetailSchema.partial()).optional(),
-  }).omit({ id: true }).partial().strict();
+    academicDetails: z.array(academicDetailSchema.partial()).optional()
+  })
+  .omit({ id: true })
+  .strict();
 
-export const enquiryDraftStep1UpdateSchema = enquiryDraftStep1RequestSchema.extend({
-  id: z.string()
-}).partial().strict();
+export const enquiryDraftStep1UpdateSchema = enquiryDraftStep1RequestSchema
+  .extend({
+    id: z.string()
+  })
+  .partial()
+  .strict();
 
 export type IEnquiryStep1RequestSchema = z.infer<typeof enquiryStep1RequestSchema>;
 export type IEnquiryDraftStep1RequestSchema = z.infer<typeof enquiryDraftStep1RequestSchema>;

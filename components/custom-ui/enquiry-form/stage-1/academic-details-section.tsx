@@ -34,6 +34,22 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
   commonFieldClass,
   commonFormItemClass
 }) => {
+  const handleNumericInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onChange: (value: number | '') => void
+  ) => {
+    const rawValue = e.target.value;
+
+    if (rawValue === '') {
+      onChange('');
+      return;
+    }
+
+    if (/^\d+$/.test(rawValue)) {
+      onChange(Number(rawValue));
+    }
+  };
+
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">
@@ -46,6 +62,8 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
 
           <AccordionContent>
             <div className="grid grid-row-3 gap-y-6 bg-white p-4 rounded-[10px]">
+              
+              {/* 10th */}
               <div className="space-y-4">
                 {/* Subheading */}
                 <h4 className="font-inter text-[16px] font-semibold">10th</h4>
@@ -63,6 +81,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter school/college Name"
                           />
@@ -84,6 +103,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter university/board Name"
                           />
@@ -109,10 +129,8 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 {...field}
                                 type="text"
                                 placeholder="Passing Year"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
+                                inputMode="numeric"
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                                 value={field.value ?? ''}
                               />
                             </FormControl>
@@ -134,10 +152,8 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 {...field}
                                 type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
+                                inputMode="numeric"
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                                 value={field.value ?? ''}
                                 min={0}
                                 max={100}
@@ -184,6 +200,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                 </div>
               </div>
 
+              {/* 12th */}
               <div className="space-y-4">
                 {/* Subheading */}
                 <h4 className="font-inter  text-[16px] font-semibold">12th</h4>
@@ -201,6 +218,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter school/college Name"
                           />
@@ -222,6 +240,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter university/board Name"
                           />
@@ -247,10 +266,8 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 {...field}
                                 type="text"
                                 placeholder="Passing Year"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
+                                inputMode="numeric"
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                                 value={field.value ?? ''}
                               />
                             </FormControl>
@@ -272,10 +289,8 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 {...field}
                                 type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
+                                inputMode="numeric"
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                                 value={field.value ?? ''}
                                 min={0}
                                 max={100}
@@ -322,6 +337,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                 </div>
               </div>
 
+              {/* Graduation */}
               <div className="space-y-4">
                 {/* Subheading */}
                 <h4 className="font-inter  text-[16px] font-semibold">Graduation</h4>
@@ -339,6 +355,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter school/college Name"
                           />
@@ -360,6 +377,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter university/board Name"
                           />
@@ -385,10 +403,8 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 {...field}
                                 type="text"
                                 placeholder="Passing Year"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
+                                inputMode="numeric"
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                                 value={field.value ?? ''}
                               />
                             </FormControl>
@@ -410,10 +426,8 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 {...field}
                                 type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
+                                inputMode="numeric"
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                                 value={field.value ?? ''}
                                 min={0}
                                 max={100}
