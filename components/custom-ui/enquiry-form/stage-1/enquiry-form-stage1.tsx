@@ -12,15 +12,13 @@ import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 // React Query imports
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 // API and schema imports
 import {
   createEnquiry,
   createEnquiryDraft,
-  getCounsellors,
   getEnquiry,
-  getTeleCallers,
   updateEnquiryDraft,
   updateEnquiryStatus
 } from './enquiry-form-api';
@@ -39,7 +37,6 @@ import { toast } from 'sonner';
 import { API_ROUTES } from '@/common/constants/apiRoutes';
 import { ApplicationStatus, EducationLevel } from '@/types/enum';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
-import EnquiryFormSkeleton from './form-skeleton';
 
 // Form Schema
 export const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
@@ -251,11 +248,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
     router.push(API_ROUTES.enquiryFormStage2(enquiry._id));
   }
-
-  if (id && (isLoading || isFetching)) {
-    return <EnquiryFormSkeleton/>;
-  }
-  
 
   return (
     <Form {...form}>
