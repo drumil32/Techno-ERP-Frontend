@@ -39,6 +39,7 @@ import { toast } from 'sonner';
 import { API_ROUTES } from '@/common/constants/apiRoutes';
 import { ApplicationStatus, EducationLevel } from '@/types/enum';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
+import EnquiryFormSkeleton from './form-skeleton';
 
 // Form Schema
 export const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
@@ -250,6 +251,11 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
     router.push(API_ROUTES.enquiryFormStage2(enquiry._id));
   }
+
+  if (id && (isLoading || isFetching)) {
+    return <EnquiryFormSkeleton/>;
+  }
+  
 
   return (
     <Form {...form}>

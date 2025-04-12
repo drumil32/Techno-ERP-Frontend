@@ -54,11 +54,21 @@ export const updateEnquiryDraft = async (data: any) => {
 }
 
 export const updateEnquiryStatus = async (data: any) => {
-    return apiRequest(
-        API_METHODS.PUT,
+    const response = await fetch(
         API_ENDPOINTS.updateEnquiryStatus,
-        data
+        {
+            method: API_METHODS.PUT,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+            body: JSON.stringify(data)
+        }
     );
+    if (!response.ok) {
+        throw new Error("Failed to fetch other fees");
+    }
+    return response.json();
 }
 
 export const getTeleCallers = async () => {
