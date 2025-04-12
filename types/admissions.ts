@@ -132,6 +132,8 @@ export interface Admission {
   religion?: string;
   bloodGroup?: string;
   admittedBy?: string;
+  collegeName?: string;
+  affiliation?: string;
 }
 
 /** Admission Table Row Type */

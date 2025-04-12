@@ -10,24 +10,17 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
 
 // Icons
 import { CalendarDaysIcon } from 'lucide-react';
 
 // Utilities
-import { format } from 'date-fns';
 import { Checkbox } from '@/components/ui/checkbox';
+import { getCounsellors, getTeleCallers } from './enquiry-form-api';
+import { useQueries } from '@tanstack/react-query';
 
 interface UserRoleInterface {
   _id: string;
@@ -40,17 +33,30 @@ interface FilledByCollegeSectionInterface {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
   commonFieldClass: string;
-  telecallers: UserRoleInterface[];
-  counsellors: UserRoleInterface[];
 }
 
 const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   form,
   commonFieldClass,
   commonFormItemClass,
-  telecallers,
-  counsellors
 }) => {
+
+    const results = useQueries({
+      queries: [
+        {
+          queryKey: ['telecallers'],
+          queryFn: getTeleCallers
+        },
+        {
+          queryKey: ['counsellors'],
+          queryFn: getCounsellors
+        }
+      ]
+    });
+  
+  const telecallers: UserRoleInterface[] = Array.isArray(results[0].data) ? results[0].data : [];
+  const counsellors: UserRoleInterface[] = Array.isArray(results[1].data) ? results[1].data : [];
+  
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">

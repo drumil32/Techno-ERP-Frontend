@@ -41,7 +41,7 @@ import { ApplicationStatus, EducationLevel } from '@/types/enum';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
 
 // Form Schema
-const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
+export const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
   confirmation: z.boolean().refine((value) => value === true, {
     message: 'You must confirm to proceed.'
   })
@@ -130,21 +130,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     };
   }, [isLoading, isError, isSuccess, isFetching, data]);
 
-  const results = useQueries({
-    queries: [
-      {
-        queryKey: ['telecallers'],
-        queryFn: getTeleCallers
-      },
-      {
-        queryKey: ['counsellors'],
-        queryFn: getCounsellors
-      }
-    ]
-  });
-
-  const telecallersData = results[0].data ?? [];
-  const counsellorsData = results[1].data ?? [];
   const commonFormItemClass = 'col-span-1 gap-y-0';
   const commonFieldClass = '';
 
@@ -298,8 +283,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
           form={form}
           commonFieldClass={commonFieldClass}
           commonFormItemClass={commonFormItemClass}
-          telecallers={Array.isArray(telecallersData) ? telecallersData : []}
-          counsellors={Array.isArray(counsellorsData) ? counsellorsData : []}
         />
 
         {/* Confirmation Check box */}

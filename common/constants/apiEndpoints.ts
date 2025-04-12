@@ -1,3 +1,4 @@
+
 export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
 
 export const API_ENDPOINTS = {
@@ -47,6 +48,9 @@ export const API_ENDPOINTS = {
 
   createStudentFeesDraft: `${API_DOMAIN}/admission/enquiry/create-draft-step-2`,
   updateStudentFeesDraft: `${API_DOMAIN}/admission/enquiry/update-draft-step-2`,
+
+  createEnquiryStep4: `${API_DOMAIN}/admission/enquiry/step-4`,
+  updateEnquiryStep4: `${API_DOMAIN}/admission/enquiry/step-4`,
 
   // Document Upload
   uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,

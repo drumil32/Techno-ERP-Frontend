@@ -30,9 +30,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { CalendarIcon } from 'lucide-react';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
-import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
 
 // Utility imports
 import { cn } from '@/lib/utils';
@@ -41,12 +38,6 @@ import { toast } from 'sonner';
 import { queryClient } from '@/lib/queryClient';
 
 // API and data-fetching imports
-import {
-  getCounsellors,
-  getEnquiry,
-  getTeleCallers,
-  updateEnquiryStatus
-} from '../stage-1/enquiry-form-api';
 import {
   createStudentFees,
   getFeesByCourseName,
@@ -76,12 +67,16 @@ import { API_ROUTES } from '@/common/constants/apiRoutes';
 
 // Component imports
 import ShowStudentData from '../stage-2/data-show';
+import FilledByCollegeSection from '../stage-1/filled-by-college-section';
+import ConfirmationCheckBox from './confirmation-check-box';
+import ConfirmationOTPSection from './confirmation-otp-section';
+import EnquiryFormFooter from './enquiry-form-footer';
+import { getEnquiry } from '../stage-1/enquiry-form-api';
+import { createEnquiryStep4, updateEnquiryStep4 } from './helpers/apirequests';
 
 const FinanceOfficeForm = () => {
-
   const params = useParams();
   const enquiry_id = params.id as string;
-  const [isOtpSending, setIsOtpSending] = useState(false);
   const [dataUpdated, setDataUpdated] = useState(true);
   const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
   const router = useRouter();
@@ -130,22 +125,6 @@ const FinanceOfficeForm = () => {
     enabled: !!courseName
   });
 
-  const results = useQueries({
-    queries: [
-      {
-        queryKey: ['telecallers'],
-        queryFn: getTeleCallers
-      },
-      {
-        queryKey: ['counsellors'],
-        queryFn: getCounsellors
-      }
-    ]
-  });
-
-  const telecallersData = Array.isArray(results[0].data) ? results[0].data : [];
-  const counsellorsData = Array.isArray(results[1].data) ? results[1].data : [];
-
   const form = useForm<IFeesRequestSchema>({
     resolver: zodResolver(feesRequestSchema),
     mode: 'onChange',
@@ -176,17 +155,6 @@ const FinanceOfficeForm = () => {
     control: form.control,
     name: 'otherFees'
   });
-
-  const selectedOtpTarget = useWatch({ control: form.control, name: 'otpTarget' });
-
-  const otpDisplayValue = useMemo(() => {
-    if (selectedOtpTarget === 'email') {
-      return studentEmail || '(Email not available)';
-    } else if (selectedOtpTarget === 'phone') {
-      return studentPhone || '(Phone not available)';
-    }
-    return '';
-  }, [selectedOtpTarget, studentEmail, studentPhone]);
 
   useEffect(() => {
     if (enquiryData && semWiseFeesData && otherFeesData && !form.formState.isDirty) {
@@ -293,24 +261,11 @@ const FinanceOfficeForm = () => {
     };
   }, [otherFeesWatched, otherFeesData]);
 
-  const counsellorOptions: MultiSelectOption[] = useMemo(() => {
-    return (Array.isArray(counsellorsData) ? counsellorsData : [])
-      .map((c: any) => ({ value: c._id, label: c.name }))
-      .filter(Boolean);
-  }, [counsellorsData]);
-
-  const telecallerOptions: MultiSelectOption[] = useMemo(() => {
-    return (Array.isArray(telecallersData) ? telecallersData : [])
-      .map((t: any) => ({ value: t._id, label: t.name }))
-      .filter(Boolean);
-  }, [telecallersData]);
-
   const createFinalFeeMutation = useMutation({
-    mutationFn: createStudentFees,
+    mutationFn: createEnquiryStep4,
     onSuccess: () => {
       toast.success('Fee record created successfully!');
       queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-      router.push(API_ROUTES.admissions);
     }
   });
 
@@ -320,8 +275,8 @@ const FinanceOfficeForm = () => {
 
     const isCustomValid = validateCustomFeeLogic(
       values,
-      otherFeesData, 
-      semWiseFeesData, 
+      otherFeesData,
+      semWiseFeesData,
       form.setError,
       form.clearErrors
     );
@@ -329,7 +284,7 @@ const FinanceOfficeForm = () => {
     if (!isCustomValid) {
       toast.error('Fee validation failed. Please check highlighted fields');
       setIsSubmittingFinal(false);
-      return; 
+      return;
     }
 
     const isUpdate = finalFeeExists;
@@ -359,8 +314,13 @@ const FinanceOfficeForm = () => {
         ...cleanedData
       };
 
-      updateStudentFees(finalPayLoad);
-    } else {
+      await updateEnquiryStep4(finalPayLoad);
+
+      toast.success('Fee record updated successfully!');
+
+    }
+    else {
+
       const validationResult = feesUpdateSchema.safeParse(values);
 
       if (!validationResult.success) {
@@ -387,6 +347,8 @@ const FinanceOfficeForm = () => {
 
       setDataUpdated((prev) => !prev);
     }
+
+    router.push(API_ROUTES.admissions);
   }
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
@@ -397,9 +359,7 @@ const FinanceOfficeForm = () => {
 
   return (
     <Form {...form}>
-      <form
-        className="pt-8 mr-[25px] space-y-8 flex flex-col w-full overflow-x-hidden relative"
-      >
+      <form className="pt-8 mr-[25px] space-y-8 flex flex-col w-full overflow-x-hidden relative">
         <ShowStudentData data={enquiryData} />
 
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="other-fees">
@@ -540,17 +500,19 @@ const FinanceOfficeForm = () => {
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
-                              <Button
-                                variant={'outline'}
-                                className={cn(
-                                  'w-full pl-3 text-left font-normal h-9 text-sm', // Adjusted height
-                                  !field.value && 'text-muted-foreground'
-                                )}
-                              >
-                                {/* Display the string value directly */}
-                                {field.value ? field.value : <span>Pick a date</span>}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
+                              <div>
+                                <Button
+                                  variant={'outline'}
+                                  className={cn(
+                                    'w-full pl-3 text-left font-normal h-9 text-sm', // Adjusted height
+                                    !field.value && 'text-muted-foreground'
+                                  )}
+                                >
+                                  {/* Display the string value directly */}
+                                  {field.value ? field.value : <span>Pick a date</span>}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </div>
                             </FormControl>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
@@ -656,209 +618,24 @@ const FinanceOfficeForm = () => {
           </AccordionItem>
         </Accordion>
 
-        <Accordion
-          type="single"
-          collapsible
-          className="w-full space-y-4"
-          defaultValue="college-details"
-        >
-          <AccordionItem value="college-details" className="border-b-0">
-            <AccordionTrigger className="w-full items-center">
-              <h3 className="font-inter text-[16px] font-semibold"> To be filled by College</h3>
-              <hr className="flex-1 border-t border-[#DADADA] ml-2" />
-            </AccordionTrigger>
+        <FilledByCollegeSection commonFieldClass="" commonFormItemClass="" form={form} />
 
-            <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-x-8 gap-y-4">
-                {' '}
-                {/* Added gap-y-4 for vertical spacing */}
-                <FormField
-                  control={form.control}
-                  name="counsellor"
-                  render={({ field }) => (
-                    <FormItem className="col-span-1">
-                      <FormLabel className="font-inter font-normal text-sm text-gray-600">
-                        Counsellor’s Name(s)
-                      </FormLabel>
-                      <FormControl>
-                        <MultiSelectDropdown
-                          options={counsellorOptions}
-                          selected={field.value ?? []}
-                          onChange={field.onChange}
-                          placeholder="Select Counsellor(s)"
-                          searchPlaceholder="Search Counsellors..."
-                          isLoading={results[1].isLoading}
-                        />
-                      </FormControl>
-                      <div className="h-5">
-                        <FormMessage className="text-xs" />
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="telecaller"
-                  render={({ field }) => (
-                    <FormItem className="col-span-1">
-                      <FormLabel className="font-inter font-normal text-sm text-gray-600">
-                        Telecaller’s Name(s)
-                      </FormLabel>
-                      <FormControl>
-                        <MultiSelectDropdown
-                          options={telecallerOptions}
-                          selected={field.value ?? []}
-                          onChange={field.onChange}
-                          placeholder="Select Telecaller(s)"
-                          searchPlaceholder="Search Telecallers..."
-                          isLoading={results[0].isLoading}
-                        />
-                      </FormControl>
-                      <div className="h-5">
-                        <FormMessage className="text-xs" />
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="remarks"
-                  render={({ field }) => (
-                    <FormItem className="col-span-1">
-                      <FormLabel className="font-inter font-normal text-sm text-gray-600">
-                        Remarks
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Optional"
-                          className="resize-none text-sm h-11"
-                          {...field}
-                          value={field.value ?? ''}
-                        />
-                      </FormControl>
-                      <div className="h-5">
-                        <FormMessage className="text-xs" />
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-
-        <Accordion
-          type="single"
-          collapsible
-          className="w-full space-y-4"
-          defaultValue="college-info"
-        >
-          <AccordionItem value="confirmation" className="border-b-0">
-            <AccordionTrigger className="w-full items-center">
-              <h3 className="font-inter text-[16px] font-semibold"> Confirmation</h3>
-              <hr className="flex-1 border-t border-[#DADADA] ml-2" />
-            </AccordionTrigger>
-            <AccordionContent className="p-6 space-y-4 bg-white text-gray-600 rounded-[10px]">
-              <FormField
-                control={form.control}
-                name="otpTarget"
-                render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium block">
-                      Select Contact for OTP Verification
-                    </FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value ?? ''}
-                        className="flex flex-col sm:flex-row gap-y-2 gap-x-6 pt-1"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="email" id="otp-email" disabled={!studentEmail} />
-                          </FormControl>
-                          <FormLabel
-                            htmlFor="otp-email"
-                            className={`font-normal text-sm cursor-pointer ${!studentEmail ? 'text-gray-400 cursor-not-allowed' : ''}`}
-                          >
-                            Email: {studentEmail || '(Not Available)'}
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="phone" id="otp-phone" disabled={!studentPhone} />
-                          </FormControl>
-                          <FormLabel
-                            htmlFor="otp-phone"
-                            className={`font-normal text-sm cursor-pointer ${!studentPhone ? 'text-gray-400 cursor-not-allowed' : ''}`}
-                          >
-                            Phone: {studentPhone || '(Not Available)'}
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage className="text-xs pt-1" />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex gap-8 items-stretch">
-                <div>
-                  <FormLabel htmlFor="otp-display" className="text-sm mb-3 text-gray-600">
-                    Selected Contact
-                  </FormLabel>
-                  <Input
-                    id="otp-display"
-                    readOnly
-                    value={otpDisplayValue}
-                    placeholder="Select Email or Phone above"
-                    className="h-9 text-sm cursor-not-allowed"
-                  />
-                </div>
-
-                <Button
-                  type="button"
-                  onClick={() => {}}
-                  disabled={isOtpSending || !selectedOtpTarget}
-                  className="h-9 text-sm mt-auto"
-                >
-                  {isOtpSending ? 'Sending...' : 'Send OTP'}
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-
-        <FormField
-          control={form.control}
-          name="confirmationCheck"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start bg-white rounded-md p-4">
-              <FormControl>
-                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel className="text-sm font-normal">
-                  All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will
-                  be charged extra based on LU/AKTU norms.
-                </FormLabel>
-                <FormMessage className="text-xs" />
-              </div>
-            </FormItem>
-          )}
+        {/* Confirmation */}
+        <ConfirmationOTPSection
+          form={form}
+          studentEmail={studentEmail}
+          studentPhone={studentPhone}
         />
 
-        <div className="z-10 bottom-0 left-0 flex items-center justify-end space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
-          <Button
-            type="button"
-            onClick={onSubmit}
-            disabled={
-              (!confirmationChecked || form.formState.isSubmitting) ?? form.formState.isSubmitting
-            }
-          >
-            {form.formState.isSubmitting ? 'Submitting...' : 'Submit & Continue'}
-          </Button>
-        </div>
+        {/* Checkbox */}
+        <ConfirmationCheckBox form={form} />
+
+        {/* Submit */}
+        <EnquiryFormFooter
+          form={form}
+          onSubmit={onSubmit}
+          confirmationChecked={confirmationChecked}
+        />
       </form>
     </Form>
   );
