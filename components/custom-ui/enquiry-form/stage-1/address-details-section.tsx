@@ -101,7 +101,7 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                       <Input
                         {...field}
                         value={field.value ?? ''}
-                        className={commonFieldClass}
+                        className={`${commonFormItemClass} w-full`}
                         placeholder="Enter the pin code"
                       />
                     </FormControl>
@@ -116,15 +116,15 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                 name="address.district"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
                       District
                     </FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className={`${commonFieldClass} w-full`}>
+                    <FormControl className=''>
+                      <Select onValueChange={field.onChange} value={field.value} >
+                        <SelectTrigger className={`${commonFieldClass}`}>
                           <SelectValue placeholder="Select the district" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className=''>
                           {Object.values(Districts).map((district) => (
                             <SelectItem key={district} value={district}>
                               {district}

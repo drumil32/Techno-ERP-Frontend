@@ -11,9 +11,9 @@ import { DocumentType } from '@/types/enum';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getEnquiry } from '../../stage-1/enquiry-form-api';
 
-const mandatoryDocuments = [
+export const mandatoryDocuments = [
   DocumentType.PHOTO,
-  DocumentType.TWELFTH_CERTIFICATE,
+  DocumentType.TENTH_MARKSHEET,
   DocumentType.GRADUATION_FINAL_YEAR_MARKSHEET,
   DocumentType.TC_MIGRATION,
   DocumentType.ALLOTMENT_LETTER,
@@ -36,32 +36,34 @@ const otherDocuments = [
     DocumentType.PHYSICALLY_HANDICAPPED_CERTIFICATE,
 ]
 
-const AllDocuments = () => {
+const AllDocuments = ({enquiryDocuments}: {enquiryDocuments:any}) => {
   const params = useParams();
   const enquiry_id = params.id as string;
 
   const queryClient = useQueryClient();
 
-  const {
-    data: enquiryData,
-    error,
-    isLoading: isLoadingEnquiry
-  } = useQuery<any>({
-    queryKey: ['enquireFormData', enquiry_id],
-    queryFn: () => (enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null')),
-    enabled: !!enquiry_id
-  });
+  // const {
+  //   data: enquiryData,
+  //   error,
+  //   isLoading: isLoadingEnquiry
+  // } = useQuery<any>({
+  //   queryKey: ['enquireFormData', enquiry_id],
+  //   queryFn: () => (enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null')),
+  //   enabled: !!enquiry_id
+  // });
 
-  let enquiryDocuments: EnquiryDocument[] = enquiryData?.documents ?? [];
+  // let enquiryDocuments: EnquiryDocument[] = enquiryData?.documents ?? [];
 
   const findExistingDocument = (docType: DocumentType): EnquiryDocument | undefined => {
     const apiDocType = docType.toString();
-    return enquiryDocuments.find((doc) => doc.type == apiDocType);
+    return enquiryDocuments.find((doc:any) => doc.type == apiDocType);
   };
 
   const onUploadSuccess = (data: any) => {
+    console.log("Invalidating enquiry data after upload...");
+
     queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-    enquiryDocuments = data.documents;
+    // enquiryDocuments = data.documents;
   };
 
   return (

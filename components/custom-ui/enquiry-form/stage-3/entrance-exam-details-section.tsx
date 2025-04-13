@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { Countries, Districts, StatesOfIndia } from '@/types/enum';
 import { Qualification } from '../schema/schema';
+import { handleNumericInputChange } from '@/lib/utils';
 
 interface EntranceExamDetailsSectionInterface {
   form: UseFormReturn<any>;
@@ -31,9 +32,9 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
             <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px] bg-white p-4 rounded-[10px]">
 
               <FormField
-                key="examName"
+                key="nameOfExamination"
                 control={form.control}
-                name="entranceExamDetails.examName"
+                name="entranceExamDetails.nameOfExamination"
                 render={({ field }) => (
                   <FormItem className={`col-span-1 gap-x-2 gap-y-0`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
@@ -90,9 +91,10 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                       <Input
                         {...field}
                         type='text'
-                        value={field.value ?? ''}
+                        value={field.value ?? null}
                         className={commonFieldClass}
                         placeholder="Enter the rank"
+                        onChange={(e) => handleNumericInputChange(e, field.onChange)}
                       />
                     </FormControl>
                     <FormMessage />
@@ -101,25 +103,25 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
               />
 
               <FormField
-                key="qualification"
+                key="qualified"
                 control={form.control}
-                name="entranceExamDetails.district"
+                name="entranceExamDetails.qualified"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                       Qualified
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={(value) => field.onChange(value === "Yes")}
+                        value={field.value === true ? "Yes" : field.value === false ? "No" : undefined}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue placeholder="Yes/no" />
+                          <SelectValue placeholder="Yes/No" />
                         </SelectTrigger>
                         <SelectContent>
-                          {Object.values(Qualification).map((qualification) => (
-                            <SelectItem key={qualification} value={qualification}>
-                              {qualification}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="Yes">Yes</SelectItem>
+                          <SelectItem value="No">No</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -127,6 +129,7 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                   </FormItem>
                 )}
               />
+
 
 
             </div>

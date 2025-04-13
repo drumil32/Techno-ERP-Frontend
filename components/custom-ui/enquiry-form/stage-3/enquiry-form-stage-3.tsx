@@ -1,6 +1,6 @@
 'use client';
 // React and Next.js imports
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 // Form handling and validation imports
@@ -22,7 +22,7 @@ import OfficeUseSection from './office-use-section';
 import ScholarshipDetailsSection from './scholarship-details-section';
 import ConfirmationSection from './confirmation-section';
 import ShowStudentData from '../stage-2/data-show';
-import AllDocuments from './documents-section/all-documents';
+import AllDocuments, { mandatoryDocuments } from './documents-section/all-documents';
 
 // API and data fetching imports
 import { getEnquiry, updateEnquiryStatus } from '../stage-1/enquiry-form-api';
@@ -38,6 +38,8 @@ import { filterBySchema, removeNullValues } from '@/lib/utils';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { updateEnquiryDraftStep3, updateEnquiryStep3 } from './helper/apirequests';
 import { useRouter } from 'next/navigation';
+import { error } from 'console';
+import { EnquiryDocument } from './documents-section/single-document-form';
 
 export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).extend({
   confirmation: z.boolean().refine((value) => value === true, {
@@ -48,7 +50,17 @@ export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).e
 const EnquiryFormStage3 = () => {
   const pathVariables = useParams();
   const id = pathVariables.id as string;
+  const [refreshKey, setRefreshKey] = useState(0)
   const router = useRouter();
+
+  const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
+    queryKey: ['enquiryFormData', id, refreshKey],
+    queryFn: () => getEnquiry(id ? id : ''),
+    enabled: !!id 
+  });
+
+  const currentDocuments: any[] = data?.documents ?? [];
+
 
   const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
     id,
@@ -74,13 +86,13 @@ const EnquiryFormStage3 = () => {
 
   async function saveDraft() {
     let values = form.getValues();
+    console.log(values)
 
     // Remove null values from the entire object
     values = removeNullValues(values);
 
     // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep3Schema.shape);
-
     // Filter out values not in the schema
     const filteredValues = Object.fromEntries(
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
@@ -128,7 +140,7 @@ const EnquiryFormStage3 = () => {
           }
         });
       }
-
+      console.log(errors)
       setNestedErrors(errors);
       return;
     }
@@ -144,13 +156,29 @@ const EnquiryFormStage3 = () => {
     toast.success('Enquiry draft updated successfully');
 
     form.setValue('confirmation', false);
+    setRefreshKey((prev) => prev + 1)
   }
 
   const onSubmit = async () => {
     let values = form.getValues();
+    const documents :any= data?.documents
+
+    console.log(documents)
+
     values = removeNullValues(values);
     const filteredData = filterBySchema(formSchemaStep3, values);
     console.log('Filtered Data:', filteredData);
+
+    const documentTypesPresent = documents.map((doc:any) => doc.type);
+    const missingDocuments = mandatoryDocuments.filter(
+      (requiredType) => !documentTypesPresent.includes(requiredType)
+    );
+
+    if (missingDocuments.length > 0) {
+      toast.error("Please upload all mandatory documents before proceeding.");
+      return;
+    }
+
 
     // remove confirmation field from values
     const { confirmation, _id, ...rest } = filteredData;
@@ -174,18 +202,14 @@ const EnquiryFormStage3 = () => {
     router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_4(enquiry._id));
   };
 
-  const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
-    queryKey: ['enquiryFormData', id],
-    queryFn: () => getEnquiry(id ? id : ''),
-    enabled: !!id
-  });
 
   useEffect(() => {
     if (data) {
       const sanitizedData = removeNullValues(data);
+      
       form.reset({ ...sanitizedData, dateOfAdmission: format(new Date(), 'dd/MM/yyyy'), id: id });
     }
-  }, [data, form]);
+  }, [data, form, refreshKey]);
 
   const toastIdRef = useRef<string | number | null>(null);
 
@@ -276,7 +300,7 @@ const EnquiryFormStage3 = () => {
             commonFormItemClass={commonFormItemClass}
           />
 
-          <AllDocuments />
+          <AllDocuments enquiryDocuments={currentDocuments}/>
 
           <ConfirmationCheckBoxStage3 form={form} />
           <ConfirmationSection form={form} />
@@ -287,7 +311,7 @@ const EnquiryFormStage3 = () => {
           />
           <ScholarshipDetailsSection form={form} />
 
-          <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} confirmationChecked={true}/>
+          <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} confirmationChecked={true} />
         </form>
       </Form>
     </>
