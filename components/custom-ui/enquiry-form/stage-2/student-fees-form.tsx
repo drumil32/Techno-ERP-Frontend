@@ -678,19 +678,16 @@ export const StudentFeesForm = () => {
                         <FormLabel className="text-sm font-medium">Fees Clearance Date</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
-                            <FormControl>
                               <Button
                                 variant={"outline"}
                                 className={cn(
-                                  "w-full pl-3 text-left font-normal h-9 text-sm", // Adjusted height
+                                  "w-full pl-3 text-left font-normal h-9 text-sm",
                                   !field.value && "text-muted-foreground"
                                 )}
                               >
-                                {/* Display the string value directly */}
                                 {field.value ? field.value : <span>Pick a date</span>}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                               </Button>
-                            </FormControl>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
                             <Calendar

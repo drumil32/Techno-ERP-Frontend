@@ -9,8 +9,13 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
-import { academicDetailsArraySchema, academicDetailSchema, enquiryStep3UpdateRequestSchema } from '../schema/schema';
+import {
+  academicDetailsArraySchema,
+  academicDetailSchema,
+  enquiryStep3UpdateRequestSchema
+} from '../schema/schema';
 import TagInput from '../stage-1/tag-input';
+import { handleNumericInputChange } from '@/lib/utils';
 
 interface AcademicDetailsSectionInterface {
   form: UseFormReturn<z.infer<typeof enquiryStep3UpdateRequestSchema>>;
@@ -31,7 +36,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
 
     if (!academicDetails || academicDetails.length === 0) {
       setIsValid(false);
-      setValidationLog(prev => [...prev, 'No academic details found - validation failed']);
+      setValidationLog((prev) => [...prev, 'No academic details found - validation failed']);
       return;
     }
 
@@ -41,18 +46,18 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
         return {
           index,
           valid: false,
-          errors: result.error.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`)
+          errors: result.error.issues.map((issue) => `${issue.path.join('.')}: ${issue.message}`)
         };
       }
       return { index, valid: true, errors: [] };
     });
 
-    const allValid = validationResults.every(r => r.valid);
+    const allValid = validationResults.every((r) => r.valid);
     setIsValid(allValid);
 
     const newLogs = [
       `Validation check at ${new Date().toLocaleTimeString()}`,
-      ...validationResults.flatMap(r =>
+      ...validationResults.flatMap((r) =>
         r.valid
           ? [`Item ${r.index + 1}: Valid`]
           : [`Item ${r.index + 1}: Invalid - ${r.errors.join(', ')}`]
@@ -60,7 +65,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
       `Overall validation: ${allValid ? 'PASSED' : 'FAILED'}`
     ];
 
-    setValidationLog(prev => [...prev, ...newLogs]);
+    setValidationLog((prev) => [...prev, ...newLogs]);
   };
 
   useEffect(() => {
@@ -131,6 +136,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter school/college Name"
                           />
@@ -152,6 +158,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter university/board Name"
                           />
@@ -176,12 +183,9 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                               <Input
                                 {...field}
                                 type="text"
-                                placeholder="Passing Year"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
                                 value={field.value ?? ''}
+                                placeholder="Passing Year"
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                               />
                             </FormControl>
                           </FormItem>
@@ -202,10 +206,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                                 {...field}
                                 type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                                 value={field.value ?? ''}
                                 min={0}
                                 max={100}
@@ -269,6 +270,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter school/college Name"
                           />
@@ -290,6 +292,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter university/board Name"
                           />
@@ -315,10 +318,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                                 {...field}
                                 type="text"
                                 placeholder="Passing Year"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                                 value={field.value ?? ''}
                               />
                             </FormControl>
@@ -340,10 +340,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                                 {...field}
                                 type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                                 value={field.value ?? ''}
                                 min={0}
                                 max={100}
@@ -407,6 +404,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter school/college Name"
                           />
@@ -428,6 +426,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                         <FormControl>
                           <Input
                             {...field}
+                            value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter university/board Name"
                           />
@@ -453,10 +452,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                                 {...field}
                                 type="text"
                                 placeholder="Passing Year"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                                 value={field.value ?? ''}
                               />
                             </FormControl>
@@ -478,10 +474,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                                 {...field}
                                 type="text"
                                 placeholder="Out of 100%"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  field.onChange(value === '' ? '' : Number(value));
-                                }}
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                                 value={field.value ?? ''}
                                 min={0}
                                 max={100}

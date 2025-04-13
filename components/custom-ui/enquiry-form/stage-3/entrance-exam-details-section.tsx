@@ -42,6 +42,8 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                     <FormControl>
                       <Input
                         {...field}
+                        type='text'
+                        value={field.value ?? ''}
                         className=""
                         placeholder="Enter the name of examination"
                       />
@@ -64,6 +66,8 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                     <FormControl>
                       <Input
                         {...field}
+                        type='text'
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter roll number"
                       />
@@ -85,6 +89,8 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                     <FormControl>
                       <Input
                         {...field}
+                        type='text'
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter the rank"
                       />
@@ -104,7 +110,7 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                       Qualified
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Yes/no" />
                         </SelectTrigger>

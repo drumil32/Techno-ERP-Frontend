@@ -323,10 +323,7 @@ const FinanceOfficeForm = () => {
       await updateEnquiryStep4(finalPayLoad);
 
       toast.success('Fee record updated successfully!');
-
-    }
-    else {
-
+    } else {
       const validationResult = feesUpdateSchema.safeParse(values);
 
       if (!validationResult.success) {
@@ -505,35 +502,25 @@ const FinanceOfficeForm = () => {
                         <FormLabel className="text-sm font-medium">Fees Clearance Date</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
-                            <FormControl>
-                              <div>
-                                <Button
-                                  variant={'outline'}
-                                  className={cn(
-                                    'w-full pl-3 text-left font-normal h-9 text-sm', // Adjusted height
-                                    !field.value && 'text-muted-foreground'
-                                  )}
-                                >
-                                  {/* Display the string value directly */}
-                                  {field.value ? field.value : <span>Pick a date</span>}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </div>
-                            </FormControl>
+                            <Button
+                              variant={'outline'}
+                              className={cn(
+                                'w-full pl-3 text-left font-normal h-9 text-sm',
+                                !field.value && 'text-muted-foreground'
+                              )}
+                            >
+                              {field.value ? field.value : <span>Pick a date</span>}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                               mode="single"
-                              // Parse the stored string ('dd/MM/yyyy') into a Date for the Calendar
                               selected={parseDisplayDate(field.value)}
                               onSelect={(selectedDate: Date | undefined) => {
-                                // Format the selected Date back into 'dd/MM/yyyy' string for storage
                                 const formattedDate = formatDisplayDate(selectedDate);
-                                // Update the form field with the string value or null
                                 field.onChange(formattedDate);
                               }}
-                              // Optional: Disable dates if needed
-                              // disabled={(date) => date < new Date("1900-01-01")}
                               initialFocus
                             />
                           </PopoverContent>

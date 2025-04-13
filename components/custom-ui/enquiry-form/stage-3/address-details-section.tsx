@@ -96,7 +96,7 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                       Address Line 1
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter Address Line 1" />
+                      <Input {...field} value={field.value ?? ''} placeholder="Enter Address Line 1" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -112,7 +112,7 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                       Address Line 2
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Enter Address Line 2" />
+                      <Input {...field} value={field.value ?? ''} placeholder="Enter Address Line 2" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -128,7 +128,7 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                       Pincode
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} className={commonFieldClass} placeholder="Enter pincode" />
+                      <Input {...field} value={field.value ?? ''} className={commonFieldClass} placeholder="Enter pincode" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

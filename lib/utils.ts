@@ -21,7 +21,10 @@ export function toPascal(title: string) {
   return convertedTitle;
 }
 
-export function filterBySchema<T extends ZodObject<any>>(schema: T, data: any): Partial<z.infer<T>> {
+export function filterBySchema<T extends ZodObject<any>>(
+  schema: T,
+  data: any
+): Partial<z.infer<T>> {
   const shapeKeys = Object.keys(schema.shape);
   const filtered: any = {};
 
@@ -33,7 +36,6 @@ export function filterBySchema<T extends ZodObject<any>>(schema: T, data: any): 
 
   return filtered;
 }
-
 
 export function removeNullValues(obj: any): any {
   if (Array.isArray(obj)) {
@@ -62,3 +64,19 @@ export function removeNullValues(obj: any): any {
     return obj;
   }
 }
+
+export const handleNumericInputChange = (
+  e: React.ChangeEvent<HTMLInputElement>,
+  onChange: (value: number | '') => void
+) => {
+  const rawValue = e.target.value;
+
+  if (rawValue === '') {
+    onChange('');
+    return;
+  }
+
+  if (/^\d+$/.test(rawValue)) {
+    onChange(Number(rawValue));
+  }
+};

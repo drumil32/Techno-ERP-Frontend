@@ -39,7 +39,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commo
                       State Of Domicile
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the state" />
                         </SelectTrigger>
@@ -67,7 +67,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commo
                       Area Type
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the area type" />
                         </SelectTrigger>
@@ -95,7 +95,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commo
                       Nationality
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Enter the nationality" />
                         </SelectTrigger>
@@ -123,7 +123,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commo
                       Religion
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the religion" />
                         </SelectTrigger>
@@ -151,7 +151,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commo
                       Category
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the religion" />
                         </SelectTrigger>
@@ -179,7 +179,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commo
                       Blood Group
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the blood group" />
                         </SelectTrigger>
@@ -211,6 +211,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commo
                     <FormControl>
                       <Input
                         {...field}
+                        value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter the Aadhaar number"
                       />

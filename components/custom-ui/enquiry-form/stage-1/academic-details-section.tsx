@@ -15,6 +15,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 import { enquiryStep1RequestSchema } from '../schema/schema';
 import TagInput from './tag-input';
+import { handleNumericInputChange } from '@/lib/utils';
 
 // Form Schema
 const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
@@ -34,21 +35,6 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
   commonFieldClass,
   commonFormItemClass
 }) => {
-  const handleNumericInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    onChange: (value: number | '') => void
-  ) => {
-    const rawValue = e.target.value;
-
-    if (rawValue === '') {
-      onChange('');
-      return;
-    }
-
-    if (/^\d+$/.test(rawValue)) {
-      onChange(Number(rawValue));
-    }
-  };
 
   return (
     <Accordion type="single" collapsible>

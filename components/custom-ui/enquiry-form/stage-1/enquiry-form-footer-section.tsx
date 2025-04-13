@@ -67,7 +67,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft, form, 
         </DialogTrigger>
         <DialogContent className="max-w-[444px]">
           <DialogHeader>
-            <DialogTitle>Save Draft</DialogTitle>
+            <DialogTitle>Submit & Continue</DialogTitle>
           </DialogHeader>
           <div className="flex gap-2 items-center text-center">
             <FaCircleExclamation className="text-yellow-500 w-12 h-12" />
@@ -79,9 +79,11 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft, form, 
                 Close
               </Button>
             </DialogClose>
-            <Button type="submit" onClick={form.handleSubmit(onSubmit, onError)}>
-              Ok
-            </Button>
+            <DialogClose asChild>
+              <Button type="submit" onClick={form.handleSubmit(onSubmit, onError)}>
+                Ok
+              </Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
