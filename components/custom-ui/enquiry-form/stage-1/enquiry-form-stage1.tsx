@@ -233,7 +233,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   async function onSubmit() {
     let values = form.getValues();
     values = removeNullValues(values);
-
     const filteredData = filterBySchema(formSchema, values);
 
     // remove confirmation field from values

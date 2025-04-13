@@ -38,25 +38,24 @@ interface FilledByCollegeSectionInterface {
 const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   form,
   commonFieldClass,
-  commonFormItemClass,
+  commonFormItemClass
 }) => {
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ['telecallers'],
+        queryFn: getTeleCallers
+      },
+      {
+        queryKey: ['counsellors'],
+        queryFn: getCounsellors
+      }
+    ]
+  });
 
-    const results = useQueries({
-      queries: [
-        {
-          queryKey: ['telecallers'],
-          queryFn: getTeleCallers
-        },
-        {
-          queryKey: ['counsellors'],
-          queryFn: getCounsellors
-        }
-      ]
-    });
-  
   const telecallers: UserRoleInterface[] = Array.isArray(results[0].data) ? results[0].data : [];
   const counsellors: UserRoleInterface[] = Array.isArray(results[1].data) ? results[1].data : [];
-  
+
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">

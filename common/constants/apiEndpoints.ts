@@ -1,3 +1,4 @@
+import { updateEnquiryStep3 } from "@/components/custom-ui/enquiry-form/stage-3/helper/apirequests";
 
 export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
 
@@ -51,6 +52,9 @@ export const API_ENDPOINTS = {
 
   createEnquiryStep4: `${API_DOMAIN}/admission/enquiry/step-4`,
   updateEnquiryStep4: `${API_DOMAIN}/admission/enquiry/step-4`,
+
+  updateEnquiryDraftStep3: `${API_DOMAIN}/admission/enquiry/save-draft-step-3`,
+  updateEnquiryStep3: `${API_DOMAIN}/admission/enquiry/step-3`,
 
   // Document Upload
   uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,

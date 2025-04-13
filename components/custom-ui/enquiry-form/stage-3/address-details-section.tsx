@@ -11,10 +11,10 @@ import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 import { Countries, Districts, StatesOfIndia } from '@/types/enum';
-import { enquiryStep3UpdateRequestSchema } from '../schema/schema';
+import { formSchemaStep3 } from './enquiry-form-stage-3';
 
 interface AddressDetailsSectionInterface {
-  form: UseFormReturn<z.infer<typeof enquiryStep3UpdateRequestSchema>>;
+  form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
   commonFormItemClass: string;
   commonFieldClass: string;
 }
@@ -34,7 +34,7 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
       return;
     }
 
-    const result = enquiryStep3UpdateRequestSchema.pick({
+    const result = formSchemaStep3.pick({
       address: true
     }).safeParse({ address: addressDetails });
 

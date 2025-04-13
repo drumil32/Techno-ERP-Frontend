@@ -30,10 +30,11 @@ import {
 } from '@/types/enum';
 import { FieldErrors, FieldValue, FieldValues, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
-import { enquirySchema, enquiryStep3UpdateRequestSchema } from '../schema/schema';
+import { enquirySchema } from '../schema/schema';
+import { formSchemaStep3 } from './enquiry-form-stage-3';
 
 interface StudentDetailsFormPropInterface {
-  form: UseFormReturn<z.infer<typeof enquiryStep3UpdateRequestSchema>>;
+  form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
   commonFormItemClass: string;
   commonFieldClass: string;
 }
@@ -68,7 +69,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
     };
 
 
-    const result = enquiryStep3UpdateRequestSchema.pick({
+    const result = formSchemaStep3.pick({
       admissionMode: true,
       dateOfAdmission: true,
       studentName: true,
@@ -453,34 +454,6 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                           />
                         </PopoverContent>
                       </Popover>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                key="category"
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                      Category
-                    </FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue className="text-[#9D9D9D]" placeholder="Select Category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.values(Category).map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {toPascal(category)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
