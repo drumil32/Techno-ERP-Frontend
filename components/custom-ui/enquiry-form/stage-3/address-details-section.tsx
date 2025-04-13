@@ -145,7 +145,7 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                     </FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className={commonFieldClass}>
+                        <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select district" />
                         </SelectTrigger>
                         <SelectContent>
@@ -172,7 +172,7 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                     </FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className={commonFieldClass}>
+                        <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select state" />
                         </SelectTrigger>
                         <SelectContent>
@@ -199,7 +199,7 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                     </FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className={commonFieldClass}>
+                        <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select country" />
                         </SelectTrigger>
                         <SelectContent>

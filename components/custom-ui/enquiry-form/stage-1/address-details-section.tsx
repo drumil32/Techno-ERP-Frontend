@@ -115,16 +115,16 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                 control={form.control}
                 name="address.district"
                 render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass} col-span-1`}>
+                  <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
                       District
                     </FormLabel>
-                    <FormControl className=''>
+                    <FormControl>
                       <Select onValueChange={field.onChange} value={field.value} >
-                        <SelectTrigger className={`${commonFieldClass}`}>
+                        <SelectTrigger className={`${commonFieldClass}  w-full`}>
                           <SelectValue placeholder="Select the district" />
                         </SelectTrigger>
-                        <SelectContent className=''>
+                        <SelectContent>
                           {Object.values(Districts).map((district) => (
                             <SelectItem key={district} value={district}>
                               {district}
