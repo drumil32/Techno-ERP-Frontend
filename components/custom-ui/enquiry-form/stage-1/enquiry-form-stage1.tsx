@@ -2,7 +2,7 @@
 
 // React and Next.js imports
 import React, { useEffect, useRef } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from '../schema/schema';
 
@@ -82,6 +82,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     enabled: !!id && !isRedirectChecking && !isRedirectError, 
   });
 
+  const confirmationChecked = useWatch({ control: form.control, name: 'confirmation' });
 
   useEffect(() => {
     if (data) {
@@ -296,7 +297,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         <ConfirmationCheckBox form={form} />
 
         {/* Sticky Footer */}
-        <EnquiryFormFooter saveDraft={saveDraft} form={form} onSubmit={onSubmit} />
+        <EnquiryFormFooter saveDraft={saveDraft} form={form} onSubmit={onSubmit} confirmationChecked={confirmationChecked}/>
       </form>
     </Form>
   );

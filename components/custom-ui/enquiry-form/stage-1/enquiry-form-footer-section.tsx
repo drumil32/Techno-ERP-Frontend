@@ -1,8 +1,5 @@
-// React and Hooks
-import React from 'react';
+import React, { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-
-// UI Components
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -13,81 +10,109 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@/components/ui/dialog';
-
-// Icons
 import { FaCircleExclamation } from 'react-icons/fa6';
 
 interface EnquiryFormFooterProps {
   saveDraft: () => void;
   form: UseFormReturn<any>;
   onSubmit: () => void;
+  isSavingDraft?: boolean;
+  confirmationChecked?: boolean;
+  draftExists?: boolean;
 }
 
-const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({ saveDraft, form, onSubmit }) => {
-  function onError() {
-    console.log(form.formState);
+
+const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
+  saveDraft,
+  form,
+  onSubmit,
+  isSavingDraft,
+  confirmationChecked,
+  draftExists
+}) => {
+  const [isSubmitDialogOpen, setSubmitDialogOpen] = useState(false);
+  const [isDraftDialogOpen, setDraftDialogOpen] = useState(false);
+
+  function handleDialogSubmit() {
+    form.handleSubmit(
+      () => {
+        onSubmit();
+        setSubmitDialogOpen(false);
+      },
+      (errors) => {
+        console.error("Form validation failed on submit:", errors);
+        setSubmitDialogOpen(false);
+      }
+    )();
   }
 
-  return (
-    <div className="z-10 bottom-0 left-0 flex items-center justify-between space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button type="button" variant="outline">
-            <span className="font-inter font-semibold text-[12px]">Save Draft</span>
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-[444px]">
-          <DialogHeader>
-            <DialogTitle>Save Draft</DialogTitle>
-          </DialogHeader>
-          <div className="flex gap-2 items-center text-center">
-            <FaCircleExclamation className="text-yellow-500 w-12 h-12" />
-            <span>Please reverify all details again before saving the enquiry form.</span>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="secondary">
-                Close
-              </Button>
-            </DialogClose>
-            <DialogClose asChild>
-              <Button type="button" onClick={saveDraft}>
-                Ok
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button type="button">
-            <span className="font-inter font-semibold text-[12px]">Submit & Continue</span>
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-[444px]">
-          <DialogHeader>
-            <DialogTitle>Submit & Continue</DialogTitle>
-          </DialogHeader>
-          <div className="flex gap-2 items-center text-center">
-            <FaCircleExclamation className="text-yellow-500 w-12 h-12" />
-            <span>Please reverify all details again before submitting the enquiry form.</span>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button type="button" variant="secondary">
-                Close
+  function handleDialogSaveDraft() {
+    saveDraft();
+    setDraftDialogOpen(false);
+  }
+  return (
+    <>
+      <div className="sticky bottom-0 left-0 z-10 flex items-center justify-between space-x-4 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] overflow-hidden">
+      <div className="absolute bottom-0 left-0 -z-100 w-screen bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] overflow-hidden"></div>
+        <Dialog open={isDraftDialogOpen} onOpenChange={setDraftDialogOpen}>
+          <DialogTrigger asChild>
+            <Button type="button" variant="outline" disabled={isSavingDraft}>
+              <span className="font-inter font-semibold text-[12px]">
+                {isSavingDraft ? 'Saving...' : (draftExists ? 'Update Draft' : 'Save Draft')}
+              </span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-[444px]">
+            <DialogHeader>
+              <DialogTitle>{draftExists ? 'Update Draft' : 'Save Draft'}</DialogTitle>
+            </DialogHeader>
+            <div className="flex gap-2 items-center text-center">
+              <FaCircleExclamation className="text-yellow-500 w-12 h-12" />
+              <span>Please reverify all details again before {draftExists ? 'updating the draft' : 'saving the enquiry form'}.</span>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="secondary" onClick={() => setDraftDialogOpen(false)}>
+                Cancel
               </Button>
-            </DialogClose>
-            <DialogClose asChild>
-              <Button type="submit" onClick={form.handleSubmit(onSubmit, onError)}>
+              <Button type="button" onClick={handleDialogSaveDraft}>
                 Ok
               </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isSubmitDialogOpen} onOpenChange={setSubmitDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              type="button"
+              disabled={!confirmationChecked || form.formState.isSubmitting || isSavingDraft}
+            >
+              <span className="font-inter font-semibold text-[12px]">
+                {form.formState.isSubmitting ? "Submitting..." : "Submit & Continue"}
+              </span>
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-[444px]">
+            <DialogHeader>
+              <DialogTitle>Submit & Continue</DialogTitle>
+            </DialogHeader>
+            <div className="flex gap-2 items-center text-center">
+              <FaCircleExclamation className="text-yellow-500 w-12 h-12" />
+              <span>Please reverify all details again before submitting the enquiry form.</span>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="secondary" onClick={() => setSubmitDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="button" onClick={handleDialogSubmit}>
+                Ok
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </>
   );
 };
 

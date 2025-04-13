@@ -213,6 +213,7 @@ export const SingleEnquiryUploadDocument = ({
 
       if (onUploadSuccess) {
         onUploadSuccess(response);
+        setSelectedFile(null)
       }
       setStatus({
         type: 'success',
@@ -312,6 +313,7 @@ export const SingleEnquiryUploadDocument = ({
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-start gap-3 w-full">
         <div className="">
+          {!isLoading && 
           <div className='flex gap-2 mt-2'>
               <Label
                 htmlFor={uniqueInputId}
@@ -387,6 +389,8 @@ export const SingleEnquiryUploadDocument = ({
               </div>
             )}
           </div>
+          }
+          
           {isLoading && (
             <div className="flex items-center justify-center h-20 w-full sm:w-64 md:w-80 lg:w-96 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 text-sm">
               Processing...

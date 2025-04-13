@@ -1,7 +1,16 @@
 'use client';
 
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { feesRequestSchema, feesUpdateSchema, frontendFeesDraftValidationSchema, IFeesRequestSchema } from './studentFeesSchema';
+import {
+  feesRequestSchema, 
+  finalFeesCreateSchema, 
+  finalFeesUpdateSchema, 
+  frontendFeesDraftValidationSchema, 
+  IFeesRequestSchema, 
+  IFinalFeesCreateSchema,
+  IFinalFeesUpdateSchema
+} from './studentFeesSchema';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
 import { getCounsellors, getEnquiry, getTeleCallers } from '../stage-1/enquiry-form-api';
@@ -42,6 +51,7 @@ import { queryClient } from '@/lib/queryClient';
 import { validateCustomFeeLogic } from './helpers/validateFees';
 import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
+import EnquiryFormFooter from '../stage-1/enquiry-form-footer-section';
 
 export const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -112,7 +122,6 @@ export const StudentFeesForm = () => {
     enabled: !!enquiry_id
   });
 
-  console.log(enquiryData)
 
   const existingFinalFee = enquiryData?.studentFee;
   const existingFeeDraft = enquiryData?.studentFeeDraft;
@@ -372,7 +381,7 @@ export const StudentFeesForm = () => {
 
         const statusPayload = {
           id: enquiry_id,
-          newStatus: "Step_3"
+          newStatus: ApplicationStatus.STEP_3
         };
 
         const status_update = await updateEnquiryStatus(statusPayload);
@@ -390,7 +399,7 @@ export const StudentFeesForm = () => {
 
   async function handleSaveDraft() {
     setIsSavingDraft(true);
-
+    form.clearErrors();
 
     const currentValues = form.getValues();
     const existingDraftId = enquiryData?.studentFeeDraft?._id;
@@ -440,7 +449,7 @@ export const StudentFeesForm = () => {
         ...cleanedData,
       };
       updateDraftMutation.mutateAsync(finalPayload)
-      // updateStudentFeesDraft(finalPayload)
+      updateStudentFeesDraft(finalPayload)
     } else {
       finalPayload = {
         enquiryId: cleanedData.enquiryId || enquiry_id,
@@ -448,7 +457,7 @@ export const StudentFeesForm = () => {
       };
       delete finalPayload.id;
       createDraftMutation.mutateAsync(finalPayload)
-      // createStudentFeesDraft(finalPayload)
+      createStudentFeesDraft(finalPayload)
     }
   }
 
@@ -504,7 +513,7 @@ export const StudentFeesForm = () => {
 
     } else {
 
-      const validationResult = feesUpdateSchema.safeParse(values);
+      const validationResult = finalFeesCreateSchema.safeParse(values);
 
 
       if (!validationResult.success) {
@@ -547,7 +556,7 @@ export const StudentFeesForm = () => {
     <Form {...form}>
       <form
         // onSubmit={form.handleSubmit(onSubmit)}
-        className="pt-8 mr-[25px] space-y-8 flex flex-col w-full overflow-x-hidden relative"
+        className="pt-8 mr-[25px] space-y-8 flex flex-col w-full"
       >
 
 
@@ -957,21 +966,14 @@ export const StudentFeesForm = () => {
           )}
         />
 
-        <div className="z-10 bottom-0 left-0 flex items-center justify-between space-x-4 mt-6 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleSaveDraft}
-            disabled={isSavingDraft || form.formState.isSubmitting}
-          >
-            {isSavingDraft ? 'Saving...' : (draftExists ? 'Update Draft' : 'Save Draft')}
-          </Button>
-          <Button type="button"
-            onClick={onSubmit}
-            disabled={(!confirmationChecked || form.formState.isSubmitting) ?? form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Submitting..." : "Submit & Continue"}
-          </Button>
-        </div>
+        <EnquiryFormFooter
+          form={form}
+          saveDraft={handleSaveDraft}
+          onSubmit={onSubmit} 
+          isSavingDraft={isSavingDraft}
+          confirmationChecked={!!confirmationChecked} 
+          draftExists={draftExists}
+        />
       </form>
     </Form>
   );

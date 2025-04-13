@@ -130,7 +130,7 @@ const EnquiryFormStage3 = () => {
           <OfficeUseSection form={form} />
           <ScholarshipDetailsSection form={form} />
 
-          <EnquiryFormFooter form={form} onSubmit={saveData} saveDraft={saveData} />
+          <EnquiryFormFooter form={form} onSubmit={saveData} saveDraft={saveData} confirmationChecked={true}/>
         </form>
       </Form>
     </>
