@@ -118,9 +118,12 @@ export const StudentFeesForm = () => {
   });
 
   const { data: enquiryData, error, isLoading: isLoadingEnquiry } = useQuery<any>({
-    queryKey: ['enquireFormData', enquiry_id, dataUpdated],
+    queryKey: ['enquireFormData', enquiry_id],  // Remove dataUpdated dependency
     queryFn: () => (enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null')),
-    enabled: !!enquiry_id
+    enabled: !!enquiry_id,
+    // Add this to ensure the query refetches when invalidated
+    refetchOnWindowFocus: false,
+    staleTime: 0
   });
 
 
@@ -278,12 +281,14 @@ export const StudentFeesForm = () => {
       form.reset({
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,
-        semWiseFees: initialSemFees,
+        semWiseFees: initialSemFees, 
         feesClearanceDate: initialFeesClearanceDate,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
         remarks: initialCollegeRemarks,
+        confirmationCheck: form.getValues().confirmationCheck || false,
       });
+  
 
 
     } else if (error) {
@@ -336,12 +341,99 @@ export const StudentFeesForm = () => {
       .filter(Boolean);
   }, [telecallersData]);
 
+  const updateFormWithNewData = (newEnquiryData:any) => {
+    if (!newEnquiryData) return;
+    
+    const feeDataSource = newEnquiryData.studentFee || newEnquiryData.studentFeeDraft;
+    if (!feeDataSource) return;
+    
+    let initialSemFees = [];
+    let initialOtherFees = [];
+  
+    const baseSem1Fee = semWiseFeesData?.fee?.[0];
+  
+    const existingSem1FeeDataInOther = feeDataSource.otherFees?.find((fee:any) => fee.type === FeeType.SEM1FEE);
+    const existingSem1FeeDataInSemWise = feeDataSource.semWiseFees?.[0];
+  
+    const sem1FeeObject = {
+      type: FeeType.SEM1FEE,
+      finalFee: existingSem1FeeDataInOther?.finalFee ?? existingSem1FeeDataInSemWise?.finalFee ?? baseSem1Fee ?? undefined,
+      fee: baseSem1Fee,
+      feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined,
+    };
+  
+    let initialCounsellors = newEnquiryData.counsellor ?? [];
+    let initialTelecallers = newEnquiryData.telecaller ?? [];
+    const initialCollegeRemarks = newEnquiryData?.remarks;
+  
+    initialOtherFees = Object.values(FeeType)
+      .filter(ft => ft !== FeeType.SEM1FEE)
+      .map((feeType) => {
+        const baseFeeInfo = otherFeesData?.find((item:any) => item.type === feeType);
+        const existingFee = feeDataSource.otherFees?.find((fee:any) => fee.type === feeType);
+  
+        return {
+          type: feeType,
+          finalFee: existingFee?.finalFee ?? baseFeeInfo?.fee ?? undefined,
+          feesDepositedTOA: existingFee?.feesDepositedTOA ?? undefined,
+        };
+      });
+  
+    initialOtherFees.unshift(sem1FeeObject as any);
+  
+    const courseSemFeeStructure = semWiseFeesData?.fee || [];
+    const existingSemFees = feeDataSource?.semWiseFees || [];
+  
+    initialSemFees = courseSemFeeStructure.map((baseFeeAmount:any, index:any) => {
+      const existingData = existingSemFees[index];
+      return {
+        finalFee: existingData?.finalFee ?? baseFeeAmount,
+      };
+    });
+  
+    const existingDateString = feeDataSource?.feesClearanceDate;
+    let initialFeesClearanceDate = null;
+  
+    if (existingDateString) {
+      initialFeesClearanceDate = existingDateString;
+    } else {
+      initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
+    }
+  
+    // Reset form with new values and make sure it's pristine
+    form.reset({
+      enquiryId: enquiry_id,
+      otherFees: initialOtherFees,
+      semWiseFees: initialSemFees,
+      feesClearanceDate: initialFeesClearanceDate,
+      counsellor: initialCounsellors,
+      telecaller: initialTelecallers,
+      remarks: initialCollegeRemarks,
+      confirmationCheck: form.getValues().confirmationCheck,
+      otpTarget: form.getValues().otpTarget,
+      otpVerificationEmail: form.getValues().otpVerificationEmail,
+    }, {
+      keepDirty: false
+    });
+  };
+  
+
   const createDraftMutation = useMutation({
     mutationFn: createStudentFeesDraft,
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("Draft saved successfully!");
       queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-      setDataUpdated((prev) => !prev);
+      
+      // Force form to be pristine after save
+      form.reset(form.getValues(), {
+        keepValues: true,
+        keepDirty: false
+      });
+      
+      // Optionally, force a refetch and update form with new data
+      getEnquiry(enquiry_id).then(newData => {
+        updateFormWithNewData(newData);
+      });
     },
     onError: (error) => {
       const errorMsg = (error as any)?.response?.data?.message || (error as Error)?.message || "Unknown error";
@@ -351,13 +443,24 @@ export const StudentFeesForm = () => {
       setIsSavingDraft(false);
     }
   });
+  
 
   const updateDraftMutation = useMutation({
     mutationFn: updateStudentFeesDraft,
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("Draft updated successfully!");
       queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-      setDataUpdated((prev) => !prev);
+      
+      // Force form to be pristine after save
+      form.reset(form.getValues(), {
+        keepValues: true,
+        keepDirty: false
+      });
+      
+      // Optionally, force a refetch and update form with new data
+      getEnquiry(enquiry_id).then(newData => {
+        updateFormWithNewData(newData);
+      });
     },
     onError: (error) => {
       const errorMsg = (error as any)?.response?.data?.message || (error as Error)?.message || "Unknown error";
@@ -401,32 +504,28 @@ export const StudentFeesForm = () => {
   async function handleSaveDraft() {
     setIsSavingDraft(true);
     form.clearErrors();
-
+  
     const currentValues = form.getValues();
     const existingDraftId = enquiryData?.studentFeeDraft?._id;
-
+  
     const isCustomValid = validateCustomFeeLogic(
       currentValues,
-      otherFeesData, // Pass base data for original fees
-      semWiseFeesData, // Pass base data for original fees
+      otherFeesData,
+      semWiseFeesData,
       form.setError,
       form.clearErrors
     );
-
+  
     if (!isCustomValid) {
-      toast.error("Fee validation failed. Please check highlighted fields (e.g., Final Fee vs Original, Deposit vs Final Fee).");
+      toast.error("Fee validation failed. Please check highlighted fields.");
       setIsSavingDraft(false);
-      return; // Stop if custom validation fails
+      return;
     }
-
-
+  
     const validationResult = frontendFeesDraftValidationSchema.safeParse(currentValues);
-
+  
     if (!validationResult.success) {
-      toast.error("Validation failed. Please check the fields.", {
-
-      });
-
+      toast.error("Validation failed. Please check the fields.");
       validationResult.error.errors.forEach(err => {
         if (err.path.length > 0) {
           const fieldName = err.path.join('.') as keyof IFeesRequestSchema;
@@ -434,31 +533,29 @@ export const StudentFeesForm = () => {
         }
       });
       setIsSavingDraft(false);
-
       return;
     }
-
+  
     const validatedDataForCleaning = validationResult.data;
-
-
     const cleanedData = cleanDataForDraft(validatedDataForCleaning);
-    let finalPayload: any = {}
-    if (draftExists && draftId) {
-      finalPayload = {
-        id: draftId,
-        enquiryId: enquiry_id,
-        ...cleanedData,
-      };
-      updateDraftMutation.mutateAsync(finalPayload)
-      updateStudentFeesDraft(finalPayload)
-    } else {
-      finalPayload = {
-        enquiryId: cleanedData.enquiryId || enquiry_id,
-        ...cleanedData,
-      };
-      delete finalPayload.id;
-      createDraftMutation.mutateAsync(finalPayload)
-      createStudentFeesDraft(finalPayload)
+    
+    try {
+      if (draftExists && draftId) {
+        const finalPayload = {
+          id: draftId,
+          enquiryId: enquiry_id,
+          ...cleanedData,
+        };
+        await updateDraftMutation.mutateAsync(finalPayload);
+      } else {
+        const finalPayload = {
+          enquiryId: cleanedData.enquiryId || enquiry_id,
+          ...cleanedData,
+        };
+        delete finalPayload.id;
+        await createDraftMutation.mutateAsync(finalPayload);
+      }
+    } catch (error) {
     }
   }
 

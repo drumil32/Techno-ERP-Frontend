@@ -67,8 +67,8 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             <DialogHeader>
               <DialogTitle>{draftExists ? 'Update Draft' : 'Save Draft'}</DialogTitle>
             </DialogHeader>
-            <div className="flex gap-2 items-center text-center">
-              <FaCircleExclamation className="text-yellow-500 w-12 h-12" />
+            <div className="flex gap-2 items-center text-left">
+              <FaCircleExclamation className="text-yellow-500 w-8 h-8" />
               <span>Please reverify all details again before {draftExists ? 'updating the draft' : 'saving the enquiry form'}.</span>
             </div>
             <DialogFooter>
@@ -97,8 +97,8 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             <DialogHeader>
               <DialogTitle>Submit & Continue</DialogTitle>
             </DialogHeader>
-            <div className="flex gap-2 items-center text-center">
-              <FaCircleExclamation className="text-yellow-500 w-12 h-12" />
+            <div className="flex gap-2 items-center text-left">
+              <FaCircleExclamation className="text-yellow-500 w-8 h-8" />
               <span>Please reverify all details again before submitting the enquiry form.</span>
             </div>
             <DialogFooter>

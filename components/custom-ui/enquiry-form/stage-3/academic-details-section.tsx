@@ -85,6 +85,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
       console.log('Validation Log:\n' + validationLog.join('\n'));
     }
   }, [validationLog]);
+  
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">

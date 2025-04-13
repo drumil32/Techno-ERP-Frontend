@@ -64,7 +64,7 @@ const EnquiryFormStage3 = () => {
 
   const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
     id,
-    currentStage: ApplicationStatus.STEP_2
+    currentStage: ApplicationStatus.STEP_3
   });
 
   const form = useForm<z.infer<typeof formSchemaStep3>>({
@@ -169,19 +169,34 @@ const EnquiryFormStage3 = () => {
     const filteredData = filterBySchema(formSchemaStep3, values);
     console.log('Filtered Data:', filteredData);
 
-    const documentTypesPresent = documents.map((doc:any) => doc.type);
-    const missingDocuments = mandatoryDocuments.filter(
-      (requiredType) => !documentTypesPresent.includes(requiredType)
-    );
+    // const documentTypesPresent = documents.map((doc:any) => doc.type);
+    // const missingDocuments = mandatoryDocuments.filter(
+    //   (requiredType) => !documentTypesPresent.includes(requiredType)
+    // );
 
-    if (missingDocuments.length > 0) {
-      toast.error("Please upload all mandatory documents before proceeding.");
-      return;
-    }
+    // if (missingDocuments.length > 0) {
+    //   toast.error("Please upload all mandatory documents before proceeding.");
+    //   return;
+    // }
 
 
     // remove confirmation field from values
     const { confirmation, _id, ...rest } = filteredData;
+
+    if ((rest as any).academicDetails) {
+      const academicDetails = (rest as any).academicDetails;
+      if (Array.isArray(academicDetails)) {
+        (rest as any).academicDetails = academicDetails.filter((entry: any) => {
+          const { educationLevel, _id, ...otherFields } = entry;
+          return Object.values(otherFields).some(
+            (value) => value !== null && value !== undefined && value !== ''
+          );
+        });
+      }
+    }
+    
+
+    console.log(rest)
 
     const enquiry: any = await updateEnquiryStep3(rest);
 

@@ -52,7 +52,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
   const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
     id,
-    currentStage: ApplicationStatus.STEP_1 
+    currentStage: ApplicationStatus.STEP_1
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -79,7 +79,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id],
     queryFn: () => getEnquiry(id ? id : ''),
-    enabled: !!id && !isRedirectChecking && !isRedirectError, 
+    enabled: !!id && !isRedirectChecking && !isRedirectError,
   });
 
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmation' });
@@ -142,14 +142,14 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
   async function saveDraft() {
     let values = form.getValues();
-    
+
     // Remove null values from the entire object
     values = removeNullValues(values);
 
-    
+
     // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep1RequestSchema.shape);
-    
+
     // Filter out values not in the schema
     const filteredValues = Object.fromEntries(
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
@@ -159,12 +159,12 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       'studentName',
       'studentPhoneNumber'
     ];
-    
+
     const filteredKeys = Array.from(new Set([
       ...Object.keys(values),
       ...alwaysIncludeKeys
-    ])).filter((key) => schemaKeys.includes(key));    
-    
+    ])).filter((key) => schemaKeys.includes(key));
+
     const partialSchema = enquiryDraftStep1RequestSchema.pick(
       filteredKeys.reduce(
         (acc, key) => {
@@ -235,9 +235,23 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     values = removeNullValues(values);
     const filteredData = filterBySchema(formSchema, values);
 
-    // remove confirmation field from values
     const { confirmation, _id, ...rest } = filteredData;
+    console.log(values)
+
+    if ((rest as any).academicDetails) {
+      const academicDetails = (rest as any).academicDetails;
+      if (Array.isArray(academicDetails)) {
+        (rest as any).academicDetails = academicDetails.filter((entry: any) => {
+          const { educationLevel, _id, ...otherFields } = entry;
+          return Object.values(otherFields).some(
+            (value) => value !== null && value !== undefined && value !== ''
+          );
+        });
+      }
+    }
     
+
+
     const enquiry: any = await createEnquiry(rest);
 
     const response = await updateEnquiryStatus({
@@ -296,7 +310,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         <ConfirmationCheckBox form={form} />
 
         {/* Sticky Footer */}
-        <EnquiryFormFooter saveDraft={saveDraft} form={form} onSubmit={onSubmit} confirmationChecked={confirmationChecked}/>
+        <EnquiryFormFooter saveDraft={saveDraft} form={form} onSubmit={onSubmit} confirmationChecked={confirmationChecked} />
       </form>
     </Form>
   );
