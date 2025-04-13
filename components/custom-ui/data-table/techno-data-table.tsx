@@ -51,6 +51,7 @@ export default function TechnoDataTable({
   totalEntries,
   handleViewMore,
   rowCursor = true,
+  showPagination = true,
   children
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -108,7 +109,7 @@ export default function TechnoDataTable({
   const nonClickableColumns = ['actions', 'leadType', 'finalConversion', "leadsFollowUpCount", 'yellowLeadsFollowUpCount'];
 
   return (
-    <div className="w-full bg-white space-y-4 my-[16px] mb-0 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
+    <div className="w-full mb-10 bg-white space-y-4 my-[16px] mb-0 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
       {/* Header Section */}
       <div className="flex w-full items-center py-4 px-4">
         <div className="flex items-center">
@@ -224,6 +225,7 @@ export default function TechnoDataTable({
       </div>
 
       {/* Pagination Section */}
+      {showPagination && 
       <div className="flex items-center justify-between py-4">
         <div className="flex items-center space-x-2">
           <span>Rows per page:</span>
@@ -300,6 +302,7 @@ export default function TechnoDataTable({
           </Button>
         </div>
       </div>
+}
     </div>
   );
 }

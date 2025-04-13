@@ -287,7 +287,7 @@ const EnquiryFormStage3 = () => {
           />
           <ScholarshipDetailsSection form={form} />
 
-          <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} />
+          <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} confirmationChecked={true}/>
         </form>
       </Form>
     </>

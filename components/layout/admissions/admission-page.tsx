@@ -119,6 +119,7 @@ export default function AdmissionsLandingPage() {
             pageLimit={10}
             onSearch={handleSearch}
             searchTerm={search}
+            showPagination={false}
           />
         )
       }
