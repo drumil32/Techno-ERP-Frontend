@@ -264,25 +264,25 @@ export const SingleEnquiryUploadDocument = ({
         <Label className="text-sm font-semibold text-gray-800 flex">
           {getReadableDocumentName(documentType)}
           {existingDocument && (
-                <svg
-                  className="h-5 w-5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                    fill="#22C55E"
-                  />
-                  <path
-                    d="M8 12L11 15L16 9"
-                    stroke="white"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              )}
+            <svg
+              className="h-5 w-5"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                fill="#22C55E"
+              />
+              <path
+                d="M8 12L11 15L16 9"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          )}
         </Label>
         {displayExistingDocument && (
           <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded border border-blue-200 flex items-center gap-2">
@@ -313,8 +313,8 @@ export const SingleEnquiryUploadDocument = ({
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-start gap-3 w-full">
         <div className="">
-          {!isLoading && 
-          <div className='flex gap-2 mt-2'>
+          {!isLoading &&
+            <div className='flex gap-2 mt-2'>
               <Label
                 htmlFor={uniqueInputId}
                 className={cn(
@@ -353,44 +353,44 @@ export const SingleEnquiryUploadDocument = ({
                   accept={acceptedFileTypes}
                 />
               </Label>
-            {selectedFile && (
-              <div
-                className={cn(
-                  'flex items-center justify-between gap-3 p-2 h-20',
-                  'border border-purple-200 bg-purple-50 rounded-lg',
-                  'w-full sm:w-64 md:w-80 lg:w-96'
-                )}
-              >
-                <div className="flex items-center gap-2 overflow-hidden">
-                  <FileText className="h-5 w-5 text-purple-600 flex-shrink-0" />
-                  <div className="flex flex-col overflow-hidden">
-                    <span
-                      className="text-sm font-medium text-purple-800 truncate"
-                      title={selectedFile.name}
-                    >
-                      {selectedFile.name}
-                    </span>
-                    <span className="text-xs text-purple-600">
-                      {formatFileSize(selectedFile.size)}
-                    </span>
-                  </div>
-                </div>
-                {/* Remove Button */}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6 text-purple-500 hover:bg-purple-100 hover:text-purple-700 flex-shrink-0 rounded-full"
-                  onClick={handleRemoveFile}
-                  aria-label="Remove file"
-                  disabled={isLoading}
+              {selectedFile && (
+                <div
+                  className={cn(
+                    'flex items-center justify-between gap-3 p-2 h-20',
+                    'border border-purple-200 bg-purple-50 rounded-lg',
+                    'w-full sm:w-64 md:w-80 lg:w-96'
+                  )}
                 >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </div>
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <FileText className="h-5 w-5 text-purple-600 flex-shrink-0" />
+                    <div className="flex flex-col overflow-hidden">
+                      <span
+                        className="text-sm font-medium text-purple-800 truncate"
+                        title={selectedFile.name}
+                      >
+                        {selectedFile.name}
+                      </span>
+                      <span className="text-xs text-purple-600">
+                        {formatFileSize(selectedFile.size)}
+                      </span>
+                    </div>
+                  </div>
+                  {/* Remove Button */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6 text-purple-500 hover:bg-purple-100 hover:text-purple-700 flex-shrink-0 rounded-full"
+                    onClick={handleRemoveFile}
+                    aria-label="Remove file"
+                    disabled={isLoading}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
           }
-          
+
           {isLoading && (
             <div className="flex items-center justify-center h-20 w-full sm:w-64 md:w-80 lg:w-96 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 text-sm">
               Processing...
@@ -405,7 +405,7 @@ export const SingleEnquiryUploadDocument = ({
               htmlFor={`due-date-picker-${uniqueInputId}`}
               className="text-xs font-medium text-gray-600 mb-1 block "
             >
-              Due by 
+              Due by
             </Label>
             <Popover>
               <PopoverTrigger asChild>
@@ -417,8 +417,8 @@ export const SingleEnquiryUploadDocument = ({
                     !dueDate && 'text-muted-foreground',
                     // Add red border if date is selected but invalid
                     dueDate &&
-                      isBefore(dueDate, startOfDay(new Date())) &&
-                      'border-red-500 focus-visible:ring-red-500'
+                    isBefore(dueDate, startOfDay(new Date())) &&
+                    'border-red-500 focus-visible:ring-red-500'
                   )}
                   disabled={isLoading}
                 >
@@ -434,9 +434,12 @@ export const SingleEnquiryUploadDocument = ({
                 <Calendar
                   mode="single"
                   selected={dueDate}
-                  onSelect={handleDueDateSelect} // Use the new handler
+                  onSelect={handleDueDateSelect}
                   initialFocus
-                  disabled={isLoading || ((date) => isBefore(date, startOfDay(new Date())))} // Disable past dates
+                  disabled={isLoading || ((date) => isBefore(date, startOfDay(new Date())))}
+                  captionLayout={"dropdown-buttons"}
+                  fromYear={new Date().getFullYear() - 100}
+                  toYear={new Date().getFullYear() + 10}
                 />
               </PopoverContent>
             </Popover>
@@ -449,7 +452,7 @@ export const SingleEnquiryUploadDocument = ({
               .
             </Label>
             <Button
-            variant={'outline'}
+              variant={'outline'}
               onClick={handleUpload}
               disabled={!canUpload} // Use the calculated canUpload state
               className="w-full sm:w-auto h-10"

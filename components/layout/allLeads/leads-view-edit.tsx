@@ -204,7 +204,7 @@ export default function LeadViewEdit({ data }: any) {
         return;
       }
 
-      const response :LeadData|null = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateLead, filteredData);
+      const response: LeadData | null = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateLead, filteredData);
       if (response) {
         toast.success('Updated Lead Successfully');
         setFormData(response);
@@ -442,6 +442,9 @@ export default function LeadViewEdit({ data }: any) {
               selected={parseDateString(formData.nextDueDate)}
               onSelect={handleDateChange}
               initialFocus
+              captionLayout={"dropdown-buttons"}
+              fromYear={new Date().getFullYear() - 100}
+              toYear={new Date().getFullYear() + 10}
             />
           </PopoverContent>
         </Popover>

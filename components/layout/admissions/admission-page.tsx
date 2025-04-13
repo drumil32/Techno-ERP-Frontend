@@ -13,7 +13,9 @@ import { useRouter } from "next/navigation";
 import { ApplicationStatus } from "@/types/enum";
 import { SITE_MAP } from "@/common/constants/frontendRouting";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { BookPlus, Search } from "lucide-react";
+import { formatApplicationStatus } from "./helpers/format-application-status";
+import { CellContext } from "@tanstack/react-table";
 
 export default function AdmissionsLandingPage() {
   const [search, setSearch] = useState("");
@@ -33,7 +35,12 @@ export default function AdmissionsLandingPage() {
     { accessorKey: 'genderDisplay', header: 'Gender' },
     { accessorKey: 'district', header: 'District' },
     { accessorKey: 'course', header: 'Course' },
-    { accessorKey: 'applicationStatus', header: 'Application Status' },
+    {
+      accessorKey: 'applicationStatus', header: 'Application Status', cell: ({ getValue }: CellContext<AdmissionTableRow, string>) => {
+        const rawStatus = getValue<string>();
+        return formatApplicationStatus(rawStatus);
+      }
+    },
 
     { accessorKey: 'fatherPhoneNumber', header: 'Father P No.' },
     { accessorKey: 'motherPhoneNumber', header: 'Mother P No.' },
@@ -92,29 +99,13 @@ export default function AdmissionsLandingPage() {
         <AdmissionCard
           heading="New Application"
           subheading="Start a new admission application"
+          icon={<BookPlus className="h-8 w-8 text-primary" />}
+
         >
           <Button className="w-2/3 cursor-pointer" onClick={() => {
             router.push(SITE_MAP.ADMISSIONS.GO_TO_ENQUIRY("new", ApplicationStatus.STEP_1.toLocaleLowerCase()))
 
           }}> Create New Admission</Button>
-        </AdmissionCard>
-
-        <AdmissionCard
-          heading="Ongoing Application"
-          subheading="Search for ongoing application"
-        >
-          <div className="flex gap-2">
-            <div className="relative">
-              <Input
-                placeholder="Search for leads"
-                className="max-w-[243px] h-[32px] rounded-md bg-[#f3f3f3] px-4 py-2 pr-10 text-gray-600 placeholder-gray-400"
-              />
-              <span className="absolute inset-y-0 right-0 flex items-center pr-3">
-                <Search className="h-4 w-4 text-gray-500" />
-              </span>
-            </div>
-            <Button className="w-1/4 cursor-pointer"> Search</Button>
-          </div>
         </AdmissionCard>
       </div>
       {

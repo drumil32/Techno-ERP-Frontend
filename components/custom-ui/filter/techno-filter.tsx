@@ -15,7 +15,7 @@ import { format, parse } from 'date-fns';
 import TechnoLeadTypeTag, { TechnoLeadType } from '../lead-type-tag/techno-lead-type-tag';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import FinalConversionTag, {FinalConversionStatus} from '@/components/layout/yellowLeads/final-conversion-tag';
+import FinalConversionTag, { FinalConversionStatus } from '@/components/layout/yellowLeads/final-conversion-tag';
 import { Course, CourseNameMapper } from '@/types/enum';
 import { toPascal } from '@/lib/utils';
 
@@ -182,6 +182,9 @@ export default function TechnoFilter({
                       mode="single"
                       selected={startDate}
                       onSelect={(date) => handleDateChange('start', date)}
+                      captionLayout={"dropdown-buttons"}
+                      fromYear={new Date().getFullYear() - 100}
+                      toYear={new Date().getFullYear() + 10}
                       initialFocus
                     />
                   </PopoverContent>
@@ -209,6 +212,9 @@ export default function TechnoFilter({
                       onSelect={(date) => handleDateChange('end', date)}
                       initialFocus
                       disabled={(date) => (startDate ? date < startDate : false)}
+                      captionLayout={"dropdown-buttons"}
+                      fromYear={new Date().getFullYear() - 100}
+                      toYear={new Date().getFullYear() + 10}
                     />
                   </PopoverContent>
                 </Popover>
@@ -240,8 +246,8 @@ export default function TechnoFilter({
                   checked={
                     multiSelect
                       ? filters[filterKey]?.includes(
-                          typeof option === 'string' ? option : option.id
-                        )
+                        typeof option === 'string' ? option : option.id
+                      )
                       : filters[filterKey] === (typeof option === 'string' ? option : option.id)
                   }
                 />

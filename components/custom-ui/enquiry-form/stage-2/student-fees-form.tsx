@@ -2,11 +2,11 @@
 
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import {
-  feesRequestSchema, 
-  finalFeesCreateSchema, 
-  finalFeesUpdateSchema, 
-  frontendFeesDraftValidationSchema, 
-  IFeesRequestSchema, 
+  feesRequestSchema,
+  finalFeesCreateSchema,
+  finalFeesUpdateSchema,
+  frontendFeesDraftValidationSchema,
+  IFeesRequestSchema,
   IFinalFeesCreateSchema,
   IFinalFeesUpdateSchema
 } from './studentFeesSchema';
@@ -52,6 +52,7 @@ import { validateCustomFeeLogic } from './helpers/validateFees';
 import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import EnquiryFormFooter from '../stage-1/enquiry-form-footer-section';
+import { DatePicker } from '@/components/ui/date-picker';
 
 export const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -240,7 +241,7 @@ export const StudentFeesForm = () => {
       initialOtherFees = Object.values(FeeType)
         .filter(ft => ft !== FeeType.SEM1FEE)
         .map((feeType) => {
-          const baseFeeInfo:any = otherFeesData.find((item: any) => item.type === feeType);
+          const baseFeeInfo: any = otherFeesData.find((item: any) => item.type === feeType);
           const existingFee = feeDataSource?.otherFees?.find((fee: any) => fee.type === feeType);
 
           return {
@@ -679,48 +680,15 @@ export const StudentFeesForm = () => {
                 </div>
 
                 <div className="mt-6 px-2">
-                  <FormField
+            
+
+                  <DatePicker
                     control={form.control}
                     name="feesClearanceDate"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col w-full max-w-xs">
-                        <FormLabel className="text-sm font-medium">Fees Clearance Date</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                              <Button
-                                variant={"outline"}
-                                className={cn(
-                                  "w-full pl-3 text-left font-normal h-9 text-sm",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? field.value : <span>Pick a date</span>}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              // Parse the stored string ('dd/MM/yyyy') into a Date for the Calendar
-                              selected={parseDisplayDate(field.value)}
-                              onSelect={(selectedDate: Date | undefined) => {
-                                // Format the selected Date back into 'dd/MM/yyyy' string for storage
-                                const formattedDate = formatDisplayDate(selectedDate);
-                                // Update the form field with the string value or null
-                                field.onChange(formattedDate);
-                              }}
-                              // Optional: Disable dates if needed
-                              // disabled={(date) => date < new Date("1900-01-01")}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        {/* Ensure FormMessage is displayed */}
-                        <div className='h-5 mt-1'> {/* Allocate space for message */}
-                          <FormMessage className="text-xs" />
-                        </div>
-                      </FormItem>
-                    )}
+                    label="Fees Clearance Date"
+                    placeholder="Pick a Date"
+                    showYearMonthDropdowns={true}
+                    formItemClassName='w-[300px]'
                   />
                 </div>
 
@@ -969,9 +937,9 @@ export const StudentFeesForm = () => {
         <EnquiryFormFooter
           form={form}
           saveDraft={handleSaveDraft}
-          onSubmit={onSubmit} 
+          onSubmit={onSubmit}
           isSavingDraft={isSavingDraft}
-          confirmationChecked={!!confirmationChecked} 
+          confirmationChecked={!!confirmationChecked}
           draftExists={draftExists}
         />
       </form>

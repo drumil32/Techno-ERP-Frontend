@@ -38,6 +38,7 @@ import {
 // React and React Hook Form
 import React from 'react';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
+import { DatePicker } from '@/components/ui/date-picker';
 
 // Props Interface
 interface StudentDetailsFormPropInterface<T extends FieldValues = FieldValues> {
@@ -94,47 +95,12 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 )}
               />
 
-              <FormField
-                key="dateOfEnquiry"
+              <DatePicker
                 control={form.control}
                 name="dateOfEnquiry"
-                render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass} border-none`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                      Date of Enquiry
-                    </FormLabel>
-                    <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={`${commonFieldClass} justify-between bg-inherit border-none shadow-none font-normal`}
-                          >
-                            <span className={!field.value ? 'text-[#9D9D9D]' : ''}>
-                              {field.value ? field.value : 'Select Date'}
-                            </span>
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                          <Calendar
-                            mode="single"
-                            selected={field.value ? new Date(field.value) : undefined}
-                            onSelect={(date) => {
-                              if (date) {
-                                const formattedDate = format(date, 'dd/MM/yyyy');
-                                field.onChange(formattedDate);
-                              } else {
-                                field.onChange('');
-                              }
-                            }}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Date of Enquiry"
+                placeholder="Select Enquiry Date"
+                showYearMonthDropdowns={true}
               />
 
               <FormField
@@ -344,48 +310,12 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 )}
               />
 
-              <FormField
-                key="dateOfBirth"
+              <DatePicker
                 control={form.control}
                 name="dateOfBirth"
-                render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                      Date of Birth
-                    </FormLabel>
-                    <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={`${commonFieldClass} justify-between bg-inherit`}
-                          >
-                            <span className={!field.value ? 'text-[#9D9D9D]' : ''}>
-                              {field.value ? field.value : 'Select Date'}
-                            </span>
-                            <CalendarDaysIcon size={16} className="ml-2" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                          <Calendar
-                            mode="single"
-                            selected={field.value ? new Date(field.value) : undefined}
-                            onSelect={(date) => {
-                              if (date) {
-                                const formattedDate = format(date, 'dd/MM/yyyy');
-                                field.onChange(formattedDate);
-                              } else {
-                                field.onChange('');
-                              }
-                            }}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Date of Birth"
+                placeholder="Select Date of Birth"
+                showYearMonthDropdowns={true}
               />
 
               <FormField

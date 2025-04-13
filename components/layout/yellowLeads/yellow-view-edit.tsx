@@ -491,6 +491,9 @@ export default function YellowLeadViewEdit({ data }: any) {
               selected={parseDateString(formData.nextDueDate)}
               onSelect={handleDateChange}
               initialFocus
+              captionLayout={"dropdown-buttons"}
+              fromYear={new Date().getFullYear() - 100}
+              toYear={new Date().getFullYear() + 10}
             />
           </PopoverContent>
         </Popover>
