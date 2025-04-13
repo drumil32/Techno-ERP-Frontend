@@ -1,9 +1,20 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@/components/ui/accordion';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
-import {  Nationality, Qualification } from '../schema/schema';
+import { Nationality, Qualification } from '../schema/schema';
 import { AreaType, BloodGroup, Category, Religion, StatesOfIndia } from '@/types/enum';
 interface MoreDetailsSectionInterface {
   form: UseFormReturn<any>;
@@ -11,10 +22,11 @@ interface MoreDetailsSectionInterface {
   commonFieldClass: string;
 }
 
-const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commonFieldClass, commonFormItemClass }) => {
-
-
-
+const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
+  form,
+  commonFieldClass,
+  commonFormItemClass
+}) => {
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">
@@ -27,8 +39,6 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commo
 
           <AccordionContent>
             <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px] bg-white p-4 rounded-[10px]">
-
-
               <FormField
                 key="state"
                 control={form.control}
@@ -197,8 +207,6 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commo
                 )}
               />
 
-
-
               <FormField
                 key="aadharNumber"
                 control={form.control}
@@ -220,13 +228,12 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({ form, commo
                   </FormItem>
                 )}
               />
-
             </div>
           </AccordionContent>
         </div>
       </AccordionItem>
     </Accordion>
-  )
-}
+  );
+};
 
 export default MoreDetailsSection;

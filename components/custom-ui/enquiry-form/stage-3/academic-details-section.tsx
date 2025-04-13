@@ -10,15 +10,14 @@ import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 import {
-  academicDetailsArraySchema,
   academicDetailSchema,
-  enquiryStep3UpdateRequestSchema
 } from '../schema/schema';
 import TagInput from '../stage-1/tag-input';
 import { handleNumericInputChange } from '@/lib/utils';
+import { formSchemaStep3 } from './enquiry-form-stage-3';
 
 interface AcademicDetailsSectionInterface {
-  form: UseFormReturn<z.infer<typeof enquiryStep3UpdateRequestSchema>>;
+  form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
   commonFormItemClass: string;
   commonFieldClass: string;
 }
