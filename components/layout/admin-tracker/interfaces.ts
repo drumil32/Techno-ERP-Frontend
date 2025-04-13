@@ -21,16 +21,18 @@ export interface LeadsAnalytics {
   black: number;
   red: number;
   blue: number;
-  yellow: number;
+  orange: number;
+  activeLeads: number;
+  invalidType: number;
 }
 
 export interface YellowLeadsAnalytics {
   _id: string | null;
-  campusVisit: number;
-  noCampusVisit: number;
+  footFall: number;
+  noFootFall: number;
   unconfirmed: number;
-  declined: number;
-  finalConversion: number;
+  dead: number;
+  admissions: number;
 }
 
 export interface AnalyticsSection {

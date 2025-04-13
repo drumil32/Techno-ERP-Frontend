@@ -5,7 +5,6 @@ import { AdminTrackerContextType } from './interfaces';
 import { apiRequest } from '@/lib/apiClient';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
-import logger from '@/lib/logger';
 
 const AdminTrackerContext = createContext<AdminTrackerContextType | null>(null);
 
@@ -13,12 +12,11 @@ export function AdminTrackerProvider({ children }: { children: ReactNode }) {
   const { filters } = useTechnoFilterContext();
 
   const getAnalytics = async () => {
-    logger.info('Applying filter', filters);
 
     const transformedValues = {
       startDate: filters?.startDate,
       endDate: filters?.endDate,
-      location: filters?.location,
+      city: filters?.city,
       course: filters?.course,
       lead: filters?.lead,
       source: filters?.source,

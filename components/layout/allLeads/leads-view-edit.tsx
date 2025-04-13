@@ -12,10 +12,8 @@ import {
 } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
-import { Course, CourseNameMapper, Gender, LeadType, Locations } from '@/types/enum';
-import TechnoLeadTypeTag, {
-  TechnoLeadType
-} from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
+import { Course, CourseNameMapper, Gender, LeadType, Locations } from '@/static/enum';
+import TechnoLeadTypeTag from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
@@ -24,17 +22,23 @@ import { parse, format, isValid } from 'date-fns';
 import { toast } from 'sonner';
 import { toPascal } from '@/lib/utils';
 import { updateLeadRequestSchema } from './validators';
-import { z } from 'zod';
+import z from 'zod';
+import { useQuery } from '@tanstack/react-query';
+import { fetchAssignedToDropdown } from './helpers/fetch-data';
 
-interface LeadData {
+export interface LeadData {
   _id: string;
   name: string;
   phoneNumber: string;
   altPhoneNumber?: string;
   email: string;
   gender: string;
-  location: string;
+  area: string;
+  city: string;
   course?: string;
+  assignedTo?: string;
+  schoolName?: string;
+  leadsFollowUpCount?: number;
   leadType?: string;
   remarks?: string;
   nextDueDate?: string;
@@ -46,13 +50,16 @@ interface FormErrors {
   phoneNumber?: string;
   altPhoneNumber?: string;
   email?: string;
+  area?: string;
   nextDueDate?: string;
+  schoolName?: string;
+  remarks?: string;
 }
 
 export default function LeadViewEdit({ data }: any) {
   const [formData, setFormData] = useState<LeadData | null>(null);
   const [originalData, setOriginalData] = useState<LeadData | null>(null);
-  const [isEditing, toggleIsEditing] = useState(false)
+  const [isEditing, toggleIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -72,20 +79,26 @@ export default function LeadViewEdit({ data }: any) {
 
       const validationData = {
         _id: tempData._id,
+        date: tempData.date,
         name: tempData.name,
         phoneNumber: tempData.phoneNumber,
         altPhoneNumber: tempData.altPhoneNumber,
         email: tempData.email,
         gender: tempData.gender,
-        location: tempData.location,
-        course: tempData.course,
+        area: tempData.area,
+        city: tempData.city,
         leadType: tempData.leadType,
+        course: tempData.course,
+        schoolName: tempData.schoolName,
+        leadsFollowUpCount: tempData.leadsFollowUpCount,
         remarks: tempData.remarks,
-        nextDueDate: tempData.nextDueDate
+        nextDueDate: tempData.nextDueDate,
+        assignedTo: tempData.assignedTo,
+        leadTypeModifiedDate: tempData.leadTypeModifiedDate,
       };
 
       // First, validate the entire schema
-      updateLeadRequestSchema.parse(validationData);
+      const response = updateLeadRequestSchema.parse(validationData);
 
       // If validation passes, remove any existing error for this field
       setErrors((prevErrors: any) => {
@@ -93,6 +106,8 @@ export default function LeadViewEdit({ data }: any) {
         delete newErrors[name];
         return newErrors;
       });
+
+
 
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -102,12 +117,17 @@ export default function LeadViewEdit({ data }: any) {
           const key = err.path[0] as keyof FormErrors;
           newErrors[key] = err.message;
         });
-
         setErrors(newErrors);
       }
     }
   };
 
+  const assignedToQuery = useQuery({
+    queryKey: ['assignedToDropdown'],
+    queryFn: fetchAssignedToDropdown
+  });
+
+  const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -119,6 +139,11 @@ export default function LeadViewEdit({ data }: any) {
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
     validateField(name, value);
   };
+
+  const handleFollowUpCountChange = (name: string, value: number) => {
+    setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
+    validateField(name, value);
+  }
 
   const handleDateChange = (date: Date | undefined) => {
     if (!date) return;
@@ -148,14 +173,18 @@ export default function LeadViewEdit({ data }: any) {
       'altPhoneNumber',
       'email',
       'gender',
-      'location',
+      'area',
+      'city',
       'course',
       'leadType',
+      'schoolName',
+      'assignedTo',
+      'leadsFollowUpCount',
       'remarks',
       'nextDueDate'
     ];
 
-    return allowedFields.some(field => {
+    return allowedFields.some((field) => {
       const origValue = originalData[field] || '';
       const newValue = formData[field] || '';
       return origValue !== newValue;
@@ -181,16 +210,22 @@ export default function LeadViewEdit({ data }: any) {
         'altPhoneNumber',
         'email',
         'gender',
-        'location',
+        'area',
+        'city',
         'course',
         'leadType',
+        'schoolName',
+        'assignedTo',
+        'leadsFollowUpCount',
         'remarks',
-        'nextDueDate'
+        'nextDueDate',
       ];
 
       const filteredData = Object.fromEntries(
         Object.entries(formData).filter(([key]) => allowedFields.includes(key))
       );
+
+      const { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
 
       const validation = updateLeadRequestSchema.safeParse(filteredData);
       if (!validation.success) {
@@ -204,11 +239,14 @@ export default function LeadViewEdit({ data }: any) {
         return;
       }
 
-      const response: LeadData | null = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateLead, filteredData);
+      const response: LeadData | null = await apiRequest(
+        API_METHODS.PUT,
+        API_ENDPOINTS.updateLead,
+        toBeUpdatedData
+      );
       if (response) {
         toast.success('Updated Lead Successfully');
         setFormData(response);
-        console.log(response);
         setOriginalData(formData);
       } else {
         setFormData(originalData);
@@ -252,8 +290,12 @@ export default function LeadViewEdit({ data }: any) {
           <p>{toPascal(formData.gender) ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Location</p>
-          <p>{formData.location ?? '-'}</p>
+          <p className="w-1/4 text-[#666666]">Area</p>
+          <p>{formData.area ?? '-'}</p>
+        </div>
+        <div className="flex gap-2">
+          <p className="w-1/4 text-[#666666]">City</p>
+          <p>{formData.city ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Course</p>
@@ -261,9 +303,24 @@ export default function LeadViewEdit({ data }: any) {
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Lead Type</p>
+          <div>
+            <TechnoLeadTypeTag type={(formData.leadType as LeadType) ?? '-'} />
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <p className="w-1/4 text-[#666666]">Assigned To</p>
           <p>
-            <TechnoLeadTypeTag type={formData.leadType as TechnoLeadType ?? '-'} />
+            {assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)?.name ??
+              '-'}
           </p>
+        </div>
+        <div className="flex gap-2">
+          <p className="w-1/4 text-[#666666]">Follow-ups</p>
+          <p>{formData.leadsFollowUpCount ?? '-'}</p>
+        </div>
+        <div className="flex gap-2">
+          <p className="w-1/4 text-[#666666]">School Name</p>
+          <p>{formData.schoolName ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Remarks</p>
@@ -272,6 +329,10 @@ export default function LeadViewEdit({ data }: any) {
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Next Due Date</p>
           <p>{formData.nextDueDate ?? '-'}</p>
+        </div>
+        <div className="flex gap-2">
+          <p className="w-1/4 text-[#666666]">Timestamp</p>
+          <p>{formData.leadTypeModifiedDate ?? '-'}</p>
         </div>
       </div>
     </>
@@ -318,24 +379,29 @@ export default function LeadViewEdit({ data }: any) {
             onChange={handleChange}
             className="rounded-[5px]"
           />
-          {errors.altPhoneNumber && <p className="text-red-500 text-xs mt-1">{errors.altPhoneNumber}</p>}
+          {errors.altPhoneNumber && (
+            <p className="text-red-500 text-xs mt-1">{errors.altPhoneNumber}</p>
+          )}
         </div>
       </div>
 
-      <div className="space-y-2">
-        <EditLabel htmlFor="email" title={'Email'} />
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          value={formData.email || ''}
-          onChange={handleChange}
-          className="rounded-[5px]"
-        />
-        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-      </div>
+
 
       <div className="flex gap-5 w-full">
+
+        <div className="space-y-2  w-1/2">
+          <EditLabel htmlFor="email" title={'Email'} />
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={formData.email || ''}
+            onChange={handleChange}
+            className="rounded-[5px]"
+          />
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+        </div>
+
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="gender" title={'Gender'} />
           <Select
@@ -355,11 +421,28 @@ export default function LeadViewEdit({ data }: any) {
           </Select>
         </div>
 
+
+      </div>
+
+      <div className="flex gap-5 w-full">
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="location" title={'Location'} />
+          <EditLabel htmlFor="area" title={'Area'} />
+          <Input
+            id="area"
+            name="area"
+            type="area"
+            value={formData.area || ''}
+            onChange={handleChange}
+            className="rounded-[5px]"
+          />
+          {errors.area && <p className="text-red-500 text-xs mt-1">{errors.area}</p>}
+        </div>
+
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="city" title={'City'} />
           <Select
-            defaultValue={formData.location}
-            onValueChange={(value) => handleSelectChange('location', value)}
+            defaultValue={formData.city}
+            onValueChange={(value) => handleSelectChange('city', value)}
           >
             <SelectTrigger id="location" className="w-full rounded-[5px]">
               <SelectValue placeholder="Select location" />
@@ -376,25 +459,6 @@ export default function LeadViewEdit({ data }: any) {
       </div>
 
       <div className="flex gap-5">
-        <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="leadType" title={'Lead Type'} />
-          <Select
-            defaultValue={formData.leadType || ''}
-            onValueChange={(value) => handleSelectChange('leadType', value)}
-          >
-            <SelectTrigger id="leadType" className="w-full rounded-[5px]">
-              <SelectValue placeholder="Select lead type" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.values(TechnoLeadType).map((type) => (
-                <SelectItem key={type} value={type}>
-                  <TechnoLeadTypeTag type={type} />
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="course" title={'Course'} />
           <Select
@@ -413,6 +477,78 @@ export default function LeadViewEdit({ data }: any) {
             </SelectContent>
           </Select>
         </div>
+
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="leadType" title={'Lead Type'} />
+          <Select
+            defaultValue={formData.leadType || ''}
+            onValueChange={(value) => handleSelectChange('leadType', value)}
+          >
+            <SelectTrigger id="leadType" className="w-full rounded-[5px]">
+              <SelectValue placeholder="Select lead type" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.values(LeadType).map((type) => (
+                <SelectItem key={type} value={type}>
+                  <TechnoLeadTypeTag type={type} />
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="flex gap-5">
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
+          <Select
+            defaultValue={formData.assignedTo || ''}
+            onValueChange={(value) => handleSelectChange('assignedTo', value)}
+          >
+            <SelectTrigger id="assignedTo" className="w-full rounded-[5px]" disabled>
+              <SelectValue placeholder={assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)?.name || 'Select Assigned To'} />
+            </SelectTrigger>
+
+            <SelectContent>
+              {assignedToDropdownData.map((user: any) => (
+                <SelectItem key={user._id} value={user._id}>
+                  {user.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="leadsFollowUpCount" title={'Follow-up Count'} />
+          <Select
+            defaultValue={formData.leadsFollowUpCount?.toString() || ''}
+            onValueChange={(value) => handleFollowUpCountChange('leadsFollowUpCount', Number(value))}
+          >
+            <SelectTrigger id="leadsFollowUpCount" className="w-full rounded-[5px]">
+              <SelectValue placeholder="Select follow-up count" />
+            </SelectTrigger>
+            <SelectContent>
+              {[1, 2, 3, 4, 5].map((count) => (
+                <SelectItem key={count} value={count.toString()}>
+                  {count.toString().padStart(2, '0')}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <EditLabel htmlFor="schoolName" title={'School Name'} />
+        <Input
+          id="schoolName"
+          name="schoolName"
+          value={formData.schoolName || ''}
+          onChange={handleChange}
+          className="rounded-[5px]"
+        />
+        {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
       </div>
 
       <div className="space-y-2">
@@ -495,7 +631,7 @@ export default function LeadViewEdit({ data }: any) {
       ) : (
         <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
           <div className="w-full flex">
-            {formData.leadType != LeadType.YELLOW ? (
+            {formData.leadType != LeadType.INTERESTED ? (
               <>
                 <Button onClick={() => toggleIsEditing(true)} className="ml-auto" icon={Pencil}>
                   Edit Lead

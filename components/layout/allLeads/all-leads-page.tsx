@@ -4,21 +4,24 @@ import TechnoAnalyticCardsGroup from '../../custom-ui/analytic-card/techno-analy
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
-import TechnoLeadTypeTag, {
-  TechnoLeadType
-} from '../../custom-ui/lead-type-tag/techno-lead-type-tag';
+import TechnoLeadTypeTag from '../../custom-ui/lead-type-tag/techno-lead-type-tag';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
-import LeadViewEdit from './leads-view-edit';
-import { Course, Locations } from '@/types/enum';
+
+import LeadViewEdit, { LeadData } from './leads-view-edit';
+import { Course, LeadType, Locations } from '@/static/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { toast } from 'sonner';
-
+import { API_METHODS } from '@/common/constants/apiMethods';
+import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import { apiRequest } from '@/lib/apiClient';
+import LeadTypeSelect from '@/components/custom-ui/lead-type-select/lead-type-select';
 
 export default function AllLeadsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -27,17 +30,32 @@ export default function AllLeadsPage() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editRow, setEditRow] = useState<any>(null);
-  const [sortBy, setSortBy] = useState<string | null>(null);
-  const [orderBy, setOrderBy] = useState<string>('asc');
-  const [isEditing, setIsEditing] = useState(false);
-
-  const toggleIsEditing = () => {
-    setIsEditing(prev => !prev)
-  }
+  const [sortState, setSortState] = useState<any>({
+    sortBy: ["date", "nextDueDate"],
+    orderBy: ["desc", "desc"]
+  })
 
   const handleSortChange = (column: string, order: string) => {
-    setSortBy(column);
-    setOrderBy(order);
+
+    if (column === "nextDueDateView") {
+      column = "nextDueDate"
+    }
+
+    setSortState(
+      (prevState: any) => {
+        const currentIndex = prevState.sortBy.indexOf(column)
+        let newOrderBy = [...prevState.orderBy]
+        if(currentIndex != -1) {
+          newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == "asc" ? "desc" : "asc"
+        }
+
+        return {
+          ...prevState,
+          orderBy: newOrderBy
+        }
+      }
+    )
+
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
@@ -67,40 +85,48 @@ export default function AllLeadsPage() {
 
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
-
-    if (filterKey === 'date') {
-      delete updatedFilters.startDate;
-      delete updatedFilters.endDate;
-      delete updatedFilters.date;
-      updateFilter('date', undefined);
-      updateFilter('startDate', undefined);
-      updateFilter('endDate', undefined);
+  
+    if (filterKey === 'date' || filterKey.includes('Date')) {
+      const dateKeys = [
+        'startDate', 'endDate',
+        'startLTCDate', 'endLTCDate',
+        'date' 
+      ];
+  
+      dateKeys.forEach(key => {
+        delete updatedFilters[key];
+        updateFilter(key, undefined);
+      });
     } else {
       delete updatedFilters[filterKey];
       updateFilter(filterKey, undefined);
     }
-
+  
     setAppliedFilters(updatedFilters);
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
+  
   const clearFilters = () => {
     getFiltersData().forEach((filter) => {
-      if (filter.filterKey === 'date') {
-        updateFilter('date', undefined);
-        updateFilter('startDate', undefined);
-        updateFilter('endDate', undefined);
+      if (filter.filterKey === 'date' || filter.isDateFilter) {
+        const dateKeys = [
+          'startDate', 'endDate',
+          'startLTCDate', 'endLTCDate',
+          'date'
+        ];
+        
+        dateKeys.forEach(key => updateFilter(key, undefined));
       } else {
         updateFilter(filter.filterKey, undefined);
       }
     });
-
+  
     setAppliedFilters({});
     currentFiltersRef.current = {};
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
-
   const handleSearch = (value: string) => {
     setSearch(value);
 
@@ -147,10 +173,8 @@ export default function AllLeadsPage() {
       refreshKey
     };
 
-    if (sortBy) {
-      params.sortBy = sortBy;
-      params.orderBy = orderBy;
-    }
+    params.sortBy = sortState.sortBy
+    params.orderBy = sortState.orderBy
 
     return params;
   };
@@ -242,16 +266,138 @@ export default function AllLeadsPage() {
     { accessorKey: 'date', header: 'Date' },
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'genderView', header: 'Gender' },
-    { accessorKey: 'location', header: 'Location' },
+    { accessorKey: 'areaView', header: 'Area' },
+    { accessorKey: 'city', header: 'City' },
     { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'leadType',
       header: 'Lead Type',
-      cell: ({ row }: any) => <TechnoLeadTypeTag type={row.original.leadType as TechnoLeadType} />
+      cell: ({ row }: any) => {
+        const [selectedType, setSelectedType] = useState<LeadType>(row.original.leadType);
+
+        const handleDropdownChange = async (value: LeadType) => {
+          setSelectedType(value);
+
+          const {
+            id,
+            altPhoneNumberView,
+            emailView,
+            genderView,
+            areaView,
+            courseView,
+            _leadType,
+            source,
+            sourceView,
+            assignedToView,
+            assignedToName,
+            nextDueDateView,
+            createdAt,
+            updatedAt,
+            remarks,
+            remarksView,
+            leadTypeModifiedDate,
+            ...cleanedRow
+          } = row.original;
+
+          const updatedData = {
+            ...cleanedRow,
+            leadType: value,
+          };
+          // const{leadTypeModifiedDate, ...updatedData} = {
+          //   ...row.original,
+          //   leadType: value,
+          // };
+
+          const response: LeadData | null = await apiRequest(
+            API_METHODS.PUT,
+            API_ENDPOINTS.updateLead,
+            updatedData
+          );
+
+          if (response) {
+            toast.success('Lead type updated successfully');
+            setRefreshKey((prevKey) => prevKey + 1);
+          } else {
+            toast.error('Failed to update lead type');
+            setSelectedType(row.original.leadType); // rollback
+          }
+        };
+
+        return (
+          <LeadTypeSelect value={selectedType} onChange={handleDropdownChange} />
+        );
+      },
     },
+
     { accessorKey: 'assignedToName', header: 'Assigned To' },
     { accessorKey: 'nextDueDateView', header: 'Next Due Date' },
+    {
+      accessorKey: 'leadsFollowUpCount',
+      header: 'Follow Ups',
+      cell: ({ row }: any) => {
+        const [selectedValue, setSelectedValue] = useState(row.original.leadsFollowUpCount);
+    
+        const handleDropdownChange = async (newValue: number) => {
+          const previousValue = selectedValue;
+          setSelectedValue(newValue); // optimistic update
+    
+          const filteredData = {
+            ...row.original,
+            leadsFollowUpCount: newValue,
+          };
+    
+          const {
+            id,
+            altPhoneNumberView,
+            emailView,
+            genderView,
+            areaView,
+            courseView,
+            _leadType,
+            source,
+            sourceView,
+            assignedToView,
+            assignedToName,
+            nextDueDateView,
+            createdAt,
+            updatedAt,
+            remarks,
+            remarksView,
+            leadTypeModifiedDate,
+            ...cleanedRow
+          } = filteredData;
+    
+          const response: LeadData | null = await apiRequest(
+            API_METHODS.PUT,
+            API_ENDPOINTS.updateLead,
+            cleanedRow
+          );
+    
+          if (response) {
+            toast.success('Follow-up count updated successfully');
+            setRefreshKey((prevKey) => prevKey + 1);
+          } else {
+            toast.error('Failed to update follow-up count');
+            setSelectedValue(previousValue); 
+          }
+        };
+        return (
+          <select
+            value={selectedValue}
+            onChange={(e) => handleDropdownChange(Number(e.target.value))}
+            className="border cursor-pointer rounded px-2 py-1"
+            aria-label="Follow-up count"
+          >
+            {[0,1, 2, 3, 4, 5].map((option) => (
+              <option key={option} value={option}>
+                {option.toString().padStart(2, '0')}
+              </option>
+            ))}
+          </select>
+        );
+      },
+    }
+,    
     { accessorKey: 'leadTypeModifiedDate', header: 'Timestamp' },
     {
       id: 'actions',
@@ -259,13 +405,13 @@ export default function AllLeadsPage() {
       cell: ({ row }: any) => (
         <Button
           variant="ghost"
-          className='cursor-pointer'
+          className="cursor-pointer"
           onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
         >
-          <span className="font-inter font-semibold text-[12px] text-primary ">View More</span>
+          <span className="font-inter font-semibold text-[12px] text-primary">View More</span>
         </Button>
-      )
-    }
+      ),
+    },
   ];
 
   const getFiltersData = () => {
@@ -276,8 +422,8 @@ export default function AllLeadsPage() {
         isDateFilter: true
       },
       {
-        filterKey: 'location',
-        label: 'Location',
+        filterKey: 'city',
+        label: 'City',
         options: Object.values(Locations),
         placeholder: 'location',
         hasSearch: true,
@@ -294,7 +440,7 @@ export default function AllLeadsPage() {
       {
         filterKey: 'leadType',
         label: 'Lead Type',
-        options: Object.values(TechnoLeadType),
+        options: Object.values(LeadType),
         multiSelect: true
       },
       {
@@ -344,6 +490,7 @@ export default function AllLeadsPage() {
           searchTerm={search}
           onSort={handleSortChange}
           totalEntries={totalEntries}
+          handleViewMore={handleViewMore}
         >
           <FilterBadges
             onFilterRemove={handleFilterRemove}

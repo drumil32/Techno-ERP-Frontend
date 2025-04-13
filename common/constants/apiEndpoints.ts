@@ -18,7 +18,7 @@ export const API_ENDPOINTS = {
   // Marketing
   getAllLeads: `${API_DOMAIN}/crm/fetch-data`,
   getAllLeadsAnalytics: `${API_DOMAIN}/crm/analytics`,
-  fetchAssignedToDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=LEAD_MARKETING&moduleName=MARKETING`,
+  fetchAssignedToDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=MARKETING`,
   updateLead: `${API_DOMAIN}/crm/edit`,
 
   getAdminAnalytics: `${API_DOMAIN}/crm/admin/analytics`,

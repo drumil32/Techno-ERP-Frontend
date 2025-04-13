@@ -7,7 +7,7 @@ import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import { AdminAnalyticsResponse } from './interfaces';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
-import { Locations, Marketing_Source } from '@/types/enum';
+import { Locations, Marketing_Source } from '@/static/enum';
 import TechnoAnalyticCardsGroup, {
   CardItem
 } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
@@ -51,8 +51,8 @@ const AdminTracker = () => {
         multiSelect: true
       },
       {
-        filterKey: 'location',
-        label: 'Location',
+        filterKey: 'city',
+        label: 'City',
         options: Object.values(Locations),
         hasSearch: true,
         multiSelect: true
@@ -127,7 +127,7 @@ const AdminTracker = () => {
     },
     'allLeads',
     {
-      allLeads: 'Total Leads',
+      allLeads: 'All Leads',
       reached: 'Reached Leads',
       notReached: 'Not Reached'
     },
@@ -143,18 +143,20 @@ const AdminTracker = () => {
       reached: data?.allLeadsAnalytics?.reached,
       white: data?.allLeadsAnalytics?.white,
       black: data?.allLeadsAnalytics?.black,
+      invalidType: data?.allLeadsAnalytics?.invalidType,
       red: data?.allLeadsAnalytics?.red,
       blue: data?.allLeadsAnalytics?.blue,
-      yellow: data?.allLeadsAnalytics?.yellow
+      activeLeads: data?.allLeadsAnalytics?.activeLeads,
     },
     'reached',
     {
-      reached: 'Reached Leads',
-      white: 'White Leads',
-      black: 'Black Leads',
-      red: 'Red Leads',
-      blue: 'Blue Leads',
-      yellow: 'Yellow Leads'
+      reached: 'Reached',
+      white: 'Did Not Pick',
+      black: 'Course NA',
+      red: 'Dead Data',
+      blue: 'Neutral Data',
+      activeLeads: 'Active Data',
+      invalidType: 'Invalid Data'
     },
     {
       reached: 'text-black',
@@ -162,48 +164,50 @@ const AdminTracker = () => {
       black: 'text-black',
       red: 'text-red-600',
       blue: 'text-blue-600',
-      yellow: 'text-yellow-600'
+      orange: 'text-orange-600',
+      activeLeads: 'text-green-600',
+      invalidType: 'text-yellow-600'
     }
   );
 
   const yellowLeadsVisited = refineAnalytics(
     {
-      yellow: data?.allLeadsAnalytics?.yellow,
-      campusVisit: data?.yellowLeadsAnalytics?.campusVisit,
-      noCampusVisit: data?.yellowLeadsAnalytics?.noCampusVisit
+      activeLeads: data?.allLeadsAnalytics?.activeLeads,
+      footFall: data?.yellowLeadsAnalytics?.footFall,
+      noFootFall: data?.yellowLeadsAnalytics?.noFootFall
     },
-    'yellow',
+    'activeLeads',
     {
-      yellow: 'Yellow Leads',
-      campusVisit: 'Campus Visit',
-      noCampusVisit: 'No Campus Visit'
+      activeLeads: 'Active Data',
+      footFall: 'Footfall',
+      noFootFall: 'No Footfall'
     },
     {
-      yellow: 'text-yellow-600',
-      campusVisit: 'text-green-600',
-      noCampusVisit: 'text-red-600'
+      activeLeads: 'text-black',
+      footFall: 'text-[#E06C06]',
+      noFootFall: 'text-[#A67B0A]'
     }
   );
 
   const finalCampusConversion = refineAnalytics(
     {
-      campusVisit: data?.yellowLeadsAnalytics?.campusVisit,
+      footFall: data?.yellowLeadsAnalytics?.footFall,
       unconfirmed: data?.yellowLeadsAnalytics?.unconfirmed,
-      declined: data?.yellowLeadsAnalytics?.declined,
-      finalConversion: data?.yellowLeadsAnalytics?.finalConversion
+      dead: data?.yellowLeadsAnalytics?.dead,
+      admissions: data?.yellowLeadsAnalytics?.admissions
     },
-    'campusVisit',
+    'footFall',
     {
-      campusVisit: 'Campus Visit',
+      footFall: 'Footfall',
       unconfirmed: 'Unconfirmed',
-      declined: 'Declined',
-      finalConversion: 'Final Conversion'
+      dead: 'Dead Data',
+      admissions: 'Admissions'
     },
     {
-      campusVisit: 'text-black',
-      unconfirmed: 'text-orange-600',
-      declined: 'text-red-600',
-      finalConversion: 'text-green-600'
+      footFall: 'text-[#000000]',
+      unconfirmed: 'text-[#E06C06]',
+      dead: 'text-[#A67B0A]',
+      admissions: 'text-[#0EA80E]'
     }
   );
 
@@ -295,7 +299,7 @@ const AdminTracker = () => {
           {/* Yellow Leads Conversion Section */}
           <div className="mt-[32px]">
             <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-              How many leads were converted to Yellow Leads?
+            How many leads were converted to Active Leads?
             </h1>
             {yellowLeadsConverted && <TechnoAnalyticCardsGroup cardsData={yellowLeadsConverted} />}
           </div>
@@ -303,7 +307,7 @@ const AdminTracker = () => {
           {/* Yellow Leads Campus Visit Section */}
           <div className="mt-[32px]">
             <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-              How many Yellow leads visited the campus?
+            How many Active leads visited the campus?
             </h1>
             {yellowLeadsVisited && <TechnoAnalyticCardsGroup cardsData={yellowLeadsVisited} />}
           </div>

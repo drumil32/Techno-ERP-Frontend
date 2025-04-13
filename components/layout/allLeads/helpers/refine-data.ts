@@ -1,8 +1,6 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
-import { TechnoLeadType } from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
+import { Course, CourseNameMapper, LeadType } from '@/static/enum';
 import { toPascal } from '@/lib/utils';
-import { Course, CourseNameMapper } from '@/types/enum';
-
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   // Modified parameters to get Assigned To Dropdown Data
   const refinedLeads = data.leads?.map((lead: any, index: number) => {
@@ -23,23 +21,27 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       emailView: lead.email ?? '-',
       gender:  lead.gender,
       genderView:  toPascal(lead.gender),
-      location: lead.location,
+      city: lead.city,
+      area:lead.area,
+      areaView:lead.area ?? '-',
       course: lead.course,
       courseView: CourseNameMapper[lead.course as Course] ?? '-',
-      leadType: TechnoLeadType[lead.leadType as keyof typeof TechnoLeadType] ?? lead.leadType,
+      leadType: LeadType[lead.leadType as keyof typeof LeadType] ?? lead.leadType,
       _leadType: lead.leadType,
       source: lead.source,
       sourceView: lead.source ?? '-',
       assignedTo: lead.assignedTo,
+      schoolName:lead.schoolName,
       assignedToView: lead.assignedTo ?? '-',
       assignedToName: assignedToName,
       nextDueDate: lead.nextDueDate ,
       nextDueDateView: lead.nextDueDate ?? '-' ,
+      leadsFollowUpCount:lead.leadsFollowUpCount ?? 0,
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: new Date(lead.updatedAt).toLocaleString(),
       remarks: lead.remarks ,
       remarksView: lead.remarks ?? '-',
-      leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'NA'
+    leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'NA'
     };
   });
 
@@ -50,6 +52,14 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
     total: data.total
   };
 };
+
+export interface AllLeadsAnalytics {
+  totalLeads: number;
+  openLeads: number;
+  interestedLeads: number;
+  notInterestedLeads: number;
+  neutralLeads: number;
+}
 
 export const refineAnalytics = (analytics: any) => {
   const totalLeads = analytics.totalLeads ?? 0;
@@ -82,6 +92,12 @@ export const refineAnalytics = (analytics: any) => {
       subheading: calculatePercentage(analytics.notInterestedLeads),
       title: 'Not Interested',
       color: 'text-red-700'
+    },
+    {
+      heading: analytics.neutralLeads ?? '',
+      subheading: calculatePercentage(analytics.neutralLeads),
+      title: 'Neutral Data',
+      color: 'text-[#006ED8]'
     }
   ];
   return analyticsCardsData;

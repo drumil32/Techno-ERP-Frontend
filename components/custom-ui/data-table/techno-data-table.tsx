@@ -25,8 +25,6 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import {
-  ArrowLeft,
-  ArrowRight,
   ChevronDown,
   ArrowUp,
   ArrowDown,
@@ -51,6 +49,8 @@ export default function TechnoDataTable({
   searchTerm = '',
   onSort,
   totalEntries,
+  handleViewMore,
+  rowCursor = true,
   children
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -104,6 +104,8 @@ export default function TechnoDataTable({
     }
     return null;
   };
+
+  const nonClickableColumns = ['actions', 'leadType', 'finalConversion', "leadsFollowUpCount", 'yellowLeadsFollowUpCount'];
 
   return (
     <div className="w-full bg-white space-y-4 my-[16px] mb-0 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -163,19 +165,32 @@ export default function TechnoDataTable({
           </TableHeader>
           <TableBody className="[&_tr]:h-[39px]">
             {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="h-[39px]">
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-'
-                        ? 'text-left max-w-[225px] truncate'
-                        : 'text-center'
-                        }`}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
+              table.getRowModel().rows.map((row: any) => (
+                <TableRow
+                  key={row.id}
+                  className="h-[39px] cursor-pointer"
+                  onClick={() =>
+                    handleViewMore({ ...row.original, leadType: row.original._leadType })
+                  }
+                >
+                  {row.getVisibleCells().map((cell: any) => {
+                    const isExcluded = nonClickableColumns.includes(cell.column.id);
+
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-'
+                            ? 'text-left max-w-[225px] truncate'
+                            : 'text-center'
+                          }`}
+                        onClick={(e) => {
+                          if (isExcluded) e.stopPropagation(); // Block row click from excluded cells
+                        }}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (
@@ -214,7 +229,7 @@ export default function TechnoDataTable({
           <span>Rows per page:</span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className='cursor-pointer'>
                 {pageSize} <ChevronDown className="ml-1" />
               </Button>
             </DropdownMenuTrigger>
@@ -246,6 +261,7 @@ export default function TechnoDataTable({
             onClick={() => onPageChange(1)}
             disabled={currentPage === 1}
             aria-label="Go to first page"
+            className='cursor-pointer'
           >
             <ChevronsLeft />
           </Button>
@@ -255,6 +271,7 @@ export default function TechnoDataTable({
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1}
             aria-label="Go to previous page"
+            className='cursor-pointer'
           >
             <ChevronLeft />
           </Button>
@@ -267,6 +284,7 @@ export default function TechnoDataTable({
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
             aria-label="Go to next page"
+            className='cursor-pointer'
           >
             <ChevronRight />
           </Button>
@@ -276,6 +294,7 @@ export default function TechnoDataTable({
             onClick={() => onPageChange(totalPages)}
             disabled={currentPage === totalPages}
             aria-label="Go to last page"
+            className='cursor-pointer'
           >
             <ChevronsRight />
           </Button>

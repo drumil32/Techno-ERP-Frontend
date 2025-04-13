@@ -1,4 +1,7 @@
+// React and state management
 import { useEffect, useState } from 'react';
+
+// UI components
 import { CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -11,19 +14,30 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
-import { Course, CourseNameMapper, Gender, Locations } from '@/types/enum';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+
+// Static data and enums
+import { Course, CourseNameMapper, Gender, Locations } from '@/static/enum';
+
+// Utility functions and constants
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
-import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
-import CampusVisitTag, { CampusVisitStatus } from './campus-visit-tag';
-import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { parse, format, isValid } from 'date-fns';
-import { Calendar } from '@/components/ui/calendar';
 import { toast } from 'sonner';
+import z, { boolean } from 'zod';
 
-import z from 'zod';
+// Custom components and helpers
+import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
+import { FootFallStatus } from './foot-fall-tag';
+import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
+import FootFallTag from './foot-fall-tag';
+import { yellowLeadUpdateSchema } from '../allLeads/validators';
+import { fetchAssignedToDropdown } from './helpers/fetch-data';
+
+// React Query
+import { useQuery } from '@tanstack/react-query';
 import { toPascal } from '@/lib/utils';
 
 interface FormErrors {
@@ -32,33 +46,18 @@ interface FormErrors {
   altPhoneNumber?: string;
   email?: string;
   nextDueDate?: string;
+  area?: string;
+  schoolName?: string;
 }
 
 export const contactNumberSchema = z
   .string()
   .regex(/^[1-9]\d{9}$/, 'Invalid contact number format. Expected: 1234567890');
 
-const updateLeadRequestSchema = z.object({
-  _id: z.string(),
-  name: z.string().min(1, 'Name field is required').optional(),
-  phoneNumber: contactNumberSchema
-    .optional(),
-  altPhoneNumber: contactNumberSchema
-    .optional(),
-  email: z.string().email('Invalid Email Format').optional(),
-  gender: z.string().optional(),
-  location: z.string().optional(),
-  course: z.string().optional(),
-  campusVisit: z.string().optional(),
-  finalConversion: z.string().optional(),
-  remarks: z.string().optional(),
-  nextDueDate: z.string().optional()
-}).strict();
-
 export default function YellowLeadViewEdit({ data }: any) {
   const [formData, setFormData] = useState<YellowLead | null>(null);
   const [originalData, setOriginalData] = useState<YellowLead | null>(null);
-  const [isEditing, toggleIsEditing] = useState(false)
+  const [isEditing, toggleIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -66,7 +65,6 @@ export default function YellowLeadViewEdit({ data }: any) {
 
   useEffect(() => {
     if (data) {
-      console.log('Initial Data', data)
       setFormData(data);
       setOriginalData(data);
     }
@@ -76,26 +74,28 @@ export default function YellowLeadViewEdit({ data }: any) {
     if (!formData) return;
 
     try {
-
       const tempData = { ...formData, [name]: value };
 
       const validationData = {
         _id: tempData._id,
+        leadTypeModifiedDate: tempData.leadTypeModifiedDate,
         name: tempData.name,
         phoneNumber: tempData.phoneNumber,
         altPhoneNumber: tempData.altPhoneNumber,
         email: tempData.email,
         gender: tempData.gender,
-        location: tempData.location,
+        area: tempData.area,
+        city: tempData.city,
         course: tempData.course,
-        campusVisit: tempData.campusVisit,
+        footFall: tempData.footFall,
         finalConversion: tempData.finalConversion,
+        schoolName: tempData.schoolName,
+        yellowLeadsFollowUpCount: tempData.yellowLeadsFollowUpCount,
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate
+      };
 
-      }
-
-      updateLeadRequestSchema.parse(validationData)
+      const response = yellowLeadUpdateSchema.parse(validationData);
 
       setErrors((prevErrors: any) => {
         const newErrors = { ...prevErrors };
@@ -113,8 +113,14 @@ export default function YellowLeadViewEdit({ data }: any) {
         setErrors(newErrors);
       }
     }
-
   };
+
+  const assignedToQuery = useQuery({
+    queryKey: ['assignedToDropdown'],
+    queryFn: fetchAssignedToDropdown
+  });
+
+  const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
 
   const parseDateString = (dateString?: string): Date | undefined => {
     if (!dateString) return undefined;
@@ -132,7 +138,13 @@ export default function YellowLeadViewEdit({ data }: any) {
     validateField(name, value);
   };
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string | boolean) => {
+
+    setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
+    validateField(name, value);
+  };
+
+  const handleFollowUpCountChange = (name: string, value: number) => {
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
     validateField(name, value);
   };
@@ -155,12 +167,16 @@ export default function YellowLeadViewEdit({ data }: any) {
       'altPhoneNumber',
       'email',
       'gender',
-      'location',
+      'area',
+      'city',
       'course',
-      'campusVisit',
+      'footFall',
       'finalConversion',
+      'yellowLeadsFollowUpCount',
+      'schoolName',
       'remarks',
-      'nextDueDate'
+      'nextDueDate',
+      'leadTypeModifiedDate'
     ];
 
     return allowedFields.some((field: any) => {
@@ -169,7 +185,6 @@ export default function YellowLeadViewEdit({ data }: any) {
       return origValue !== newValue;
     });
   };
-
 
   const handleSubmit = async () => {
     if (!formData) return;
@@ -182,6 +197,7 @@ export default function YellowLeadViewEdit({ data }: any) {
 
     setIsSubmitting(true);
     try {
+      formData.footFall = formData.footFall;
       const allowedFields = [
         '_id',
         'name',
@@ -189,20 +205,23 @@ export default function YellowLeadViewEdit({ data }: any) {
         'altPhoneNumber',
         'email',
         'gender',
-        'location',
+        'area',
+        'city',
         'course',
-        'campusVisit',
+        'footFall',
+        'schoolName',
         'finalConversion',
+        'yellowLeadsFollowUpCount',
         'remarks',
-        'nextDueDate'
+        'nextDueDate',
+        'leadTypeModifiedDate'
       ];
-
 
       const filteredData = Object.fromEntries(
         Object.entries(formData).filter(([key]) => allowedFields.includes(key))
       );
 
-      const validation = updateLeadRequestSchema.safeParse(filteredData);
+      const validation = yellowLeadUpdateSchema.safeParse(filteredData);
       if (!validation.success) {
         const newErrors: FormErrors = {};
         validation.error.errors.forEach((err) => {
@@ -215,22 +234,16 @@ export default function YellowLeadViewEdit({ data }: any) {
       }
 
 
-      filteredData.campusVisit = filteredData.campusVisit === 'YES';
-
-
-      console.log(filteredData)
+      const { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
 
       const response: YellowLead | null = await apiRequest(
         API_METHODS.PUT,
         API_ENDPOINTS.updateYellowLead,
-        filteredData
+        toBeUpdatedData
       );
 
-
-      console.log(response)
-
       if (response) {
-        response.campusVisit = CampusVisitStatus[String(formData.campusVisit) as keyof typeof CampusVisitStatus] ?? formData.campusVisit;
+        // response.footFall =formData.footFall;
         setFormData(response as YellowLead);
         toast.success('Updated Lead Successfully');
         setOriginalData(formData);
@@ -239,7 +252,6 @@ export default function YellowLeadViewEdit({ data }: any) {
       }
       toggleIsEditing(false);
       setErrors({});
-
     } catch (err) {
       console.error('Error updating lead:', err);
       toast.error('An error occurred while updating the lead');
@@ -256,7 +268,7 @@ export default function YellowLeadViewEdit({ data }: any) {
       <div className="flex flex-col gap-6 text-sm">
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">LTC Date</p>
-          <p>{formData.ltcDate ?? '-'}</p>
+          <p>{formData.leadTypeModifiedDate ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Name</p>
@@ -279,20 +291,43 @@ export default function YellowLeadViewEdit({ data }: any) {
           <p>{toPascal(formData.gender) ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Location</p>
-          <p>{formData.location ?? '-'}</p>
+          <p className="w-1/4 text-[#666666]">Area</p>
+          <p>{formData.area ?? '-'}</p>
+        </div>
+        <div className="flex gap-2">
+          <p className="w-1/4 text-[#666666]">City</p>
+          <p>{formData.city ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Course</p>
           <p>{formData.course ? CourseNameMapper[formData.course as Course] : '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Campus Visit</p>
-          {formData.campusVisit ? <CampusVisitTag status={String(formData.campusVisit) as CampusVisitStatus} /> : <p>-</p>}
+          <p className="w-1/4 text-[#666666]">Foot Fall</p>
+          {formData.footFall!=undefined ? (
+            <FootFallTag status={formData.footFall === true ? FootFallStatus.true : FootFallStatus.false} />
+          ) : (
+            <p>-</p>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <p className="w-1/4 text-[#666666]">Assigned To</p>
+          <p>
+            {assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)?.name ??
+              '-'}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <p className="w-1/4 text-[#666666]">Follow-ups</p>
+          <p>{formData.yellowLeadsFollowUpCount ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4.5 text-[#666666]">Final Conversion</p>
-          {formData.finalConversion ? <FinalConversionTag status={formData.finalConversion as FinalConversionStatus} /> : <p>-</p>}
+          {formData.finalConversion ? (
+            <FinalConversionTag status={formData.finalConversion as FinalConversionStatus} />
+          ) : (
+            <p>-</p>
+          )}
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Remarks</p>
@@ -311,7 +346,8 @@ export default function YellowLeadViewEdit({ data }: any) {
     <>
       <div className="flex flex-col gap-2">
         <p className="text-[#666666] font-normal">LTC Date</p>
-        <p>{data.ltcDate}</p>
+        <p>{data.leadTypeModifiedDate}</p>
+        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
       </div>
 
       <div className="space-y-2">
@@ -321,7 +357,7 @@ export default function YellowLeadViewEdit({ data }: any) {
           name="name"
           value={formData.name || ''}
           onChange={handleChange}
-          className={`rounded-[5px] ${errors.name ? 'border-red-500' : ''}`}
+          className="rounded-[5px]"
         />
         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
       </div>
@@ -348,24 +384,26 @@ export default function YellowLeadViewEdit({ data }: any) {
             onChange={handleChange}
             className={`rounded-[5px] ${errors.altPhoneNumber ? 'border-red-500' : ''}`}
           />
-          {errors.altPhoneNumber && <p className="text-red-500 text-xs mt-1">{errors.altPhoneNumber}</p>}
+          {errors.altPhoneNumber && (
+            <p className="text-red-500 text-xs mt-1">{errors.altPhoneNumber}</p>
+          )}
         </div>
       </div>
 
-      <div className="space-y-2">
-        <EditLabel htmlFor="email" title={'Email'} />
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          value={formData.email || ''}
-          onChange={handleChange}
-          className={`rounded-[5px] ${errors.email ? 'border-red-500' : ''}`}
-        />
-        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-      </div>
-
       <div className="flex gap-5 w-full">
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="email" title={'Email'} />
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={formData.email || ''}
+            onChange={handleChange}
+            className={`rounded-[5px] ${errors.email ? 'border-red-500' : ''}`}
+          />
+          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+        </div>
+
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="gender" title={'Gender'} />
           <Select
@@ -384,15 +422,30 @@ export default function YellowLeadViewEdit({ data }: any) {
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div className="flex gap-5 w-full">
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="area" title={'Area'} />
+          <Input
+            id="area"
+            name="area"
+            type="area"
+            value={formData.area || ''}
+            onChange={handleChange}
+            className="rounded-[5px]"
+          />
+          {errors.area && <p className="text-red-500 text-xs mt-1">{errors.area}</p>}
+        </div>
 
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="location" title={'Location'} />
+          <EditLabel htmlFor="city" title={'City'} />
           <Select
-            defaultValue={formData.location}
-            onValueChange={(value) => handleSelectChange('location', value)}
+            defaultValue={formData.city}
+            onValueChange={(value) => handleSelectChange('city', value)}
           >
-            <SelectTrigger id="location" className="w-full rounded-[5px]">
-              <SelectValue placeholder="Select location" />
+            <SelectTrigger id="city" className="w-full rounded-[5px]">
+              <SelectValue placeholder="Select City" />
             </SelectTrigger>
             <SelectContent>
               {Object.values(Locations).map((location) => (
@@ -426,23 +479,83 @@ export default function YellowLeadViewEdit({ data }: any) {
         </div>
 
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="campusVisit" title={'Campus Visit'} />
+          <EditLabel htmlFor="footFall" title={'Foot Fall'} />
           <Select
-            defaultValue={String(formData.campusVisit) || CampusVisitStatus.false}
-            onValueChange={(value) => handleSelectChange('campusVisit', value)}
+            defaultValue={formData.footFall ? "true" : "false"}
+            onValueChange={(value) => handleSelectChange('footFall', value === "true")}
           >
-            <SelectTrigger id="campusVisit" className="w-full rounded-[5px]">
-              <SelectValue placeholder="Select Campus Visit" />
+            <SelectTrigger id="footFall" className="w-full rounded-[5px]">
+              <SelectValue placeholder="Select Foot Fall" />
             </SelectTrigger>
             <SelectContent>
-              {Object.values(CampusVisitStatus).map((status) => (
-                <SelectItem key={status} value={status}>
-                  <CampusVisitTag status={status} />
+              {Object.entries(FootFallStatus).map(([key, label]) => (
+                <SelectItem key={key} value={key}>
+                  <FootFallTag status={label} />
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
+      </div>
+
+      <div className="flex gap-5">
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
+          <Select
+            defaultValue={formData.assignedTo || ''}
+            onValueChange={(value) => handleSelectChange('assignedTo', value)}
+          >
+            <SelectTrigger id="assignedTo" className="w-full rounded-[5px]" disabled>
+              <SelectValue
+                placeholder={
+                  assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)
+                    ?.name || 'Select Assigned To'
+                }
+              />
+            </SelectTrigger>
+
+            <SelectContent>
+              {assignedToDropdownData.map((user: any) => (
+                <SelectItem key={user._id} value={user._id}>
+                  {user.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="yellowLeadsFollowUpCount" title={'Follow-ups'} />
+          <Select
+            defaultValue={formData.yellowLeadsFollowUpCount?.toString() || ''}
+            onValueChange={(value) =>
+              handleFollowUpCountChange('yellowLeadsFollowUpCount', Number(value))
+            }
+          >
+            <SelectTrigger id="yellowLeadsFollowUpCount" className="w-full rounded-[5px]">
+              <SelectValue placeholder="Select follow-up count" />
+            </SelectTrigger>
+            <SelectContent>
+              {[1, 2, 3, 4, 5].map((count) => (
+                <SelectItem key={count} value={count.toString()}>
+                  {count.toString().padStart(2, '0')}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <EditLabel htmlFor="schoolName" title={'School Name'} />
+        <Input
+          id="schoolName"
+          name="schoolName"
+          value={formData.schoolName || ''}
+          onChange={handleChange}
+          className="rounded-[5px]"
+        />
+        {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
       </div>
 
       <div className="space-y-2">
@@ -544,7 +657,7 @@ export default function YellowLeadViewEdit({ data }: any) {
               onClick={() => {
                 // Validate critical fields before entering edit mode
                 if (formData) {
-                  ['name', 'phoneNumber', 'email'].forEach(field => {
+                  ['name', 'phoneNumber', 'email'].forEach((field) => {
                     validateField(field, formData[field as keyof YellowLead]);
                   });
                   // If altPhoneNumber has a value, validate it too

@@ -14,15 +14,15 @@ export function TechnoFilterProvider({ children }: { children: ReactNode }) {
   const [filters, setFilters] = useState<Record<string, any>>({});
 
   const updateFilter = (key: string, value: any) => {
-    if (value === undefined) {
-      setFilters((prev) => {
-        const newFilters = { ...prev };
+    setFilters(prev => {
+      const newFilters = { ...prev };
+      if (value === undefined || value === null || value === '') {
         delete newFilters[key];
-        return newFilters;
-      });
-    } else {
-      setFilters((prev) => ({ ...prev, [key]: value }));
-    }
+      } else {
+        newFilters[key] = value;
+      }
+      return newFilters;
+    });
   };
 
   const updateFilters = (newFilters: Record<string, any>) => {

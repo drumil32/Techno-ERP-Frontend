@@ -1,4 +1,4 @@
-import { CampusVisitStatus } from "@/components/layout/yellowLeads/campus-visit-tag";
+import { FootFallStatus } from "@/components/layout/yellowLeads/foot-fall-tag";
 import { FinalConversionStatus } from "@/components/layout/yellowLeads/final-conversion-tag";
 
 export interface YellowLead {
@@ -12,14 +12,14 @@ export interface YellowLead {
   assignedTo: string;
   location: string;
   course: string;
-  campusVisit: CampusVisitStatus;
+  footFall: boolean;
   finalConversion: FinalConversionStatus;
   remarks: string;
   createdAt: string; // ISO Date string
   updatedAt: string; // ISO Date string
   __v: number;
   date: string; // DD/MM/YYYY format
-  ltcDate: string; // DD/MM/YYYY format
+  leadTypeModifiedDate: string; // DD/MM/YYYY format
   nextDueDate: string; // DD/MM/YYYY format
   [key: string]: any;
 }

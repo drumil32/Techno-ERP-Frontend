@@ -48,7 +48,7 @@ import {
 // Schema and validation imports
 import {
   feesRequestSchema,
-  feesUpdateSchema,
+  finalFeesUpdateSchema,
   IFeesRequestSchema
 } from '../stage-2/studentFeesSchema';
 import { validateCustomFeeLogic } from '../stage-2/helpers/validateFees';
@@ -324,7 +324,7 @@ const FinanceOfficeForm = () => {
 
       toast.success('Fee record updated successfully!');
     } else {
-      const validationResult = feesUpdateSchema.safeParse(values);
+      const validationResult = finalFeesUpdateSchema.safeParse(values);
 
       if (!validationResult.success) {
         toast.error('Validation failed. Please check the fields.', {});
@@ -627,7 +627,7 @@ const FinanceOfficeForm = () => {
         <EnquiryFormFooter
           form={form}
           onSubmit={onSubmit}
-          confirmationChecked={confirmationChecked}
+          confirmationChecked={!!confirmationChecked}
         />
       </form>
     </Form>

@@ -37,7 +37,7 @@ export default function TechnoFiltersGroup({
           applyFilters={handleFilters}
         />
       ))}
-      <Button onClick={clearFilters}>Clear Filters</Button>
+      <Button className=' cursor-pointer ' onClick={clearFilters}>Clear Filters</Button>
     </div>
   );
 }

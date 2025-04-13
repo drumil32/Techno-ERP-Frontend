@@ -12,12 +12,13 @@ import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Calendar1, ChevronDown, Search } from 'lucide-react';
 import { format, parse } from 'date-fns';
-import TechnoLeadTypeTag, { TechnoLeadType } from '../lead-type-tag/techno-lead-type-tag';
+import TechnoLeadTypeTag from '../lead-type-tag/techno-lead-type-tag';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import FinalConversionTag, { FinalConversionStatus } from '@/components/layout/yellowLeads/final-conversion-tag';
 import { Course, CourseNameMapper } from '@/types/enum';
 import { toPascal } from '@/lib/utils';
+import { LeadType } from '@/static/enum';
 
 export interface FilterOption {
   id: string;
@@ -101,16 +102,18 @@ export default function TechnoFilter({
       updateFilter(filterKey, value);
     }
   };
-
   const handleDateChange = (type: 'start' | 'end', selectedDate: Date | undefined) => {
     if (isThisMonth) {
       setIsThisMonth(false);
-      updateFilter('date', undefined);
+      updateFilter(filterKey, undefined);
     }
 
-    const variant = filterKey === 'ltcDate' ? 'LTC' : '';
+    const datePrefix = filterKey === 'leadTypeModifiedDate' ? 'LTC' : '';
+    const startDateKey = `start${datePrefix}Date`;
+    const endDateKey = `end${datePrefix}Date`;
 
-    updateFilter(`${type}${variant}Date`, formatDateForAPI(selectedDate));
+    updateFilter(startDateKey, type === 'start' ? formatDateForAPI(selectedDate) : filters[startDateKey]);
+    updateFilter(endDateKey, type === 'end' ? formatDateForAPI(selectedDate) : filters[endDateKey]);
 
     if (type === 'start') {
       setStartDate(selectedDate);
@@ -133,22 +136,40 @@ export default function TechnoFilter({
       setStartDate(firstDay);
       setEndDate(lastDay);
 
+      const datePrefix = filterKey === 'leadTypeModifiedDate' ? 'LTC' : '';
+      updateFilter(`start${datePrefix}Date`, formatDateForAPI(firstDay));
+      updateFilter(`end${datePrefix}Date`, formatDateForAPI(lastDay));
       updateFilter(filterKey, 'This Month');
-      handleDateChange('start', firstDay);
-      handleDateChange('end', lastDay);
     } else {
+      const datePrefix = filterKey === 'leadTypeModifiedDate' ? 'LTC' : '';
+      updateFilter(`start${datePrefix}Date`, undefined);
+      updateFilter(`end${datePrefix}Date`, undefined);
+      updateFilter(filterKey, undefined);
       setStartDate(undefined);
       setEndDate(undefined);
-      updateFilter(filterKey, undefined);
-      handleDateChange('start', undefined);
-      handleDateChange('end', undefined);
     }
   };
+
+  useEffect(() => {
+    const datePrefix = filterKey === 'leadTypeModifiedDate' ? 'LTC' : '';
+    const startDateKey = `start${datePrefix}Date`;
+    const endDateKey = `end${datePrefix}Date`;
+
+    setIsThisMonth(filters[filterKey] === 'This Month');
+    setStartDate(parseDateFromAPI(filters[startDateKey]));
+    setEndDate(parseDateFromAPI(filters[endDateKey]));
+
+    if (!filters[startDateKey] && !filters[endDateKey] && filters[filterKey] !== 'This Month') {
+      setStartDate(undefined);
+      setEndDate(undefined);
+      setIsThisMonth(false);
+    }
+  }, [filters, filterKey]);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">
+        <Button className='cursor-pointer' variant="outline">
           {filterLabel}
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
@@ -255,8 +276,8 @@ export default function TechnoFilter({
                   <TechnoLeadTypeTag
                     type={
                       typeof option === 'string'
-                        ? (option as TechnoLeadType)
-                        : (option.label as TechnoLeadType)
+                        ? (option as LeadType)
+                        : (option.label as LeadType)
                     }
                   />
                 ) : filterKey === 'finalConversionType' ? (
