@@ -34,9 +34,11 @@ import ConfirmationCheckBox from './confirmation-check-box';
 
 // Utility and constants imports
 import { toast } from 'sonner';
-import { API_ROUTES } from '@/common/constants/apiRoutes';
 import { ApplicationStatus, EducationLevel } from '@/types/enum';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
+import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Form Schema
 export const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
@@ -47,6 +49,11 @@ export const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
 
 const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   const router = useRouter();
+
+  const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
+    id,
+    currentStage: ApplicationStatus.STEP_1 
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -72,8 +79,9 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id],
     queryFn: () => getEnquiry(id ? id : ''),
-    enabled: !!id
+    enabled: !!id && !isRedirectChecking && !isRedirectError, 
   });
+
 
   useEffect(() => {
     if (data) {
@@ -209,7 +217,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
       toast.success('Enquiry draft created successfully');
 
-      router.push(API_ROUTES.enquiryFormStage1(response._id));
+      router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_1(response._id));
     } else {
       const response = await updateEnquiryDraft({ ...rest, id });
       if (!response) {
@@ -246,8 +254,9 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     form.setValue('confirmation', false);
     form.reset();
 
-    router.push(API_ROUTES.enquiryFormStage2(enquiry._id));
+    router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_2(enquiry._id));
   }
+
 
   return (
     <Form {...form}>

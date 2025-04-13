@@ -20,12 +20,10 @@ export default function AdmissionFormLayout({ children }: { children: React.Reac
     const { setSidebarActiveItem } = useSidebarContext();
     const pathname = usePathname();
 
-
     const pathSegments = pathname.split('/');
     const currentStepPath = pathSegments.find(segment => ADMISSION_STEPS.some(step => step.path === segment));
 
     useEffect(() => {
-
         setHeaderActiveItem(HEADER_ITEMS.APPLICATION_PROCESS.title);
         setSidebarActiveItem(SIDEBAR_ITEMS.ADMISSIONS);
     }, [setHeaderActiveItem, setSidebarActiveItem]);

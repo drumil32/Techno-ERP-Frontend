@@ -1,7 +1,6 @@
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
-import { API_ROUTES } from '@/common/constants/apiRoutes';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { toast } from 'sonner';
-import logger from './logger';
 
 type RequestParams = Record<string, string | number | boolean | undefined>;
 
@@ -54,7 +53,7 @@ export const apiRequest = async <T>(
   if (!response.ok || !responseBody.SUCCESS) {
     toast.error(responseBody.ERROR || responseBody.MESSAGE || `HTTP Error: ${response.status}`);
     if (response.status === 401 && !isAuthRequest) {
-      window.location.href = API_ROUTES.login;
+      window.location.href = SITE_MAP.AUTH.LOGIN;
     }
     return null;
   }

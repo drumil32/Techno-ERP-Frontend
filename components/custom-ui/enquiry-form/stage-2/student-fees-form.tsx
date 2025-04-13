@@ -35,11 +35,13 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { cleanDataForDraft } from './helpers/refine-data';
 import { createStudentFeesDraft, updateStudentFeesDraft } from './student-fees-api';
 import ShowStudentData from './data-show';
-import { FeeType } from '@/types/enum';
+import { ApplicationStatus, FeeType } from '@/types/enum';
 import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
 import { toast } from 'sonner';
 import { queryClient } from '@/lib/queryClient';
 import { validateCustomFeeLogic } from './helpers/validateFees';
+import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 export const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -91,6 +93,11 @@ export const StudentFeesForm = () => {
   const [dataUpdated, setDataUpdated] = useState(true);
   const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
   const router = useRouter()
+
+  const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
+    id: enquiry_id,
+    currentStage: ApplicationStatus.STEP_2
+  });
 
   // Queries
   const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
@@ -529,8 +536,7 @@ export const StudentFeesForm = () => {
 
     }
 
-    router.push(`/c/admissions/admission-form/${enquiry_id}/step_3`)
-
+    router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_3(enquiry_id))
   }
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {

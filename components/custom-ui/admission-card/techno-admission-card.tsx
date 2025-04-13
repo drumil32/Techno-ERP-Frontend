@@ -16,7 +16,7 @@ export default function AdmissionCard({
     children
 }: AdmissionCardProps) {
     return (
-        <Card className="p-0 w-[353px] h-[165px] shadow-sm border-[1px] rounded-[10px] border-gray-200 ">
+        <Card className="p-0 w-[353px] shadow-sm border-[1px] rounded-[10px] border-gray-200 ">
             <CardContent className="flex flex-col gap-[24px] p-[24px]">
                 <div className='  mt-[8px] flex w-max flex-col gap-[4px] '>
                     <div className={`h-[30px] leading-[100%] font-[700] text-[16px] text-[#4E4E4E]`}>{heading}</div>

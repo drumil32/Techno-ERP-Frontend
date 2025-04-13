@@ -26,7 +26,7 @@ export default function TechnoBreadCrumb() {
         for (const [key, value] of Object.entries(SITE_MAP)) {
             const paths = Object.values(value);
             for (const path of paths) {
-                if (currentPath === path || pathname.startsWith(path)) {
+                if (currentPath === path || pathname.startsWith(path as string)) {
                     return key;
                 }
             }

@@ -16,7 +16,7 @@ import TechnoLeadTypeTag, { TechnoLeadType } from '../lead-type-tag/techno-lead-
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import FinalConversionTag, {FinalConversionStatus} from '@/components/layout/yellowLeads/final-conversion-tag';
-import { Course, CourseNameMapper, finalConversion, MarketingSources } from '@/types/enum';
+import { Course, CourseNameMapper } from '@/types/enum';
 import { toPascal } from '@/lib/utils';
 
 export interface FilterOption {

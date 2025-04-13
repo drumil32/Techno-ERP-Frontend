@@ -8,30 +8,32 @@ import TechnoDataTable from "@/components/custom-ui/data-table/techno-data-table
 import { refineAdmissions } from "./helpers/refine-data";
 import { AdmissionTableRow } from "@/types/admissions";
 import AdmissionCard from "@/components/custom-ui/admission-card/techno-admission-card";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
 import TechnoPageTitle from "@/components/custom-ui/page-title/techno-page-title";
 import { useRouter } from "next/navigation";
+import { ApplicationStatus } from "@/types/enum";
+import { SITE_MAP } from "@/common/constants/frontendRouting";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 export default function AdmissionsLandingPage() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const router = useRouter()
 
-    const handleViewMore = (row: AdmissionTableRow) => {
-        if(row && row.id) {
-            router.push(`/c/admissions/admission-form/${row._id}/${row.applicationStatus.toLocaleLowerCase()}`)
-        }
-    };
-    const columns = [
-        { accessorKey: 'id', header: 'S. No' },
-        { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry' },
-        { accessorKey: 'studentName', header: 'Name' },
-        { accessorKey: 'studentPhoneNumber', header: 'Phone Number' },
-        { accessorKey: 'genderDisplay', header: 'Gender' },
-        { accessorKey: 'district', header: 'District' },
-        { accessorKey: 'course', header: 'Course' },
-        { accessorKey: 'applicationStatus', header: 'Application Status' },
+  const handleViewMore = (row: AdmissionTableRow) => {
+    if (row && row.id) {
+      router.push(SITE_MAP.ADMISSIONS.GO_TO_ENQUIRY(row._id, row.applicationStatus.toLocaleLowerCase()))
+    }
+  };
+  const columns = [
+    { accessorKey: 'id', header: 'S. No' },
+    { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry' },
+    { accessorKey: 'studentName', header: 'Name' },
+    { accessorKey: 'studentPhoneNumber', header: 'Phone Number' },
+    { accessorKey: 'genderDisplay', header: 'Gender' },
+    { accessorKey: 'district', header: 'District' },
+    { accessorKey: 'course', header: 'Course' },
+    { accessorKey: 'applicationStatus', header: 'Application Status' },
 
     { accessorKey: 'fatherPhoneNumber', header: 'Father P No.' },
     { accessorKey: 'motherPhoneNumber', header: 'Mother P No.' },
@@ -82,18 +84,20 @@ export default function AdmissionsLandingPage() {
   const admissionsData = admissionsQuery.data ? refineAdmissions(admissionsQuery.data) : []
   console.log(admissionsData)
 
-    return (
-        <>
-            <TechnoPageTitle title="Admission Application Process" />
-            <div className="flex gap-[32px]">
-                <AdmissionCard
-                    heading="New Application"
-                    subheading="Start a new admission application"
-                >
-                    <Button className="w-2/3" onClick={() => {
-                        router.push('/c/admissions/admission-form/new/step_1')
-                    }}> Create New Admission</Button>
-                </AdmissionCard>
+  return (
+    <>
+      <TechnoPageTitle title="Admission Application Process" />
+      <div className="flex gap-[32px]">
+
+        <AdmissionCard
+          heading="New Application"
+          subheading="Start a new admission application"
+        >
+          <Button className="w-2/3 cursor-pointer" onClick={() => {
+            router.push(SITE_MAP.ADMISSIONS.GO_TO_ENQUIRY("new", ApplicationStatus.STEP_1.toLocaleLowerCase()))
+
+          }}> Create New Admission</Button>
+        </AdmissionCard>
 
         <AdmissionCard
           heading="Ongoing Application"
@@ -109,7 +113,7 @@ export default function AdmissionsLandingPage() {
                 <Search className="h-4 w-4 text-gray-500" />
               </span>
             </div>
-            <Button className="w-1/4"> Search</Button>
+            <Button className="w-1/4 cursor-pointer"> Search</Button>
           </div>
         </AdmissionCard>
       </div>

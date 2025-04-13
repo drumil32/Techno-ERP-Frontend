@@ -16,20 +16,24 @@ import { format } from 'date-fns';
 import ConfirmationCheckBoxStage3 from "./acknowledgement-section";
 import EntranceExamDetailsSection from "./entrance-exam-details-section";
 import MoreDetailsSection from "./more-details-section";
-import { EducationLevel } from "@/types/enum";
+import { ApplicationStatus, EducationLevel } from "@/types/enum";
 import OfficeUseSection from "./office-use-section";
 import ScholarshipDetailsSection from "./scholarship-details-section";
 import ConfirmationSection from "./confirmation-section";
 import ShowStudentData from "../stage-2/data-show";
 import { Admission } from "@/types/admissions";
-import MandatoryDocuments from "./documents-section/mandatory-documents";
-import OtherDocuments from "./documents-section/other-documentation";
 import AllDocuments from "./documents-section/all-documents";
+import { useAdmissionRedirect } from "@/lib/useAdmissionRedirect";
 
 const EnquiryFormStage3 = () => {
 
   const pathVariables = useParams();
   const id = pathVariables.id as string;
+
+  const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
+    id,
+    currentStage: ApplicationStatus.STEP_2
+  });
 
   const form = useForm<z.infer<typeof enquiryStep3UpdateRequestSchema>>(
     {
@@ -72,7 +76,7 @@ const EnquiryFormStage3 = () => {
     console.log('Effect running, data:', data);
     if (data) {
       console.log('Attempting to reset form with:', data);
-      form.reset(data);
+      form.reset(data as any);
       form.setValue('dateOfAdmission', format(new Date(), 'dd/MM/yyyy')); // As per discussion set date manually because if we set at schema level it would be overriden
       console.log('Form values after reset:', form.getValues());
     }

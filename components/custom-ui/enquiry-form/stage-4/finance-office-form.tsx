@@ -62,8 +62,7 @@ import {
   parseDisplayDate
 } from '../stage-2/student-fees-form';
 import { displayFeeMapper, scheduleFeeMapper } from '../stage-2/helpers/mappers';
-import { FeeType } from '@/types/enum';
-import { API_ROUTES } from '@/common/constants/apiRoutes';
+import { ApplicationStatus, FeeType } from '@/types/enum';
 
 // Component imports
 import ShowStudentData from '../stage-2/data-show';
@@ -73,6 +72,8 @@ import ConfirmationOTPSection from './confirmation-otp-section';
 import EnquiryFormFooter from './enquiry-form-footer';
 import { getEnquiry } from '../stage-1/enquiry-form-api';
 import { createEnquiryStep4, updateEnquiryStep4 } from './helpers/apirequests';
+import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 const FinanceOfficeForm = () => {
   const params = useParams();
@@ -80,6 +81,11 @@ const FinanceOfficeForm = () => {
   const [dataUpdated, setDataUpdated] = useState(true);
   const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
   const router = useRouter();
+
+  const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
+    id: enquiry_id,
+    currentStage: ApplicationStatus.STEP_4
+  });
 
   // Queries
   const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
@@ -348,7 +354,7 @@ const FinanceOfficeForm = () => {
       setDataUpdated((prev) => !prev);
     }
 
-    router.push(API_ROUTES.admissions);
+    router.push(SITE_MAP.ADMISSIONS.DEFAULT)
   }
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
