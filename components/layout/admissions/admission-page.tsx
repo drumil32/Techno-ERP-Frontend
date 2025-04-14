@@ -120,6 +120,7 @@ export default function AdmissionsLandingPage() {
             onSearch={handleSearch}
             searchTerm={search}
             showPagination={false}
+            handleViewMore={handleViewMore}
           />
         )
       }
