@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 // Form handling and validation imports
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { enquiryDraftStep3Schema, enquiryStep3UpdateRequestSchema } from '../schema/schema';
@@ -217,14 +217,53 @@ const EnquiryFormStage3 = () => {
     router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_4(enquiry._id));
   };
 
+  const confirmationChecked = useWatch({ control: form.control, name: 'confirmation' });
 
   useEffect(() => {
     if (data) {
       const sanitizedData = removeNullValues(data);
-      
-      form.reset({ ...sanitizedData, dateOfAdmission: format(new Date(), 'dd/MM/yyyy'), id: id });
+
+      const defaultAcademicDetails = [
+        { educationLevel: EducationLevel.Tenth },
+        { educationLevel: EducationLevel.Twelfth },
+        { educationLevel: EducationLevel.Graduation }
+      ];
+      const mergedAcademicDetails = defaultAcademicDetails.map((defaultDetail, index) => {
+        const fetchedDetail = sanitizedData.academicDetails?.[index] || {};
+        return {
+          ...defaultDetail,
+          ...fetchedDetail
+        };
+      });
+
+      while (mergedAcademicDetails.length < 3) {
+        if (mergedAcademicDetails.length === 0) mergedAcademicDetails.push({ educationLevel: EducationLevel.Tenth });
+        else if (mergedAcademicDetails.length === 1) mergedAcademicDetails.push({ educationLevel: EducationLevel.Twelfth });
+        else if (mergedAcademicDetails.length === 2) mergedAcademicDetails.push({ educationLevel: EducationLevel.Graduation });
+      }
+      const finalAcademicDetails = mergedAcademicDetails.slice(0, 3);
+
+
+      form.reset({
+        ...sanitizedData,
+        academicDetails: finalAcademicDetails,
+        id: id,
+      });
+
+    } else if (!isLoading && !isFetching) {
+      form.reset({
+        academicDetails: [
+          { educationLevel: EducationLevel.Tenth },
+          { educationLevel: EducationLevel.Twelfth },
+          { educationLevel: EducationLevel.Graduation }
+        ],
+        dateOfAdmission: format(new Date(), 'dd/MM/yyyy'),
+        id: id,
+      });
+
     }
-  }, [data, form, refreshKey]);
+  }, [data, form, id, refreshKey, isLoading, isFetching]);
+
 
   const toastIdRef = useRef<string | number | null>(null);
 
@@ -326,7 +365,7 @@ const EnquiryFormStage3 = () => {
           />
           <ScholarshipDetailsSection form={form} />
 
-          <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} confirmationChecked={true} />
+          <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} confirmationChecked={confirmationChecked} />
         </form>
       </Form>
     </>
