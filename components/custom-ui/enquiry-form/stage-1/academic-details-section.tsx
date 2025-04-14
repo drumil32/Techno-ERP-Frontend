@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 // UI Components
 import {
@@ -13,9 +13,10 @@ import { Input } from '@/components/ui/input';
 // Form and Validation
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
-import { enquiryStep1RequestSchema } from '../schema/schema';
+import { academicDetailsArraySchema, enquiryStep1RequestSchema } from '../schema/schema';
 import TagInput from './tag-input';
 import { handleNumericInputChange } from '@/lib/utils';
+import { EducationLevel } from '@/types/enum';
 
 // Form Schema
 const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
@@ -35,6 +36,42 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
   commonFieldClass,
   commonFormItemClass
 }) => {
+  const prevValuesRef = useRef<z.infer<typeof academicDetailsArraySchema>>([]);
+
+  const educationLevels = [EducationLevel.Tenth, EducationLevel.Twelfth, EducationLevel.Graduation];
+
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      const prevValues = prevValuesRef.current;
+
+      values.academicDetails?.forEach((entry, index) => {
+        if (entry) {
+          const allFilled =
+            entry.schoolCollegeName &&
+            entry.universityBoardName &&
+            entry.passingYear &&
+            entry.percentageObtained &&
+            (Array.isArray(entry.subjects) || entry.subjects === undefined);
+
+          const expectedLevel = educationLevels[index];
+
+          if (
+            allFilled &&
+            entry.educationLevel !== expectedLevel &&
+            prevValues[index]?.educationLevel !== expectedLevel
+          ) {
+            form.setValue(`academicDetails.${index}.educationLevel`, expectedLevel);
+          }
+
+          if (entry.educationLevel) {
+            prevValues[index] = entry as z.infer<typeof academicDetailsArraySchema>[number];
+          }
+        }
+      });
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <Accordion type="single" collapsible>
@@ -48,7 +85,6 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
 
           <AccordionContent>
             <div className="grid grid-row-3 gap-y-6 bg-white p-4 rounded-[10px]">
-              
               {/* 10th */}
               <div className="space-y-4">
                 {/* Subheading */}

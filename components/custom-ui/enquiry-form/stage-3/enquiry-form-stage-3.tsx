@@ -69,19 +69,6 @@ const EnquiryFormStage3 = () => {
 
   const form = useForm<z.infer<typeof formSchemaStep3>>({
     resolver: zodResolver(formSchemaStep3),
-    defaultValues: {
-      academicDetails: [
-        {
-          educationLevel: EducationLevel.Tenth
-        },
-        {
-          educationLevel: EducationLevel.Twelfth
-        },
-        {
-          educationLevel: EducationLevel.Graduation
-        }
-      ]
-    }
   });
 
   async function saveDraft() {
@@ -223,42 +210,11 @@ const EnquiryFormStage3 = () => {
     if (data) {
       const sanitizedData = removeNullValues(data);
 
-      const defaultAcademicDetails = [
-        { educationLevel: EducationLevel.Tenth },
-        { educationLevel: EducationLevel.Twelfth },
-        { educationLevel: EducationLevel.Graduation }
-      ];
-      const mergedAcademicDetails = defaultAcademicDetails.map((defaultDetail, index) => {
-        const fetchedDetail = sanitizedData.academicDetails?.[index] || {};
-        return {
-          ...defaultDetail,
-          ...fetchedDetail
-        };
-      });
-
-      while (mergedAcademicDetails.length < 3) {
-        if (mergedAcademicDetails.length === 0) mergedAcademicDetails.push({ educationLevel: EducationLevel.Tenth });
-        else if (mergedAcademicDetails.length === 1) mergedAcademicDetails.push({ educationLevel: EducationLevel.Twelfth });
-        else if (mergedAcademicDetails.length === 2) mergedAcademicDetails.push({ educationLevel: EducationLevel.Graduation });
-      }
-      const finalAcademicDetails = mergedAcademicDetails.slice(0, 3);
-
-
       form.reset({
         ...sanitizedData,
-        academicDetails: finalAcademicDetails,
-        id: id,
-      });
-
-    } else if (!isLoading && !isFetching) {
-      form.reset({
-        academicDetails: [
-          { educationLevel: EducationLevel.Tenth },
-          { educationLevel: EducationLevel.Twelfth },
-          { educationLevel: EducationLevel.Graduation }
-        ],
         dateOfAdmission: format(new Date(), 'dd/MM/yyyy'),
         id: id,
+        confirmation: false,
       });
 
     }

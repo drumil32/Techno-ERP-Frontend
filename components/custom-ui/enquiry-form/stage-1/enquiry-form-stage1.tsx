@@ -60,18 +60,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     defaultValues: {
       studentName: '',
       studentPhoneNumber: '',
-      confirmation: false,
-      academicDetails: [
-        {
-          educationLevel: EducationLevel.Tenth
-        },
-        {
-          educationLevel: EducationLevel.Twelfth
-        },
-        {
-          educationLevel: EducationLevel.Graduation
-        }
-      ]
+      confirmation: false
     }
   });
 
@@ -79,7 +68,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id],
     queryFn: () => getEnquiry(id ? id : ''),
-    enabled: !!id && !isRedirectChecking && !isRedirectError,
+    enabled: !!id && !isRedirectChecking && !isRedirectError
   });
 
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmation' });
@@ -146,7 +135,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     // Remove null values from the entire object
     values = removeNullValues(values);
 
-
     // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep1RequestSchema.shape);
 
@@ -155,15 +143,11 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
     );
 
-    const alwaysIncludeKeys = [
-      'studentName',
-      'studentPhoneNumber'
-    ];
+    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber'];
 
-    const filteredKeys = Array.from(new Set([
-      ...Object.keys(values),
-      ...alwaysIncludeKeys
-    ])).filter((key) => schemaKeys.includes(key));
+    const filteredKeys = Array.from(new Set([...Object.keys(values), ...alwaysIncludeKeys])).filter(
+      (key) => schemaKeys.includes(key)
+    );
 
     const partialSchema = enquiryDraftStep1RequestSchema.pick(
       filteredKeys.reduce(
@@ -236,7 +220,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     const filteredData = filterBySchema(formSchema, values);
 
     const { confirmation, _id, ...rest } = filteredData;
-    console.log(values)
 
     if ((rest as any).academicDetails) {
       const academicDetails = (rest as any).academicDetails;
@@ -249,8 +232,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         });
       }
     }
-    
-
 
     const enquiry: any = await createEnquiry(rest);
 
@@ -270,7 +251,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
     router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_2(enquiry._id));
   }
-
 
   return (
     <Form {...form}>
@@ -310,7 +290,12 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         <ConfirmationCheckBox form={form} />
 
         {/* Sticky Footer */}
-        <EnquiryFormFooter saveDraft={saveDraft} form={form} onSubmit={onSubmit} confirmationChecked={confirmationChecked} />
+        <EnquiryFormFooter
+          saveDraft={saveDraft}
+          form={form}
+          onSubmit={onSubmit}
+          confirmationChecked={confirmationChecked}
+        />
       </form>
     </Form>
   );

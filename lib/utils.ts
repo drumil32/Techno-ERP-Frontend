@@ -36,7 +36,6 @@ export function filterBySchema<T extends ZodObject<any>>(
 
   return filtered;
 }
-
 export function removeNullValues(obj: any): any {
   if (Array.isArray(obj)) {
     return obj
@@ -46,24 +45,37 @@ export function removeNullValues(obj: any): any {
           item !== null &&
           item !== undefined &&
           item !== '' &&
-          !(Array.isArray(item) && item.length === 0)
+          !(Array.isArray(item) && item.length === 0) &&
+          !(isObject(item) && isAllValuesUndefined(item))
       );
-  } else if (typeof obj === 'object' && obj !== null) {
-    return Object.fromEntries(
+  } else if (isObject(obj)) {
+    const cleaned = Object.fromEntries(
       Object.entries(obj)
-        .map(([key, value]) => [key, removeNullValues(value)])
+        .map(([k, v]) => [k, removeNullValues(v)])
         .filter(
-          ([_, value]) =>
-            value !== null &&
-            value !== undefined &&
-            value !== '' &&
-            !(Array.isArray(value) && value.length === 0)
+          ([_, v]) =>
+            v !== null &&
+            v !== undefined &&
+            v !== '' &&
+            !(Array.isArray(v) && v.length === 0) &&
+            !(isObject(v) && isAllValuesUndefined(v))
         )
     );
-  } else {
-    return obj;
+
+    return Object.keys(cleaned).length === 0 ? null : cleaned;
   }
+
+  return obj;
 }
+
+function isObject(value: any): boolean {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isAllValuesUndefined(obj: object): boolean {
+  return Object.values(obj).every((val) => val === undefined);
+}
+
 
 export const handleNumericInputChange = (
   e: React.ChangeEvent<HTMLInputElement>,

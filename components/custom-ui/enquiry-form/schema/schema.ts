@@ -64,145 +64,26 @@ export const academicDetailBaseSchema = z.object({
 // Create the partial version for use in draft schemas
 export const academicDetailPartialSchema = academicDetailBaseSchema.partial();
 
-// Create the fully validated version with refinements
-export const academicDetailSchema = academicDetailBaseSchema.superRefine((data, ctx) => {
-    // Helper function to check if any field *other than* educationLevel has data
-    const isEffectivelyEmpty = (
-        (data.schoolCollegeName === null || data.schoolCollegeName === undefined || data.schoolCollegeName === '') &&
-        (data.universityBoardName === null || data.universityBoardName === undefined || data.universityBoardName === '') &&
-        (data.passingYear === null || data.passingYear === undefined) &&
-        (data.percentageObtained === null || data.percentageObtained === undefined) &&
-        (data.subjects === null || data.subjects === undefined || data.subjects.length === 0)
-    );
-
-    // If the object is effectively empty (only educationLevel might be present), it's valid. Do nothing.
-    if (isEffectivelyEmpty) {
-        return;
-    }
-
-    // --- If NOT empty, enforce the original requirements for the fields ---
-
-    // School/College Name Validation
-    if (!data.schoolCollegeName || data.schoolCollegeName.trim().length < 1) {
-        ctx.addIssue({
-            code: ZodIssueCode.custom, // Use custom for required checks on optional fields
-            message: 'School/College Name is required',
-            path: ['schoolCollegeName'],
-        });
-    } else if (!/^[A-Za-z\s]+$/.test(data.schoolCollegeName)) {
-         ctx.addIssue({
-            code: ZodIssueCode.invalid_string,
-            validation: 'regex',
-            message: 'School/College Name must only contain alphabets and spaces',
-            path: ['schoolCollegeName'],
-        });
-    }
-
-    // University/Board Name Validation
-    if (!data.universityBoardName || data.universityBoardName.trim().length < 1) {
-        ctx.addIssue({
-            code: ZodIssueCode.custom,
-            message: 'University/Board Name is required',
-            path: ['universityBoardName'],
-        });
-    } else if (!/^[A-Za-z\s]+$/.test(data.universityBoardName)) {
-         ctx.addIssue({
-            code: ZodIssueCode.invalid_string,
-            validation: 'regex',
-            message: 'University/Board Name must only contain alphabets and spaces',
-            path: ['universityBoardName'],
-        });
-    }
-
-    // Passing Year Validation
-    if (data.passingYear === null || data.passingYear === undefined) {
-         ctx.addIssue({
-            code: ZodIssueCode.invalid_type, // Type error if missing when required
-            expected: 'number',
-            received: 'undefined',
-            message: 'Passing Year required',
-            path: ['passingYear'],
-        });
-    } else { // Only apply number refinements if the value exists
-        if (!Number.isInteger(data.passingYear)) {
-            ctx.addIssue({
-               code: ZodIssueCode.invalid_type,
-               expected: 'integer',
-               received: 'float',
-               message: 'Passing Year must be an integer',
-               path: ['passingYear'],
-           });
-        }
-        if (data.passingYear.toString().length !== 4) {
-             ctx.addIssue({
-                code: ZodIssueCode.custom,
-                message: 'Passing Year must be a valid 4-digit year',
-                path: ['passingYear'],
-            });
-        }
-    }
-
-
-    // Percentage Obtained Validation
-    if (data.percentageObtained === null || data.percentageObtained === undefined) {
-         ctx.addIssue({
-            code: ZodIssueCode.invalid_type, // Type error if missing when required
-            expected: 'number',
-            received: 'undefined',
-            message: 'Percentage Obtained required', // Corrected double space
-            path: ['percentageObtained'],
-        });
-    } else { // Only apply number refinements if the value exists
-         if (data.percentageObtained < 0) {
-             ctx.addIssue({
-                code: ZodIssueCode.too_small,
-                type: 'number',
-                minimum: 0,
-                inclusive: true,
-                message: 'Percentage must be at least 0',
-                path: ['percentageObtained'],
-            });
-        }
-        if (data.percentageObtained > 100) {
-             ctx.addIssue({
-                code: ZodIssueCode.too_big,
-                type: 'number',
-                maximum: 100,
-                inclusive: true,
-                message: 'Percentage cannot exceed 100',
-                path: ['percentageObtained'],
-            });
-        }
-    }
-
-    // Subjects Validation (Optional array, but non-empty if provided)
-    if (data.subjects && Array.isArray(data.subjects)) {
-        if (data.subjects.length === 0) {
-             // If the array exists but is empty, treat as error based on original .nonempty()
-             ctx.addIssue({
-                 code: ZodIssueCode.too_small,
-                 minimum: 1,
-                 inclusive: true,
-                 exact: false,
-                 type: 'array',
-                 message: 'Subjects cannot be empty if provided',
-                 path: ['subjects'],
-             });
-        } else {
-            // Check individual subjects in the non-empty array
-            data.subjects.forEach((subject, index) => {
-                if (typeof subject !== 'string' || subject.trim().length < 1) {
-                     ctx.addIssue({
-                        code: ZodIssueCode.custom,
-                        message: 'Subject name cannot be empty',
-                        path: ['subjects', index],
-                     });
-                }
-            });
-        }
-    }
-    // If data.subjects is null/undefined, the base .optional() handles it, no issue needed here.
+export const academicDetailSchema = z.object({
+  educationLevel : z.nativeEnum(EducationLevel), // Only allows fixed values
+  schoolCollegeName: z.string().min(1, 'School/College Name is required'),
+  universityBoardName: z.string().min(1, 'University/Board Name is required'),
+  passingYear: z
+    .number()
+    .int()
+    .refine((year) => year.toString().length === 4, {
+      message: 'Passing Year must be a valid 4-digit year'
+    }),
+  percentageObtained: z
+    .number()
+    .min(0, 'Percentage must be at least 0')
+    .max(100, 'Percentage cannot exceed 100'),
+  subjects: z
+    .array(z.string().min(1, 'Subject name is required'))
+    .nonempty('Subjects cannot be empty').optional()
 });
+// Array schema
+export const academicDetailsArraySchema = z.array(academicDetailSchema);
 
 export const singleDocumentSchema = z.object({
   type: z.nativeEnum(DocumentType),
@@ -225,7 +106,6 @@ export const singleDocumentSchema = z.object({
   fileUrl: z.string().optional()
 });
 
-export const academicDetailsArraySchema = z.array(academicDetailSchema);
 export const academicDetailsPartialArraySchema = z.array(academicDetailPartialSchema);
 
 export const enquirySchema = z.object({
@@ -403,4 +283,5 @@ export type IEnquiryDraftStep1UpdateSchema = z.infer<typeof enquiryDraftStep1Upd
 export type IEnquirySchema = z.infer<typeof enquirySchema>;
 export type IEnquiryDraftStep3Schema = z.infer<typeof enquiryDraftStep3Schema>;
 export type IAcademicDetailSchema = z.infer<typeof academicDetailSchema>;
+export type IAcademicDetailArraySchema = z.infer<typeof academicDetailsArraySchema>;
 export type IAcademicDetailPartialSchema = z.infer<typeof academicDetailPartialSchema>;
