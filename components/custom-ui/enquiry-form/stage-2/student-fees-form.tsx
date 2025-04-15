@@ -788,6 +788,7 @@ export const StudentFeesForm = () => {
                     placeholder="Pick a Date"
                     showYearMonthDropdowns={true}
                     formItemClassName="w-[300px]"
+                    labelClassName='font-inter font-normal text-[12px] text-[#666666]'
                   />
                 </div>
               </div>

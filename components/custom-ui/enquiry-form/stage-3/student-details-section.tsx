@@ -32,6 +32,7 @@ import { FieldErrors, FieldValue, FieldValues, UseFormReturn } from 'react-hook-
 import { z } from 'zod';
 import { enquirySchema } from '../schema/schema';
 import { formSchemaStep3 } from './enquiry-form-stage-3';
+import { DatePicker } from '@/components/ui/date-picker';
 
 interface StudentDetailsFormPropInterface {
   form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
@@ -68,25 +69,26 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
       reference: form.getValues('reference')
     };
 
-
-    const result = formSchemaStep3.pick({
-      admissionMode: true,
-      dateOfAdmission: true,
-      studentName: true,
-      studentPhoneNumber: true,
-      emailId: true,
-      fatherName: true,
-      fatherPhoneNumber: true,
-      fatherOccupation: true,
-      motherName: true,
-      motherPhoneNumber: true,
-      motherOccupation: true,
-      dateOfBirth: true,
-      category: true,
-      gender: true,
-      course: true,
-      reference: true
-    }).safeParse(studentDetails);
+    const result = formSchemaStep3
+      .pick({
+        admissionMode: true,
+        dateOfAdmission: true,
+        studentName: true,
+        studentPhoneNumber: true,
+        emailId: true,
+        fatherName: true,
+        fatherPhoneNumber: true,
+        fatherOccupation: true,
+        motherName: true,
+        motherPhoneNumber: true,
+        motherOccupation: true,
+        dateOfBirth: true,
+        category: true,
+        gender: true,
+        course: true,
+        reference: true
+      })
+      .safeParse(studentDetails);
 
     setIsValid(result.success);
   };
@@ -166,47 +168,14 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 )}
               />
 
-              <FormField
-                key="dateOfAdmission"
+              <DatePicker
                 control={form.control}
                 name="dateOfAdmission"
-                render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass} border-none`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                      Date of Admission
-                    </FormLabel>
-                    <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={`${commonFieldClass} justify-between bg-inherit border-none shadow-none font-normal`}
-                          >
-                            <span className={!field.value ? 'text-[#9D9D9D]' : ''}>
-                              {field.value ? field.value : 'Select Date'}
-                            </span>
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                          <Calendar
-                            mode="single"
-                            selected={field.value ? new Date(field.value) : new Date()}
-                            onSelect={(date) => {
-                              if (date) {
-                                const formattedDate = format(date, 'dd/MM/yyyy');
-                                field.onChange(formattedDate);
-                              } else {
-                                field.onChange('');
-                              }
-                            }}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Date of Admission"
+                placeholder="Pick a Date"
+                showYearMonthDropdowns={true}
+                formItemClassName={`${commonFormItemClass} border-none`}
+                labelClassName="font-inter font-normal text-[12px] text-[#666666]"
               />
 
               <FormField
