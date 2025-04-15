@@ -101,6 +101,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 label="Date of Enquiry"
                 placeholder="Select Enquiry Date"
                 showYearMonthDropdowns={true}
+                labelClassName='font-inter font-normal text-[12px] text-[#666666]'
               />
 
               <FormField
@@ -316,6 +317,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 label="Date of Birth"
                 placeholder="Select Date of Birth"
                 showYearMonthDropdowns={true}
+                labelClassName='font-inter font-normal text-[12px] text-[#666666]'
               />
 
               <FormField
