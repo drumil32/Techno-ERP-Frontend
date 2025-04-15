@@ -21,6 +21,7 @@ import { CalendarDaysIcon } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { getCounsellors, getTeleCallers } from './enquiry-form-api';
 import { useQueries } from '@tanstack/react-query';
+import { MultiSelectPopoverCheckbox } from '../../common/multi-select-popover-checkbox';
 
 interface UserRoleInterface {
   _id: string;
@@ -68,116 +69,22 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
 
           <AccordionContent>
             <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-4 gap-x-[32px] bg-white p-4 rounded-[10px]">
-              <FormField
-                key="counsellor"
-                control={form.control}
+              <MultiSelectPopoverCheckbox
+                form={form}
                 name="counsellor"
-                render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass} col-span-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                      Counsellor’s Name
-                    </FormLabel>
-                    <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={`${commonFieldClass} text-left bg-inherit w-full max-w-full truncate`}
-                          >
-                            <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full font-normal text-[#666666]">
-                              {field.value && field.value.length > 0
-                                ? counsellors
-                                    .filter((counsellor) => field.value.includes(counsellor._id))
-                                    .map((counsellor) => counsellor.name)
-                                    .join(', ')
-                                : "Select Counsellor's Name"}
-                            </span>
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[180px] p-2 rounded-sm">
-                          <div className="max-h-60 overflow-y-auto">
-                            {counsellors?.map((counsellor) => (
-                              <div
-                                key={counsellor._id}
-                                className="flex items-center space-x-2 space-y-1"
-                              >
-                                <Checkbox
-                                  checked={field.value?.includes(counsellor._id)}
-                                  onCheckedChange={(checked) => {
-                                    const newValues = checked
-                                      ? [...(field.value || []), counsellor._id]
-                                      : field.value?.filter((id: string) => id !== counsellor._id);
-                                    field.onChange(newValues);
-                                  }}
-                                  className="rounded-none"
-                                />
-                                <span className="text-[12px]">{counsellor.name}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Counsellor’s Name"
+                options={counsellors}
+                placeholder="Select Counsellor's Name"
+                className="col-span-1"
               />
-
-              <FormField
-                key="telecaller"
-                control={form.control}
+              
+              <MultiSelectPopoverCheckbox
+                form={form}
                 name="telecaller"
-                render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass} col-span-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                      Telecaller’s Name
-                    </FormLabel>
-                    <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={`
-                              ${commonFieldClass}
-                              text-left bg-inherit w-full max-w-full truncate`}
-                          >
-                            <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full font-normal text-[#666666]">
-                              {field.value && field.value.length > 0
-                                ? telecallers
-                                    .filter((telecaller) => field.value.includes(telecaller._id))
-                                    .map((telecaller) => telecaller.name)
-                                    .join(', ')
-                                : "Select Telecaller's Name"}
-                            </span>
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-[180px] p-2 rounded-sm">
-                          <div className="max-h-60 overflow-y-auto">
-                            {telecallers?.map((telecaller) => (
-                              <div
-                                key={telecaller._id}
-                                className="flex items-center space-x-2 space-y-2"
-                              >
-                                <Checkbox
-                                  checked={field.value?.includes(telecaller._id)}
-                                  onCheckedChange={(checked) => {
-                                    const newValues = checked
-                                      ? [...(field.value || []), telecaller._id]
-                                      : field.value?.filter((id: string) => id !== telecaller._id);
-                                    field.onChange(newValues);
-                                  }}
-                                  className="rounded-none"
-                                />
-                                <span className="text-[12px]">{telecaller.name}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Telecaller’s Name"
+                options={telecallers}
+                placeholder="Select Telecaller's Name"
+                className="col-span-1"
               />
 
               <FormField

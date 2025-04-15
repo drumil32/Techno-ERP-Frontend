@@ -67,13 +67,13 @@ import { ApplicationStatus, FeeType } from '@/types/enum';
 // Component imports
 import ShowStudentData from '../stage-2/data-show';
 import FilledByCollegeSection from '../stage-1/filled-by-college-section';
-import ConfirmationCheckBox from './confirmation-check-box';
 import ConfirmationOTPSection from './confirmation-otp-section';
 import EnquiryFormFooter from './enquiry-form-footer';
 import { getEnquiry } from '../stage-1/enquiry-form-api';
 import { createEnquiryStep4, updateEnquiryStep4 } from './helpers/apirequests';
 import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
+import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
 
 const FinanceOfficeForm = () => {
   const params = useParams();
@@ -351,7 +351,7 @@ const FinanceOfficeForm = () => {
       setDataUpdated((prev) => !prev);
     }
 
-    router.push(SITE_MAP.ADMISSIONS.DEFAULT)
+    router.push(SITE_MAP.ADMISSIONS.DEFAULT);
   }
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
@@ -620,8 +620,13 @@ const FinanceOfficeForm = () => {
           studentPhone={studentPhone}
         />
 
-        {/* Checkbox */}
-        <ConfirmationCheckBox form={form} />
+        <ConfirmationCheckBox
+          form={form}
+          name="confirmationCheck"
+          label="All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will be charged extra based on LU/AKTU norms."
+          id="checkbox-for-step2"
+          className="flex flex-row items-start bg-white rounded-md p-4"
+        />
 
         {/* Submit */}
         <EnquiryFormFooter

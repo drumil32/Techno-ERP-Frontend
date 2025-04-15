@@ -41,7 +41,6 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   }
 
   function handleSubmitClick() {
-    // Filter academicDetails
     const currentValues = form.getValues();
     if (currentValues.academicDetails) {
       const filteredAcademicDetails: IAcademicDetailArraySchema =
@@ -56,7 +55,6 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
       form.setValue('academicDetails', filteredAcademicDetails);
     }
 
-    // Trigger form submission after filtering
     setTimeout(() => {
       form.handleSubmit(onSubmit, onError)();
     }, 0);
