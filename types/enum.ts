@@ -43,11 +43,14 @@ export enum FinalConversionType {
 }
 
 
-export enum Marketing_Source {
-  SCHOOL = 'School',
-  DIGITAL_MARKETING = 'Digital_Marketing'
+// export enum Marketing_Source {
+//   SCHOOL = 'School',
+//   DIGITAL_MARKETING = 'Digital_Marketing'
+// }
+export enum DropDownType{
+  CITY = "CITY",
+  MAKRETING_SOURCE = "MAKRETING_SOURCE"
 }
-
 /*
  * Admission Module Enums
 */

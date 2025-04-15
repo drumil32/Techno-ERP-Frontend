@@ -40,6 +40,9 @@ export const API_ENDPOINTS = {
 
   fetchTeleCallersDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=ADMISSION`,
   fetchCounsellorsDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=COUNSELOR&moduleName=ADMISSION`,
+  fetchMarketingSourcesDropdown: `${API_DOMAIN}/dropdown/MAKRETING_SOURCE`,
+  fetchCityDropdown: `${API_DOMAIN}/dropdown/CITY`,
+
   // Fees Details
   getOtherFees: `${API_DOMAIN}/fees-structure/other-fees`,
   getFeesByCourse: (course_name: string) => `${API_DOMAIN}/fees-structure/course/${course_name}`,

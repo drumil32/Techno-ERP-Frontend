@@ -24,3 +24,13 @@ export const fetchAssignedToDropdown = async () => {
   const result= await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchAssignedToDropdown);
   return result;
 };
+
+export const marketingSourcesDropdown=async()=>{
+  const result=await apiRequest(API_METHODS.GET,API_ENDPOINTS.fetchMarketingSourcesDropdown);
+  return result;
+}
+
+export const cityDropdown=async()=>{
+  const result=await apiRequest(API_METHODS.GET,API_ENDPOINTS.fetchCityDropdown);
+  return result;
+}
