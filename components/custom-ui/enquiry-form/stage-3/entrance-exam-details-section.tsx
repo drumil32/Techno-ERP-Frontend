@@ -91,7 +91,7 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                       <Input
                         {...field}
                         type='text'
-                        value={field.value ?? null}
+                        inputMode="numeric"
                         className={commonFieldClass}
                         placeholder="Enter the rank"
                         onChange={(e) => handleNumericInputChange(e, field.onChange)}
