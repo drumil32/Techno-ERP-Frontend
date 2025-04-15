@@ -26,6 +26,7 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { apiRequest } from '@/lib/apiClient';
 import FinalConversionSelect from './final-conversion-select';
+import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
 
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -343,6 +344,11 @@ export default function YellowLeadsTracker() {
     }
   ];
 
+   const cityDropdownQuery=useQuery({
+      queryKey:['cities'],
+      queryFn:cityDropdown
+    })
+   const cityDropdownData=Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data:[];
   const getFiltersData = () => {
     return [
       {
@@ -353,7 +359,12 @@ export default function YellowLeadsTracker() {
       {
         filterKey: 'city',
         label: 'City',
-        options: Object.values(Locations),
+        options: cityDropdownData.map((item: string) => {
+          return {
+            label:item,
+            id:item
+          };
+        }),
         hasSearch: true,
         multiSelect: true
       },

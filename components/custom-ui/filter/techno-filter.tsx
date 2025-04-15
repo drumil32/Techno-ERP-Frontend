@@ -291,7 +291,7 @@ export default function TechnoFilter({
                 ) : filterKey === 'course' ? (
                   <span>{CourseNameMapper[option as Course]}</span>
                 ) : filterKey === 'source' ? (
-                  <span>{toPascal(option as string)}</span>
+                  <span>{toPascal(typeof option === 'string' ? option : option.label)}</span>
                 ) : (
                   <span>{typeof option === 'string' ? option : option.label}</span>
                 )}

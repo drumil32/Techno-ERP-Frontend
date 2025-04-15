@@ -22,6 +22,7 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { apiRequest } from '@/lib/apiClient';
 import LeadTypeSelect from '@/components/custom-ui/lead-type-select/lead-type-select';
+import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
 
 export default function AllLeadsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -195,7 +196,11 @@ export default function AllLeadsPage() {
     placeholderData: (previousData) => previousData,
     enabled: true
   });
-
+  const cityDropdownQuery=useQuery({
+    queryKey:['cities'],
+    queryFn:cityDropdown
+  })
+ const cityDropdownData=Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data:[];
   const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data) : [];
   const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
   const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
@@ -424,8 +429,12 @@ export default function AllLeadsPage() {
       {
         filterKey: 'city',
         label: 'City',
-        options: Object.values(Locations),
-        placeholder: 'location',
+        options: cityDropdownData.map((item: string) => {
+          return {
+            label:item,
+            id:item
+          };
+        }),
         hasSearch: true,
         multiSelect: true
       },

@@ -6,8 +6,8 @@ import { useAdminTrackerContext } from './admin-tracker-context';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import { AdminAnalyticsResponse } from './interfaces';
-import { fetchAssignedToDropdown } from './helpers/fetch-data';
-import { Locations, Marketing_Source } from '@/static/enum';
+import { cityDropdown, fetchAssignedToDropdown, marketingSourcesDropdown } from './helpers/fetch-data';
+import { Locations } from '@/static/enum';
 import TechnoAnalyticCardsGroup, {
   CardItem
 } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
@@ -15,6 +15,7 @@ import { refineAnalytics } from './helpers/refine-data';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { toast } from 'sonner';
 import FilterBadges from '../allLeads/components/filter-badges'; import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
+import { DropDownType } from '@/types/enum';
 
 const AdminTracker = () => {
   const { filters, updateFilter } = useTechnoFilterContext();
@@ -35,7 +36,17 @@ const AdminTracker = () => {
     queryKey: ['assignedToDropdown', filterParams, appliedFilters],
     queryFn: fetchAssignedToDropdown
   });
+  const marketingSourceQuery=useQuery({
+    queryKey:['marketingSources'],
+    queryFn:marketingSourcesDropdown
+  })
+  const cityDropdownQuery=useQuery({
+    queryKey:['cities'],
+    queryFn:cityDropdown
+  })
+ const cityDropdownData=Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data:[];
   const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
+ const marketingSource=Array.isArray(marketingSourceQuery.data) ? marketingSourceQuery.data:[];
 
   const getFiltersData = () => {
     return [
@@ -47,13 +58,23 @@ const AdminTracker = () => {
       {
         filterKey: 'source',
         label: 'Source',
-        options: Object.values(Marketing_Source),
+        options: marketingSource.map((item: string) => {
+          return {
+            label:item,
+            id:item
+          };
+        }),
         multiSelect: true
       },
       {
         filterKey: 'city',
         label: 'City',
-        options: Object.values(Locations),
+        options: cityDropdownData.map((item: string) => {
+          return {
+            label:item,
+            id:item
+          };
+        }),
         hasSearch: true,
         multiSelect: true
       },
