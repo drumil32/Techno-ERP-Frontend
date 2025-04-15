@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 
 // Form handling and validation imports
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { enquiryDraftStep3Schema, enquiryStep3UpdateRequestSchema } from '../schema/schema';
@@ -69,19 +69,6 @@ const EnquiryFormStage3 = () => {
 
   const form = useForm<z.infer<typeof formSchemaStep3>>({
     resolver: zodResolver(formSchemaStep3),
-    defaultValues: {
-      academicDetails: [
-        {
-          educationLevel: EducationLevel.Tenth
-        },
-        {
-          educationLevel: EducationLevel.Twelfth
-        },
-        {
-          educationLevel: EducationLevel.Graduation
-        }
-      ]
-    }
   });
 
   async function saveDraft() {
@@ -217,14 +204,22 @@ const EnquiryFormStage3 = () => {
     router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_4(enquiry._id));
   };
 
+  const confirmationChecked = useWatch({ control: form.control, name: 'confirmation' });
 
   useEffect(() => {
     if (data) {
       const sanitizedData = removeNullValues(data);
-      
-      form.reset({ ...sanitizedData, dateOfAdmission: format(new Date(), 'dd/MM/yyyy'), id: id });
+
+      form.reset({
+        ...sanitizedData,
+        dateOfAdmission: format(new Date(), 'dd/MM/yyyy'),
+        id: id,
+        confirmation: false,
+      });
+
     }
-  }, [data, form, refreshKey]);
+  }, [data, form, id, refreshKey, isLoading, isFetching]);
+
 
   const toastIdRef = useRef<string | number | null>(null);
 
@@ -326,7 +321,7 @@ const EnquiryFormStage3 = () => {
           />
           <ScholarshipDetailsSection form={form} />
 
-          <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} confirmationChecked={true} />
+          <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} confirmationChecked={confirmationChecked} />
         </form>
       </Form>
     </>

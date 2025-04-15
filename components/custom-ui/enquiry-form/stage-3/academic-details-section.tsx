@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -9,12 +9,11 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
-import {
-  academicDetailSchema,
-} from '../schema/schema';
+import { academicDetailsArraySchema, academicDetailSchema } from '../schema/schema';
 import TagInput from '../stage-1/tag-input';
 import { handleNumericInputChange } from '@/lib/utils';
 import { formSchemaStep3 } from './enquiry-form-stage-3';
+import { EducationLevel } from '@/types/enum';
 
 interface AcademicDetailsSectionInterface {
   form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
@@ -85,7 +84,44 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
       console.log('Validation Log:\n' + validationLog.join('\n'));
     }
   }, [validationLog]);
-  
+
+  const prevValuesRef = useRef<z.infer<typeof academicDetailsArraySchema>>([]);
+
+  const educationLevels = [EducationLevel.Tenth, EducationLevel.Twelfth, EducationLevel.Graduation];
+
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      const prevValues = prevValuesRef.current;
+
+      values.academicDetails?.forEach((entry, index) => {
+        if (entry) {
+          const allFilled =
+            entry.schoolCollegeName &&
+            entry.universityBoardName &&
+            entry.passingYear &&
+            entry.percentageObtained &&
+            (Array.isArray(entry.subjects) || entry.subjects === undefined);
+
+          const expectedLevel = educationLevels[index];
+
+          if (
+            allFilled &&
+            entry.educationLevel !== expectedLevel &&
+            prevValues[index]?.educationLevel !== expectedLevel
+          ) {
+            form.setValue(`academicDetails.${index}.educationLevel`, expectedLevel);
+          }
+
+          if (entry.educationLevel) {
+            prevValues[index] = entry as z.infer<typeof academicDetailsArraySchema>[number];
+          }
+        }
+      });
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">

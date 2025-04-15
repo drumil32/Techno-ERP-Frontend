@@ -11,6 +11,8 @@ import {
   DialogTrigger
 } from '@/components/ui/dialog';
 import { FaCircleExclamation } from 'react-icons/fa6';
+import { IAcademicDetailArraySchema, IAcademicDetailSchema } from '../schema/schema';
+import { toast } from 'sonner';
 
 interface EnquiryFormFooterProps {
   saveDraft: () => void;
@@ -20,7 +22,6 @@ interface EnquiryFormFooterProps {
   confirmationChecked?: boolean;
   draftExists?: boolean;
 }
-
 
 const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   saveDraft,
@@ -33,19 +34,33 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   const [isSubmitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [isDraftDialogOpen, setDraftDialogOpen] = useState(false);
 
-  function handleDialogSubmit() {
-    form.handleSubmit(
-      () => {
-        onSubmit();
-        setSubmitDialogOpen(false);
-      },
-      (errors) => {
-        console.error("Form validation failed on submit:", errors);
-        setSubmitDialogOpen(false);
-      }
-    )();
+  function onError() {
+    console.log('Error in submission');
+    console.log(form.formState.errors);
+    toast.error('Error in submission');
   }
 
+  function handleSubmitClick() {
+    // Filter academicDetails
+    const currentValues = form.getValues();
+    if (currentValues.academicDetails) {
+      const filteredAcademicDetails: IAcademicDetailArraySchema =
+        currentValues.academicDetails.filter(
+          (entry: IAcademicDetailSchema) =>
+            entry &&
+            entry.schoolCollegeName &&
+            entry.universityBoardName &&
+            entry.passingYear &&
+            entry.percentageObtained
+        );
+      form.setValue('academicDetails', filteredAcademicDetails);
+    }
+
+    // Trigger form submission after filtering
+    setTimeout(() => {
+      form.handleSubmit(onSubmit, onError)();
+    }, 0);
+  }
 
   function handleDialogSaveDraft() {
     saveDraft();
@@ -54,12 +69,12 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   return (
     <>
       <div className="sticky bottom-0 left-0 z-10 flex items-center justify-between space-x-4 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] overflow-hidden">
-      <div className="absolute bottom-0 left-0 -z-100 w-screen bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] overflow-hidden"></div>
+        <div className="absolute bottom-0 left-0 -z-100 w-screen bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] overflow-hidden"></div>
         <Dialog open={isDraftDialogOpen} onOpenChange={setDraftDialogOpen}>
           <DialogTrigger asChild>
             <Button type="button" variant="outline" disabled={isSavingDraft}>
               <span className="font-inter font-semibold text-[12px]">
-                {isSavingDraft ? 'Saving...' : (draftExists ? 'Update Draft' : 'Save Draft')}
+                {isSavingDraft ? 'Saving...' : draftExists ? 'Update Draft' : 'Save Draft'}
               </span>
             </Button>
           </DialogTrigger>
@@ -69,7 +84,10 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             </DialogHeader>
             <div className="flex gap-2 items-center text-left">
               <FaCircleExclamation className="text-yellow-500 w-8 h-8" />
-              <span>Please reverify all details again before {draftExists ? 'updating the draft' : 'saving the enquiry form'}.</span>
+              <span>
+                Please reverify all details again before{' '}
+                {draftExists ? 'updating the draft' : 'saving the enquiry form'}.
+              </span>
             </div>
             <DialogFooter>
               <Button type="button" variant="secondary" onClick={() => setDraftDialogOpen(false)}>
@@ -89,7 +107,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
               disabled={!confirmationChecked || form.formState.isSubmitting || isSavingDraft}
             >
               <span className="font-inter font-semibold text-[12px]">
-                {form.formState.isSubmitting ? "Submitting..." : "Submit & Continue"}
+                {form.formState.isSubmitting ? 'Submitting...' : 'Submit & Continue'}
               </span>
             </Button>
           </DialogTrigger>
@@ -105,7 +123,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
               <Button type="button" variant="secondary" onClick={() => setSubmitDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button type="button" onClick={handleDialogSubmit}>
+              <Button type="button" onClick={handleSubmitClick}>
                 Ok
               </Button>
             </DialogFooter>
