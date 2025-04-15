@@ -287,7 +287,13 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         />
 
         {/* Confirmation Check box */}
-        <ConfirmationCheckBox form={form} />
+        <ConfirmationCheckBox
+          form={form}
+          name="confirmation"
+          label="All the above information has been verified by the applicant and thoroughly checked by the Admissions team."
+          id="checkbox-for-step3"
+          className="cols-span-3"
+        />
 
         {/* Sticky Footer */}
         <EnquiryFormFooter

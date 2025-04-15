@@ -212,7 +212,7 @@ const EnquiryFormStage3 = () => {
 
       form.reset({
         ...sanitizedData,
-        dateOfAdmission: format(new Date(), 'dd/MM/yyyy'),
+        dateOfAdmission: sanitizedData.dateOfAdmission || format(new Date(), 'dd/MM/yyyy'),
         id: id,
         confirmation: false,
       });

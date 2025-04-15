@@ -4,11 +4,8 @@ import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import {
   feesRequestSchema,
   finalFeesCreateSchema,
-  finalFeesUpdateSchema,
   frontendFeesDraftValidationSchema,
   IFeesRequestSchema,
-  IFinalFeesCreateSchema,
-  IFinalFeesUpdateSchema
 } from './studentFeesSchema';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -42,16 +39,12 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cleanDataForDraft } from './helpers/refine-data';
 import { createStudentFeesDraft, updateStudentFeesDraft } from './student-fees-api';
 import ShowStudentData from './data-show';
 import { ApplicationStatus, FeeType } from '@/types/enum';
-import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
 import { toast } from 'sonner';
 import { queryClient } from '@/lib/queryClient';
 import { validateCustomFeeLogic } from './helpers/validateFees';
@@ -59,6 +52,8 @@ import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import EnquiryFormFooter from '../stage-1/enquiry-form-footer-section';
 import { DatePicker } from '@/components/ui/date-picker';
+import { MultiSelectPopoverCheckbox } from '../../common/multi-select-popover-checkbox';
+import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
 
 export const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -123,8 +118,12 @@ export const StudentFeesForm = () => {
     staleTime: 1000 * 60 * 5
   });
 
-  const { data: enquiryData, error, isLoading: isLoadingEnquiry } = useQuery<any>({
-    queryKey: ['enquireFormData', enquiry_id],  // Remove dataUpdated dependency
+  const {
+    data: enquiryData,
+    error,
+    isLoading: isLoadingEnquiry
+  } = useQuery<any>({
+    queryKey: ['enquireFormData', enquiry_id], // Remove dataUpdated dependency
     queryFn: () => (enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null')),
     enabled: !!enquiry_id,
     // Add this to ensure the query refetches when invalidated
@@ -294,16 +293,13 @@ export const StudentFeesForm = () => {
       form.reset({
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,
-        semWiseFees: initialSemFees, 
+        semWiseFees: initialSemFees,
         feesClearanceDate: initialFeesClearanceDate,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
         remarks: initialCollegeRemarks,
-        confirmationCheck: form.getValues().confirmationCheck || false,
+        confirmationCheck: form.getValues().confirmationCheck || false
       });
-  
-
-
     } else if (error) {
       toast.error('Failed to load student data.');
     }
@@ -333,98 +329,105 @@ export const StudentFeesForm = () => {
     };
   }, [otherFeesWatched, otherFeesData]);
 
-
-  const updateFormWithNewData = (newEnquiryData:any) => {
+  const updateFormWithNewData = (newEnquiryData: any) => {
     if (!newEnquiryData) return;
-    
+
     const feeDataSource = newEnquiryData.studentFee || newEnquiryData.studentFeeDraft;
     if (!feeDataSource) return;
-    
+
     let initialSemFees = [];
     let initialOtherFees = [];
-  
+
     const baseSem1Fee = semWiseFeesData?.fee?.[0];
-  
-    const existingSem1FeeDataInOther = feeDataSource.otherFees?.find((fee:any) => fee.type === FeeType.SEM1FEE);
+
+    const existingSem1FeeDataInOther = feeDataSource.otherFees?.find(
+      (fee: any) => fee.type === FeeType.SEM1FEE
+    );
     const existingSem1FeeDataInSemWise = feeDataSource.semWiseFees?.[0];
-  
+
     const sem1FeeObject = {
       type: FeeType.SEM1FEE,
-      finalFee: existingSem1FeeDataInOther?.finalFee ?? existingSem1FeeDataInSemWise?.finalFee ?? baseSem1Fee ?? undefined,
+      finalFee:
+        existingSem1FeeDataInOther?.finalFee ??
+        existingSem1FeeDataInSemWise?.finalFee ??
+        baseSem1Fee ??
+        undefined,
       fee: baseSem1Fee,
-      feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined,
+      feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined
     };
-  
+
     let initialCounsellors = newEnquiryData.counsellor ?? [];
     let initialTelecallers = newEnquiryData.telecaller ?? [];
     const initialCollegeRemarks = newEnquiryData?.remarks;
-  
+
     initialOtherFees = Object.values(FeeType)
-      .filter(ft => ft !== FeeType.SEM1FEE)
+      .filter((ft) => ft !== FeeType.SEM1FEE)
       .map((feeType) => {
-        const baseFeeInfo = otherFeesData?.find((item:any) => item.type === feeType);
-        const existingFee = feeDataSource.otherFees?.find((fee:any) => fee.type === feeType);
-  
+        const baseFeeInfo = otherFeesData?.find((item: any) => item.type === feeType);
+        const existingFee = feeDataSource.otherFees?.find((fee: any) => fee.type === feeType);
+
         return {
           type: feeType,
           finalFee: existingFee?.finalFee ?? baseFeeInfo?.fee ?? undefined,
-          feesDepositedTOA: existingFee?.feesDepositedTOA ?? undefined,
+          feesDepositedTOA: existingFee?.feesDepositedTOA ?? undefined
         };
       });
-  
+
     initialOtherFees.unshift(sem1FeeObject as any);
-  
+
     const courseSemFeeStructure = semWiseFeesData?.fee || [];
     const existingSemFees = feeDataSource?.semWiseFees || [];
-  
-    initialSemFees = courseSemFeeStructure.map((baseFeeAmount:any, index:any) => {
+
+    initialSemFees = courseSemFeeStructure.map((baseFeeAmount: any, index: any) => {
       const existingData = existingSemFees[index];
       return {
-        finalFee: existingData?.finalFee ?? baseFeeAmount,
+        finalFee: existingData?.finalFee ?? baseFeeAmount
       };
     });
-  
+
     const existingDateString = feeDataSource?.feesClearanceDate;
     let initialFeesClearanceDate = null;
-  
+
     if (existingDateString) {
       initialFeesClearanceDate = existingDateString;
     } else {
       initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
     }
-  
+
     // Reset form with new values and make sure it's pristine
-    form.reset({
-      enquiryId: enquiry_id,
-      otherFees: initialOtherFees,
-      semWiseFees: initialSemFees,
-      feesClearanceDate: initialFeesClearanceDate,
-      counsellor: initialCounsellors,
-      telecaller: initialTelecallers,
-      remarks: initialCollegeRemarks,
-      confirmationCheck: form.getValues().confirmationCheck,
-      otpTarget: form.getValues().otpTarget,
-      otpVerificationEmail: form.getValues().otpVerificationEmail,
-    }, {
-      keepDirty: false
-    });
+    form.reset(
+      {
+        enquiryId: enquiry_id,
+        otherFees: initialOtherFees,
+        semWiseFees: initialSemFees,
+        feesClearanceDate: initialFeesClearanceDate,
+        counsellor: initialCounsellors,
+        telecaller: initialTelecallers,
+        remarks: initialCollegeRemarks,
+        confirmationCheck: form.getValues().confirmationCheck,
+        otpTarget: form.getValues().otpTarget,
+        otpVerificationEmail: form.getValues().otpVerificationEmail
+      },
+      {
+        keepDirty: false
+      }
+    );
   };
-  
 
   const createDraftMutation = useMutation({
     mutationFn: createStudentFeesDraft,
     onSuccess: (data) => {
-      toast.success("Draft saved successfully!");
+      toast.success('Draft saved successfully!');
       queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-      
+
       // Force form to be pristine after save
       form.reset(form.getValues(), {
         keepValues: true,
         keepDirty: false
       });
-      
+
       // Optionally, force a refetch and update form with new data
-      getEnquiry(enquiry_id).then(newData => {
+      getEnquiry(enquiry_id).then((newData) => {
         updateFormWithNewData(newData);
       });
     },
@@ -437,22 +440,21 @@ export const StudentFeesForm = () => {
       setIsSavingDraft(false);
     }
   });
-  
 
   const updateDraftMutation = useMutation({
     mutationFn: updateStudentFeesDraft,
     onSuccess: (data) => {
-      toast.success("Draft updated successfully!");
+      toast.success('Draft updated successfully!');
       queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-      
+
       // Force form to be pristine after save
       form.reset(form.getValues(), {
         keepValues: true,
         keepDirty: false
       });
-      
+
       // Optionally, force a refetch and update form with new data
-      getEnquiry(enquiry_id).then(newData => {
+      getEnquiry(enquiry_id).then((newData) => {
         updateFormWithNewData(newData);
       });
     },
@@ -500,10 +502,10 @@ export const StudentFeesForm = () => {
   async function handleSaveDraft() {
     setIsSavingDraft(true);
     form.clearErrors();
-  
+
     const currentValues = form.getValues();
     const existingDraftId = enquiryData?.studentFeeDraft?._id;
-  
+
     const isCustomValid = validateCustomFeeLogic(
       currentValues,
       otherFeesData,
@@ -511,18 +513,18 @@ export const StudentFeesForm = () => {
       form.setError,
       form.clearErrors
     );
-  
+
     if (!isCustomValid) {
-      toast.error("Fee validation failed. Please check highlighted fields.");
+      toast.error('Fee validation failed. Please check highlighted fields.');
       setIsSavingDraft(false);
       return;
     }
-  
+
     const validationResult = frontendFeesDraftValidationSchema.safeParse(currentValues);
-  
+
     if (!validationResult.success) {
-      toast.error("Validation failed. Please check the fields.");
-      validationResult.error.errors.forEach(err => {
+      toast.error('Validation failed. Please check the fields.');
+      validationResult.error.errors.forEach((err) => {
         if (err.path.length > 0) {
           const fieldName = err.path.join('.') as keyof IFeesRequestSchema;
           form.setError(fieldName, { type: 'manual', message: err.message });
@@ -531,28 +533,27 @@ export const StudentFeesForm = () => {
       setIsSavingDraft(false);
       return;
     }
-  
+
     const validatedDataForCleaning = validationResult.data;
     const cleanedData = cleanDataForDraft(validatedDataForCleaning);
-    
+
     try {
       if (draftExists && draftId) {
         const finalPayload = {
           id: draftId,
           enquiryId: enquiry_id,
-          ...cleanedData,
+          ...cleanedData
         };
         await updateDraftMutation.mutateAsync(finalPayload);
       } else {
         const finalPayload = {
           enquiryId: cleanedData.enquiryId || enquiry_id,
-          ...cleanedData,
+          ...cleanedData
         };
         delete finalPayload.id;
         await createDraftMutation.mutateAsync(finalPayload);
       }
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   async function onSubmit() {
@@ -787,6 +788,7 @@ export const StudentFeesForm = () => {
                     placeholder="Pick a Date"
                     showYearMonthDropdowns={true}
                     formItemClassName="w-[300px]"
+                    labelClassName='font-inter font-normal text-[12px] text-[#666666]'
                   />
                 </div>
               </div>
@@ -879,132 +881,21 @@ export const StudentFeesForm = () => {
 
             <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-x-8 gap-y-4">
-                {' '}
-                {/* Added gap-y-4 for vertical spacing */}
-                <FormField
-                  key="counsellor"
-                  control={form.control}
+                <MultiSelectPopoverCheckbox
+                  form={form}
                   name="counsellor"
-                  render={({ field }) => (
-                    <FormItem className={`${commonFormItemClass} col-span-1`}>
-                      <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                        Counsellor’s Name
-                      </FormLabel>
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={`${commonFieldClass} text-left bg-inherit w-full max-w-full truncate`}
-                            >
-                              <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full font-normal text-[#666666]">
-                                {field.value && field.value.length > 0
-                                  ? counsellors
-                                      .filter((counsellor) =>
-                                        field?.value?.includes(counsellor._id)
-                                      )
-                                      .map((counsellor) => counsellor.name)
-                                      .join(', ')
-                                  : "Select Counsellor's Name"}
-                              </span>
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[180px] p-2 rounded-sm">
-                            <div className="max-h-60 overflow-y-auto">
-                              {counsellors?.map((counsellor) => (
-                                <div
-                                  key={counsellor._id}
-                                  className="flex items-center space-x-2 space-y-1"
-                                >
-                                  <Checkbox
-                                    checked={field?.value?.includes(counsellor._id)}
-                                    onCheckedChange={(checked) => {
-                                      const newValues = checked
-                                        ? [...(field?.value || []), counsellor._id]
-                                        : field.value?.filter(
-                                            (id: string) => id !== counsellor._id
-                                          );
-                                      field.onChange(newValues);
-                                    }}
-                                    className="rounded-none"
-                                  />
-                                  <span className="text-[12px]">{counsellor.name}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Counsellor’s Name"
+                  options={counsellors}
+                  placeholder="Select Counsellor's Name"
+                  className="col-span-1"
                 />
-                <FormField
-                  key="telecaller"
-                  control={form.control}
+                <MultiSelectPopoverCheckbox
+                  form={form}
                   name="telecaller"
-                  render={({ field }) => (
-                    <FormItem className={`${commonFormItemClass} col-span-1`}>
-                      <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                        Telecaller’s Name
-                      </FormLabel>
-                      <FormControl>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className={`
-                                              ${commonFieldClass}
-                                              text-left bg-inherit w-full max-w-full truncate`}
-                            >
-                              <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full font-normal text-[#666666]">
-                                {field.value && field.value.length > 0
-                                  ? telecallers
-                                    .map((telecaller) => {
-                                    console.log(
-                                      field?.value,
-                                    );
-                                    const isSelected = field?.value?.includes(telecaller._id);
-                                    console.log(
-                                    `Telecaller ID: ${telecaller._id}, Name: ${telecaller.name}, Matched: ${isSelected}`
-                                    );
-                                    return isSelected ? telecaller.name : null;
-                                  })
-                                  .filter(Boolean)
-                                  .join(', ')
-                                  : "Select Telecaller's Name"}
-                              </span>
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-[180px] p-2 rounded-sm">
-                            <div className="max-h-60 overflow-y-auto">
-                              {telecallers?.map((telecaller) => (
-                                <div
-                                  key={telecaller._id}
-                                  className="flex items-center space-x-2 space-y-2"
-                                >
-                                  <Checkbox
-                                    checked={field.value?.includes(telecaller._id)}
-                                    onCheckedChange={(checked) => {
-                                      const newValues = checked
-                                        ? [...(field.value || []), telecaller._id]
-                                        : field.value?.filter(
-                                            (id: string) => id !== telecaller._id
-                                          );
-                                      field.onChange(newValues);
-                                    }}
-                                    className="rounded-none"
-                                  />
-                                  <span className="text-[12px]">{telecaller.name}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  label="Telecaller’s Name"
+                  options={telecallers}
+                  placeholder="Select Telecaller's Name"
+                  className="col-span-1"
                 />
                 <FormField
                   control={form.control}
@@ -1115,23 +1006,12 @@ export const StudentFeesForm = () => {
           </AccordionItem>
         </Accordion>
 
-        <FormField
-          control={form.control}
+        <ConfirmationCheckBox
+          form={form}
           name="confirmationCheck"
-          render={({ field }) => (
-            <FormItem className="flex flex-row items-start bg-white rounded-md p-4">
-              <FormControl>
-                <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-              </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel className="text-sm font-normal">
-                  All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will
-                  be charged extra based on LU/AKTU norms.
-                </FormLabel>
-                <FormMessage className="text-xs" />
-              </div>
-            </FormItem>
-          )}
+          label="All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will be charged extra based on LU/AKTU norms."
+          id="checkbox-for-step2"
+          className="flex flex-row items-start bg-white rounded-md p-4"
         />
 
         <EnquiryFormFooter
