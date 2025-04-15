@@ -40,9 +40,9 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
           <AccordionContent>
             <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px] bg-white p-4 rounded-[10px]">
               <FormField
-                key="state"
+                key="stateOfDomicile"
                 control={form.control}
-                name="moreDetails.state"
+                name="stateOfDomicile"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
@@ -68,9 +68,9 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
               />
 
               <FormField
-                key="area"
+                key="areaType"
                 control={form.control}
-                name="moreDetails.area"
+                name="areaType"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
@@ -98,7 +98,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
               <FormField
                 key="nationality"
                 control={form.control}
-                name="moreDetails.nationality"
+                name="nationality"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">

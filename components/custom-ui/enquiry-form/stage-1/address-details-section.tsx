@@ -32,11 +32,15 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
   commonFieldClass,
   commonFormItemClass
 }) => {
+
+  const hasAddressErrors = !!form.formState.errors.address &&
+  Object.keys(form.formState.errors.address).length > 0;
+
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">
         <div className="space-y-2">
-          <AccordionTrigger className="w-full items-center">
+          <AccordionTrigger className={`w-full items-center ${hasAddressErrors ? 'text-red-500' : ''}`}>
             {/* Section Title */}
             <h3 className="font-inter text-[16px] font-semibold">Address details</h3>
             <hr className="flex-1 border-t border-[#DADADA] ml-2" />
