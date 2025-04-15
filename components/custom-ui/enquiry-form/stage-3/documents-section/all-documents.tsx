@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react';
+'use client'
+
+import React from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -8,12 +10,10 @@ import {
 import { useParams } from 'next/navigation';
 import { EnquiryDocument, SingleEnquiryUploadDocument } from './single-document-form';
 import { DocumentType } from '@/types/enum';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getEnquiry } from '../../stage-1/enquiry-form-api';
 
 export const mandatoryDocuments = [
   DocumentType.PHOTO,
-  DocumentType.TENTH_MARKSHEET,
+  DocumentType.TWELFTH_MARKSHEET,
   DocumentType.GRADUATION_FINAL_YEAR_MARKSHEET,
   DocumentType.TC_MIGRATION,
   DocumentType.ALLOTMENT_LETTER,
@@ -23,24 +23,23 @@ export const mandatoryDocuments = [
 ];
 
 const otherDocuments = [
-    DocumentType.TENTH_MARKSHEET,
-    DocumentType.TENTH_CERTIFICATE,
-    DocumentType.TWELFTH_CERTIFICATE,
-    DocumentType.CHARACTER_CERTIFICATE,
-    DocumentType.ANTI_RAGGING_BY_STUDENT,
-    DocumentType.ANTI_RAGGING_BY_PARENT,
-    DocumentType.INCOME_CERTIFICATE,
-    DocumentType.NIVAS_CERTIFICATE,
-    DocumentType.AADHAR,
-    DocumentType.DECLARATION_FILLED,
-    DocumentType.PHYSICALLY_HANDICAPPED_CERTIFICATE,
+  DocumentType.TENTH_MARKSHEET,
+  DocumentType.TENTH_CERTIFICATE,
+  DocumentType.TWELFTH_CERTIFICATE,
+  DocumentType.CHARACTER_CERTIFICATE,
+  DocumentType.ANTI_RAGGING_BY_STUDENT,
+  DocumentType.ANTI_RAGGING_BY_PARENT,
+  DocumentType.INCOME_CERTIFICATE,
+  DocumentType.NIVAS_CERTIFICATE,
+  DocumentType.AADHAR,
+  DocumentType.DECLARATION_FILLED,
+  DocumentType.PHYSICALLY_HANDICAPPED_CERTIFICATE,
 ]
 
-const AllDocuments = ({enquiryDocuments}: {enquiryDocuments:any}) => {
+const AllDocuments = ({ enquiryDocuments, setCurrentDocuments }: { enquiryDocuments: any, setCurrentDocuments: any }) => {
   const params = useParams();
   const enquiry_id = params.id as string;
-
-  const queryClient = useQueryClient();
+  console.log(enquiryDocuments)
 
   // const {
   //   data: enquiryData,
@@ -56,14 +55,7 @@ const AllDocuments = ({enquiryDocuments}: {enquiryDocuments:any}) => {
 
   const findExistingDocument = (docType: DocumentType): EnquiryDocument | undefined => {
     const apiDocType = docType.toString();
-    return enquiryDocuments.find((doc:any) => doc.type == apiDocType);
-  };
-
-  const onUploadSuccess = (data: any) => {
-    console.log("Invalidating enquiry data after upload...");
-
-    queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-    // enquiryDocuments = data.documents;
+    return enquiryDocuments?.find((doc: any) => doc.type == apiDocType);
   };
 
   return (
@@ -83,7 +75,7 @@ const AllDocuments = ({enquiryDocuments}: {enquiryDocuments:any}) => {
                   enquiryId={enquiry_id}
                   documentType={docType}
                   existingDocument={findExistingDocument(docType)}
-                  onUploadSuccess={onUploadSuccess}
+                  onUploadSuccess={setCurrentDocuments}
                 />
               ))}
             </AccordionContent>
@@ -106,7 +98,7 @@ const AllDocuments = ({enquiryDocuments}: {enquiryDocuments:any}) => {
                   enquiryId={enquiry_id}
                   documentType={docType}
                   existingDocument={findExistingDocument(docType)}
-                  onUploadSuccess={onUploadSuccess}
+                  onUploadSuccess={setCurrentDocuments}
                 />
               ))}
             </AccordionContent>
