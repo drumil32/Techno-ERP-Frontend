@@ -42,23 +42,25 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
 
   function handleSubmitClick() {
     const currentValues = form.getValues();
+  
     if (currentValues.academicDetails) {
       const filteredAcademicDetails: IAcademicDetailArraySchema =
-        currentValues.academicDetails.filter(
-          (entry: IAcademicDetailSchema) =>
-            entry &&
-            entry.schoolCollegeName &&
-            entry.universityBoardName &&
-            entry.passingYear &&
-            entry.percentageObtained
-        );
+        currentValues.academicDetails.filter((entry: IAcademicDetailSchema) => {
+          if (!entry) return false;
+  
+          // Keep entry if at least one field is defined (i.e. not all undefined)
+          return Object.values(entry).some((value) => value !== undefined);
+        });
+  
       form.setValue('academicDetails', filteredAcademicDetails);
     }
-
+  
+    // Trigger form submission after filtering
     setTimeout(() => {
       form.handleSubmit(onSubmit, onError)();
     }, 0);
   }
+  
 
   function handleDialogSaveDraft() {
     saveDraft();

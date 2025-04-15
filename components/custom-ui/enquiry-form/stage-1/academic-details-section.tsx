@@ -51,7 +51,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
             entry.universityBoardName &&
             entry.passingYear &&
             entry.percentageObtained &&
-            (Array.isArray(entry.subjects) || entry.subjects === undefined);
+            (Array.isArray(entry.subjects) || entry.subjects === undefined || (entry.subjects as unknown[]).length === 0);
 
           const expectedLevel = educationLevels[index];
 

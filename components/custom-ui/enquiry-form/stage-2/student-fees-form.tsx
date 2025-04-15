@@ -4,11 +4,8 @@ import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import {
   feesRequestSchema,
   finalFeesCreateSchema,
-  finalFeesUpdateSchema,
   frontendFeesDraftValidationSchema,
   IFeesRequestSchema,
-  IFinalFeesCreateSchema,
-  IFinalFeesUpdateSchema
 } from './studentFeesSchema';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -42,16 +39,12 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cleanDataForDraft } from './helpers/refine-data';
 import { createStudentFeesDraft, updateStudentFeesDraft } from './student-fees-api';
 import ShowStudentData from './data-show';
 import { ApplicationStatus, FeeType } from '@/types/enum';
-import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
 import { toast } from 'sonner';
 import { queryClient } from '@/lib/queryClient';
 import { validateCustomFeeLogic } from './helpers/validateFees';
