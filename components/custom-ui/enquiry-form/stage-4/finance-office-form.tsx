@@ -74,6 +74,7 @@ import { createEnquiryStep4, updateEnquiryStep4 } from './helpers/apirequests';
 import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
+import { DatePicker } from '@/components/ui/date-picker';
 
 const FinanceOfficeForm = () => {
   const params = useParams();
@@ -494,45 +495,20 @@ const FinanceOfficeForm = () => {
                 </div>
 
                 <div className="mt-6 px-2">
-                  <FormField
+                  <DatePicker
                     control={form.control}
                     name="feesClearanceDate"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col w-full max-w-xs">
-                        <FormLabel className="text-sm font-medium">Fees Clearance Date</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant={'outline'}
-                              className={cn(
-                                'w-full pl-3 text-left font-normal h-9 text-sm',
-                                !field.value && 'text-muted-foreground'
-                              )}
-                            >
-                              {field.value ? field.value : <span>Pick a date</span>}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={parseDisplayDate(field.value)}
-                              onSelect={(selectedDate: Date | undefined) => {
-                                const formattedDate = formatDisplayDate(selectedDate);
-                                field.onChange(formattedDate);
-                              }}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        {/* Ensure FormMessage is displayed */}
-                        <div className="h-5 mt-1">
-                          {' '}
-                          {/* Allocate space for message */}
-                          <FormMessage className="text-xs" />
-                        </div>
-                      </FormItem>
-                    )}
+                    label="Fees Clearance Date"
+                    placeholder="Pick a Date"
+                    showYearMonthDropdowns={true}
+                    formItemClassName="w-[300px]"
+                    labelClassName="font-inter font-normal text-[12px] text-[#666666]"
+                    calendarProps={{
+                      disabled: (date) => {
+                        const today = new Date();
+                        return date <= new Date(today.setHours(0, 0, 0, 0));
+                      },
+                    }}
                   />
                 </div>
               </div>

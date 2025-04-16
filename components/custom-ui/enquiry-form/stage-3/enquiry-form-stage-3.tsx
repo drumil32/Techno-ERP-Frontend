@@ -314,7 +314,6 @@ const EnquiryFormStage3 = () => {
 
           <AllDocuments enquiryDocuments={currentDocuments} setCurrentDocuments={setCurrentDocuments}/>
 
-          <ConfirmationCheckBoxStage3 form={form} />
           <ConfirmationSection form={form} />
           <OfficeUseSection
             form={form}
@@ -322,6 +321,7 @@ const EnquiryFormStage3 = () => {
             commonFormItemClass={commonFormItemClass}
           />
           <ScholarshipDetailsSection form={form} />
+          <ConfirmationCheckBoxStage3 form={form} />
 
           <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} confirmationChecked={confirmationChecked} />
         </form>

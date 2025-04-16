@@ -385,48 +385,19 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 )}
               />
 
-              <FormField
-                key="dateOfBirth"
+              <DatePicker
                 control={form.control}
                 name="dateOfBirth"
-                render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                      Date of Birth
-                    </FormLabel>
-                    <FormControl>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            variant="outline"
-                            className={`${commonFieldClass} justify-between bg-inherit`}
-                          >
-                            <span className={!field.value ? 'text-[#9D9D9D]' : ''}>
-                              {field.value ? field.value : 'Select Date'}
-                            </span>
-                            <CalendarDaysIcon size={16} className="ml-2" />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                          <Calendar
-                            mode="single"
-                            selected={field.value ? new Date(field.value) : undefined}
-                            onSelect={(date) => {
-                              if (date) {
-                                const formattedDate = format(date, 'dd/MM/yyyy');
-                                field.onChange(formattedDate);
-                              } else {
-                                field.onChange('');
-                              }
-                            }}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                label="Date of Birth"
+                placeholder="Select Date of Birth"
+                showYearMonthDropdowns={true}
+                labelClassName="font-inter font-normal text-[12px] text-[#666666]"
+                calendarProps={{
+                  disabled: (date) => {
+                    const today = new Date();
+                    return date >= new Date(today.setHours(0, 0, 0, 0));
+                  },
+                }}
               />
 
               <FormField
