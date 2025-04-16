@@ -7,8 +7,8 @@ export enum FinalConversionStatus {
 
 export const FinalConversionStatusMapper: Record<FinalConversionStatus, string> = {
   [FinalConversionStatus.CONVERTED]: 'Admission',
-  [FinalConversionStatus.DEAD]: 'Unconfirmed',
-  [FinalConversionStatus.UNCONFIRMED]: 'Not Interested',
+  [FinalConversionStatus.DEAD]: 'Not Interested',
+  [FinalConversionStatus.UNCONFIRMED]: 'Unconfirmed',
   [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall',
 };
 
