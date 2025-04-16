@@ -25,6 +25,7 @@ import { updateLeadRequestSchema } from './validators';
 import z from 'zod';
 import { useQuery } from '@tanstack/react-query';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
+import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
 
 export interface LeadData {
   _id: string;
@@ -70,6 +71,11 @@ export default function LeadViewEdit({ data }: any) {
       setOriginalData(data);
     }
   }, [data]);
+    const cityDropdownQuery = useQuery({
+      queryKey: ['cities'],
+      queryFn: cityDropdown
+    })
+    const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
 
   const validateField = (name: string, value: any) => {
     if (!formData) return;
@@ -448,7 +454,7 @@ export default function LeadViewEdit({ data }: any) {
               <SelectValue placeholder="Select location" />
             </SelectTrigger>
             <SelectContent>
-              {Object.values(Locations).map((location) => (
+              {Object.values(cityDropdownData).map((location) => (
                 <SelectItem key={location} value={location}>
                   {location}
                 </SelectItem>

@@ -272,7 +272,7 @@ export default function AllLeadsPage() {
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'areaView', header: 'Area' },
-    { accessorKey: 'city', header: 'City' },
+    { accessorKey: 'cityView', header: 'City' },
     { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'leadType',

@@ -25,7 +25,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       area: lead.area,
       areaView: lead.area ?? '-',
       city: lead.city,
-      cityView: lead.city ?? '-',
+      cityView: lead.city ?? 'Not Provided',
       course: lead.course,
       courseView: CourseNameMapper[lead.course as Course] ?? '-',
       footFall:lead.footFall,
@@ -73,7 +73,7 @@ export const refineAnalytics = (analytics: YellowLeadAnalytics) => {
     {
       heading: String(analytics.allLeadsCount ?? ''),
       subheading: '100%',
-      title: 'Total Yellow Leads',
+      title: 'Total Active Leads',
       color: 'text-black'
     },
     {
@@ -85,7 +85,7 @@ export const refineAnalytics = (analytics: YellowLeadAnalytics) => {
     {
       heading: String(analytics.activeYellowLeadsCount ?? ''),
       subheading: calculatePercentage(analytics.activeYellowLeadsCount ?? 0),
-      title: 'Active Yellow Leads',
+      title: 'Left Over Leads',
       color: 'text-yellow-600'
     },
     {

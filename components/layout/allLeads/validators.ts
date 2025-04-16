@@ -31,7 +31,7 @@ export const leadMasterSchema = z.object({
   email: z.string().email('Invalid Email Format').optional(),
   gender: z.nativeEnum(Gender).default(Gender.NOT_TO_MENTION),
   area: z.string().optional(),
-  city: z.nativeEnum(Locations).optional(),
+  city: z.string().optional(),
   course: z.nativeEnum(Course).optional(),
   assignedTo: objectIdSchema, // TODO: need to test this
   leadType: z.nativeEnum(LeadType).default(LeadType.OPEN),

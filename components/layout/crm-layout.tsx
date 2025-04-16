@@ -10,7 +10,7 @@ import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 const HEADER_ITEMS = {
     ALL_LEADS: { title: "All Leads", route: SITE_MAP.MARKETING.ALL_LEADS },
-    YELLOW_LEADS: { title: "Yellow Leads", route: SITE_MAP.MARKETING.YELLOW_LEADS },
+    ACTIVE_LEADS: { title: "Active Leads", route: SITE_MAP.MARKETING.ACTIVE_LEADS },
     ADMIN_TRACKER: { title: "Admin Tracker", route: SITE_MAP.MARKETING.ADMIN_TRACKER }
 };
 

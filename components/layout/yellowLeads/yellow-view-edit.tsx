@@ -39,6 +39,7 @@ import { fetchAssignedToDropdown } from './helpers/fetch-data';
 // React Query
 import { useQuery } from '@tanstack/react-query';
 import { toPascal } from '@/lib/utils';
+import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
 
 interface FormErrors {
   name?: string;
@@ -121,6 +122,11 @@ export default function YellowLeadViewEdit({ data }: any) {
   });
 
   const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
+  const cityDropdownQuery = useQuery({
+    queryKey: ['cities'],
+    queryFn: cityDropdown
+  })
+  const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
 
   const parseDateString = (dateString?: string): Date | undefined => {
     if (!dateString) return undefined;
@@ -304,7 +310,7 @@ export default function YellowLeadViewEdit({ data }: any) {
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Foot Fall</p>
-          {formData.footFall!=undefined ? (
+          {formData.footFall != undefined ? (
             <FootFallTag status={formData.footFall === true ? FootFallStatus.true : FootFallStatus.false} />
           ) : (
             <p>-</p>
@@ -448,7 +454,7 @@ export default function YellowLeadViewEdit({ data }: any) {
               <SelectValue placeholder="Select City" />
             </SelectTrigger>
             <SelectContent>
-              {Object.values(Locations).map((location) => (
+              {Object.values(cityDropdownData).map((location) => (
                 <SelectItem key={location} value={location}>
                   {location}
                 </SelectItem>

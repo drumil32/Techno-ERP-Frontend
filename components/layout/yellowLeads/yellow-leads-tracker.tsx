@@ -201,7 +201,7 @@ export default function YellowLeadsTracker() {
       }
 
       if (isSuccess) {
-        toast.success('Yellow Leads data loaded successfully', {
+        toast.success('Active Leads data loaded successfully', {
           id: toastIdRef.current!,
           duration: 2000
         });
@@ -455,7 +455,7 @@ export default function YellowLeadsTracker() {
         <TechnoDataTable
           columns={columns}
           data={leads.leads}
-          tableName="Yellow Leads Table"
+          tableName="Active Leads Table"
           currentPage={page}
           totalPages={totalPages}
           pageLimit={limit}
