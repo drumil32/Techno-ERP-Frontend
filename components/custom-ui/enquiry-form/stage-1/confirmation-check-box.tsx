@@ -18,8 +18,8 @@ const ConfirmationCheckBox: React.FC<ConfirmationCheckBoxInterface> = ({
   form,
   name,
   label,
-  id = "confirmation-checkbox",
-  className = "",
+  id = 'confirmation-checkbox',
+  className = ''
 }) => {
   return (
     <FormField
@@ -37,6 +37,7 @@ const ConfirmationCheckBox: React.FC<ConfirmationCheckBoxInterface> = ({
               />
               <label htmlFor={id} className="ml-2 w-full text-[12px] cursor-pointer">
                 {label}
+                <span className="text-red-500 pl-0">*</span>
               </label>
             </div>
           </FormControl>
@@ -46,6 +47,5 @@ const ConfirmationCheckBox: React.FC<ConfirmationCheckBoxInterface> = ({
     />
   );
 };
-
 
 export default ConfirmationCheckBox;

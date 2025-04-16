@@ -221,8 +221,9 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                 name="category"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Category
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>

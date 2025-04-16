@@ -143,11 +143,12 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="admissionMode"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Admission Mode
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue={AdmissionMode.OFFLINE}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue
                             className="text-[#9D9D9D]"
@@ -184,8 +185,9 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="studentName"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-start-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Student Name
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -207,8 +209,9 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="studentPhoneNumber"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Student's Phone Number
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -253,8 +256,9 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="fatherName"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Father's Name
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -276,8 +280,9 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="fatherPhoneNumber"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Father's Phone Number
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -299,8 +304,9 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="fatherOccupation"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Father's Occupation
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -322,8 +328,9 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="motherName"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Mother's Name
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -345,8 +352,9 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="motherPhoneNumber"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Mother's Phone Number
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -368,8 +376,9 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="motherOccupation"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Mother's Occupation
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -398,6 +407,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                     return date >= new Date(today.setHours(0, 0, 0, 0));
                   },
                 }}
+                isRequired={true}
               />
 
               <FormField
@@ -406,11 +416,12 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="gender"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Gender
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value} defaultValue={Gender.NOT_TO_MENTION}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Gender" />
                         </SelectTrigger>
@@ -434,8 +445,9 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="course"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-start-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Course
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>
@@ -462,8 +474,9 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="reference"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Reference
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>
