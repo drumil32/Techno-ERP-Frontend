@@ -16,6 +16,8 @@ import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { Nationality, Qualification } from '../schema/schema';
 import { AreaType, BloodGroup, Category, Religion, StatesOfIndia } from '@/types/enum';
+import { useEffect, useState } from 'react';
+import { formSchemaStep3 } from './enquiry-form-stage-3';
 interface MoreDetailsSectionInterface {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
@@ -27,14 +29,76 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
   commonFieldClass,
   commonFormItemClass
 }) => {
+  const [isValid, setIsValid] = useState(false);
+
+  const checkValidity = () => {
+    const values = form.getValues();
+
+    const moreDetails = {
+      stateOfDomicile: values.stateOfDomicile,
+      areaType: values.areaType,
+      nationality: values.nationality,
+      religion: values.religion,
+      category: values.category,
+      bloodGroup: values.bloodGroup,
+      aadharNumber: values.aadharNumber
+    };
+
+    const result = formSchemaStep3
+      .pick({
+        stateOfDomicile: true,
+        areaType: true,
+        nationality: true,
+        religion: true,
+        category: true,
+        bloodGroup: true,
+        aadharNumber: true
+      })
+      .safeParse(moreDetails);
+
+    setIsValid(result.success);
+  };
+
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      checkValidity();
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
+
+  useEffect(() => {
+    checkValidity();
+  }, []);
+
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">
         <div className="space-y-2">
           <AccordionTrigger className="w-full items-center">
-            {/* Section Title */}
-            <h3 className="font-inter text-[16px] font-semibold">More Details</h3>
-            <hr className="flex-1 border-t border-[#DADADA] ml-2" />
+            <div className="flex items-center w-full">
+              <h3 className="font-inter text-[16px] font-semibold">More details</h3>
+              {isValid && (
+                <svg
+                  className="ml-2 h-5 w-5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                    fill="#22C55E"
+                  />
+                  <path
+                    d="M8 12L11 15L16 9"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+              <hr className="flex-1 border-t border-[#DADADA] ml-2" />
+            </div>
           </AccordionTrigger>
 
           <AccordionContent>

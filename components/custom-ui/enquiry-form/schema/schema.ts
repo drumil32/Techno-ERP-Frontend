@@ -112,7 +112,7 @@ export const enquirySchema = z.object({
   _id: z.string().optional(),
   // Student Details
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
-  dateOfEnquiry: requestDateSchema,
+  dateOfEnquiry: requestDateSchema.optional(),
   studentName: z
     .string({ required_error: 'Student Name is required' })
     .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
