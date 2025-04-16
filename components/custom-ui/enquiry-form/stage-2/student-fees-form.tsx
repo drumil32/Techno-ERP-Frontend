@@ -115,6 +115,7 @@ export const StudentFeesForm = () => {
   const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
     queryKey: ['otherFeesData'],
     queryFn: getOtherFees,
+    refetchOnWindowFocus: false, 
     staleTime: 1000 * 60 * 5
   });
 

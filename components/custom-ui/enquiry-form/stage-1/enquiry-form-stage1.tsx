@@ -68,7 +68,8 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id],
     queryFn: () => getEnquiry(id ? id : ''),
-    enabled: !!id && !isRedirectChecking && !isRedirectError
+    enabled: !!id && !isRedirectChecking && !isRedirectError,
+    refetchOnWindowFocus: false, 
   });
 
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmation' });

@@ -85,6 +85,7 @@ export default function AdmissionsLandingPage() {
     queryKey: ['admissions', filterParams],
     queryFn: fetchAdmissionsData,
     placeholderData: (previousData) => previousData,
+    refetchOnWindowFocus: false, 
     enabled: true
   })
 

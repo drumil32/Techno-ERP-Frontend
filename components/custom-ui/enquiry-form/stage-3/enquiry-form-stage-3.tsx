@@ -58,6 +58,7 @@ const EnquiryFormStage3 = () => {
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id, refreshKey],
     queryFn: () => getEnquiry(id ? id : ''),
+    refetchOnWindowFocus: false, 
     enabled: !!id 
   });
 

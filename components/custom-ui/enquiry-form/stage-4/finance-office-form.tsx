@@ -92,7 +92,8 @@ const FinanceOfficeForm = () => {
   const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
     queryKey: ['otherFeesData'],
     queryFn: getOtherFees,
-    staleTime: 1000 * 60 * 5
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false, 
   });
 
   const {
@@ -102,7 +103,8 @@ const FinanceOfficeForm = () => {
   } = useQuery<any>({
     queryKey: ['enquireFormData', enquiry_id, dataUpdated],
     queryFn: () => (enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null')),
-    enabled: !!enquiry_id
+    enabled: !!enquiry_id,
+    refetchOnWindowFocus: false, 
   });
 
   const existingFinalFee = enquiryData?.studentFee;
