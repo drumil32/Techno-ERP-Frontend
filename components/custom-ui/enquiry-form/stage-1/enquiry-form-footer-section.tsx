@@ -42,25 +42,24 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
 
   function handleSubmitClick() {
     const currentValues = form.getValues();
-  
+
     if (currentValues.academicDetails) {
       const filteredAcademicDetails: IAcademicDetailArraySchema =
         currentValues.academicDetails.filter((entry: IAcademicDetailSchema) => {
           if (!entry) return false;
-  
+
           // Keep entry if at least one field is defined (i.e. not all undefined)
           return Object.values(entry).some((value) => value !== undefined);
         });
-  
+
       form.setValue('academicDetails', filteredAcademicDetails);
     }
-  
+
     // Trigger form submission after filtering
     setTimeout(() => {
       form.handleSubmit(onSubmit, onError)();
     }, 0);
   }
-  
 
   function handleDialogSaveDraft() {
     saveDraft();
@@ -90,12 +89,16 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
               </span>
             </div>
             <DialogFooter>
-              <Button type="button" variant="secondary" onClick={() => setDraftDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="button" onClick={handleDialogSaveDraft}>
-                Ok
-              </Button>
+              <DialogClose asChild>
+                <Button type="button" variant="secondary" onClick={() => setDraftDialogOpen(false)}>
+                  Cancel
+                </Button>
+              </DialogClose>
+              <DialogClose asChild>
+                <Button type="button" onClick={handleDialogSaveDraft}>
+                  Ok
+                </Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -120,12 +123,20 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
               <span>Please reverify all details again before submitting the enquiry form.</span>
             </div>
             <DialogFooter>
-              <Button type="button" variant="secondary" onClick={() => setSubmitDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="button" onClick={handleSubmitClick}>
-                Ok
-              </Button>
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => setSubmitDialogOpen(false)}
+                >
+                  Cancel
+                </Button>
+              </DialogClose>
+              <DialogClose asChild>
+                <Button type="button" onClick={handleSubmitClick}>
+                  Ok
+                </Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
