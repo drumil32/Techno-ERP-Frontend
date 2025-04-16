@@ -9,7 +9,7 @@ export const SITE_MAP = {
     MARKETING: {
         DEFAULT: '/c/marketing/all-leads',
         ALL_LEADS: '/c/marketing/all-leads',
-        YELLOW_LEADS: '/c/marketing/yellow-leads',
+        ACTIVE_LEADS: '/c/marketing/active-leads',
         ADMIN_TRACKER: '/c/marketing/admin-tracker',
     },
     ADMISSIONS: {

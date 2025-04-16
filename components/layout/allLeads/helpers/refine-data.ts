@@ -22,6 +22,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       gender:  lead.gender,
       genderView:  toPascal(lead.gender),
       city: lead.city,
+      cityView:lead.city ?? 'Not Provided',
       area:lead.area,
       areaView:lead.area ?? '-',
       course: lead.course,
@@ -84,7 +85,7 @@ export const refineAnalytics = (analytics: any) => {
     {
       heading: analytics.interestedLeads ?? '',
       subheading: calculatePercentage(analytics.interestedLeads),
-      title: 'Yellow Leads',
+      title: 'Active Leads',
       color: 'text-yellow-600'
     },
     {

@@ -317,7 +317,7 @@ const AdminTracker = () => {
             {totalLeadsReached && <TechnoAnalyticCardsGroup cardsData={totalLeadsReached} />}
           </div>
 
-          {/* Yellow Leads Conversion Section */}
+          {/* Active Leads Conversion Section */}
           <div className="mt-[32px]">
             <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
             How many leads were converted to Active Leads?
@@ -325,7 +325,7 @@ const AdminTracker = () => {
             {yellowLeadsConverted && <TechnoAnalyticCardsGroup cardsData={yellowLeadsConverted} />}
           </div>
 
-          {/* Yellow Leads Campus Visit Section */}
+          {/* Active Leads Campus Visit Section */}
           <div className="mt-[32px]">
             <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
             How many Active leads visited the campus?
