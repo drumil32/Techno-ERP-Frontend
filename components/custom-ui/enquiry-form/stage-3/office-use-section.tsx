@@ -56,7 +56,6 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
         type="single"
         collapsible
         className="w-full space-y-4"
-        defaultValue="college-details"
       >
         <AccordionItem value="college-details" className="border-b-0">
           <AccordionTrigger className="w-full items-center">

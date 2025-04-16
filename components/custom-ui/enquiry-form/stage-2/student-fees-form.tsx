@@ -115,6 +115,7 @@ export const StudentFeesForm = () => {
   const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
     queryKey: ['otherFeesData'],
     queryFn: getOtherFees,
+    refetchOnWindowFocus: false, 
     staleTime: 1000 * 60 * 5
   });
 
@@ -553,7 +554,7 @@ export const StudentFeesForm = () => {
         delete finalPayload.id;
         await createDraftMutation.mutateAsync(finalPayload);
       }
-    } catch (error) {}
+    } catch (error) { }
   }
 
   async function onSubmit() {
@@ -788,8 +789,15 @@ export const StudentFeesForm = () => {
                     placeholder="Pick a Date"
                     showYearMonthDropdowns={true}
                     formItemClassName="w-[300px]"
-                    labelClassName='font-inter font-normal text-[12px] text-[#666666]'
+                    labelClassName="font-inter font-normal text-[12px] text-[#666666]"
+                    calendarProps={{
+                      disabled: (date) => {
+                        const today = new Date();
+                        return date <= new Date(today.setHours(0, 0, 0, 0));
+                      },
+                    }}
                   />
+
                 </div>
               </div>
             </AccordionContent>
@@ -995,7 +1003,7 @@ export const StudentFeesForm = () => {
 
                 <Button
                   type="button"
-                  onClick={() => {}}
+                  onClick={() => { }}
                   disabled={isOtpSending || !selectedOtpTarget}
                   className="h-9 text-sm mt-auto"
                 >

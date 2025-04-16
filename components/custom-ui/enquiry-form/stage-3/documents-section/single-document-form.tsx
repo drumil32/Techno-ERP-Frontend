@@ -1,3 +1,5 @@
+'use client'
+
 import { format, isBefore, parseISO, startOfDay } from 'date-fns';
 import { useCallback, useRef, useState, DragEvent, ChangeEvent, useEffect } from 'react';
 import { uploadDocumentAPI } from './helpers/apiRequest'; // Assuming this exists
@@ -20,6 +22,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { getReadableDocumentName } from './helpers/mapperFunction';
+import { DatePicker } from '@/components/ui/date-picker';
 
 interface SingleEnquiryUploadDocumentProps {
   enquiryId: string;
@@ -209,17 +212,22 @@ export const SingleEnquiryUploadDocument = ({
         formDataPayload.append('dueBy', formatedDate);
       }
 
-      const response = await uploadDocumentAPI(formDataPayload);
+      const response:any = await uploadDocumentAPI(formDataPayload);
 
-      if (onUploadSuccess) {
-        onUploadSuccess(response);
-        setSelectedFile(null)
+      const updatedDocuments = response?.documents;
+
+      if (onUploadSuccess && Array.isArray(updatedDocuments)) {
+        console.log("Calling onUploadSuccess with updated documents array.");
+        onUploadSuccess(updatedDocuments); 
+        setSelectedFile(null); 
+        resetFileInput(); 
+      } else if (onUploadSuccess) {
+        console.error("Upload successful, but response.documents is not an array or missing:", response);
       }
       setStatus({
         type: 'success',
         message: `${getReadableDocumentName(documentType)} uploaded successfully!`
       });
-      if (onUploadSuccess) onUploadSuccess(response);
     } catch (error) {
       console.error('Upload failed:', error);
       let errorMessage = 'File upload failed. Please try again.';
@@ -424,7 +432,7 @@ export const SingleEnquiryUploadDocument = ({
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {dueDate ? (
-                    format(dueDate, 'MM/dd/yy')
+                    format(dueDate, 'dd/MM/yy')
                   ) : (
                     <span className="text-xs">Pick Due Date</span>
                   )}

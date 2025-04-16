@@ -26,7 +26,7 @@ import AllDocuments, { mandatoryDocuments } from './documents-section/all-docume
 
 // API and data fetching imports
 import { getEnquiry, updateEnquiryStatus } from '../stage-1/enquiry-form-api';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 
 // Utility and type imports
@@ -47,7 +47,9 @@ export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).e
   })
 });
 
+
 const EnquiryFormStage3 = () => {
+  const queryClient = useQueryClient();
   const pathVariables = useParams();
   const id = pathVariables.id as string;
   const [refreshKey, setRefreshKey] = useState(0)
@@ -56,11 +58,15 @@ const EnquiryFormStage3 = () => {
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id, refreshKey],
     queryFn: () => getEnquiry(id ? id : ''),
+    refetchOnWindowFocus: false, 
     enabled: !!id 
   });
 
-  const currentDocuments: any[] = data?.documents ?? [];
+  const [currentDocuments, setCurrentDocuments]= useState<EnquiryDocument[]>(data?.documents as EnquiryDocument[] ?? []);
 
+  useEffect(() => {
+    setCurrentDocuments(data?.documents as EnquiryDocument[] ?? [])
+  }, [data])
 
   const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
     id,
@@ -148,15 +154,12 @@ const EnquiryFormStage3 = () => {
 
   const onSubmit = async () => {
     let values = form.getValues();
-    const documents :any= data?.documents
-
-    console.log(documents)
 
     values = removeNullValues(values);
     const filteredData = filterBySchema(formSchemaStep3, values);
     console.log('Filtered Data:', filteredData);
 
-    const documentTypesPresent = documents.map((doc:any) => doc.type);
+    const documentTypesPresent = currentDocuments.map((doc:any) => doc.type);
     const missingDocuments = mandatoryDocuments.filter(
       (requiredType) => !documentTypesPresent.includes(requiredType)
     );
@@ -310,9 +313,8 @@ const EnquiryFormStage3 = () => {
             commonFormItemClass={commonFormItemClass}
           />
 
-          <AllDocuments enquiryDocuments={currentDocuments}/>
+          <AllDocuments enquiryDocuments={currentDocuments} setCurrentDocuments={setCurrentDocuments}/>
 
-          <ConfirmationCheckBoxStage3 form={form} />
           <ConfirmationSection form={form} />
           <OfficeUseSection
             form={form}
@@ -320,6 +322,7 @@ const EnquiryFormStage3 = () => {
             commonFormItemClass={commonFormItemClass}
           />
           <ScholarshipDetailsSection form={form} />
+          <ConfirmationCheckBoxStage3 form={form} />
 
           <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} confirmationChecked={confirmationChecked} />
         </form>
