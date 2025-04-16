@@ -31,6 +31,7 @@ interface DatePickerProps<
   showYearMonthDropdowns?: boolean;
   fromYear?: number;
   toYear?: number;
+  isRequired ?: boolean;
 }
 
 const parseDateString = (
@@ -64,7 +65,8 @@ export function DatePicker<
   calendarProps,
   showYearMonthDropdowns = true,
   fromYear = new Date().getFullYear() - 100,
-  toYear = new Date().getFullYear() + 10
+  toYear = new Date().getFullYear() + 10,
+  isRequired = false,
 }: DatePickerProps<TFieldValues, TName>) {
   return (
     <FormField
@@ -84,7 +86,10 @@ export function DatePicker<
 
         return (
           <FormItem className={cn('flex flex-col', formItemClassName)}>
-            <FormLabel className={cn(labelClassName)}>{label}</FormLabel>
+            <FormLabel className={cn(labelClassName, isRequired && 'gap-x-1')}>
+              {label}
+              {isRequired && <span className="text-red-500">*</span>}
+            </FormLabel>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
