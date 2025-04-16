@@ -38,7 +38,6 @@ import { ApplicationStatus, EducationLevel } from '@/types/enum';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
 import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
-import { Skeleton } from '@/components/ui/skeleton';
 
 // Form Schema
 export const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({

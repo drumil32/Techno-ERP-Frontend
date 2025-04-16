@@ -38,9 +38,7 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Checkbox } from '@/components/ui/checkbox';
 import { cleanDataForDraft } from './helpers/refine-data';
 import { createStudentFeesDraft, updateStudentFeesDraft } from './student-fees-api';
 import ShowStudentData from './data-show';
@@ -473,7 +471,9 @@ export const StudentFeesForm = () => {
     mutationFn: createStudentFees,
     onSuccess: async (data, variables) => {
       toast.success('Fee record created successfully!');
-      queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
+
+      await queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
+
       try {
         if (!enquiry_id) {
           toast.error('Could not update enquiry status: Missing ID.');
@@ -485,11 +485,13 @@ export const StudentFeesForm = () => {
           newStatus: ApplicationStatus.STEP_3
         };
 
-        const status_update = await updateEnquiryStatus(statusPayload);
+        await updateEnquiryStatus(statusPayload);
 
         toast.success('Enquiry status updated to Step 3.');
 
-        queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
+        await queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
+        
+        router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_3(enquiry_id));
       } catch (statusError) {
         const errorMsg =
           (statusError as any)?.response?.data?.message ||
@@ -559,6 +561,7 @@ export const StudentFeesForm = () => {
 
   async function onSubmit() {
     setIsSubmittingFinal(true);
+    form.clearErrors();
     const values = form.getValues();
 
     const isCustomValid = validateCustomFeeLogic(
@@ -629,15 +632,9 @@ export const StudentFeesForm = () => {
       };
 
       await createFinalFeeMutation.mutateAsync(finalPayLoad);
-
-      setDataUpdated((prev) => !prev);
     }
-
-    router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_3(enquiry_id));
   }
 
-  const commonFormItemClass = 'col-span-1 gap-y-0';
-  const commonFieldClass = '';
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
     return (

@@ -54,8 +54,9 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                 name="address.addressLine1"
                 render={({ field }) => (
                   <FormItem className={`col-span-2 gap-x-2 gap-y-0`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Address Line 1
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -76,8 +77,9 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                 name="address.addressLine2"
                 render={({ field }) => (
                   <FormItem className={`col-span-2 gap-x-2 gap-y-0`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Address Line 2
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -98,8 +100,9 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                 name="address.pincode"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Pincode
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -120,8 +123,9 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                 name="address.district"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full gap-x-1">
                       District
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value} >
@@ -148,8 +152,9 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                 name="address.state"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-start-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       State
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>
@@ -176,8 +181,9 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                 name="address.country"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Country
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>
