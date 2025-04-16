@@ -22,6 +22,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { getReadableDocumentName } from './helpers/mapperFunction';
+import { DatePicker } from '@/components/ui/date-picker';
 
 interface SingleEnquiryUploadDocumentProps {
   enquiryId: string;
@@ -431,7 +432,7 @@ export const SingleEnquiryUploadDocument = ({
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
                   {dueDate ? (
-                    format(dueDate, 'MM/dd/yy')
+                    format(dueDate, 'dd/MM/yy')
                   ) : (
                     <span className="text-xs">Pick Due Date</span>
                   )}

@@ -317,7 +317,13 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 label="Date of Birth"
                 placeholder="Select Date of Birth"
                 showYearMonthDropdowns={true}
-                labelClassName='font-inter font-normal text-[12px] text-[#666666]'
+                labelClassName="font-inter font-normal text-[12px] text-[#666666]"
+                calendarProps={{
+                  disabled: (date) => {
+                    const today = new Date();
+                    return date >= new Date(today.setHours(0, 0, 0, 0)); 
+                  },
+                }}
               />
 
               <FormField
