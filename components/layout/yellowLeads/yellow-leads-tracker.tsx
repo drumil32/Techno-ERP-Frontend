@@ -40,6 +40,7 @@ export default function YellowLeadsTracker() {
     sortBy: ["leadTypeModifiedDate", "nextDueDate"],
     orderBy: ["desc", "desc"]
   })
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const handleSortChange = (column: string, order: string) => {
 
@@ -287,12 +288,12 @@ export default function YellowLeadsTracker() {
           <select
             value={selectedValue}
             onChange={(e) => handleDropdownChange(Number(e.target.value))}
-            className=" border rounded px-2 py-1 cursor-pointer"
+            className="border rounded px-2 py-1 cursor-pointer"
             aria-label="Follow-up count"
           >
-            {[0, 1, 2, 3, 4, 5].map((option) => (
-              <option key={option} value={option}>
-                {option.toString().padStart(2, '0')}
+            {Array.from({ length: selectedValue + 2 }, (_, i) => (
+              <option key={i} value={i}>
+                {i.toString().padStart(2, '0')}
               </option>
             ))}
           </select>
@@ -344,11 +345,11 @@ export default function YellowLeadsTracker() {
     }
   ];
 
-   const cityDropdownQuery=useQuery({
-      queryKey:['cities'],
-      queryFn:cityDropdown
-    })
-   const cityDropdownData=Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data:[];
+  const cityDropdownQuery = useQuery({
+    queryKey: ['cities'],
+    queryFn: cityDropdown
+  })
+  const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
   const getFiltersData = () => {
     return [
       {
@@ -361,8 +362,8 @@ export default function YellowLeadsTracker() {
         label: 'City',
         options: cityDropdownData.map((item: string) => {
           return {
-            label:item,
-            id:item
+            label: item,
+            id: item
           };
         }),
         hasSearch: true,
@@ -466,6 +467,8 @@ export default function YellowLeadsTracker() {
           onSort={handleSortChange}
           totalEntries={totalEntries}
           handleViewMore={handleViewMore}
+          selectedRowId={selectedRowId}
+          setSelectedRowId={setSelectedRowId}
         >
           <FilterBadges
             onFilterRemove={handleFilterRemove}
@@ -478,6 +481,7 @@ export default function YellowLeadsTracker() {
         title={'Lead Details'}
         isOpen={isDrawerOpen}
         onClose={() => {
+          setSelectedRowId(null);
           setIsDrawerOpen(false);
           setRefreshKey((prev) => prev + 1);
         }}

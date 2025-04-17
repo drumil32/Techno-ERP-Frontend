@@ -26,6 +26,7 @@ import z from 'zod';
 import { useQuery } from '@tanstack/react-query';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
 import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
+import { formatDateView } from './helpers/refine-data';
 
 export interface LeadData {
   _id: string;
@@ -71,11 +72,11 @@ export default function LeadViewEdit({ data }: any) {
       setOriginalData(data);
     }
   }, [data]);
-    const cityDropdownQuery = useQuery({
-      queryKey: ['cities'],
-      queryFn: cityDropdown
-    })
-    const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
+  const cityDropdownQuery = useQuery({
+    queryKey: ['cities'],
+    queryFn: cityDropdown
+  })
+  const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
 
   const validateField = (name: string, value: any) => {
     if (!formData) return;
@@ -273,7 +274,7 @@ export default function LeadViewEdit({ data }: any) {
       <div className="flex flex-col gap-6 text-sm">
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Date</p>
-          <p>{formData.date ?? '-'}</p>
+          <p>{formatDateView(formData.date) ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Name</p>
@@ -637,19 +638,12 @@ export default function LeadViewEdit({ data }: any) {
       ) : (
         <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
           <div className="w-full flex">
-            {formData.leadType != LeadType.INTERESTED ? (
-              <>
-                <Button onClick={() => toggleIsEditing(true)} className="ml-auto" icon={Pencil}>
-                  Edit Lead
-                </Button>
-              </>
-            ) : (
-              <>
-                <div className="text-center text-sm">
-                  *In case of any update please refer to Yellow Lead section
-                </div>
-              </>
-            )}
+            <>
+              <Button onClick={() => toggleIsEditing(true)} className="ml-auto" icon={Pencil}>
+                Edit Lead
+              </Button>
+            </>
+
           </div>
         </CardFooter>
       )}

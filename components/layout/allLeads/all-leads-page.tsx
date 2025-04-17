@@ -35,6 +35,7 @@ export default function AllLeadsPage() {
     sortBy: ["date", "nextDueDate"],
     orderBy: ["desc", "desc"]
   })
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const handleSortChange = (column: string, order: string) => {
 
@@ -46,7 +47,7 @@ export default function AllLeadsPage() {
       (prevState: any) => {
         const currentIndex = prevState.sortBy.indexOf(column)
         let newOrderBy = [...prevState.orderBy]
-        if(currentIndex != -1) {
+        if (currentIndex != -1) {
           newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == "asc" ? "desc" : "asc"
         }
 
@@ -86,14 +87,14 @@ export default function AllLeadsPage() {
 
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
-  
+
     if (filterKey === 'date' || filterKey.includes('Date')) {
       const dateKeys = [
         'startDate', 'endDate',
         'startLTCDate', 'endLTCDate',
-        'date' 
+        'date'
       ];
-  
+
       dateKeys.forEach(key => {
         delete updatedFilters[key];
         updateFilter(key, undefined);
@@ -102,12 +103,12 @@ export default function AllLeadsPage() {
       delete updatedFilters[filterKey];
       updateFilter(filterKey, undefined);
     }
-  
+
     setAppliedFilters(updatedFilters);
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
-  
+
   const clearFilters = () => {
     getFiltersData().forEach((filter) => {
       if (filter.filterKey === 'date' || filter.isDateFilter) {
@@ -116,13 +117,13 @@ export default function AllLeadsPage() {
           'startLTCDate', 'endLTCDate',
           'date'
         ];
-        
+
         dateKeys.forEach(key => updateFilter(key, undefined));
       } else {
         updateFilter(filter.filterKey, undefined);
       }
     });
-  
+
     setAppliedFilters({});
     currentFiltersRef.current = {};
     setPage(1);
@@ -196,11 +197,11 @@ export default function AllLeadsPage() {
     placeholderData: (previousData) => previousData,
     enabled: true
   });
-  const cityDropdownQuery=useQuery({
-    queryKey:['cities'],
-    queryFn:cityDropdown
+  const cityDropdownQuery = useQuery({
+    queryKey: ['cities'],
+    queryFn: cityDropdown
   })
- const cityDropdownData=Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data:[];
+  const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
   const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data) : [];
   const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
   const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
@@ -268,7 +269,7 @@ export default function AllLeadsPage() {
 
   const columns = [
     { accessorKey: 'id', header: 'S. No' },
-    { accessorKey: 'date', header: 'Date' },
+    { accessorKey: 'dateView', header: 'Date' },
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'areaView', header: 'Area' },
@@ -290,6 +291,7 @@ export default function AllLeadsPage() {
             genderView,
             areaView,
             cityView,
+            dateView,
             courseView,
             _leadType,
             source,
@@ -342,16 +344,16 @@ export default function AllLeadsPage() {
       header: 'Follow Ups',
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.leadsFollowUpCount);
-    
+
         const handleDropdownChange = async (newValue: number) => {
           const previousValue = selectedValue;
           setSelectedValue(newValue); // optimistic update
-    
+
           const filteredData = {
             ...row.original,
             leadsFollowUpCount: newValue,
           };
-    
+
           const {
             id,
             altPhoneNumberView,
@@ -360,6 +362,7 @@ export default function AllLeadsPage() {
             areaView,
             courseView,
             _leadType,
+            dateView,
             source,
             sourceView,
             cityView,
@@ -373,38 +376,38 @@ export default function AllLeadsPage() {
             leadTypeModifiedDate,
             ...cleanedRow
           } = filteredData;
-    
+
           const response: LeadData | null = await apiRequest(
             API_METHODS.PUT,
             API_ENDPOINTS.updateLead,
             cleanedRow
           );
-    
+
           if (response) {
             toast.success('Follow-up count updated successfully');
             setRefreshKey((prevKey) => prevKey + 1);
           } else {
             toast.error('Failed to update follow-up count');
-            setSelectedValue(previousValue); 
+            setSelectedValue(previousValue);
           }
         };
         return (
           <select
             value={selectedValue}
             onChange={(e) => handleDropdownChange(Number(e.target.value))}
-            className="border cursor-pointer rounded px-2 py-1"
+            className="border rounded px-2 py-1 cursor-pointer"
             aria-label="Follow-up count"
           >
-            {[0,1, 2, 3, 4, 5].map((option) => (
-              <option key={option} value={option}>
-                {option.toString().padStart(2, '0')}
+            {Array.from({ length: selectedValue + 2 }, (_, i) => (
+              <option key={i} value={i}>
+                {i.toString().padStart(2, '0')}
               </option>
             ))}
           </select>
         );
       },
     }
-,    
+    ,
     { accessorKey: 'leadTypeModifiedDate', header: 'Timestamp' },
     {
       id: 'actions',
@@ -433,8 +436,8 @@ export default function AllLeadsPage() {
         label: 'City',
         options: cityDropdownData.map((item: string) => {
           return {
-            label:item,
-            id:item
+            label: item,
+            id: item
           };
         }),
         hasSearch: true,
@@ -502,6 +505,8 @@ export default function AllLeadsPage() {
           onSort={handleSortChange}
           totalEntries={totalEntries}
           handleViewMore={handleViewMore}
+          selectedRowId={selectedRowId}
+          setSelectedRowId={setSelectedRowId}
         >
           <FilterBadges
             onFilterRemove={handleFilterRemove}
@@ -514,6 +519,7 @@ export default function AllLeadsPage() {
         title={'Edit Lead Details'}
         isOpen={isDrawerOpen}
         onClose={() => {
+          setSelectedRowId(null);
           setIsDrawerOpen(false);
           setRefreshKey((prev) => prev + 1);
         }}

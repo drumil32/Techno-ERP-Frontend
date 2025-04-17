@@ -31,8 +31,8 @@ export interface YellowLeadsAnalytics {
   footFall: number;
   noFootFall: number;
   unconfirmed: number;
-  declined: number;
-  finalConversion: number;
+  dead: number;
+  admissions: number;
 }
 
 export interface AnalyticsSection {

@@ -50,6 +50,8 @@ export default function TechnoDataTable({
   onSort,
   totalEntries,
   handleViewMore,
+  selectedRowId=null,
+  setSelectedRowId,
   rowCursor = true,
   showPagination = true,
   children
@@ -169,9 +171,11 @@ export default function TechnoDataTable({
               table.getRowModel().rows.map((row: any) => (
                 <TableRow
                   key={row.id}
-                  className="h-[39px] cursor-pointer"
-                  onClick={() =>
+                  className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
+                  onClick={() => {
+                    setSelectedRowId(row.id);
                     handleViewMore({ ...row.original, leadType: row.original._leadType })
+                  }
                   }
                 >
                   {row.getVisibleCells().map((cell: any) => {
@@ -181,8 +185,8 @@ export default function TechnoDataTable({
                       <TableCell
                         key={cell.id}
                         className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-'
-                            ? 'text-left max-w-[225px] truncate'
-                            : 'text-center'
+                          ? 'text-left max-w-[225px] truncate'
+                          : 'text-center'
                           }`}
                         onClick={(e) => {
                           if (isExcluded) e.stopPropagation(); // Block row click from excluded cells
@@ -225,84 +229,84 @@ export default function TechnoDataTable({
       </div>
 
       {/* Pagination Section */}
-      {showPagination && 
-      <div className="flex items-center justify-between py-4">
-        <div className="flex items-center space-x-2">
-          <span>Rows per page:</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className='cursor-pointer'>
-                {pageSize} <ChevronDown className="ml-1" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              {[5, 10, 20, 30, 50].map((size) => (
-                <DropdownMenuItem
-                  key={size}
-                  onClick={() => {
-                    onLimitChange(size);
-                    setPageSize(size);
-                  }}
-                >
-                  {size}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <span>
-            {table.getState().pagination.pageIndex * pageSize + 1} -{' '}
-            {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, totalEntries)} of{' '}
-            {totalEntries}
-          </span>
-        </div>
+      {showPagination &&
+        <div className="flex items-center justify-between py-4">
+          <div className="flex items-center space-x-2">
+            <span>Rows per page:</span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className='cursor-pointer'>
+                  {pageSize} <ChevronDown className="ml-1" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                {[5, 10, 20, 30, 50].map((size) => (
+                  <DropdownMenuItem
+                    key={size}
+                    onClick={() => {
+                      onLimitChange(size);
+                      setPageSize(size);
+                    }}
+                  >
+                    {size}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <span>
+              {table.getState().pagination.pageIndex * pageSize + 1} -{' '}
+              {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, totalEntries)} of{' '}
+              {totalEntries}
+            </span>
+          </div>
 
-        <div className="flex items-center gap-1">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onPageChange(1)}
-            disabled={currentPage === 1}
-            aria-label="Go to first page"
-            className='cursor-pointer'
-          >
-            <ChevronsLeft />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onPageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-            aria-label="Go to previous page"
-            className='cursor-pointer'
-          >
-            <ChevronLeft />
-          </Button>
-          {currentPage > 1 && <span>1 ..</span>}
-          <span>{currentPage}</span>
-          {currentPage < totalPages && <span>..{totalPages}</span>}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onPageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            aria-label="Go to next page"
-            className='cursor-pointer'
-          >
-            <ChevronRight />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => onPageChange(totalPages)}
-            disabled={currentPage === totalPages}
-            aria-label="Go to last page"
-            className='cursor-pointer'
-          >
-            <ChevronsRight />
-          </Button>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onPageChange(1)}
+              disabled={currentPage === 1}
+              aria-label="Go to first page"
+              className='cursor-pointer'
+            >
+              <ChevronsLeft />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onPageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              aria-label="Go to previous page"
+              className='cursor-pointer'
+            >
+              <ChevronLeft />
+            </Button>
+            {currentPage > 1 && <span>1 ..</span>}
+            <span>{currentPage}</span>
+            {currentPage < totalPages && <span>..{totalPages}</span>}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              aria-label="Go to next page"
+              className='cursor-pointer'
+            >
+              <ChevronRight />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onPageChange(totalPages)}
+              disabled={currentPage === totalPages}
+              aria-label="Go to last page"
+              className='cursor-pointer'
+            >
+              <ChevronsRight />
+            </Button>
+          </div>
         </div>
-      </div>
-}
+      }
     </div>
   );
 }

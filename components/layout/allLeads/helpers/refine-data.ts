@@ -1,6 +1,17 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { Course, CourseNameMapper, LeadType } from '@/static/enum';
 import { toPascal } from '@/lib/utils';
+
+export const formatDateView=(dateStr:string)=> {
+  if (!dateStr || typeof dateStr !== "string") return "";
+
+  const parts = dateStr.split("/");
+  if (parts.length !== 3) return "";
+
+  const [day, month, year] = parts;
+  return `${day}/${month}/${year.slice(-2)}`;
+}
+
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   // Modified parameters to get Assigned To Dropdown Data
   const refinedLeads = data.leads?.map((lead: any, index: number) => {
@@ -13,6 +24,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       _id: lead._id,
       id: index + 1,
       date: lead.date,
+      dateView:formatDateView(lead.date),
       name: lead.name,
       phoneNumber: lead.phoneNumber,
       altPhoneNumber: lead.altPhoneNumber,
