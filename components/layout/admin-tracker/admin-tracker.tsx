@@ -214,8 +214,8 @@ const AdminTracker = () => {
     {
       footFall: data?.yellowLeadsAnalytics?.footFall,
       unconfirmed: data?.yellowLeadsAnalytics?.unconfirmed,
-      dead: data?.yellowLeadsAnalytics?.dead,
-      admissions: data?.yellowLeadsAnalytics?.admissions
+      dead: data?.yellowLeadsAnalytics?.declined,
+      admissions: data?.yellowLeadsAnalytics?.finalConversion
     },
     'footFall',
     {
