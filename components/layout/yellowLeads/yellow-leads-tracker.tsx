@@ -488,6 +488,9 @@ export default function YellowLeadsTracker() {
       >
         {isDrawerOpen && editRow && (
           <YellowLeadViewEdit
+            setIsDrawerOpen={setIsDrawerOpen}
+            setSelectedRowId={setSelectedRowId}
+            setRefreshKey={setRefreshKey}
             key={editRow._id}
             data={editRow}
           />

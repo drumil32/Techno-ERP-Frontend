@@ -282,6 +282,11 @@ export default function AllLeadsPage() {
         const [selectedType, setSelectedType] = useState<LeadType>(row.original.leadType);
 
         const handleDropdownChange = async (value: LeadType) => {
+          if (row.original.leadType == LeadType.INTERESTED) {
+            toast.info('Please refer to Active Leads page to change Active Lead Type');
+            return;
+          }
+
           setSelectedType(value);
 
           const {
@@ -416,7 +421,10 @@ export default function AllLeadsPage() {
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
+          onClick={() => {
+            setSelectedRowId(row.id);
+            handleViewMore({ ...row.original, leadType: row.original._leadType })
+          }}
         >
           <span className="font-inter font-semibold text-[12px] text-primary">View More</span>
         </Button>
@@ -526,6 +534,9 @@ export default function AllLeadsPage() {
       >
         {isDrawerOpen && editRow && (
           <LeadViewEdit
+            setIsDrawerOpen={setIsDrawerOpen}
+            setSelectedRowId={setSelectedRowId}
+            setRefreshKey={setRefreshKey}
             key={editRow._id}
             data={editRow}
           />

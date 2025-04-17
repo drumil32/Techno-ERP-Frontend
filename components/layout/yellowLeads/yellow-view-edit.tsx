@@ -55,10 +55,10 @@ export const contactNumberSchema = z
   .string()
   .regex(/^[1-9]\d{9}$/, 'Invalid contact number format. Expected: 1234567890');
 
-export default function YellowLeadViewEdit({ data }: any) {
+export default function YellowLeadViewEdit({ data, setIsDrawerOpen,setSelectedRowId,setRefreshKey}: any) {
   const [formData, setFormData] = useState<YellowLead | null>(null);
   const [originalData, setOriginalData] = useState<YellowLead | null>(null);
-  const [isEditing, toggleIsEditing] = useState(false);
+  // const [isEditing, toggleIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -197,7 +197,9 @@ export default function YellowLeadViewEdit({ data }: any) {
 
     if (!hasChanges()) {
       toast.info('No changes to save');
-      toggleIsEditing(false);
+      setSelectedRowId(null);
+      setIsDrawerOpen(false);
+      // toggleIsEditing(false);
       return;
     }
 
@@ -256,7 +258,10 @@ export default function YellowLeadViewEdit({ data }: any) {
       } else {
         setFormData(originalData);
       }
-      toggleIsEditing(false);
+      setRefreshKey((prev:number)=>prev+1);
+      setSelectedRowId(null);
+      setIsDrawerOpen(false);
+      // toggleIsEditing(false);
       setErrors({});
     } catch (err) {
       console.error('Error updating lead:', err);
@@ -542,11 +547,11 @@ export default function YellowLeadViewEdit({ data }: any) {
               <SelectValue placeholder="Select follow-up count" />
             </SelectTrigger>
             <SelectContent>
-              {[1, 2, 3, 4, 5].map((count) => (
-                <SelectItem key={count} value={count.toString()}>
-                  {count.toString().padStart(2, '0')}
+            {Array.from({ length: formData.yellowLeadsFollowUpCount + 2 }, (_, i) => ((
+                <SelectItem key={i} value={i.toString()}>
+                  {i.toString().padStart(2, '0')}
                 </SelectItem>
-              ))}
+              )))}
             </SelectContent>
           </Select>
         </div>
@@ -624,17 +629,19 @@ export default function YellowLeadViewEdit({ data }: any) {
   return (
     <div className="w-full h-full max-w-2xl mx-auto border-none flex flex-col">
       <CardContent className="px-3 space-y-6 mb-20">
-        {isEditing ? EditView : ReadOnlyView}
+        {EditView }
       </CardContent>
 
-      {isEditing ? (
+      
         <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
           <>
             <Button
               variant="outline"
               onClick={() => {
                 setFormData(originalData);
-                toggleIsEditing(false);
+                setSelectedRowId(null);
+                setIsDrawerOpen(false);
+                // toggleIsEditing(false);
                 setErrors({});
                 setChangedFields(new Set());
               }}
@@ -656,31 +663,7 @@ export default function YellowLeadViewEdit({ data }: any) {
             </Button>
           </>
         </CardFooter>
-      ) : (
-        <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
-          <div className="w-full flex">
-            <Button
-              onClick={() => {
-                // Validate critical fields before entering edit mode
-                if (formData) {
-                  ['name', 'phoneNumber', 'email'].forEach((field) => {
-                    validateField(field, formData[field as keyof YellowLead]);
-                  });
-                  // If altPhoneNumber has a value, validate it too
-                  if (formData.altPhoneNumber) {
-                    validateField('altPhoneNumber', formData.altPhoneNumber);
-                  }
-                }
-                toggleIsEditing(true);
-              }}
-              className="ml-auto"
-              icon={Pencil}
-            >
-              Edit Lead
-            </Button>
-          </div>
-        </CardFooter>
-      )}
+      
     </div>
   );
 }

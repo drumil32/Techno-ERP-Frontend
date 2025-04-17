@@ -58,10 +58,10 @@ interface FormErrors {
   remarks?: string;
 }
 
-export default function LeadViewEdit({ data }: any) {
+export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, setRefreshKey }: any) {
   const [formData, setFormData] = useState<LeadData | null>(null);
   const [originalData, setOriginalData] = useState<LeadData | null>(null);
-  const [isEditing, toggleIsEditing] = useState(false);
+  // const [isEditing, toggleIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -204,7 +204,9 @@ export default function LeadViewEdit({ data }: any) {
     // Check if there are any changes
     if (!hasChanges()) {
       toast.info('No changes to save');
-      toggleIsEditing(false);
+      setSelectedRowId(null);
+      setIsDrawerOpen(false);
+      // toggleIsEditing(false);
       return;
     }
 
@@ -258,7 +260,10 @@ export default function LeadViewEdit({ data }: any) {
       } else {
         setFormData(originalData);
       }
-      toggleIsEditing(false);
+      setSelectedRowId(null);
+      setRefreshKey((prev: number) => prev + 1);
+      setIsDrawerOpen(false);
+      // toggleIsEditing(false);
       setErrors({});
     } catch (err) {
       console.error('Error updating lead:', err);
@@ -488,6 +493,7 @@ export default function LeadViewEdit({ data }: any) {
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="leadType" title={'Lead Type'} />
           <Select
+          disabled={formData.leadType==LeadType.INTERESTED}
             defaultValue={formData.leadType || ''}
             onValueChange={(value) => handleSelectChange('leadType', value)}
           >
@@ -536,11 +542,12 @@ export default function LeadViewEdit({ data }: any) {
               <SelectValue placeholder="Select follow-up count" />
             </SelectTrigger>
             <SelectContent>
-              {[1, 2, 3, 4, 5].map((count) => (
-                <SelectItem key={count} value={count.toString()}>
-                  {count.toString().padStart(2, '0')}
+              {Array.from({ length: formData?.leadsFollowUpCount! + 2 }, (_, i) => ((
+                <SelectItem key={i} value={i.toString()}>
+                  {i.toString().padStart(2, '0')}
                 </SelectItem>
-              ))}
+              )))}
+
             </SelectContent>
           </Select>
         </div>
@@ -604,49 +611,40 @@ export default function LeadViewEdit({ data }: any) {
   return (
     <div className="w-full h-full max-w-2xl mx-auto border-none flex flex-col">
       <CardContent className="px-3 space-y-6 mb-20">
-        {isEditing ? EditView : ReadOnlyView}
+        {EditView}
       </CardContent>
 
-      {isEditing ? (
-        <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
-          <>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setFormData(originalData);
-                toggleIsEditing(false);
-                setErrors({});
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting || Object.keys(errors).length > 0}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving
-                </>
-              ) : (
-                'Save Lead'
-              )}
-            </Button>
-          </>
-        </CardFooter>
-      ) : (
-        <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
-          <div className="w-full flex">
-            <>
-              <Button onClick={() => toggleIsEditing(true)} className="ml-auto" icon={Pencil}>
-                Edit Lead
-              </Button>
-            </>
 
-          </div>
-        </CardFooter>
-      )}
+      <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
+        <>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setFormData(originalData);
+              setSelectedRowId(null);
+              setIsDrawerOpen(false);
+              // toggleIsEditing(false);
+              setErrors({});
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting || Object.keys(errors).length > 0}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving
+              </>
+            ) : (
+              'Save Lead'
+            )}
+          </Button>
+        </>
+      </CardFooter>
+
     </div>
   );
 }
