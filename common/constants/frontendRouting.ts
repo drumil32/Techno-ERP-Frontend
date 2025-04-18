@@ -26,10 +26,12 @@ export const SITE_MAP = {
     STUDENT_REPOSITORY: {
         DEFAULT: '/c/student-repository',
     },
-    ALL_COURSES: {
-        DEFAULT: '/c/courses',
-    },
     FACULTY: {
         DEFAULT: '/c/faculty',
     },
+    COURSE : {
+        DEFAULT: '/c/academics/courses',
+        COURSES : '/c/academics/courses',
+        SUBJECTS : '/c/academics/subjects'
+    }
 };

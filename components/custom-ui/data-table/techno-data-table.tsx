@@ -121,7 +121,7 @@ export default function TechnoDataTable({
         <div className="flex items-center space-x-2 ml-auto">
           <div className="relative">
             <Input
-              placeholder="Search for leads"
+              placeholder="Search here"
               value={globalFilter}
               onChange={handleSearchChange}
               className="max-w-[243px] h-[32px] rounded-md bg-[#f3f3f3] px-4 py-2 pr-10 text-gray-600 placeholder-gray-400"

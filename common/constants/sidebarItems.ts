@@ -3,6 +3,6 @@ export const SIDEBAR_ITEMS = {
     ADMISSIONS: "Admissions",
     FINANCE: "Finance",
     STUDENT_REPOSITORY: "Student Repository",
-    ALL_COURSES: "All Courses",
+    COURSE: "Academics",
     FACULTY: "Faculty"
 }

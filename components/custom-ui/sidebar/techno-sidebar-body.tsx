@@ -17,7 +17,7 @@ const MENU_ITEMS = [
   { icon: UserPlus, text: SIDEBAR_ITEMS.ADMISSIONS },
   { icon: IndianRupee, text: SIDEBAR_ITEMS.FINANCE },
   { icon: FolderOpen, text: SIDEBAR_ITEMS.STUDENT_REPOSITORY },
-  { icon: BookOpen, text: SIDEBAR_ITEMS.ALL_COURSES },
+  { icon: BookOpen, text: SIDEBAR_ITEMS.COURSE },
   { icon: Users, text: SIDEBAR_ITEMS.FACULTY }
 ];
 
