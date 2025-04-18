@@ -22,7 +22,7 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { apiRequest } from '@/lib/apiClient';
 import LeadTypeSelect from '@/components/custom-ui/lead-type-select/lead-type-select';
-import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
+import { cityDropdown, marketingSourcesDropdown } from '../admin-tracker/helpers/fetch-data';
 
 export default function AllLeadsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -432,12 +432,30 @@ export default function AllLeadsPage() {
     },
   ];
 
+  const marketingSourceQuery = useQuery({
+    queryKey: ['marketingSources'],
+    queryFn: marketingSourcesDropdown
+  })
+  const marketingSource = Array.isArray(marketingSourceQuery.data) ? marketingSourceQuery.data : [];
+
+
   const getFiltersData = () => {
     return [
       {
         filterKey: 'date',
         label: 'Date',
         isDateFilter: true
+      },
+      {
+        filterKey: 'source',
+        label: 'Source',
+        options: marketingSource.map((item: string) => {
+          return {
+            label: item,
+            id: item
+          };
+        }),
+        multiSelect: true
       },
       {
         filterKey: 'city',
@@ -461,7 +479,7 @@ export default function AllLeadsPage() {
       },
       {
         filterKey: 'leadType',
-        label: 'Lead Type',
+        label: 'Lead Status',
         options: Object.values(LeadType),
         multiSelect: true
       },

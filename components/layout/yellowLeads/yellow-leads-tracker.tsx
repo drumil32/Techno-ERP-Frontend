@@ -26,7 +26,7 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { apiRequest } from '@/lib/apiClient';
 import FinalConversionSelect from './final-conversion-select';
-import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
+import { cityDropdown, marketingSourcesDropdown } from '../admin-tracker/helpers/fetch-data';
 
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -349,6 +349,12 @@ export default function YellowLeadsTracker() {
     queryKey: ['cities'],
     queryFn: cityDropdown
   })
+  const marketingSourceQuery = useQuery({
+    queryKey: ['marketingSources'],
+    queryFn: marketingSourcesDropdown
+  })
+  const marketingSource = Array.isArray(marketingSourceQuery.data) ? marketingSourceQuery.data : [];
+
   const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
   const getFiltersData = () => {
     return [
@@ -356,6 +362,17 @@ export default function YellowLeadsTracker() {
         filterKey: 'leadTypeModifiedDate',
         label: 'LTC Date',
         isDateFilter: true
+      },
+      {
+        filterKey: 'source',
+        label: 'Source',
+        options: marketingSource.map((item: string) => {
+          return {
+            label:item,
+            id:item
+          };
+        }),
+        multiSelect: true
       },
       {
         filterKey: 'city',
