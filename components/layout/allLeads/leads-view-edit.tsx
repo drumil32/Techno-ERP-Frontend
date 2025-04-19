@@ -354,7 +354,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
     <>
       <div className="flex flex-col gap-2">
         <p className="text-[#666666] font-normal">Date</p>
-        <p>{data.date}</p>
+        <p>{formatDateView(data.date)}</p>
       </div>
 
       <div className="space-y-2">
@@ -512,25 +512,29 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
       </div>
 
       <div className="flex gap-5">
-        <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
-          <Select
-            defaultValue={formData.assignedTo || ''}
-            onValueChange={(value) => handleSelectChange('assignedTo', value)}
-          >
-            <SelectTrigger id="assignedTo" className="w-full rounded-[5px]" disabled>
-              <SelectValue placeholder={assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)?.name || 'Select Assigned To'} />
-            </SelectTrigger>
-
-            <SelectContent>
-              {assignedToDropdownData.map((user: any) => (
-                <SelectItem key={user._id} value={user._id}>
-                  {user.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="space-y-2 w-1/2">
+        <EditLabel htmlFor="nextDueDate" title={'Next Due Date'} />
+        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-full justify-start text-left pl-20">
+              <CalendarIcon className="left-3 h-5 w-5 text-gray-400" />
+              {formData.nextDueDate || 'Select a date'}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={parseDateString(formData.nextDueDate)}
+              onSelect={handleDateChange}
+              initialFocus
+              captionLayout={"dropdown-buttons"}
+              fromYear={new Date().getFullYear() - 100}
+              toYear={new Date().getFullYear() + 10}
+            />
+          </PopoverContent>
+        </Popover>
+        {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
+      </div>
 
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="leadsFollowUpCount" title={'Follow-up Count'} />
@@ -564,6 +568,25 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         />
         {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
       </div>
+      <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
+          <Select
+            defaultValue={formData.assignedTo || ''}
+            onValueChange={(value) => handleSelectChange('assignedTo', value)}
+          >
+            <SelectTrigger id="assignedTo" className="w-full rounded-[5px]" disabled>
+              <SelectValue placeholder={assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)?.name || 'Select Assigned To'} />
+            </SelectTrigger>
+
+            <SelectContent>
+              {assignedToDropdownData.map((user: any) => (
+                <SelectItem key={user._id} value={user._id}>
+                  {user.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
       <div className="space-y-2">
         <EditLabel htmlFor="remarks" title={'Remarks'} />
@@ -577,33 +600,11 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         />
       </div>
 
-      <div className="space-y-2 w-1/2">
-        <EditLabel htmlFor="nextDueDate" title={'Next Due Date'} />
-        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full justify-start text-left pl-20">
-              <CalendarIcon className="left-3 h-5 w-5 text-gray-400" />
-              {formData.nextDueDate || 'Select a date'}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={parseDateString(formData.nextDueDate)}
-              onSelect={handleDateChange}
-              initialFocus
-              captionLayout={"dropdown-buttons"}
-              fromYear={new Date().getFullYear() - 100}
-              toYear={new Date().getFullYear() + 10}
-            />
-          </PopoverContent>
-        </Popover>
-        {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
-      </div>
+  
 
       <div className="flex flex-col gap-2">
         <p className="text-[#666666]">Last Modified Date</p>
-        <p>{formData.leadTypeModifiedDate}</p>
+        <p>{formatDateView(formData.leadTypeModifiedDate)}</p>
       </div>
     </>
   );

@@ -39,8 +39,11 @@ export default function AllLeadsPage() {
 
   const handleSortChange = (column: string, order: string) => {
 
-    if (column === "nextDueDateView") {
+    if (column === "nextDueDateView" ) {
       column = "nextDueDate"
+    }
+    if (column === "dateView" ) {
+      column = "date"
     }
 
     setSortState(
@@ -309,6 +312,7 @@ export default function AllLeadsPage() {
             remarks,
             remarksView,
             leadTypeModifiedDate,
+            leadTypeModifiedDateView,
             ...cleanedRow
           } = row.original;
 
@@ -379,6 +383,7 @@ export default function AllLeadsPage() {
             remarks,
             remarksView,
             leadTypeModifiedDate,
+            leadTypeModifiedDateView,
             ...cleanedRow
           } = filteredData;
 
@@ -413,7 +418,7 @@ export default function AllLeadsPage() {
       },
     }
     ,
-    { accessorKey: 'leadTypeModifiedDate', header: 'Timestamp' },
+    { accessorKey: 'leadTypeModifiedDateView', header: 'Timestamp' },
     {
       id: 'actions',
       header: 'Actions',

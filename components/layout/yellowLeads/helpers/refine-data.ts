@@ -2,7 +2,7 @@ import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-c
 import { FinalConversionStatus } from '../final-conversion-tag';
 import { Course, CourseNameMapper } from '@/static/enum';
 import { toPascal } from '@/lib/utils';
-
+import { formatTimeStampView,formatDateView} from '../../allLeads/helpers/refine-data';
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   const refinedLeads = data.yellowLeads?.map((lead: any, index: number) => {
     const assignedToUser = assignedToDropdownData?.find(
@@ -28,8 +28,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       cityView: lead.city ?? 'Not Provided',
       course: lead.course,
       courseView: CourseNameMapper[lead.course as Course] ?? '-',
-      footFall:lead.footFall,
-      schoolName:lead.schoolName,
+      footFall: lead.footFall,
+      schoolName: lead.schoolName,
       finalConversion:
         FinalConversionStatus[lead.finalConversion as keyof typeof FinalConversionStatus] ??
         lead.finalConversion,
@@ -37,9 +37,9 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       remarks: lead.remarks,
       remarksView: lead.remarks ?? '-',
       date: lead.date,
-      leadTypeModifiedDate: lead.leadTypeModifiedDate ?? '-',
+      leadTypeModifiedDate: formatTimeStampView(lead.leadTypeModifiedDate) ?? '-',
       nextDueDate: lead.nextDueDate,
-      nextDueDateView: lead.nextDueDate ?? '-',
+      nextDueDateView: formatDateView( lead.nextDueDate) ?? '-',
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: new Date(lead.updatedAt).toLocaleString()
     };
@@ -77,16 +77,16 @@ export const refineAnalytics = (analytics: YellowLeadAnalytics) => {
       color: 'text-black'
     },
     {
+      heading: String(analytics.activeYellowLeadsCount ?? ''),
+      subheading: calculatePercentage(analytics.activeYellowLeadsCount ?? 0),
+      title: 'No Footfall',
+      color: 'text-yellow-600'
+    },
+    {
       heading: String(analytics.campusVisitTrueCount ?? ''),
       subheading: calculatePercentage(analytics.campusVisitTrueCount ?? 0),
       title: 'Footfall',
       color: 'text-orange-600'
-    },
-    {
-      heading: String(analytics.activeYellowLeadsCount ?? ''),
-      subheading: calculatePercentage(analytics.activeYellowLeadsCount ?? 0),
-      title: 'Left Over Leads',
-      color: 'text-yellow-600'
     },
     {
       heading: String(analytics.unconfirmed ?? ''),

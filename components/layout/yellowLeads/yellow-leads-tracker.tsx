@@ -27,6 +27,7 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { apiRequest } from '@/lib/apiClient';
 import FinalConversionSelect from './final-conversion-select';
 import { cityDropdown, marketingSourcesDropdown } from '../admin-tracker/helpers/fetch-data';
+import FootFallSelect from './foot-fall-select';
 
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -248,11 +249,42 @@ export default function YellowLeadsTracker() {
     { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'footFall',
-      header: 'Foot Fall',
-      cell: ({ row }: any) => (
-        <FootFallTag status={row.original.footFall === true ? FootFallStatus.true : FootFallStatus.false} />
-      )
+      header: 'Footfall',
+      cell: ({ row }: any) => {
+        const [selectedStatus, setSelectedStatus] = useState<FootFallStatus>(
+          row.original.footFall === true ? FootFallStatus.true : FootFallStatus.false
+        );
+    
+        const handleFootfallChange = async (newValue: FootFallStatus) => {
+          const previousValue = selectedStatus;
+          setSelectedStatus(newValue);
+    
+          const updatedData = {
+            _id: row.original._id,
+            footFall: newValue === FootFallStatus.true,
+          };
+    
+          const response: LeadData | null = await apiRequest(
+            API_METHODS.PUT,
+            API_ENDPOINTS.updateYellowLead,
+            updatedData
+          );
+    
+          if (response) {
+            toast.success('Footfall status updated successfully');
+            setRefreshKey((prevKey) => prevKey + 1);
+          } else {
+            toast.error('Failed to update footfall status');
+            setSelectedStatus(previousValue);
+          }
+        };
+    
+        return (
+          <FootFallSelect value={selectedStatus} onChange={handleFootfallChange} />
+        );
+      }
     },
+    
     { accessorKey: 'nextDueDateView', header: 'Next Call Date' },
     {
       accessorKey: 'yellowLeadsFollowUpCount',
@@ -326,7 +358,7 @@ export default function YellowLeadsTracker() {
           }
         };
 
-        return <FinalConversionSelect value={value} onChange={handleChange} />;
+        return <FinalConversionSelect isDisable={!row.original.footFall} value={value} onChange={handleChange} />;
       },
     },
     { accessorKey: 'assignedToName', header: 'Assigned To' },
@@ -368,8 +400,8 @@ export default function YellowLeadsTracker() {
         label: 'Source',
         options: marketingSource.map((item: string) => {
           return {
-            label:item,
-            id:item
+            label: item,
+            id: item
           };
         }),
         multiSelect: true

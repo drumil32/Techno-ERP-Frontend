@@ -40,7 +40,7 @@ import { fetchAssignedToDropdown } from './helpers/fetch-data';
 import { useQuery } from '@tanstack/react-query';
 import { toPascal } from '@/lib/utils';
 import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
-
+import { formatDateView,formatTimeStampView } from '../allLeads/helpers/refine-data';
 interface FormErrors {
   name?: string;
   phoneNumber?: string;
@@ -357,7 +357,7 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen,setSelectedRo
     <>
       <div className="flex flex-col gap-2">
         <p className="text-[#666666] font-normal">LTC Date</p>
-        <p>{data.leadTypeModifiedDate}</p>
+        <p>{formatTimeStampView(data.leadTypeModifiedDate)}</p>
         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
       </div>
 
@@ -509,31 +509,31 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen,setSelectedRo
         </div>
       </div>
 
+     
       <div className="flex gap-5">
-        <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
-          <Select
-            defaultValue={formData.assignedTo || ''}
-            onValueChange={(value) => handleSelectChange('assignedTo', value)}
-          >
-            <SelectTrigger id="assignedTo" className="w-full rounded-[5px]" disabled>
-              <SelectValue
-                placeholder={
-                  assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)
-                    ?.name || 'Select Assigned To'
-                }
-              />
-            </SelectTrigger>
-
-            <SelectContent>
-              {assignedToDropdownData.map((user: any) => (
-                <SelectItem key={user._id} value={user._id}>
-                  {user.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="space-y-2 w-1/2">
+        <EditLabel htmlFor="nextDueDate" title={'Next Call Date'} />
+        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-full justify-start text-left pl-20">
+              <CalendarIcon className="left-3 h-5 w-5 text-gray-400" />
+              {formData.nextDueDate || 'Select a date'}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={parseDateString(formData.nextDueDate)}
+              onSelect={handleDateChange}
+              initialFocus
+              captionLayout={"dropdown-buttons"}
+              fromYear={new Date().getFullYear() - 100}
+              toYear={new Date().getFullYear() + 10}
+            />
+          </PopoverContent>
+        </Popover>
+        {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
+      </div>
 
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="yellowLeadsFollowUpCount" title={'Follow-ups'} />
@@ -572,6 +572,7 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen,setSelectedRo
       <div className="space-y-2">
         <EditLabel htmlFor="finalConversion" title={'Final Conversion'} />
         <Select
+          disabled={!formData.footFall}
           defaultValue={String(formData.finalConversion) as FinalConversionStatus}
           onValueChange={(value) => handleSelectChange('finalConversion', value)}
         >
@@ -587,7 +588,30 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen,setSelectedRo
           </SelectContent>
         </Select>
       </div>
+      <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
+          <Select
+            defaultValue={formData.assignedTo || ''}
+            onValueChange={(value) => handleSelectChange('assignedTo', value)}
+          >
+            <SelectTrigger id="assignedTo" className="w-full rounded-[5px]" disabled>
+              <SelectValue
+                placeholder={
+                  assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)
+                    ?.name || 'Select Assigned To'
+                }
+              />
+            </SelectTrigger>
 
+            <SelectContent>
+              {assignedToDropdownData.map((user: any) => (
+                <SelectItem key={user._id} value={user._id}>
+                  {user.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       <div className="space-y-2">
         <EditLabel htmlFor="remarks" title={'Remarks'} />
         <textarea
@@ -599,30 +623,8 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen,setSelectedRo
           placeholder="Enter remarks here"
         />
       </div>
+      
 
-      <div className="space-y-2 w-1/2">
-        <EditLabel htmlFor="nextDueDate" title={'Next Call Date'} />
-        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full justify-start text-left pl-20">
-              <CalendarIcon className="left-3 h-5 w-5 text-gray-400" />
-              {formData.nextDueDate || 'Select a date'}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={parseDateString(formData.nextDueDate)}
-              onSelect={handleDateChange}
-              initialFocus
-              captionLayout={"dropdown-buttons"}
-              fromYear={new Date().getFullYear() - 100}
-              toYear={new Date().getFullYear() + 10}
-            />
-          </PopoverContent>
-        </Popover>
-        {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
-      </div>
     </>
   );
 
