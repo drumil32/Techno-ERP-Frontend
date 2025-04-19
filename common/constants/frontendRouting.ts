@@ -29,7 +29,7 @@ export const SITE_MAP = {
     FACULTY: {
         DEFAULT: '/c/faculty',
     },
-    COURSE : {
+    ACADEMICS : {
         DEFAULT: '/c/academics/courses',
         COURSES : '/c/academics/courses',
         SUBJECTS : '/c/academics/subjects'

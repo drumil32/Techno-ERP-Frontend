@@ -12,6 +12,16 @@ export const fetchCourses = async ({ queryKey }: any) => {
     return res;
 };
 
+export const fetchUniqueCourses = async ({ queryKey }: any) => {
+    console.log("Fetching Unique courses : ");
+    console.log("Query key is : ", queryKey);
+    const [, params] = queryKey;
+    console.log("Params are : ", params);
+    const res = await apiRequest(API_METHODS.GET, API_ENDPOINTS.getUniqueCourseDetails, params);
+    console.log("Response is : ", res);
+    return res;
+};
+
 export const createCourse = async ({ queryKey }: any) => {
     console.log("Creating courses : ");
     console.log("Query key is : ", queryKey);
@@ -42,6 +52,17 @@ export const fetchSubjects = async ({ queryKey }: any) => {
     console.log("Response is : ", res);
     return res;
 };
+
+export const fetchFilteredSubjects = async ({ queryKey }: any) => {
+    console.log("Fetching subjects : ");
+    console.log("Query key is : ", queryKey);
+    const [, params] = queryKey;
+    console.log("Params are : ", params);
+    const res = await apiRequest(API_METHODS.POST, API_ENDPOINTS.getFilteredSubjectDetails, params);
+    console.log("Response is : ", res);
+    return res;
+};
+
 
 export const createSubject = async ({ queryKey }: any) => {
     console.log("Creating subject : ");

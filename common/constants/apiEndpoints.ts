@@ -71,10 +71,12 @@ export const API_ENDPOINTS = {
   //Courses 
   createCourse : `${API_DOMAIN}/course`,
   getCourseDetails : `${API_DOMAIN}/course/course-details`,
+  getUniqueCourseDetails : `${API_DOMAIN}/course/unique-courses`,
   updateCourse : `${API_DOMAIN}/course`,
   
   createSubject : `${API_DOMAIN}/course/subject`,
   getSubjectDetails : `${API_DOMAIN}/course/subject/subject-details`,
+  getFilteredSubjectDetails : `${API_DOMAIN}/course/subject/filtered-subject-details`,
   updateSubject : `${API_DOMAIN}/course/subject`,
   deleteSubject : `${API_DOMAIN}/course/subject`,
   

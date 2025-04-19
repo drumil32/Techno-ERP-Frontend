@@ -15,14 +15,11 @@ import React from 'react';
 
 export default function TechnoBreadCrumb() {
     const pathname = usePathname();
-
     const pathSegments = pathname.split('/').filter(Boolean);
-
     const findSidebarKey = () => {
         if (pathSegments.length < 2) return 'MARKETING';
 
         const currentPath = `/${pathSegments.slice(0, 2).join('/')}`;
-
         for (const [key, value] of Object.entries(SITE_MAP)) {
             const paths = Object.values(value);
             for (const path of paths) {
@@ -36,8 +33,8 @@ export default function TechnoBreadCrumb() {
     };
 
     const sidebarKey = findSidebarKey();
+   
     const sidebarTitle = SIDEBAR_ITEMS[sidebarKey as keyof typeof SIDEBAR_ITEMS] || 'Marketing';
-
     const generateBreadcrumbs = () => {
         const breadcrumbs = [];
 

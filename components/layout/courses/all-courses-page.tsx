@@ -13,7 +13,7 @@ import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
 import TechnoFiltersGroup from '@/components/custom-ui/filter/techno-filters-group';
 
-interface Course {
+export interface Course {
     courseName: string;
     courseCode: string;
     courseId: string;
@@ -32,10 +32,10 @@ interface Course {
     totalPages: number;
   }
   
-  interface CourseApiResponse {
+export interface CourseApiResponse {
     courseInformation : Course[];
     pagination : Pagination;
-  }
+}
 
   
 export default function AllCoursesPage() {
