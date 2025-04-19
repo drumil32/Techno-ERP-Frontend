@@ -12,33 +12,36 @@ import { useTechnoFilterContext } from '@/components/custom-ui/filter/filter-con
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
 import TechnoFiltersGroup from '@/components/custom-ui/filter/techno-filters-group';
+import { useRouter } from 'next/navigation';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 export interface Course {
-    courseName: string;
-    courseCode: string;
-    courseId: string;
-    semesterId: string;
-    semesterNumber: number;
-    courseYear: string;
-    academicYear: string;
-    departmentName: string;
-    departmentHOD: string;
-    numberOfSubjects: number;
-  }
-  
-  interface Pagination {
-    currentPage: number;
-    totalItems: number;
-    totalPages: number;
-  }
-  
-export interface CourseApiResponse {
-    courseInformation : Course[];
-    pagination : Pagination;
+  courseName: string;
+  courseCode: string;
+  courseId: string;
+  semesterId: string;
+  semesterNumber: number;
+  courseYear: string;
+  academicYear: string;
+  departmentName: string;
+  departmentHOD: string;
+  numberOfSubjects: number;
 }
 
-  
+interface Pagination {
+  currentPage: number;
+  totalItems: number;
+  totalPages: number;
+}
+
+export interface CourseApiResponse {
+  courseInformation: Course[];
+  pagination: Pagination;
+}
+
+
 export default function AllCoursesPage() {
+  const router = useRouter();
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
   const [search, setSearch] = useState('');
@@ -54,7 +57,14 @@ export default function AllCoursesPage() {
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleViewMore = (row: any) => {
+    console.log("Inside handle view more!");
+    console.log("Row is : ",row);
+    console.log("Course ID : ", row.courseId);
+    console.log("Semester ID : ", row.semesterId);
+    const { courseCode, courseId, semesterId } = row;
     //DTODO : Here this will redirect to other page.
+    const redirectionPath =  `${SITE_MAP.ACADEMICS.COURSES}/${courseCode}?crsi=${courseId}&si=${semesterId}`
+    router.push(redirectionPath);
   };
 
 
@@ -73,12 +83,12 @@ export default function AllCoursesPage() {
     currentFiltersRef.current = {};
     setPage(1);
     setRefreshKey(prevKey => prevKey + 1);
-    
+
     const academicYearList = generateAcademicYearDropdown();
     const currentAcademicYear = academicYearList[5];
     updateFilter('academicYear', currentAcademicYear);
   };
-  
+
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -127,7 +137,7 @@ export default function AllCoursesPage() {
     const params: { [key: string]: any } = {
       page,
       limit,
-      academicYear : getCurrentAcademicYear(),
+      academicYear: getCurrentAcademicYear(),
       search: debouncedSearch,
       ...appliedFilters,
       refreshKey
@@ -145,14 +155,14 @@ export default function AllCoursesPage() {
     enabled: true
   });
 
-  const courseResponse : CourseApiResponse = courseQuery.data as CourseApiResponse;
+  const courseResponse: CourseApiResponse = courseQuery.data as CourseApiResponse;
   console.log(courseResponse)
   const courses = courseResponse?.courseInformation || [];
   const coursesWithSerialNo = courses.map((course, index) => ({
     ...course,
     serialNo: (page - 1) * limit + index + 1,
   }));
-  
+
   const pagination = courseResponse?.pagination;
 
   const toastIdRef = useRef<string | number | null>(null);
@@ -239,11 +249,11 @@ export default function AllCoursesPage() {
   ];
 
   const getFiltersData = () => {
-    const academicYearOptions: FilterOption[] = generateAcademicYearDropdown().map((year : string) => ({
+    const academicYearOptions: FilterOption[] = generateAcademicYearDropdown().map((year: string) => ({
       label: year,
       id: year
     }));
-    
+
     return [
       {
         filterKey: 'academicYear',
@@ -255,10 +265,10 @@ export default function AllCoursesPage() {
       }
     ];
   };
-  
+
 
   useEffect(() => {
-    if (courses.length>0) {
+    if (courses.length > 0) {
       setTotalPages(pagination.totalPages);
       setTotalEntries(pagination.totalItems);
     }
@@ -273,24 +283,23 @@ export default function AllCoursesPage() {
         handleFilters={applyFilter}
         clearFilters={clearFilters}
       />
-      
-        <TechnoDataTable
-          columns={columns}
-          data={coursesWithSerialNo}
-          tableName="Course List"
-          currentPage={page}
-          totalPages={totalPages}
-          pageLimit={limit}
-          onPageChange={handlePageChange}
-          onLimitChange={handleLimitChange}
-          onSearch={handleSearch}
-          searchTerm={search}
-          totalEntries={totalEntries}
-          handleViewMore={handleViewMore}
-          selectedRowId={selectedRowId}
-          setSelectedRowId={setSelectedRowId}
-        >
-        </TechnoDataTable>
+      <TechnoDataTable
+        columns={columns}
+        data={coursesWithSerialNo}
+        tableName="Course List"
+        currentPage={page}
+        totalPages={totalPages}
+        pageLimit={limit}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSearch={handleSearch}
+        searchTerm={search}
+        totalEntries={totalEntries}
+        handleViewMore={handleViewMore}
+        selectedRowId={selectedRowId}
+        setSelectedRowId={setSelectedRowId}
+      >
+      </TechnoDataTable>
     </>
   );
 }

@@ -48,15 +48,12 @@ export const AllSubjectsPage = () => {
         queryFn: fetchDepartmentDropdown
     });
 
-    const courseDropdown = useQuery({
-        queryKey: ['coursesDropdown'],
-        queryFn: () => fetchCourses({ limit: 100 }), 
-    });
-
     const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const handleViewMore = (row: any) => {
+    const handleViewMore = (row : any) => {
         //DTODO : Here this will redirect to other page.
+        console.log(row);
+
     };
 
 
@@ -315,14 +312,12 @@ export const AllSubjectsPage = () => {
                 data={subjects}
                 tableName="Subjects List"
                 currentPage={page}
-                totalPages={totalPages}
-                pageLimit={limit}
                 onPageChange={handlePageChange}
                 onLimitChange={handleLimitChange}
                 onSearch={handleSearch}
                 searchTerm={search}
-                totalEntries={totalEntries}
                 handleViewMore={handleViewMore}
+                showPagination={false}
                 selectedRowId={selectedRowId}
                 setSelectedRowId={setSelectedRowId}
             >

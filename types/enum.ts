@@ -327,3 +327,9 @@ export const CourseNameMapper: Record<Course, string> = {
   [Course.MSCC]: 'M.SC (Chem)'
 };
 
+
+export enum LectureConfirmation{
+  CONFIRMED = 'CONFIRMED',
+  DELAYED = 'DELAYED',
+  TO_BE_DONE = 'TO_BE_DONE'
+}
