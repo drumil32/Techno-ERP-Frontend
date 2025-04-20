@@ -7,6 +7,7 @@
   font-family: var(--font-inter);
 }
 
+
 * {
   font-family: var(--font-inter);
 }
@@ -136,4 +137,62 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+
+
+.border-box{
+  border-color: #c1c1c1;
+  border-radius: 10px;
+  border-width: 1px;
+}
+
+
+.documentHeading{
+  font-size: 14px;
+  color: #5B31d1;
+  font-weight: 500;
+}
+
+
+.documentMetaDataText{
+  font-size: 12px;
+  color: #666666;
+  font-weight: 400;
+}
+
+
+.upload-materials-border-box{
+  border-color: #e4e4e4;
+  border-radius: 10px;
+  border-width: 1px;
+}
+
+.editable-cell{
+  border-color: #e4e4e4;
+  border-radius: 5px;
+  border-width: 1px;
+}
+
+.upload-materials-heading{
+  font-size: 14px;
+  color: #5f5f5f;
+  font-weight: 500;
+}
+
+.btnLabelAdd{
+  color: #5f5f5f;
+  font-weight: 500;
+}
+
+.saveDataBtn{
+  background: #5B31d1;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.saveDataBtn:hover{
+  background-color: #481bc2;
+  color: #ffffff;
+  font-weight: 600;
 }

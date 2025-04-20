@@ -16,50 +16,83 @@ import { Button } from "@/components/ui/button";
 import TechnoDataTable from "@/components/custom-ui/data-table/techno-data-table";
 import { SITE_MAP } from "@/common/constants/frontendRouting";
 import { getCurrentBreadCrumb } from "@/lib/getCurrentBreadCrumb";
-import { Trash2, UploadCloud } from "lucide-react";
+import { FolderPlus, Trash2, Upload, UploadCloud } from "lucide-react";
 import { LectureConfirmation } from "@/types/enum";
+import SubjectMaterialsSection from "@/components/custom-ui/documents/document-section";
+import { AddMoreDataBtn } from "@/components/custom-ui/add-more-data-btn/add-data-btn";
+import TechnoDataTableAdvanced from "@/components/custom-ui/data-table/techno-data-table-advanced";
 
-interface Plan{
-    _id : string,
+
+const dummyMaterials = [
+    {
+        name: "ProductStrategyPresentation.pdf",
+        link: "https://example.com/ProductStrategyPresentation.pdf",
+        metadata: { topic: "General" },
+    },
+    {
+        name: "MarketTrends_2024_Report.pdf",
+        link: "https://example.com/MarketTrends_2024_Report.pdf",
+        metadata: { topic: "1. Introduction to Marketing Str" },
+    },
+    {
+        name: "ConsumerBehaviorCaseStudy.pdf",
+        link: "https://example.com/ConsumerBehaviorCaseStudy.pdf",
+        metadata: { topic: "2. Introduction to Marketing Str" },
+    },
+    {
+        name: "BrandingFundamentals.pdf",
+        link: "https://example.com/BrandingFundamentals.pdf",
+        metadata: { topic: "3. Introduction to Marketing Str" },
+    },
+    {
+        name: "AdvancedPricingModels.pdf",
+        link: "https://example.com/AdvancedPricingModels.pdf",
+        metadata: { topic: "4. Introduction to Marketing Str" },
+    },
+];
+
+
+interface Plan {
+    _id: string,
     // serialNo? : number,
     unit: number,
-    lectureNumber : number,
-    topicName : string,
-    instructor : string,
-    plannedDate? : string,
-    actualDate? : string,
-    classStrength? : number,
-    absent? : number,
-    remarks? : string,
-    confirmation : string,
-    documents : string[]
+    lectureNumber: number,
+    topicName: string,
+    instructor: string,
+    plannedDate?: string,
+    actualDate?: string,
+    classStrength?: number,
+    absent?: number,
+    remarks?: string,
+    confirmation: string,
+    documents: string[]
 }
 
-interface Schedule{
-    lecturePlan? : Plan[],
-    practicalPlan? : Plan[],
-    additionalResources? : string[]
+interface Schedule {
+    lecturePlan?: Plan[],
+    practicalPlan?: Plan[],
+    additionalResources?: string[]
 }
 
-interface ScheduleApiResponse{
-    courseId : string,
-    semesterId : string,
-    subjectId : string,
-    scheduleId : string,
-    instructorId : string,
-    departmentMetaDataId : string,
-    courseName : string,
-    courseCode : string,
-    courseYear : string,
-    semesterNumber : number,
-    subjectName : string,
-    subjectCode : string,
-    instructorName : string,
-    departmentName : string,
-    departmentHOD : string,
-    collegeName : string,
-    schedule : Schedule,
-    academicYear : "2024-2025"
+interface ScheduleApiResponse {
+    courseId: string,
+    semesterId: string,
+    subjectId: string,
+    scheduleId: string,
+    instructorId: string,
+    departmentMetaDataId: string,
+    courseName: string,
+    courseCode: string,
+    courseYear: string,
+    semesterNumber: number,
+    subjectName: string,
+    subjectCode: string,
+    instructorName: string,
+    departmentName: string,
+    departmentHOD: string,
+    collegeName: string,
+    schedule: Schedule,
+    academicYear: "2024-2025"
 }
 
 const calculateAttendance = (plan: Plan) => {
@@ -69,7 +102,7 @@ const calculateAttendance = (plan: Plan) => {
 };
 
 export const SingleSubjectPage = () => {
-    
+
     const pathname = usePathname();
     const routerNav = useRouter();
     const searchParams = useSearchParams();
@@ -85,6 +118,7 @@ export const SingleSubjectPage = () => {
 
     const rows = [3, 4, 4];
 
+    const [materials, setMaterials] = useState(dummyMaterials);
     const [refreshKey, setRefreshKey] = useState(0);
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -93,14 +127,14 @@ export const SingleSubjectPage = () => {
 
     const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const handleViewMore = (row : any) => {
-       //TODO : This won't be there anymore
+    const handleViewMore = (row: any) => {
+        //TODO : This won't be there anymore
     };
 
-    const handleDelete = (row : any) => {
+    const handleDelete = (row: any) => {
 
     }
-    
+
     const handleUpload = (row: any) => {
 
     }
@@ -125,13 +159,17 @@ export const SingleSubjectPage = () => {
         };
     }, []);
 
+    const addLecturePlan = () => {
+        console.log("Adding lecture plan!");
+        console.log("Added lecture plan");
+    }
 
     const getQueryParams = () => {
         const params: { [key: string]: any } = {
-            courseId : courseId,
-            semesterId : semesterId,
-            subjectId : subjectId,
-            instructorId : instructorId,
+            courseId: courseId,
+            semesterId: semesterId,
+            subjectId: subjectId,
+            instructorId: instructorId,
             search: debouncedSearch,
             refreshKey
         };
@@ -149,7 +187,7 @@ export const SingleSubjectPage = () => {
     });
 
 
-    const scheduleResponse : ScheduleApiResponse = subjectQuery.data as ScheduleApiResponse || {};
+    const scheduleResponse: ScheduleApiResponse = subjectQuery.data as ScheduleApiResponse || {};
     console.log(scheduleResponse);
     let schedule = scheduleResponse?.schedule || [];
 
@@ -157,38 +195,38 @@ export const SingleSubjectPage = () => {
     let lecturePlan = schedule?.practicalPlan || [];
     let additionalResources = schedule?.additionalResources || [];
 
- 
+
 
     lecturePlan = (schedule?.lecturePlan || []).map(plan => ({
         ...plan,
         attendance: calculateAttendance(plan)
-      }));
-      
-      practicalPlan = (schedule?.practicalPlan || []).map(plan => ({
+    }));
+
+    practicalPlan = (schedule?.practicalPlan || []).map(plan => ({
         ...plan,
         attendance: calculateAttendance(plan)
-      }));
+    }));
 
     // practicalPlan.forEach((plan, index) => {
     //     plan.serialNo = index + 1;
     // });
-      
+
     // lecturePlan.forEach((plan, index) => {
     //     plan.serialNo = index + 1;
     // });
 
     const subjectData = {
-        "Subject Name" : scheduleResponse?.subjectName,
-        "Subject Code" : scheduleResponse?.subjectCode,
-        "Instructor" : scheduleResponse?.instructorName,
-        "Course Name" : scheduleResponse?.courseName,
-        "Course Year" : scheduleResponse?.courseYear,
-        "Semester" : scheduleResponse?.semesterNumber?.toString(),
-        "Academic Year" : "2024-2025",
-        "Course Code" : scheduleResponse?.courseCode,
-        "Department" : scheduleResponse?.departmentName,
-        "HOD" : scheduleResponse?.departmentHOD,
-        "College Name" : scheduleResponse?.collegeName
+        "Subject Name": scheduleResponse?.subjectName,
+        "Subject Code": scheduleResponse?.subjectCode,
+        "Instructor": scheduleResponse?.instructorName,
+        "Course Name": scheduleResponse?.courseName,
+        "Course Year": scheduleResponse?.courseYear,
+        "Semester": scheduleResponse?.semesterNumber?.toString(),
+        "Academic Year": "2024-2025",
+        "Course Code": scheduleResponse?.courseCode,
+        "Department": scheduleResponse?.departmentName,
+        "HOD": scheduleResponse?.departmentHOD,
+        "College Name": scheduleResponse?.collegeName
     }
 
     console.log(subjectData);
@@ -255,111 +293,128 @@ export const SingleSubjectPage = () => {
         { accessorKey: 'lectureNumber', header: 'Lecture No' },
         { accessorKey: 'topicName', header: 'Topic Name' },
         { accessorKey: 'plannedDate', header: 'Planned Date' },
-        { accessorKey : 'actualDate', header : 'Actual Date'},
-        { accessorKey : 'classStrength', header : 'Class Strength'},
-        { accessorKey : 'attendance', header : 'Attendance'},
-        { accessorKey : 'absent', header : 'Absent'},
-        { accessorKey : 'remarks' , header : 'Remarks'},
+        { accessorKey: 'actualDate', header: 'Actual Date' },
+        { accessorKey: 'classStrength', header: 'Class Strength' },
+        { accessorKey: 'attendance', header: 'Attendance' },
+        { accessorKey: 'absent', header: 'Absent' },
+        { accessorKey: 'remarks', header: 'Remarks' },
         {
             accessorKey: 'confirmation',
             header: 'Confirmation',
             cell: ({ row, getValue }: any) => {
-              const value = getValue() || LectureConfirmation.TO_BE_DONE;
-          
-              return (
-                <select
-                  defaultValue={value}
-                  className="border rounded px-2 py-1 text-sm"
-                  onChange={(e) => {
-                    const updatedValue = e.target.value as LectureConfirmation;
-                    console.log('Updated Confirmation:', updatedValue);
-                  }}
-                >
-                  {Object.values(LectureConfirmation).map((status) => (
-                    <option key={status} value={status}>
-                      {status.replace(/_/g, ' ')}
-                    </option>
-                  ))}
-                </select>
-              );
+                const value = getValue() || LectureConfirmation.TO_BE_DONE;
+
+                return (
+                    <select
+                        defaultValue={value}
+                        className="border rounded px-2 py-1 text-sm"
+                        onChange={(e) => {
+                            const updatedValue = e.target.value as LectureConfirmation;
+                            console.log('Updated Confirmation:', updatedValue);
+                        }}
+                    >
+                        {Object.values(LectureConfirmation).map((status) => (
+                            <option key={status} value={status}>
+                                {status.replace(/_/g, ' ')}
+                            </option>
+                        ))}
+                    </select>
+                );
             },
-          },
+        },
         {
             id: 'actions',
             header: 'Actions',
             cell: ({ row }: any) => (
-              <div className="flex items-right gap-2">
-                <center>
-                <button
-                  onClick={() => handleDelete(row.original)}
-                  className="font-light hover:text-gray-500"
-                >
-                  <Trash2 size={20}/>
-                </button>
-                </center>
-               <center>
-               <button
-                  onClick={() => handleUpload(row.original)}
-                  className="font-light hover:text-gray-500 "
-                >
-                  <UploadCloud size={20} />
-                </button>
-               </center>
-               
-              </div>
+                <div className="flex items-right gap-2">
+                    <center>
+                        <button
+                            onClick={() => handleDelete(row.original)}
+                            className="font-light hover:text-gray-500"
+                        >
+                            <Trash2 size={20} />
+                        </button>
+                    </center>
+                    <center>
+                        <button
+                            onClick={() => handleUpload(row.original)}
+                            className="font-light hover:text-gray-500 "
+                        >
+                            <Upload size={20} />
+                        </button>
+                    </center>
+                </div>
             ),
-          }
+        }
     ];
 
 
     return (
         <>
-        <div className="pb-6">
-        <DynamicInfoGrid
-                columns={3}
-                rowsPerColumn={rows}
-                data={subjectData}
-                design={{
-                    containerWidth: "1339px",
-                    containerHeight: "119px",
-                    columnWidth: "475px",
-                    columnHeight: "96px",
-                    columnGap: "65px",
-                    rowGap: "12px",
-                    keyWidth: "125px",
-                    valueWidth: "333px",
-                    fontSize: "14px"
-                }}
+            <div className="pb-6">
+                <DynamicInfoGrid
+                    columns={3}
+                    rowsPerColumn={rows}
+                    data={subjectData}
+                    design={{
+                        containerWidth: "1339px",
+                        containerHeight: "119px",
+                        columnWidth: "475px",
+                        columnHeight: "96px",
+                        columnGap: "65px",
+                        rowGap: "12px",
+                        keyWidth: "125px",
+                        valueWidth: "333px",
+                        fontSize: "14px"
+                    }}
+                />
+
+            </div>
+
+            <TechnoDataTableAdvanced 
+             columns={columns}
+             data={lecturePlan}
+             tableName="Lecture Plan"
+             onSearch={handleSearch}
+             searchTerm={search}
+             handleViewMore={handleViewMore}
+             showPagination={false}
+             selectedRowId={selectedRowId}
+             setSelectedRowId={setSelectedRowId}
+             visibleRows = {10}
+             showAddButton = {true}
+             showEditButton = {true}
+             addButtonPlacement  ={ "bottom"}
+             addBtnLabel = {"Add Lecture Plan"} >
+             </TechnoDataTableAdvanced>
+
+            <TechnoDataTableAdvanced 
+             columns={columns}
+             data={practicalPlan}
+             tableName="Practical Plan"
+             onSearch={handleSearch}
+             searchTerm={search}
+             handleViewMore={handleViewMore}
+             showPagination={false}
+             selectedRowId={selectedRowId}
+             setSelectedRowId={setSelectedRowId}
+             visibleRows = {2}
+             showAddButton = {true}
+             showEditButton = {true}
+             addButtonPlacement  ={ "bottom"}
+             addBtnLabel = {"Add Practical Plan"} >
+             </TechnoDataTableAdvanced>
+
+            <SubjectMaterialsSection
+                materials={materials}
+                onRemove={(index) =>
+                    setMaterials((prev) => prev.filter((_, i) => i !== index))}
+                onUpload={() => alert("Upload button clicked!")}
+                nameFontSize="text-sm"
+                metadataFontSize="text-xs"
             />
 
-        </div>
-          
-            <TechnoDataTable
-                columns={columns}
-                data={lecturePlan}
-                tableName="Lecture Plan"
-                onSearch={handleSearch}
-                searchTerm={search}
-                handleViewMore={handleViewMore}
-                showPagination={false}
-                selectedRowId={selectedRowId}
-                setSelectedRowId={setSelectedRowId}
-            >
-            </TechnoDataTable>
 
-
-            <TechnoDataTable
-                columns={columns}
-                data={practicalPlan}
-                tableName="Practical Plan"
-                onSearch={handleSearch}
-                searchTerm={search}
-                handleViewMore={handleViewMore}
-                showPagination={false}
-                selectedRowId={selectedRowId}
-                setSelectedRowId={setSelectedRowId}
-            >
-            </TechnoDataTable>
         </>
     );
 }
