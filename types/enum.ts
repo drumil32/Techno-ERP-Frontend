@@ -333,3 +333,9 @@ export enum LectureConfirmation{
   DELAYED = 'DELAYED',
   TO_BE_DONE = 'TO_BE_DONE'
 }
+
+export enum CourseMaterialType{
+  LPLAN = "LPlan",
+  PPLAN = "PPlan",
+  General = "General"
+}

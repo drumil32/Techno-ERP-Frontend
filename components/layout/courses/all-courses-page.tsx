@@ -14,6 +14,8 @@ import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown
 import TechnoFiltersGroup from '@/components/custom-ui/filter/techno-filters-group';
 import { useRouter } from 'next/navigation';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
+import { AddMoreDataBtn } from '@/components/custom-ui/add-more-data-btn/add-data-btn';
+import { FolderPlus } from 'lucide-react';
 
 export interface Course {
   courseName: string;
@@ -278,11 +280,17 @@ export default function AllCoursesPage() {
     <>
       <TechnoPageHeading title={"All Courses"} />
 
-      <TechnoFiltersGroup
-        filters={getFiltersData()}
-        handleFilters={applyFilter}
-        clearFilters={clearFilters}
-      />
+      <span>
+        <div className='flex justify-between'>
+          <TechnoFiltersGroup
+          filters={getFiltersData()}
+          handleFilters={applyFilter}
+          clearFilters={clearFilters}
+          />
+          <AddMoreDataBtn icon={<FolderPlus/>} label={"Create New Course"} onClick={ () => { console.log("Clicked button of creating new course")} } ></AddMoreDataBtn>
+        </div>
+      </span>
+     
       <TechnoDataTable
         columns={columns}
         data={coursesWithSerialNo}

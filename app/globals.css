@@ -149,14 +149,14 @@
 
 
 .documentHeading{
-  font-size: 14px;
+  font-size: 15px;
   color: #5B31d1;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 
 .documentMetaDataText{
-  font-size: 12px;
+  font-size: 13px;
   color: #666666;
   font-weight: 400;
 }
@@ -164,7 +164,7 @@
 
 .upload-materials-border-box{
   border-color: #e4e4e4;
-  border-radius: 10px;
+  border-radius: 13px;
   border-width: 1px;
 }
 

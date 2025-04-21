@@ -1,30 +1,49 @@
 import React from "react";
 import { Upload, X } from "lucide-react";
 import { AddMoreDataBtn } from "../add-more-data-btn/add-data-btn";
+import { CourseMaterialType } from "@/types/enum";
 
-type SubjectMaterial = {
-  name: string;
-  link: string;
-  metadata: Record<string, string>;
-};
+interface SubjectMaterial {
+  courseId: string,
+  semesterId: string,
+  subjectId: string,
+  planId?: string,
+  type: CourseMaterialType,
+  link: string,
+  name: string,
+  metaData: {
+      topic: string
+  }
+}
+
 
 type Props = { 
   materials: SubjectMaterial[];
-  onRemove: (index: number) => void;
-  onUpload: () => void;
   nameFontSize?: string;
   metadataFontSize?: string;
+  onRemove : (index:number, materials :SubjectMaterial[]) => void
+  onUpload : () => void
 };
+
+// const onRemove = (index : number, materials: SubjectMaterial[]) => {
+//   console.log(index);
+// }
+
+// const onUpload  = () => {
+
+// }
 
 export default function SubjectMaterialsSection({
   materials,
-  onRemove,
-  onUpload,
   nameFontSize = "text-sm",
   metadataFontSize = "text-xs",
-}: Props) {
+  onRemove,
+  onUpload
+} : Props) {
+
   return (
 
+    
     <div className="w-full mb-10 bg-white space-y-4 my-[16px] px-4 py-3 shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="flex w-full items-center py-2 px-1">
         <div className="flex items-center">
@@ -55,17 +74,18 @@ export default function SubjectMaterialsSection({
               </a>
               <span
                 className={`documentMetaDataText font-inter truncate pt-1 ${metadataFontSize}`}
-                title={Object.values(material.metadata).join(", ")}
+                title={material.metaData.topic}
               >
-                {Object.values(material.metadata).join(", ")}
+                {/* {Object.values(material.metaData.topic).join(", ")} */}
+                {material.metaData.topic}
               </span>
             </div>
 
             <button
-              onClick={() => onRemove(index)}
+              onClick={() => onRemove(index, materials)}
               className="ml-2 text-gray-400 hover:text-red-500 flex-shrink-0"
             >
-              <X size={16} />
+              <X size={16} onClick={()=>onRemove(index, materials)}/>
             </button>
           </div>
         ))}

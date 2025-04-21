@@ -204,9 +204,9 @@ export default function TechnoDataTableAdvanced({
           </TableHeader>
           <TableBody>
             {(visibleData.length ? visibleData : []).map((row: any, i: number) => (
-              <TableRow key={i}>
+              <TableRow key={i} className='h-[45px] cursor-pointer'>
                 {columns.map((column: any, j: number) => (
-                  <TableCell key={j} className="text-center">
+                  <TableCell key={j} className="text-center h-[39px]">
                     {editing ? (
                       <Input
                         className="editable-cell px-2 py-1"
@@ -222,9 +222,9 @@ export default function TechnoDataTableAdvanced({
             ))}
 
             {addingRow && (
-              <TableRow>
+              <TableRow className='h-[39px] cursor-pointer'>
                 {columns.map((column: any, idx: number) => (
-                  <TableCell key={idx}>
+                  <TableCell key={idx} className='h-[39px]'>
                     <Input
                       className="editable-cell px-2 py-1"
                       value={newRow[column.accessorKey] || ''}

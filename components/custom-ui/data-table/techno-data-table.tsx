@@ -111,7 +111,7 @@ export default function TechnoDataTable({
   const nonClickableColumns = ['actions', 'leadType', 'finalConversion', "leadsFollowUpCount", 'yellowLeadsFollowUpCount'];
 
   return (
-    <div className="w-full mb-10 bg-white space-y-4 my-[16px] mb-0 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
+    <div className="w-full mb-10 bg-white space-y-4 my-[8px] mb-0 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
       {/* Header Section */}
       <div className="flex w-full items-center py-4 px-4">
         <div className="flex items-center">

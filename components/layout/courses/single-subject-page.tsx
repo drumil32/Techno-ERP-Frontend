@@ -11,16 +11,12 @@ import { useQuery } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
-import { fetchSchedule, fetchSubjects } from "./helpers/fetch-data";
-import { Button } from "@/components/ui/button";
-import TechnoDataTable from "@/components/custom-ui/data-table/techno-data-table";
-import { SITE_MAP } from "@/common/constants/frontendRouting";
-import { getCurrentBreadCrumb } from "@/lib/getCurrentBreadCrumb";
-import { FolderPlus, Trash2, Upload, UploadCloud } from "lucide-react";
+import { fetchSchedule } from "./helpers/fetch-data";
+import { Trash2, Upload } from "lucide-react";
 import { LectureConfirmation } from "@/types/enum";
 import SubjectMaterialsSection from "@/components/custom-ui/documents/document-section";
-import { AddMoreDataBtn } from "@/components/custom-ui/add-more-data-btn/add-data-btn";
 import TechnoDataTableAdvanced from "@/components/custom-ui/data-table/techno-data-table-advanced";
+import { prepareSubjectMaterial, processPlan } from "./helpers/prepare-subject-materials";
 
 
 const dummyMaterials = [
@@ -52,7 +48,7 @@ const dummyMaterials = [
 ];
 
 
-interface Plan {
+export interface Plan {
     _id: string,
     // serialNo? : number,
     unit: number,
@@ -92,7 +88,7 @@ interface ScheduleApiResponse {
     departmentHOD: string,
     collegeName: string,
     schedule: Schedule,
-    academicYear: "2024-2025"
+    academicYear: string,
 }
 
 const calculateAttendance = (plan: Plan) => {
@@ -111,7 +107,7 @@ export const SingleSubjectPage = () => {
     const subjectId = searchParams.get("subi");
     const instructorId = searchParams.get("ii");
 
-    console.log("COurse id : ", courseId);
+    console.log("Course id : ", courseId);
     console.log("Semester Id : ", semesterId);
     console.log("Subject Id : ", subjectId);
     console.log("Instructor Id : ", instructorId);
@@ -195,7 +191,10 @@ export const SingleSubjectPage = () => {
     let lecturePlan = schedule?.practicalPlan || [];
     let additionalResources = schedule?.additionalResources || [];
 
-
+    console.log("Practical Plan : ", practicalPlan);
+    console.log("Lecture Plan is : ", lecturePlan);
+    const documentMaterials = prepareSubjectMaterial(lecturePlan, practicalPlan, additionalResources, courseId!, semesterId!, subjectId!)
+    console.log("Document Materials are : ", documentMaterials);
 
     lecturePlan = (schedule?.lecturePlan || []).map(plan => ({
         ...plan,
@@ -222,7 +221,7 @@ export const SingleSubjectPage = () => {
         "Course Name": scheduleResponse?.courseName,
         "Course Year": scheduleResponse?.courseYear,
         "Semester": scheduleResponse?.semesterNumber?.toString(),
-        "Academic Year": "2024-2025",
+        "Academic Year": scheduleResponse.academicYear,
         "Course Code": scheduleResponse?.courseCode,
         "Department": scheduleResponse?.departmentName,
         "HOD": scheduleResponse?.departmentHOD,
@@ -288,6 +287,7 @@ export const SingleSubjectPage = () => {
         subjectQuery.isFetching,
     ]);
 
+    
     const columns = [
         { accessorKey: 'unit', header: 'Unit' },
         { accessorKey: 'lectureNumber', header: 'Lecture No' },
@@ -406,9 +406,13 @@ export const SingleSubjectPage = () => {
              </TechnoDataTableAdvanced>
 
             <SubjectMaterialsSection
-                materials={materials}
-                onRemove={(index) =>
+                materials={documentMaterials}
+                onRemove={(index, materials) => {
+                    console.log('Removing document');
+                    console.log('Index : ', index);
+                    console.log('Materials : ', materials);
                     setMaterials((prev) => prev.filter((_, i) => i !== index))}
+                }
                 onUpload={() => alert("Upload button clicked!")}
                 nameFontSize="text-sm"
                 metadataFontSize="text-xs"
