@@ -568,7 +568,21 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         />
         {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
       </div>
-      <div className="space-y-2 w-1/2">
+  
+
+      <div className="space-y-2">
+        <EditLabel htmlFor="remarks" title={'Remarks'} />
+        <textarea
+          id="remarks"
+          name="remarks"
+          value={formData.remarks || ''}
+          onChange={handleChange}
+          className="w-full min-h-20 px-3 py-2 border rounded-[5px]"
+          placeholder="Enter remarks here"
+        />
+      </div>
+
+      <div className="space-y-2 w-full">
           <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
           <Select
             defaultValue={formData.assignedTo || ''}
@@ -587,20 +601,6 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
             </SelectContent>
           </Select>
         </div>
-
-      <div className="space-y-2">
-        <EditLabel htmlFor="remarks" title={'Remarks'} />
-        <textarea
-          id="remarks"
-          name="remarks"
-          value={formData.remarks || ''}
-          onChange={handleChange}
-          className="w-full min-h-20 px-3 py-2 border rounded-[5px]"
-          placeholder="Enter remarks here"
-        />
-      </div>
-
-  
 
       <div className="flex flex-col gap-2">
         <p className="text-[#666666]">Last Modified Date</p>

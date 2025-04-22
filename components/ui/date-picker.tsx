@@ -26,12 +26,13 @@ interface DatePickerProps<
   disabled?: boolean;
   calendarProps?: Omit<
     ShadcnCalendarProps,
-    'mode' | 'selected' | 'onSelect' | 'initialFocus' | 'captionLayout' | 'fromYear' | 'toYear' // Also omit props controlled by DatePicker logic
+    'mode' | 'selected' | 'onSelect' | 'initialFocus' | 'captionLayout' | 'fromYear' | 'toYear' | 'defaultMonth'
   >;
   showYearMonthDropdowns?: boolean;
   fromYear?: number;
   toYear?: number;
-  isRequired ?: boolean;
+  isRequired?: boolean;
+  defaultMonth?: Date; 
 }
 
 const parseDateString = (
@@ -67,6 +68,7 @@ export function DatePicker<
   fromYear = new Date().getFullYear() - 100,
   toYear = new Date().getFullYear() + 10,
   isRequired = false,
+  defaultMonth = new Date(),
 }: DatePickerProps<TFieldValues, TName>) {
   return (
     <FormField
@@ -118,6 +120,7 @@ export function DatePicker<
                   onSelect={handleDateSelect}
                   disabled={disabled || calendarProps?.disabled}
                   initialFocus
+                  defaultMonth={defaultMonth} 
                   captionLayout={showYearMonthDropdowns ? 'dropdown-buttons' : 'buttons'}
                   fromYear={showYearMonthDropdowns ? fromYear : undefined}
                   toYear={showYearMonthDropdowns ? toYear : undefined}

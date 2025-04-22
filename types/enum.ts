@@ -16,7 +16,6 @@ export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
   OTHER = 'OTHERS',
-  NOT_TO_MENTION = 'NOT_TO_MENTION'
 }
 
 

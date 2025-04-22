@@ -341,6 +341,8 @@ export default function AllLeadsPage() {
         };
 
         return (
+
+          
           <LeadTypeSelect value={selectedType} onChange={handleDropdownChange} />
         );
       },

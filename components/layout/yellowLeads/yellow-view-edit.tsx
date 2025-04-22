@@ -314,7 +314,7 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen,setSelectedRo
           <p>{formData.course ? CourseNameMapper[formData.course as Course] : '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Foot Fall</p>
+          <p className="w-1/4 text-[#666666]">Footfall</p>
           {formData.footFall != undefined ? (
             <FootFallTag status={formData.footFall === true ? FootFallStatus.true : FootFallStatus.false} />
           ) : (
@@ -490,7 +490,7 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen,setSelectedRo
         </div>
 
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="footFall" title={'Foot Fall'} />
+          <EditLabel htmlFor="footFall" title={'Footfall'} />
           <Select
             defaultValue={formData.footFall ? "true" : "false"}
             onValueChange={(value) => handleSelectChange('footFall', value === "true")}
@@ -588,7 +588,20 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen,setSelectedRo
           </SelectContent>
         </Select>
       </div>
-      <div className="space-y-2 w-1/2">
+
+      <div className="space-y-2">
+        <EditLabel htmlFor="remarks" title={'Remarks'} />
+        <textarea
+          id="remarks"
+          name="remarks"
+          value={formData.remarks || ''}
+          onChange={handleChange}
+          className="w-full min-h-20 px-3 py-2 border rounded-[5px]"
+          placeholder="Enter remarks here"
+        />
+      </div>
+      
+      <div className="space-y-2 w-full">
           <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
           <Select
             defaultValue={formData.assignedTo || ''}
@@ -612,19 +625,6 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen,setSelectedRo
             </SelectContent>
           </Select>
         </div>
-      <div className="space-y-2">
-        <EditLabel htmlFor="remarks" title={'Remarks'} />
-        <textarea
-          id="remarks"
-          name="remarks"
-          value={formData.remarks || ''}
-          onChange={handleChange}
-          className="w-full min-h-20 px-3 py-2 border rounded-[5px]"
-          placeholder="Enter remarks here"
-        />
-      </div>
-      
-
     </>
   );
 

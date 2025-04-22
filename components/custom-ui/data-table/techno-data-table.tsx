@@ -135,7 +135,7 @@ export default function TechnoDataTable({
           {children && <div className="ml-2">{children}</div>}
         </div>
         <div className="flex items-center space-x-2 ml-auto">
-          <div className="relative">
+        <div className="relative">
             <Input
               placeholder="Search for leads"
               value={globalFilter}
@@ -146,17 +146,17 @@ export default function TechnoDataTable({
               <Search className="h-4 w-4 text-gray-500" />
             </span>
           </div>
-          <Button variant="outline" className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
+          <Button disabled variant="outline" className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
             <span className="font-inter font-medium text-[12px]">Upload</span>
           </Button>
-          <Button className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
+          <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
             <span className="font-inter font-semibold text-[12px]">Download</span>
           </Button>
         </div>
       </div>
 
       <div className="relative min-h-[580px] overflow-auto">
-        <Table className="w-full">
+        <Table className="w-full zoom-out-60 ">
           <TableHeader className="bg-[#F7F7F7] sticky top-0 z-5">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="h-10">
@@ -187,7 +187,7 @@ export default function TechnoDataTable({
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody className="[&_tr]:h-[39px]">
+          <TableBody className="[&_tr]:h-[39px] ">
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row: any) => (
                 <TableRow
@@ -205,8 +205,8 @@ export default function TechnoDataTable({
                     return (
                       <TableCell
                         key={cell.id}
-                        className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-'
-                          ? 'text-left max-w-[225px] truncate'
+                        className={`h-[39px] py-2 ${(cell.column.columnDef.header === 'Remarks'|| cell.column.columnDef.header==='Area'|| cell.column.columnDef.header==='Name'|| cell.column.columnDef.header==='Assigned To') && cell.getValue() !== '-'
+                          ? 'text-left max-w-[120px] truncate'
                           : 'text-center'
                           }`}
                         onClick={(e) => {

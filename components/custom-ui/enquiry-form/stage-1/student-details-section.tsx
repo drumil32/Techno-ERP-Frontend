@@ -333,6 +333,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                     return date >= new Date(today.setHours(0, 0, 0, 0)); 
                   },
                 }}
+                defaultMonth = {new Date(new Date().getFullYear() - 10, 0, 1)} 
                 isRequired={true}
               />
 
@@ -376,7 +377,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value} defaultValue={Gender.NOT_TO_MENTION}>
+                      <Select onValueChange={field.onChange} value={field.value} >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Gender" />
                         </SelectTrigger>

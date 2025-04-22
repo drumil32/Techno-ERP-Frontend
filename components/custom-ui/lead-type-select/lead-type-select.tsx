@@ -28,7 +28,7 @@ export default function LeadTypeSelect({ value, onChange }: LeadTypeSelectProps)
   return (
     <Select value={value} onValueChange={(val) => onChange(val as LeadType)}>
       <SelectTrigger
-        className={` cursor-pointer rounded-[5px] text-sm font-medium  w-[180px] px-2 py-1 ${selectedStyle}`}
+        className={`hover:border-slate-600 cursor-pointer border-transparent rounded-[5px] text-sm font-medium  w-[140px] px-2 py-1 ${selectedStyle}`}
       >
         <SelectValue placeholder="Select Type" />
       </SelectTrigger>
@@ -37,7 +37,7 @@ export default function LeadTypeSelect({ value, onChange }: LeadTypeSelectProps)
           <SelectItem
             key={type}
             value={type}
-            className={`hover:border-slate-600 border-2 cursor-pointer rounded-[5px] text-sm font-medium px-3 py-2 transition-all ${typeStyles[type]} `}
+            className={`border-transparent hover:border-slate-600 border-2 cursor-pointer rounded-[5px] text-sm font-medium px-3 py-2 transition-all ${typeStyles[type]} `}
           >
             {LeadTypeMapper[type]}
           </SelectItem>
