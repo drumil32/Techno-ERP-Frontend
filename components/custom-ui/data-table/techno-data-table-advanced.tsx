@@ -67,7 +67,9 @@ export default function TechnoDataTableAdvanced({
   showEditButton = false,
   visibleRows = 10,
   addButtonPlacement = "top",
-  addBtnLabel = "Add"
+  addBtnLabel = "Add",
+  addViaDialog = false,
+  onAddClick
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
@@ -77,7 +79,7 @@ export default function TechnoDataTableAdvanced({
   const [editedData, setEditedData] = useState([...data]);
   const [addingRow, setAddingRow] = useState(false);
   const [newRow, setNewRow] = useState<any>({});
-  
+
   useEffect(() => {
     setGlobalFilter(searchTerm);
   }, [searchTerm]);
@@ -137,32 +139,43 @@ export default function TechnoDataTableAdvanced({
     manualPagination: true,
     pageCount: totalPages,
   });
-  
+
 
 
   const nonClickableColumns = ['actions', 'leadType', 'finalConversion', "leadsFollowUpCount", 'yellowLeadsFollowUpCount'];
 
   return (
-    <div className="w-full mb-2 bg-white space-y-4 my-[16px] px-4 py-2 pb-3 shadow-sm border-[1px] rounded-[10px] border-gray-200">
-
+    <div className="w-full mb-10 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="flex w-full items-center py-4 px-4">
-        
-        {/* Table Header */}     
+
+        {/* Table Header */}
         <div className="flex items-center">
           <h2 className="text-xl font-bold">{tableName}</h2>
           {children && <div className="ml-2">{children}</div>}
         </div>
 
-        {/* Edit Button, always on top */} 
+        {/* Edit Button, always on top */}
         <div className="flex items-center space-x-2 ml-auto" >
-        {showEditButton && (
-            <Button variant="outline" className="h-8" onClick={handleEditToggle} disabled={addingRow || editing} >
+          {showEditButton && (
+            <Button variant="outline" className="btnLabelAdd h-8" onClick={handleEditToggle} disabled={addingRow || editing} >
               <Edit2 className="mr-1 h-4 w-4" /> Edit
             </Button>
           )}
-          {showAddButton && addButtonPlacement==="top" && (
-            <Button variant="outline" className="h-8" onClick={() => setAddingRow(true)} disabled={addingRow || editing} >
-              <FolderPlus className="mr-1 h-4 w-4" /> { addBtnLabel }
+
+          {showAddButton && addButtonPlacement === "top" && (
+            <Button
+              variant="outline"
+              className="h-8 btnLabelAdd font-inter bg-white text-black hover:bg-gray-200"
+              onClick={() => {
+                if (addViaDialog && onAddClick) {
+                  onAddClick();
+                } else {
+                  setAddingRow(true);
+                }
+              }}
+              disabled={addingRow || editing}
+            >
+              <FolderPlus className="h-4 w-4" /> {addBtnLabel}
             </Button>
           )}
 
@@ -177,7 +190,7 @@ export default function TechnoDataTableAdvanced({
               <Search className="h-4 w-4 text-gray-500" />
             </span>
           </div>
-        
+
           <Button variant="outline" className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
             <span className="font-inter font-medium text-[12px]">Upload</span>
           </Button>
@@ -187,9 +200,10 @@ export default function TechnoDataTableAdvanced({
         </div>
       </div>
 
-      <div className={`relative overflow-auto`} style={{ maxHeight: `${visibleRows * 40 + 40}px` }}>
+      <div className={`relative overflow-auto min-h-[580px]`} style={{ minHeight: `${visibleRows * 39 + 40}px` }}>
         <Table className="w-full">
-          <TableHeader className="bg-[#F7F7F7] sticky top-0 z-5">
+          <TableHeader className="bg-[#F7F7F7] sticky top-0">
+            <TableRow>
             {columns.map((column: any, idx: number) => (
               <TableHead key={idx} className="text-center font-light h-10">
                 {column.header === 'Date' || column.header === 'Next Due Date' ? (
@@ -201,32 +215,56 @@ export default function TechnoDataTableAdvanced({
                 )}
               </TableHead>
             ))}
+            </TableRow>
           </TableHeader>
-          <TableBody>
-            {(visibleData.length ? visibleData : []).map((row: any, i: number) => (
-              <TableRow key={i} className='h-[45px] cursor-pointer'>
-                {columns.map((column: any, j: number) => (
-                  <TableCell key={j} className="text-center h-[39px]">
-                    {editing ? (
-                      <Input
-                        className="editable-cell px-2 py-1"
-                        value={row[column.accessorKey] || ''}
-                        onChange={(e) => handleEditedChange(i, column.accessorKey, e.target.value)}
-                      />
-                    ) : (
-                      row[column.accessorKey] || ''
-                    )}
-                  </TableCell>
-                ))}
+          <TableBody className="[&_tr]:h-[39px]">
+            {table.getRowModel().rows.length > 0 && !addingRow ? (
+              table.getRowModel().rows.map((row: any, rowIndex: number) => (
+                <TableRow
+                  key={row.id}
+                  className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
+                  onClick={() => {
+                    setSelectedRowId(row.id);
+                    handleViewMore?.({ ...row.original, leadType: row.original._leadType });
+                  }}
+                >
+                  {row.getVisibleCells().map((cell: any) => {
+                    const isExcluded = nonClickableColumns.includes(cell.column.id);
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-' ? 'text-left max-w-[225px] truncate' : 'text-center'}`}
+                        // className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-' ? 'text-left w-auto truncate' : 'text-center w-auto'}`}
+                        onClick={(e) => {
+                          if (isExcluded) e.stopPropagation();
+                        }}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))
+            ) : !addingRow ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-[450px] text-center">
+                  <div className="flex flex-col items-center justify-center h-full">
+                    <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <h3 className="mt-4 text-lg font-medium text-gray-900">No Results Found</h3>
+                    <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filter to find what you're looking for.</p>
+                  </div>
+                </TableCell>
               </TableRow>
-            ))}
+            ) : null}
 
-            {addingRow && (
+            {!addViaDialog && addingRow && (
               <TableRow className='h-[39px] cursor-pointer'>
                 {columns.map((column: any, idx: number) => (
                   <TableCell key={idx} className='h-[39px]'>
                     <Input
-                      className="editable-cell px-2 py-1"
+                      className="editable-cell px-2 py-2"
                       value={newRow[column.accessorKey] || ''}
                       onChange={(e) => handleNewRowChange(column.accessorKey, e.target.value)}
                     />
@@ -237,71 +275,79 @@ export default function TechnoDataTableAdvanced({
           </TableBody>
         </Table>
 
-  {addButtonPlacement === "bottom" && (
-  <div className="flex justify-between items-center mt-2 w-full">
-    {/* By default mode of add mode */}
+        {addButtonPlacement === "bottom" && (
+          <div className="flex justify-between items-center mt-2 w-full">
+            {/* By default mode of add mode */}
 
-    <AddMoreDataBtn onClick={() => { setAddingRow(true); setNewRow({});  } }
-        btnClassName="btnLabelAdd upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200  p-2 pr-3"
-        labelClassName="font-inter btnLabelAdd text-md"
-        disabled={addingRow || editing}
-        icon={<FolderPlus></FolderPlus>} label={addBtnLabel}>
-    </AddMoreDataBtn>
+            <AddMoreDataBtn
+              onClick={() => {
+                if (addViaDialog && onAddClick) {
+                  onAddClick();
+                } else {
+                  setAddingRow(true);
+                  setNewRow({});
+                }
+              }}
+              btnClassName="btnLabelAdd upload-materials-border-box font-inter bg-white text-black hover:bg-gray-200 p-2 pr-3"
+              labelClassName="font-inter btnLabelAdd text-md"
+              disabled={addingRow || editing}
+              icon={<FolderPlus></FolderPlus>} label={addBtnLabel}>
+            </AddMoreDataBtn>
 
-    {/* Adding/Editing Mode */}
-    {(addingRow || editing) && (
-      <div className="flex gap-2 justify-end ml-4">
-        {/* Save button */}
-        <AddMoreDataBtn onClick={() => {
-            if (addingRow) {
-              data.push(newRow); 
-              setAddingRow(false);
-              setNewRow({});
-            } 
-            else {
-              setEditing(false); 
-            }
-          }}
-          btnClassName=" font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn"
-          icon = { <Check></Check>}
-          label = {"Save"} />
-        
-        {/* Discard button */}
-        <AddMoreDataBtn onClick={() => {
-            if (addingRow) {
-              setAddingRow(false);
-              setNewRow({});
-            } else {
-              setEditing(false);
-            }
-          }}
-          btnClassName="upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200"
-          icon = { <X></X>}
-          label = {"Discard"} />
+            {/* Adding/Editing Mode */}
+            {!addViaDialog && (addingRow || editing) && (
+              <div className="flex gap-2 justify-end ml-4">
+                {/* Save button */}
+                <AddMoreDataBtn onClick={() => {
+                  if (addingRow) {
+                    data.push(newRow);
+                    setAddingRow(false);
+                    setNewRow({});
+                  }
+                  else {
+                    setEditing(false);
+                  }
+                }}
+                  btnClassName=" font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn"
+                  icon={<Check></Check>}
+                  label={"Save"} />
 
-      </div>
-    )}
-  </div>
-)}
+                {/* Discard button */}
+                <AddMoreDataBtn onClick={() => {
+                  if (addingRow) {
+                    setAddingRow(false);
+                    setNewRow({});
+                  } else {
+                    setEditing(false);
+                  }
+                }}
+                  btnClassName="upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200"
+                  icon={<X></X>}
+                  label={"Discard"} />
+
+              </div>
+            )}
+          </div>
+        )}
 
 
 
-{addButtonPlacement !== "bottom" && (
-  <>
-    {addingRow && (
-      <div className="flex gap-2 justify-end mt-2">
-        <AddMoreDataBtn onClick={() => { data.push(newRow); setAddingRow(false); setNewRow({}); }} btnClassName='font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn' icon={<Check></Check>} label={"Save"} />
-        <AddMoreDataBtn onClick={() => { setAddingRow(false); setNewRow({}); }} btnClassName='upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200 h-[40px] p-2 pr-3' icon={<X/>} label={"Discard"} />
-      </div>
-    )}
-    {editing && (
-      <div className="flex gap-2 justify-end mt-2">
-        <AddMoreDataBtn onClick={() => { setEditing(false); }} btnClassName='font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn' icon={<Check></Check>} label={"Save"}/>
-        <AddMoreDataBtn onClick={() => { setEditing(false); }} btnClassName='upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200 h-[40px] p-2 pr-3' icon={<X/>} label={"Discard"}/> 
-      </div>
-    )}
-  </>
-)}
+        {addButtonPlacement !== "bottom" && (
+          <>
+            {!addViaDialog && addingRow && (
+              <div className="flex gap-2 justify-end mt-2">
+                <AddMoreDataBtn onClick={() => { data.push(newRow); setAddingRow(false); setNewRow({}); }} btnClassName='font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn' icon={<Check></Check>} label={"Save"} />
+                <AddMoreDataBtn onClick={() => { setAddingRow(false); setNewRow({}); }} btnClassName='upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200 h-[40px] p-2 pr-3' icon={<X />} label={"Discard"} />
+              </div>
+            )}
+            {!addViaDialog && editing && (
+              <div className="flex gap-2 justify-end mt-2">
+                <AddMoreDataBtn onClick={() => { setEditing(false); }} btnClassName='font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn' icon={<Check></Check>} label={"Save"} />
+                <AddMoreDataBtn onClick={() => { setEditing(false); }} btnClassName='upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200 h-[40px] p-2 pr-3' icon={<X />} label={"Discard"} />
+              </div>
+            )}
+          </>
+        )}
 
       </div>
 

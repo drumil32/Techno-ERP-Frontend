@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from '../../ui/button';
 import { toast } from "sonner";
 import { fetchDepartmentDropdown, fetchCourses, fetchFilteredSubjects, fetchUniqueCourses } from "./helpers/fetch-data";
+import TechnoDataTableAdvanced from "@/components/custom-ui/data-table/techno-data-table-advanced";
 
 interface UniqueCourseInformation{
     courseCode : string;
@@ -307,7 +308,7 @@ export const AllSubjectsPage = () => {
                 clearFilters={clearFilters}
             />
 
-            <TechnoDataTable
+            <TechnoDataTableAdvanced
                 columns={columns}
                 data={subjects}
                 tableName="Subjects List"
@@ -320,8 +321,8 @@ export const AllSubjectsPage = () => {
                 showPagination={false}
                 selectedRowId={selectedRowId}
                 setSelectedRowId={setSelectedRowId}
-            >
-            </TechnoDataTable>
+                >
+            </TechnoDataTableAdvanced>
         </>
     )
 }

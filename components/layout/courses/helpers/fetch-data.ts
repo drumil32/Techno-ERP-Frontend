@@ -22,10 +22,10 @@ export const fetchUniqueCourses = async ({ queryKey }: any) => {
     return res;
 };
 
-export const createCourse = async ({ queryKey }: any) => {
+export const createCourse = async (params : any) => {
     console.log("Creating courses : ");
-    console.log("Query key is : ", queryKey);
-    const [, params] = queryKey;  
+    // console.log("Query key is : ", queryKey);
+    // const [, params] = queryKey;  
     console.log("Params are : ", params);
     const res = await apiRequest(API_METHODS.POST, API_ENDPOINTS.createCourse, params);
     console.log("Response is : ", res)
@@ -64,10 +64,8 @@ export const fetchFilteredSubjects = async ({ queryKey }: any) => {
 };
 
 
-export const createSubject = async ({ queryKey }: any) => {
+export const createSubject = async (params : any) => {
     console.log("Creating subject : ");
-    console.log("Query key is : ", queryKey);
-    const [, params] = queryKey;  
     console.log("Params are : ", params);
     const res = await apiRequest(API_METHODS.POST, API_ENDPOINTS.createSubject, params);
     console.log("Response is : ", res)

@@ -6,40 +6,41 @@ import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { fetchSubjects } from "./helpers/fetch-data";
 import { Button } from "@/components/ui/button";
-import TechnoDataTable from "@/components/custom-ui/data-table/techno-data-table";
 import { SITE_MAP } from "@/common/constants/frontendRouting";
 import { getCurrentBreadCrumb } from "@/lib/getCurrentBreadCrumb";
+import TechnoDataTableAdvanced from "@/components/custom-ui/data-table/techno-data-table-advanced";
+import { CreateSubjectDialog } from "@/components/custom-ui/create-dialog/create-subject-dialog";
 
-interface Subject{
-    serialNo? : number,
-    subjectId : string,
-    subjectName : string,
-    subjectCode : string,
-    instructorName : string,
-    instructorId : string,
-    numberOfLectures : string
+interface Subject {
+    serialNo?: number,
+    subjectId: string,
+    subjectName: string,
+    subjectCode: string,
+    instructorName: string,
+    instructorId: string,
+    numberOfLectures: number
 }
 
 interface SubjectInformation {
-    courseId : string,
-    courseName : string,
-    courseCode : string,
-    semesterId : string,
-    semesterNumber : string,
-    academicYear : string,
-    courseYear : string,
-    collegeName : string,
-    departmentName : string,
-    departmentHOD : string,
-    subjectDetails : Subject[]
+    courseId: string,
+    courseName: string,
+    courseCode: string,
+    semesterId: string,
+    semesterNumber: string,
+    academicYear: string,
+    courseYear: string,
+    collegeName: string,
+    departmentName: string,
+    departmentHOD: string,
+    subjectDetails: Subject[]
 }
 
-interface SubjectApiResponse{
-    subjectInformation : SubjectInformation
+interface SubjectApiResponse {
+    subjectInformation: SubjectInformation
 }
 
 export const SingleCoursePage = () => {
-    
+
     const pathname = usePathname();
     const routerNav = useRouter();
     const searchParams = useSearchParams();
@@ -50,6 +51,7 @@ export const SingleCoursePage = () => {
     console.log("Semester Id : ", semesterId);
     const rows = [4, 4];
 
+    const [createSubjectDialogOpen, setCreateSubjectDialogOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -58,15 +60,15 @@ export const SingleCoursePage = () => {
 
     const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const handleViewMore = (row : Subject) => {
+    const handleViewMore = (row: Subject) => {
         console.log(row);
-        console.log("Subject ID : ",row.subjectId);
-        console.log("Instructor ID : ",row.instructorId);
-        console.log("Course ID : ",courseId);
-        console.log("Semester ID : ",semesterId);
+        console.log("Subject ID : ", row.subjectId);
+        console.log("Instructor ID : ", row.instructorId);
+        console.log("Course ID : ", courseId);
+        console.log("Semester ID : ", semesterId);
         console.log("Path Name is : ", pathname);
         const currentCourse = getCurrentBreadCrumb(pathname);
-        const redirectionPath =  `${SITE_MAP.ACADEMICS.COURSES}/${currentCourse}/${row.subjectCode}?crsi=${courseId}&si=${semesterId}&subi=${row.subjectId}&ii=${row.instructorId}`;
+        const redirectionPath = `${SITE_MAP.ACADEMICS.COURSES}/${currentCourse}/${row.subjectCode}?crsi=${courseId}&si=${semesterId}&subi=${row.subjectId}&ii=${row.instructorId}`;
 
         routerNav.push(redirectionPath);
     };
@@ -94,8 +96,8 @@ export const SingleCoursePage = () => {
 
     const getQueryParams = () => {
         const params: { [key: string]: any } = {
-            courseId : courseId,
-            semesterId : semesterId,
+            courseId: courseId,
+            semesterId: semesterId,
             search: debouncedSearch,
             refreshKey
         };
@@ -113,24 +115,25 @@ export const SingleCoursePage = () => {
     });
 
 
-    const subjectResponse : SubjectApiResponse = subjectQuery.data as SubjectApiResponse || {};
+    const subjectResponse: SubjectApiResponse = subjectQuery.data as SubjectApiResponse || {};
     console.log(subjectResponse);
     let subjects = subjectResponse?.subjectInformation?.subjectDetails || [];
 
+    console.log("Subject information is : ", subjects);
     subjects.forEach((subject, index) => {
         subject.serialNo = index + 1;
     });
-      
+
 
     const courseData = {
-        "Course Name" : subjectResponse?.subjectInformation?.courseName,
-        "Course Year" : subjectResponse?.subjectInformation?.courseYear,
-        "Semester" : subjectResponse?.subjectInformation?.semesterNumber,
-        "Academic Year" : subjectResponse?.subjectInformation?.academicYear,
-        "Course Code" : subjectResponse?.subjectInformation?.courseCode,
-        "Department" : subjectResponse?.subjectInformation?.departmentName,
-        "HOD" : subjectResponse?.subjectInformation?.departmentHOD,
-        "College Name" : subjectResponse?.subjectInformation?.collegeName
+        "Course Name": subjectResponse?.subjectInformation?.courseName,
+        "Course Year": subjectResponse?.subjectInformation?.courseYear,
+        "Semester": subjectResponse?.subjectInformation?.semesterNumber,
+        "Academic Year": subjectResponse?.subjectInformation?.academicYear,
+        "Course Code": subjectResponse?.subjectInformation?.courseCode,
+        "Department": subjectResponse?.subjectInformation?.departmentName,
+        "HOD": subjectResponse?.subjectInformation?.departmentHOD,
+        "College Name": subjectResponse?.subjectInformation?.collegeName
     }
 
     console.log(courseData);
@@ -197,7 +200,7 @@ export const SingleCoursePage = () => {
         { accessorKey: 'subjectName', header: 'Subject Name' },
         { accessorKey: 'subjectCode', header: 'Subject Code' },
         { accessorKey: 'instructorName', header: 'Instructor' },
-        { accessorKey : 'numberOfLectures', header : 'No. of Lectures'},
+        { accessorKey: 'numberOfLectures', header: 'No. of Lectures' },
         {
             id: 'actions',
             header: 'Actions',
@@ -213,31 +216,40 @@ export const SingleCoursePage = () => {
         },
     ];
 
-
     return (
         <>
-        <div className="pb-6">
-        <DynamicInfoGrid
-                columns={2}
-                rowsPerColumn={rows}
-                data={courseData}
-                design={{
-                    containerWidth: "1339px",
-                    containerHeight: "119px",
-                    columnWidth: "475px",
-                    columnHeight: "96px",
-                    columnGap: "65px",
-                    rowGap: "12px",
-                    keyWidth: "125px",
-                    valueWidth: "333px",
-                    fontSize: "14px"
+            <div className="pb-6">
+                <DynamicInfoGrid
+                    columns={2}
+                    rowsPerColumn={rows}
+                    data={courseData}
+                    design={{
+                        containerWidth: "1339px",
+                        containerHeight: "119px",
+                        columnWidth: "475px",
+                        columnHeight: "96px",
+                        columnGap: "65px",
+                        rowGap: "12px",
+                        keyWidth: "125px",
+                        valueWidth: "333px",
+                        fontSize: "14px"
+                    }}
+                />
+            </div>
+
+            <CreateSubjectDialog
+                openDialog={createSubjectDialogOpen}
+                onOpenChange={setCreateSubjectDialogOpen}
+                data={{
+                    courseId : courseId!,
+                    semesterId : semesterId!,
+                    courseName : subjectResponse?.subjectInformation?.courseName,
+                    academicYear : subjectResponse?.subjectInformation?.academicYear,
+                    semester : parseInt(subjectResponse?.subjectInformation?.semesterNumber!)
                 }}
             />
 
-        </div>
-          
-
-            <TechnoDataTable
+            <TechnoDataTableAdvanced
                 columns={columns}
                 data={subjects}
                 tableName="Subjects List"
@@ -247,8 +259,15 @@ export const SingleCoursePage = () => {
                 showPagination={false}
                 selectedRowId={selectedRowId}
                 setSelectedRowId={setSelectedRowId}
+                showAddButton={true}
+                showEditButton={false}
+                visibleRows={10}
+                addButtonPlacement={"top"}
+                addBtnLabel={"Add"}
+                addViaDialog={true}
+                onAddClick={() => setCreateSubjectDialogOpen(true)}
             >
-            </TechnoDataTable>
+            </TechnoDataTableAdvanced>
         </>
     );
 }

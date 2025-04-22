@@ -339,3 +339,10 @@ export enum CourseMaterialType{
   PPLAN = "PPlan",
   General = "General"
 }
+
+
+export enum CollegeNames{
+  "TIHS" = "TIHS",
+  "TIMS" = "TIMS",
+  "TCL" = "TCL",
+}

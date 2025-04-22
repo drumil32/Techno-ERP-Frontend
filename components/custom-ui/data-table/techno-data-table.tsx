@@ -141,7 +141,7 @@ export default function TechnoDataTable({
 
       <div className="relative min-h-[580px] overflow-auto">
         <Table className="w-full">
-          <TableHeader className="bg-[#F7F7F7] sticky top-0 z-5">
+          <TableHeader className="bg-[#F7F7F7] sticky top-0 ">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="h-10">
                 {headerGroup.headers.map((header, index) => (
