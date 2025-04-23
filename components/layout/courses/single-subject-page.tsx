@@ -7,46 +7,21 @@
 
 "use client";
 import DynamicInfoGrid from "@/components/custom-ui/info-grid/info-grid";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { fetchSchedule } from "./helpers/fetch-data";
-import { Trash2, Upload } from "lucide-react";
-import { LectureConfirmation } from "@/types/enum";
+import { DeleteIcon, Trash2, Upload } from "lucide-react";
+import { CourseMaterialType, LectureConfirmation } from "@/types/enum";
 import SubjectMaterialsSection from "@/components/custom-ui/documents/document-section";
 import TechnoDataTableAdvanced from "@/components/custom-ui/data-table/techno-data-table-advanced";
-import { prepareSubjectMaterial, processPlan } from "./helpers/prepare-subject-materials";
+import { prepareSubjectMaterial, SubjectMaterial } from "./helpers/prepare-subject-materials";
 import { UploaderDialogWrapper } from "@/components/document-upload/document-upload-wrapper";
-
-
-const dummyMaterials = [
-    {
-        name: "ProductStrategyPresentation.pdf",
-        link: "https://example.com/ProductStrategyPresentation.pdf",
-        metadata: { topic: "General" },
-    },
-    {
-        name: "MarketTrends_2024_Report.pdf",
-        link: "https://example.com/MarketTrends_2024_Report.pdf",
-        metadata: { topic: "1. Introduction to Marketing Str" },
-    },
-    {
-        name: "ConsumerBehaviorCaseStudy.pdf",
-        link: "https://example.com/ConsumerBehaviorCaseStudy.pdf",
-        metadata: { topic: "2. Introduction to Marketing Str" },
-    },
-    {
-        name: "BrandingFundamentals.pdf",
-        link: "https://example.com/BrandingFundamentals.pdf",
-        metadata: { topic: "3. Introduction to Marketing Str" },
-    },
-    {
-        name: "AdvancedPricingModels.pdf",
-        link: "https://example.com/AdvancedPricingModels.pdf",
-        metadata: { topic: "4. Introduction to Marketing Str" },
-    },
-];
+import { API_ENDPOINTS } from "@/common/constants/apiEndpoints";
+import axios from 'axios';
+import { ConfirmDialog } from "@/components/custom-ui/confirm-dialog/confirm-dialog";
+import { Button } from "@/components/ui/button";
 
 
 export interface Plan {
@@ -100,6 +75,7 @@ const calculateAttendance = (plan: Plan) => {
 
 export const SingleSubjectPage = () => {
 
+    const queryClient = useQueryClient();
     const pathname = usePathname();
     const routerNav = useRouter();
     const searchParams = useSearchParams();
@@ -115,11 +91,31 @@ export const SingleSubjectPage = () => {
 
     const rows = [3, 4, 4];
 
-    const [materials, setMaterials] = useState(dummyMaterials);
+    const [materials, setMaterials] = useState([{}]);
     const [refreshKey, setRefreshKey] = useState(0);
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [showDocumentUploader, setShowDocumentUploader] = useState(false);
+    const [uploadContext, setUploadContext] = useState<{
+        planId: string;
+        type: "LPlan" | "PPlan";
+        courseId: string;
+        semesterId: string;
+        subjectId: string;
+        instructorId: string;
+    } | null>(null);
+
+    const [additionalResourcesContext, setAdditionalResourcesContext] = useState<{
+        courseId: string;
+        semesterId: string;
+        subjectId: string;
+        instructorId: string;
+    } | null>(null);
+
+    const [deleteInfo, setDeleteInfo] = useState<{
+        index: number;
+        material: SubjectMaterial;
+    } | null>(null);
 
     const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
@@ -130,9 +126,37 @@ export const SingleSubjectPage = () => {
         console.log("Accepted files:", files);
     };
 
-
-    const handleFileSave = async (file: File) => {
+    const handlePlanFileSave = async (file: File) => {
         console.log("Handling file save");
+        if (!uploadContext)
+            return;
+
+        console.log("Upload information is: ", uploadContext);
+
+        const formData = new FormData();
+        formData.append("planId", uploadContext.planId);
+        formData.append("type", uploadContext.type);
+        formData.append("courseId", uploadContext.courseId);
+        formData.append("semesterId", uploadContext.semesterId);
+        formData.append("subjectId", uploadContext.subjectId);
+        formData.append("instructorId", uploadContext.instructorId);
+        formData.append("document", file);
+
+        const response = await axios.put(API_ENDPOINTS.uploadPlan, formData, {
+            headers: { // No need to handle headers, it will be done by axios
+            },
+            withCredentials: true,
+        });
+
+        if (response.data.SUCCESS) {
+            toast.success(response.data.MESSAGE);
+            queryClient.invalidateQueries({ queryKey: ['scheduleInfo'] });
+            setUploadContext(null);
+            setShowDocumentUploader(false);
+        }
+        else {
+            toast.error(response.data.ERROR);
+        }
     };
 
     const handleViewMore = (row: any) => {
@@ -143,9 +167,104 @@ export const SingleSubjectPage = () => {
 
     }
 
-    const handleUpload = (row: any) => {
 
-    }
+    const handleDocumentDelete = async () => {
+        if (!deleteInfo)
+            return;
+
+        const { courseId, semesterId, subjectId, planId, type, link: documentUrl } = deleteInfo.material;
+
+        console.log("Delete Info is:", deleteInfo);
+
+        const payload: Record<string, any> = {
+            courseId,
+            semesterId,
+            subjectId,
+            documentUrl,
+        };
+
+        if (type === CourseMaterialType.LPLAN || type === CourseMaterialType.PPLAN) {
+            payload.type = type;
+            payload.planId = planId;
+        }
+
+        try {
+            const response = await axios.delete(API_ENDPOINTS.deleteFileUsingURL, {
+                data: payload,
+                withCredentials: true,
+            });
+
+            if (response.data.SUCCESS) {
+                toast.success(response.data.MESSAGE);
+                queryClient.invalidateQueries({ queryKey: ["scheduleInfo"] });
+                setDeleteInfo(null);
+            }
+            else {
+                toast.error(response.data.ERROR);
+            }
+        }
+        catch (error) {
+            toast.error("An error occurred while deleting the document.");
+            console.error(error);
+        }
+    };
+
+
+    const handleUpload = (row: any, type: "LPlan" | "PPlan") => {
+        setUploadContext({
+            planId: row._id,
+            type,
+            courseId: courseId!,
+            semesterId: semesterId!,
+            subjectId: subjectId!,
+            instructorId: instructorId!
+        });
+
+        setShowDocumentUploader(true);
+    };
+
+
+    const handleAdditionalResourceUpload = () => {
+        setAdditionalResourcesContext({
+            courseId: courseId!,
+            semesterId: semesterId!,
+            subjectId: subjectId!,
+            instructorId: instructorId!
+        });
+        setShowDocumentUploader(true);
+    };
+
+
+    const handleAdditionalResourceFileSave = async (file: File) => {
+        console.log("Handling file save");
+        if (!additionalResourcesContext)
+            return;
+
+        console.log("Upload information is: ", uploadContext);
+
+        const formData = new FormData();
+        formData.append("courseId", additionalResourcesContext.courseId);
+        formData.append("semesterId", additionalResourcesContext.semesterId);
+        formData.append("subjectId", additionalResourcesContext.subjectId);
+        formData.append("instructorId", additionalResourcesContext.instructorId);
+        formData.append("document", file);
+
+        const response = await axios.put(API_ENDPOINTS.uploadAdditionalResources, formData, {
+            headers: { // No need to handle headers, it will be done by axios
+            },
+            withCredentials: true,
+        });
+
+        if (response.data.SUCCESS) {
+            toast.success(response.data.MESSAGE);
+            queryClient.invalidateQueries({ queryKey: ['scheduleInfo'] });
+            setAdditionalResourcesContext(null);
+            setShowDocumentUploader(false);
+        }
+        else {
+            toast.error(response.data.ERROR);
+        }
+    };
 
     const handleSearch = (value: string) => {
         setSearch(value);
@@ -186,7 +305,7 @@ export const SingleSubjectPage = () => {
     };
 
     const filterParams = getQueryParams();
-    console.log("FIlter params : ", filterParams);
+    console.log("Filter params : ", filterParams);
     const subjectQuery = useQuery({
         queryKey: ['scheduleInfo', filterParams, debouncedSearch],
         queryFn: fetchSchedule,
@@ -199,15 +318,15 @@ export const SingleSubjectPage = () => {
     console.log(scheduleResponse);
     let schedule = scheduleResponse?.schedule || [];
 
-    let practicalPlan = schedule?.lecturePlan || [];
-    let lecturePlan = schedule?.practicalPlan || [];
+    let practicalPlan = schedule?.practicalPlan || [];
+    let lecturePlan = schedule?.lecturePlan || [];
     let additionalResources = schedule?.additionalResources || [];
 
     console.log("Practical Plan : ", practicalPlan);
     console.log("Lecture Plan is : ", lecturePlan);
-    const documentMaterials = prepareSubjectMaterial(lecturePlan, practicalPlan, additionalResources, courseId!, semesterId!, subjectId!)
+    const documentMaterials = prepareSubjectMaterial(lecturePlan, practicalPlan, additionalResources, courseId!, semesterId!, subjectId!, instructorId!)
     console.log("Document Materials are : ", documentMaterials);
-
+    // setMaterials(documentMaterials);
     lecturePlan = (schedule?.lecturePlan || []).map(plan => ({
         ...plan,
         attendance: calculateAttendance(plan)
@@ -300,7 +419,7 @@ export const SingleSubjectPage = () => {
     ]);
 
 
-    const columns = [
+    const getColumns = (type: "LPlan" | "PPlan") => [
         { accessorKey: 'unit', header: 'Unit' },
         { accessorKey: 'lectureNumber', header: 'Lecture No' },
         { accessorKey: 'topicName', header: 'Topic Name' },
@@ -313,9 +432,8 @@ export const SingleSubjectPage = () => {
         {
             accessorKey: 'confirmation',
             header: 'Confirmation',
-            cell: ({ row, getValue }: any) => {
+            cell: ({ getValue }: any) => {
                 const value = getValue() || LectureConfirmation.TO_BE_DONE;
-
                 return (
                     <select
                         defaultValue={value}
@@ -349,15 +467,15 @@ export const SingleSubjectPage = () => {
                     </center>
                     <center>
                         <button
-                            onClick={() => { handleUpload(row.original); setShowDocumentUploader(true); }}
-                            className="font-light hover:text-gray-500 "
+                            onClick={() => { handleUpload(row.original, type); setShowDocumentUploader(true); }}
+                            className="font-light hover:text-gray-500"
                         >
                             <Upload size={20} />
                         </button>
                     </center>
                 </div>
             ),
-        }
+        },
     ];
 
 
@@ -384,7 +502,7 @@ export const SingleSubjectPage = () => {
             </div>
 
             <TechnoDataTableAdvanced
-                columns={columns}
+                columns={getColumns("LPlan")}
                 data={lecturePlan}
                 tableName="Lecture Plan"
                 onSearch={handleSearch}
@@ -393,7 +511,7 @@ export const SingleSubjectPage = () => {
                 showPagination={false}
                 selectedRowId={selectedRowId}
                 setSelectedRowId={setSelectedRowId}
-                visibleRows={10}
+                visibleRows={5}
                 showAddButton={true}
                 showEditButton={true}
                 addButtonPlacement={"bottom"}
@@ -404,12 +522,13 @@ export const SingleSubjectPage = () => {
                 open={showDocumentUploader}
                 onClose={() => setShowDocumentUploader(false)}
                 onFileAccepted={handleFileAccepted}
-                onSave={handleFileSave}
+                onSave={uploadContext ? handlePlanFileSave : handleAdditionalResourceFileSave}
                 headingText="Upload Subject Materials"
             />
 
+
             <TechnoDataTableAdvanced
-                columns={columns}
+                columns={getColumns("PPlan")}
                 data={practicalPlan}
                 tableName="Practical Plan"
                 onSearch={handleSearch}
@@ -418,7 +537,7 @@ export const SingleSubjectPage = () => {
                 showPagination={false}
                 selectedRowId={selectedRowId}
                 setSelectedRowId={setSelectedRowId}
-                visibleRows={2}
+                visibleRows={5}
                 showAddButton={true}
                 showEditButton={true}
                 addButtonPlacement={"bottom"}
@@ -427,19 +546,38 @@ export const SingleSubjectPage = () => {
 
             <SubjectMaterialsSection
                 materials={documentMaterials}
-                onRemove={(index, materials) => {
-                    console.log('Removing document');
-                    console.log('Index : ', index);
-                    console.log('Materials : ', materials);
-                    setMaterials((prev) => prev.filter((_, i) => i !== index))
-                }
-                }
-                onUpload={() => alert("Upload button clicked!")}
+                onRemove={(index, documentMaterials) => {
+                    setDeleteInfo({ index, material: documentMaterials.at(index) as SubjectMaterial });
+                }}
+                onUpload={handleAdditionalResourceUpload}
                 nameFontSize="text-sm"
                 metadataFontSize="text-xs"
             />
 
-
+            <ConfirmDialog
+                open={!!deleteInfo}
+                icon={<Trash2 className=" pb-1 text-gray-500" />}
+                title="Deleting a Document?"
+                description={
+                    <>
+                        Are you sure you want to delete the document{" "}
+                        <strong>{deleteInfo?.material.name}</strong>?<br />
+                        <center>
+                            <Button className="pt-2 mt-2 text-lg bg-white hover:bg-white">
+                                <a
+                                    href={deleteInfo?.material.link}
+                                    target="_blank"
+                                    className="underline text-blue-800"
+                                >
+                                    View your document here!
+                                </a>
+                            </Button>
+                        </center>
+                    </>
+                }
+                onCancel={() => setDeleteInfo(null)}
+                onConfirm={handleDocumentDelete}
+            />
         </>
     );
 }

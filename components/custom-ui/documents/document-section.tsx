@@ -29,10 +29,6 @@ type Props = {
 //   console.log(index);
 // }
 
-// const onUpload  = () => {
-
-// }
-
 export default function SubjectMaterialsSection({
   materials,
   nameFontSize = "text-sm",

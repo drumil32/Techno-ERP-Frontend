@@ -155,10 +155,8 @@ export const uploadAdditionalResources = async ({ queryKey }: any) => {
     return res;
 };
 
-export const uploadPlanDocument = async ({ queryKey }: any) => {
+export const uploadPlanDocument = async (params: any) => {
     console.log("Upload plan document : ");
-    console.log("Query key is : ", queryKey);
-    const [, params] = queryKey;  
     console.log("Params are : ", params);
     const res = await apiRequest(API_METHODS.POST, API_ENDPOINTS.uploadPlan, params);
     console.log("Response is : ", res)

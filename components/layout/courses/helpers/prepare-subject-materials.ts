@@ -2,11 +2,12 @@ import { Course, CourseMaterialType } from "@/types/enum";
 import { Plan } from "../single-subject-page";
 import { sub } from "date-fns";
 
-interface SubjectMaterial {
+export interface SubjectMaterial {
     courseId: string,
     semesterId: string,
     subjectId: string,
     planId?: string,
+    instructorId : string,
     type: CourseMaterialType,
     link: string,
     name: string,
@@ -20,7 +21,7 @@ export const parseDocumentUrl = (documentUrl: string) => {
     return parts[parts.length - 1];
 }
 
-export const processPlan = (plans: Plan[], prefix: string, type: CourseMaterialType, courseId: string, semesterId: string, subjectId: string) => {
+export const processPlan = (plans: Plan[], prefix: string, type: CourseMaterialType, courseId: string, semesterId: string, subjectId: string, instructorId : string) => {
     const courseMaterials: SubjectMaterial[] = [];
     if (plans.length > 0) {
         for (let plan of plans) {
@@ -30,6 +31,7 @@ export const processPlan = (plans: Plan[], prefix: string, type: CourseMaterialT
                     semesterId: semesterId,
                     subjectId: subjectId,
                     planId: plan._id,
+                    instructorId : instructorId,
                     type: type,
                     link: document,
                     name: parseDocumentUrl(document),
@@ -44,7 +46,7 @@ export const processPlan = (plans: Plan[], prefix: string, type: CourseMaterialT
     return courseMaterials;
 }
 
-export const processAdditionalResources = (documents : string[], prefix : string, type : CourseMaterialType, courseId : string, semesterId : string, subjectId : string) => {
+export const processAdditionalResources = (documents : string[], prefix : string, type : CourseMaterialType, courseId : string, semesterId : string, subjectId : string, instructorId : string) => {
     const courseMaterials : SubjectMaterial[] = [];
     for (let document of documents) {
         courseMaterials.push({
@@ -52,6 +54,7 @@ export const processAdditionalResources = (documents : string[], prefix : string
             semesterId: semesterId,
             subjectId: subjectId,
             planId: undefined,
+            instructorId : instructorId,
             type: type,
             link: document,
             name: parseDocumentUrl(document),
@@ -65,17 +68,16 @@ export const processAdditionalResources = (documents : string[], prefix : string
 }
 
 
-export const prepareSubjectMaterial = (lecturePlan: Plan[], practicalPlan: Plan[], additionalResources: string[], courseId: string, semesterId: string, subjectId: string) => {
+export const prepareSubjectMaterial = (lecturePlan: Plan[], practicalPlan: Plan[], additionalResources: string[], courseId: string, semesterId: string, subjectId: string, instructorId : string) => {
     console.log(lecturePlan);
     console.log(practicalPlan);
     console.log(additionalResources);
     console.log("Course ID : ", courseId);
     console.log("Subject ID : ", subjectId);
     console.log("Semester ID : ", semesterId);
-
-    const processedLectureMaterials = processPlan(lecturePlan, "L", CourseMaterialType.LPLAN, courseId, semesterId, subjectId);
-    const processedPracticalMaterials = processPlan(practicalPlan,"P", CourseMaterialType.PPLAN, courseId, semesterId, subjectId);
-    const processedAdditionalResources = processAdditionalResources(additionalResources, "G", CourseMaterialType.General, courseId, semesterId, subjectId);
+    const processedLectureMaterials = processPlan(lecturePlan, "L", CourseMaterialType.LPLAN, courseId, semesterId, subjectId, instructorId);
+    const processedPracticalMaterials = processPlan(practicalPlan,"P", CourseMaterialType.PPLAN, courseId, semesterId, subjectId, instructorId);
+    const processedAdditionalResources = processAdditionalResources(additionalResources, "G", CourseMaterialType.General, courseId, semesterId, subjectId, instructorId);
     console.log("Processed Lecture Materials : ", processedLectureMaterials);
     console.log("Processed Practical Materials : ", processedPracticalMaterials);
     console.log("Processed AdditionalResources Materials : ", processedAdditionalResources);
