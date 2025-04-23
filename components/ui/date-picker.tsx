@@ -1,5 +1,5 @@
 import React from 'react';
-import { Control, FieldPath, FieldValues } from 'react-hook-form';
+import { Control, FieldPath, FieldValues, PathValue } from 'react-hook-form';
 import { format, parse, isValid } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
@@ -32,7 +32,8 @@ interface DatePickerProps<
   fromYear?: number;
   toYear?: number;
   isRequired?: boolean;
-  defaultMonth?: Date; 
+  defaultMonth?: Date;
+  defaultSelectedDate?: Date; 
 }
 
 const parseDateString = (
@@ -69,11 +70,17 @@ export function DatePicker<
   toYear = new Date().getFullYear() + 10,
   isRequired = false,
   defaultMonth = new Date(),
+  defaultSelectedDate, 
 }: DatePickerProps<TFieldValues, TName>) {
   return (
     <FormField
       control={control}
       name={name}
+      defaultValue={
+        defaultSelectedDate ? 
+          format(defaultSelectedDate, dateFormat) as PathValue<TFieldValues, TName> 
+          : undefined
+      } 
       render={({ field, fieldState: { error } }) => {
         const selectedDate = parseDateString(field.value, dateFormat);
 
@@ -120,7 +127,7 @@ export function DatePicker<
                   onSelect={handleDateSelect}
                   disabled={disabled || calendarProps?.disabled}
                   initialFocus
-                  defaultMonth={defaultMonth} 
+                  defaultMonth={selectedDate || defaultMonth} // Show selected date's month if available, otherwise fall back to defaultMonth
                   captionLayout={showYearMonthDropdowns ? 'dropdown-buttons' : 'buttons'}
                   fromYear={showYearMonthDropdowns ? fromYear : undefined}
                   toYear={showYearMonthDropdowns ? toYear : undefined}

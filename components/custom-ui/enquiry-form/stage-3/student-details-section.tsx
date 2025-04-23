@@ -354,7 +354,6 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       Mother's Phone Number
-                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input

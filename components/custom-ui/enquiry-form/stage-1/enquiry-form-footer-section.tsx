@@ -120,7 +120,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             </DialogHeader>
             <div className="flex gap-2 items-center text-left">
               <FaCircleExclamation className="text-yellow-500 w-8 h-8" />
-              <span>Please reverify all details again before submitting the enquiry form.</span>
+              <span>Please reverify all details again before submitting.</span>
             </div>
             <DialogFooter>
               <DialogClose asChild>

@@ -24,7 +24,7 @@ export default function CRMLayout({ children }: { children: React.ReactNode }) {
         <>
             <TechnoTopHeader headerItems={HEADER_ITEMS} />
             <div className="flex flex-col px-4 gap-4">
-                <TechnoBreadCrumb />
+                <TechnoBreadCrumb rootUrl='/c/marketing/all-leads' />
                 <TechnoFilterProvider>
                     {children}
                 </TechnoFilterProvider>

@@ -102,6 +102,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 label="Date of Enquiry"
                 placeholder="Select Enquiry Date"
                 showYearMonthDropdowns={true}
+                defaultSelectedDate={new Date()}
                 labelClassName='font-inter font-normal text-[12px] text-[#666666]'
               />
 
@@ -161,6 +162,8 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                       Email ID
+                      <span className="text-red-500 pl-0">*</span>
+                      
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -183,7 +186,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Father Name
+                      Father's Name
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
@@ -207,7 +210,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Father Phone Number
+                      Father's Phone Number
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
@@ -231,7 +234,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Father Occupation
+                      Father's Occupation
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
@@ -255,7 +258,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Mother Name
+                      Mother's Name
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
@@ -279,8 +282,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Mother Phone Number
-                      <span className="text-red-500 pl-0">*</span>
+                      Mother's Phone Number
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -303,7 +305,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Mother Occupation
+                      Mother's Occupation
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
@@ -350,12 +352,12 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue className="text-[#9D9D9D]" placeholder="Select Category" />
+                          <SelectValue className="text-[#9D9D9D]" placeholder="Select category" />
                         </SelectTrigger>
                         <SelectContent>
                           {Object.values(Category).map((category) => (
                             <SelectItem key={category} value={category}>
-                              {toPascal(category)}
+                              {category}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -408,7 +410,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                     <FormControl>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue className="text-[#9D9D9D]" placeholder="Select Course" />
+                          <SelectValue className="text-[#9D9D9D]" placeholder="Select course" />
                         </SelectTrigger>
                         <SelectContent>
                           {Object.values(Course).map((course) => (
@@ -424,34 +426,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 )}
               />
 
-              <FormField
-                key="reference"
-                control={form.control}
-                name="reference"
-                render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Reference
-                      <span className="text-red-500 pl-0">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue className="text-[#9D9D9D]" placeholder="Select Reference" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.values(AdmissionReference).map((ref) => (
-                            <SelectItem key={ref} value={ref}>
-                              {ref}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
             </div>
           </AccordionContent>
         </div>
