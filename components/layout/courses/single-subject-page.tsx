@@ -17,6 +17,7 @@ import { LectureConfirmation } from "@/types/enum";
 import SubjectMaterialsSection from "@/components/custom-ui/documents/document-section";
 import TechnoDataTableAdvanced from "@/components/custom-ui/data-table/techno-data-table-advanced";
 import { prepareSubjectMaterial, processPlan } from "./helpers/prepare-subject-materials";
+import { UploaderDialogWrapper } from "@/components/document-upload/document-upload-wrapper";
 
 
 const dummyMaterials = [
@@ -118,10 +119,21 @@ export const SingleSubjectPage = () => {
     const [refreshKey, setRefreshKey] = useState(0);
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [showDocumentUploader, setShowDocumentUploader] = useState(false);
 
     const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
     const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+
+    const handleFileAccepted = (files: File[]) => {
+        console.log("Accepted files:", files);
+    };
+
+
+    const handleFileSave = async (file: File) => {
+        console.log("Handling file save");
+    };
 
     const handleViewMore = (row: any) => {
         //TODO : This won't be there anymore
@@ -287,7 +299,7 @@ export const SingleSubjectPage = () => {
         subjectQuery.isFetching,
     ]);
 
-    
+
     const columns = [
         { accessorKey: 'unit', header: 'Unit' },
         { accessorKey: 'lectureNumber', header: 'Lecture No' },
@@ -337,7 +349,7 @@ export const SingleSubjectPage = () => {
                     </center>
                     <center>
                         <button
-                            onClick={() => handleUpload(row.original)}
+                            onClick={() => { handleUpload(row.original); setShowDocumentUploader(true); }}
                             className="font-light hover:text-gray-500 "
                         >
                             <Upload size={20} />
@@ -371,39 +383,47 @@ export const SingleSubjectPage = () => {
 
             </div>
 
-            <TechnoDataTableAdvanced 
-             columns={columns}
-             data={lecturePlan}
-             tableName="Lecture Plan"
-             onSearch={handleSearch}
-             searchTerm={search}
-             handleViewMore={handleViewMore}
-             showPagination={false}
-             selectedRowId={selectedRowId}
-             setSelectedRowId={setSelectedRowId}
-             visibleRows = {10}
-             showAddButton = {true}
-             showEditButton = {true}
-             addButtonPlacement  ={ "bottom"}
-             addBtnLabel = {"Add Lecture Plan"} >
-             </TechnoDataTableAdvanced>
+            <TechnoDataTableAdvanced
+                columns={columns}
+                data={lecturePlan}
+                tableName="Lecture Plan"
+                onSearch={handleSearch}
+                searchTerm={search}
+                handleViewMore={handleViewMore}
+                showPagination={false}
+                selectedRowId={selectedRowId}
+                setSelectedRowId={setSelectedRowId}
+                visibleRows={10}
+                showAddButton={true}
+                showEditButton={true}
+                addButtonPlacement={"bottom"}
+                addBtnLabel={"Add Lecture Plan"} >
+            </TechnoDataTableAdvanced>
 
-            <TechnoDataTableAdvanced 
-             columns={columns}
-             data={practicalPlan}
-             tableName="Practical Plan"
-             onSearch={handleSearch}
-             searchTerm={search}
-             handleViewMore={handleViewMore}
-             showPagination={false}
-             selectedRowId={selectedRowId}
-             setSelectedRowId={setSelectedRowId}
-             visibleRows = {2}
-             showAddButton = {true}
-             showEditButton = {true}
-             addButtonPlacement  ={ "bottom"}
-             addBtnLabel = {"Add Practical Plan"} >
-             </TechnoDataTableAdvanced>
+            <UploaderDialogWrapper
+                open={showDocumentUploader}
+                onClose={() => setShowDocumentUploader(false)}
+                onFileAccepted={handleFileAccepted}
+                onSave={handleFileSave}
+                headingText="Upload Subject Materials"
+            />
+
+            <TechnoDataTableAdvanced
+                columns={columns}
+                data={practicalPlan}
+                tableName="Practical Plan"
+                onSearch={handleSearch}
+                searchTerm={search}
+                handleViewMore={handleViewMore}
+                showPagination={false}
+                selectedRowId={selectedRowId}
+                setSelectedRowId={setSelectedRowId}
+                visibleRows={2}
+                showAddButton={true}
+                showEditButton={true}
+                addButtonPlacement={"bottom"}
+                addBtnLabel={"Add Practical Plan"} >
+            </TechnoDataTableAdvanced>
 
             <SubjectMaterialsSection
                 materials={documentMaterials}
@@ -411,7 +431,8 @@ export const SingleSubjectPage = () => {
                     console.log('Removing document');
                     console.log('Index : ', index);
                     console.log('Materials : ', materials);
-                    setMaterials((prev) => prev.filter((_, i) => i !== index))}
+                    setMaterials((prev) => prev.filter((_, i) => i !== index))
+                }
                 }
                 onUpload={() => alert("Upload button clicked!")}
                 nameFontSize="text-sm"
