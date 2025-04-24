@@ -52,17 +52,17 @@ import { CustomStyledDropdown } from '../custom-dropdown/custom-styled-dropdown'
 const confirmationStatus: Record<LectureConfirmation, { name: string; textStyle: string; bgStyle: string }> = {
   [LectureConfirmation.TO_BE_DONE]: {
     name: "To Be Done",
-    textStyle: "text-yellow-900 text-center",
+    textStyle: "text-yellow-800",
     bgStyle: "bg-yellow-100",
   },
   [LectureConfirmation.CONFIRMED]: {
     name: "Confirmed",
-    textStyle: "text-green-000  text-center",
+    textStyle: "text-green-800",
     bgStyle: "bg-green-100",
   },
   [LectureConfirmation.DELAYED]: {
     name: "Delayed",
-    textStyle: "text-red-800  text-center",
+    textStyle: "text-red-800",
     bgStyle: "bg-red-100",
   },
 };
@@ -105,6 +105,11 @@ export default function TechnoDataTableAdvanced({
   const [addingRow, setAddingRow] = useState(false);
   const [newRow, setNewRow] = useState<any>({});
 
+  console.log("New Row : ", newRow);
+  console.log("Edited Data : ", editedData);
+  console.log("Adding Row : ", addingRow);
+  console.log("Editing : ", editing);
+
   useEffect(() => {
     setGlobalFilter(searchTerm);
   }, [searchTerm]);
@@ -113,20 +118,6 @@ export default function TechnoDataTableAdvanced({
     const value = e.target.value;
     setGlobalFilter(value);
     if (onSearch) onSearch(value);
-  };
-
-  const handleSort = (columnName: string) => {
-    const newOrder = sortColumn === columnName ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc';
-    setSortColumn(columnName);
-    setSortOrder(newOrder);
-    if (onSort) onSort(columnName, newOrder);
-  };
-
-  const getSortIcon = (columnName: string) => {
-    if (sortColumn === columnName) {
-      return sortOrder === 'asc' ? <ArrowUp className="ml-1 h-4 w-4" /> : <ArrowDown className="ml-1 h-4 w-4" />;
-    }
-    return null;
   };
 
   const handleEditToggle = () => {
@@ -164,10 +155,6 @@ export default function TechnoDataTableAdvanced({
     manualPagination: true,
     pageCount: totalPages,
   });
-
-
-
-  // const nonClickableColumns = ['actions', 'leadType', 'finalConversion', "leadsFollowUpCount", 'yellowLeadsFollowUpCount'];
 
   return (
     <div className="w-full mb-3 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -279,7 +266,7 @@ export default function TechnoDataTableAdvanced({
                             }
 
                             if (columnId === 'confirmation') {
-                              if (editing || addingRow) {
+                              if (editing) {
                                 return (
                                   <CustomStyledDropdown
                                     value={value}
@@ -301,16 +288,18 @@ export default function TechnoDataTableAdvanced({
                               );
                             }
 
-                            if (editing || addingRow) {
+                            // || addingRow
+                            if (editing) {
                               return (
                                 <input
                                   type="text"
                                   className="border rounded px-2 py-1 text-sm w-3/4"
                                   value={value ?? ''}
                                   onChange={(e) =>
-                                    editing
-                                      ? handleEditedChange(rowIndex, columnId, e.target.value)
-                                      : handleNewRowChange(columnId, e.target.value)
+                                    // editing
+                                    // ? handleEditedChange(rowIndex, columnId, e.target.value)
+                                    // : handleNewRowChange(columnId, e.target.value)
+                                    handleEditedChange(rowIndex, columnId, e.target.value)
                                   }
                                 />
                               );
@@ -324,7 +313,7 @@ export default function TechnoDataTableAdvanced({
                   </TableRow>
                 ))}
                 {!addViaDialog && addingRow && (
-                  <TableRow className="h-[39px] cursor-pointer bg-gray-50">
+                  <TableRow className="h-[39px] cursor-pointer">
                     {columns.map((column: any, idx: number) => {
                       const columnId = column.accessorKey || column.id;
                       console.log("Here, column Id : ", columnId);
@@ -358,11 +347,27 @@ export default function TechnoDataTableAdvanced({
                       else {
                         return (
                           <TableCell key={idx} className="h-[39px]">
-                            <Input
+                            {/* <Input
                               className="editable-cell px-2 py-2"
                               value={newRow[columnId] || ''}
                               onChange={(e) => handleNewRowChange(columnId, e.target.value)}
                             />
+                             */}
+
+                             {/* TODO : VALIDATION CHECK HERE */}
+                            {/* <div className="flex flex-col items-center">
+                              <Input
+                                className={`editable-cell px-2 py-2 ${validationErrors[columnId] ? 'border-red-500' : ''}`}
+                                value={newRow[columnId] || ''}
+                                onChange={(e) => {
+                                  handleNewRowChange(columnId, e.target.value);
+                                  setValidationErrors((prev) => ({ ...prev, [columnId]: '' }));
+                                }}
+                              />
+                              {validationErrors[columnId] && (
+                                <span className="text-xs text-red-500">{validationErrors[columnId]}</span>
+                              )}
+                              </div> */}
                           </TableCell>
                         );
                       }
@@ -391,23 +396,24 @@ export default function TechnoDataTableAdvanced({
         </Table>
 
         {addButtonPlacement === "bottom" && (
-          <div className="flex justify-between items-center mt-2 w-full">
-            {/* By default mode of add mode */}
-            <AddMoreDataBtn
+          <div className="h-[50px] flex justify-between items-center pt-2 w-full">
+            <Button
+              variant="outline"
+              className="h-[40px] p-2 pr-3 upload-materials-border-box transition btnLabelAdd                                                                                       font-inter bg-white text-black hover:bg-gray-200"
               onClick={() => {
                 if (addViaDialog && onAddClick) {
                   onAddClick();
-                }
-                else {
+                } else {
                   setAddingRow(true);
                   setNewRow({});
                 }
               }}
-              btnClassName="btnLabelAdd upload-materials-border-box font-inter bg-white text-black hover:bg-gray-200 p-2 pr-3"
-              labelClassName="font-inter btnLabelAdd text-md"
               disabled={addingRow || editing}
-              icon={<FolderPlus></FolderPlus>} label={addBtnLabel}>
-            </AddMoreDataBtn>
+            >
+              <span className='font-inter'><FolderPlus className='text-xl' /></span>
+              <p className='font-inter btnLabelAdd text-md'>{addBtnLabel}</p>
+            </Button>
+
 
             {/* Adding/Editing Mode */}
             {!addViaDialog && (addingRow || editing) && (

@@ -64,18 +64,18 @@ interface ScheduleApiResponse {
 const confirmationStatus: Record<LectureConfirmation, { name: string; textStyle: string; bgStyle: string }> = {
     [LectureConfirmation.TO_BE_DONE]: {
         name: "To Be Done",
-        textStyle: "text-gray-700",
-        bgStyle: "bg-yellow-100",
+        textStyle: "text-yellow-100",
+        bgStyle: "bg-yellow-700",
     },
     [LectureConfirmation.CONFIRMED]: {
         name: "Confirmed",
-        textStyle: "text-green-800",
-        bgStyle: "bg-green-100",
+        textStyle: "text-green-100",
+        bgStyle: "bg-green-800",
     },
     [LectureConfirmation.DELAYED]: {
         name: "Delayed",
-        textStyle: "text-red-700",
-        bgStyle: "bg-red-100",
+        textStyle: "text-red-100",
+        bgStyle: "bg-red-700",
     },
 };
 
@@ -553,7 +553,7 @@ export const SingleSubjectPage = () => {
                 visibleRows={5}
                 showAddButton={true}
                 showEditButton={true}
-                addButtonPlacement={"bottom"}
+                addButtonPlacement={"top"}
                 addBtnLabel={"Add Practical Plan"} >
             </TechnoDataTableAdvanced>
 
