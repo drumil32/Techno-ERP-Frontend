@@ -67,6 +67,7 @@ export const API_ENDPOINTS = {
   createDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
   updateDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
   getDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
+  fetchInstructorsMetaData : `${API_DOMAIN}/department-metadata/instructors`,
 
   //Courses 
   createCourse : `${API_DOMAIN}/course`,

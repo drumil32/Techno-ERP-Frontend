@@ -263,7 +263,7 @@ export const SingleCoursePage = () => {
                 showEditButton={false}
                 visibleRows={10}
                 addButtonPlacement={"top"}
-                addBtnLabel={"Add"}
+                addBtnLabel={"Add a Subject"}
                 addViaDialog={true}
                 onAddClick={() => setCreateSubjectDialogOpen(true)}
             >
