@@ -180,6 +180,40 @@ export const SingleSubjectPage = () => {
 
     }
 
+    const saveLecturePlan = async (courseId : string, semesterId : string, subjectId : string, instructorId : string, newRowData : any) => {
+        console.log("Saving lecture plan: ");
+        console.log("Data to save, courseId : ", courseId);
+        console.log("Data to save, semesterId : ", semesterId);
+        console.log("Data to save, subjectId : ", subjectId);
+        console.log("Data to save, instructorId : ", instructorId);
+        console.log("Data to save, new data : ", newRowData);
+        const requestObject = {
+            courseId : courseId,
+            semesterId : semesterId,
+            subjectId : subjectId,
+            instructorId : instructorId,
+            ...newRowData,
+            type : CourseMaterialType.LPLAN
+        }
+
+        const response = await axios.post(API_ENDPOINTS.createPlan, requestObject, {
+            headers: { // No need to handle headers, it will be done by axios
+            },
+            withCredentials: true,
+        });
+
+        console.log("Response is : ", response);
+        
+        if (response.data.SUCCESS) {
+            console.log("Response Data : ", response.data)
+            toast.success(response.data.MESSAGE);
+            queryClient.invalidateQueries({ queryKey: ['scheduleInfo'] });
+        }
+        else {
+            toast.error(response.data.ERROR);
+        }
+    }
+
 
     const handleDocumentDelete = async () => {
         if (!deleteInfo)
@@ -528,7 +562,12 @@ export const SingleSubjectPage = () => {
                 showAddButton={true}
                 showEditButton={true}
                 addButtonPlacement={"bottom"}
-                addBtnLabel={"Add Lecture Plan"} >
+                addBtnLabel={"Add Lecture Plan"} 
+                onSaveNewRow={(newRowData: any) => {
+                    console.log("Saving new row:", newRowData);
+                    saveLecturePlan(courseId!, semesterId!, subjectId!, instructorId!, newRowData);
+                }}
+                >
             </TechnoDataTableAdvanced>
 
             <UploaderDialogWrapper

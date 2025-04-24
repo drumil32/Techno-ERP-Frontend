@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-
+import { z } from "zod";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,6 +48,7 @@ import { LuDownload, LuUpload } from 'react-icons/lu';
 import { AddMoreDataBtn } from '../add-more-data-btn/add-data-btn';
 import { LectureConfirmation } from '@/types/enum';
 import { CustomStyledDropdown } from '../custom-dropdown/custom-styled-dropdown';
+import { IScheduleSchema, scheduleSchema } from '@/components/layout/courses/schemas/scheduleSchema';
 
 const confirmationStatus: Record<LectureConfirmation, { name: string; textStyle: string; bgStyle: string }> = {
   [LectureConfirmation.TO_BE_DONE]: {
@@ -92,7 +93,8 @@ export default function TechnoDataTableAdvanced({
   addButtonPlacement = "top",
   addBtnLabel = "Add",
   addViaDialog = false,
-  onAddClick
+  onAddClick,
+  onSaveNewRow
 }: any) {
 
   console.log("Columns are : ", columns)
@@ -104,11 +106,48 @@ export default function TechnoDataTableAdvanced({
   const [editedData, setEditedData] = useState([...data]);
   const [addingRow, setAddingRow] = useState(false);
   const [newRow, setNewRow] = useState<any>({});
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
 
   console.log("New Row : ", newRow);
   console.log("Edited Data : ", editedData);
   console.log("Adding Row : ", addingRow);
   console.log("Editing : ", editing);
+
+
+  const validateRow = (row: any): boolean => {
+    try {
+      console.log("Row to be validated : ", row);
+      if(row.unit)
+        row.unit = parseInt(row.unit);
+      if(row.lectureNumber)
+        row.lectureNumber = parseInt(row.lectureNumber);
+      if(row.classStrength)
+        row.classStrength = parseInt(row.classStrength);
+      if(row.attendance)
+        row.attendance = parseInt(row.attendance);
+      if(row.absent)
+        row.absent = parseInt(row.absent);
+      const validation = scheduleSchema.parse(row);
+      console.log("Validation result : ", validation);
+      setValidationErrors({});
+      return true;
+    }
+    catch (err) {
+      if (err instanceof z.ZodError) {
+        const errors: Record<string, string> = {};
+        err.errors.forEach((e) => {
+          if (e.path.length > 0) {
+            const key = e.path[0] as string;
+            errors[key] = e.message;
+          }
+        });
+        console.log("Errors are : ", errors);
+        setValidationErrors(errors);
+      }
+      return false;
+    }
+  };
+
 
   useEffect(() => {
     setGlobalFilter(searchTerm);
@@ -347,15 +386,7 @@ export default function TechnoDataTableAdvanced({
                       else {
                         return (
                           <TableCell key={idx} className="h-[39px]">
-                            {/* <Input
-                              className="editable-cell px-2 py-2"
-                              value={newRow[columnId] || ''}
-                              onChange={(e) => handleNewRowChange(columnId, e.target.value)}
-                            />
-                             */}
-
-                             {/* TODO : VALIDATION CHECK HERE */}
-                            {/* <div className="flex flex-col items-center">
+                            <div className="flex flex-col items-center">
                               <Input
                                 className={`editable-cell px-2 py-2 ${validationErrors[columnId] ? 'border-red-500' : ''}`}
                                 value={newRow[columnId] || ''}
@@ -367,7 +398,7 @@ export default function TechnoDataTableAdvanced({
                               {validationErrors[columnId] && (
                                 <span className="text-xs text-red-500">{validationErrors[columnId]}</span>
                               )}
-                              </div> */}
+                            </div>
                           </TableCell>
                         );
                       }
@@ -401,6 +432,7 @@ export default function TechnoDataTableAdvanced({
               variant="outline"
               className="h-[40px] p-2 pr-3 upload-materials-border-box transition btnLabelAdd                                                                                       font-inter bg-white text-black hover:bg-gray-200"
               onClick={() => {
+                setValidationErrors({});
                 if (addViaDialog && onAddClick) {
                   onAddClick();
                 } else {
@@ -421,9 +453,15 @@ export default function TechnoDataTableAdvanced({
                 {/* Save button */}
                 <AddMoreDataBtn onClick={() => {
                   if (addingRow) {
-                    data.push(newRow);
-                    setAddingRow(false);
-                    setNewRow({});
+                    const isValid = validateRow(newRow);
+                    console.log("Is valid : ", isValid);
+                    if(isValid)
+                    {
+                      onSaveNewRow?.(newRow);
+                      data.push(newRow);
+                      setAddingRow(false);
+                      setNewRow({});
+                    }
                   }
                   else {
                     setEditing(false);
