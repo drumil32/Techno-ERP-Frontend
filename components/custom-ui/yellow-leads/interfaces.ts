@@ -14,6 +14,7 @@ export interface YellowLead {
   course: string;
   footFall: boolean;
   finalConversion: FinalConversionStatus;
+  yellowLeadsFollowUpCount:number;
   remarks: string;
   createdAt: string; // ISO Date string
   updatedAt: string; // ISO Date string

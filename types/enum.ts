@@ -16,7 +16,6 @@ export enum Gender {
   MALE = 'MALE',
   FEMALE = 'FEMALE',
   OTHER = 'OTHERS',
-  NOT_TO_MENTION = 'NOT_TO_MENTION'
 }
 
 
@@ -245,18 +244,23 @@ export enum StatesOfIndia {
 }
 
 
+// export enum Countries {
+//   India = "India",
+//   Pakistan = "Pakistan",
+//   China = "China",
+//   Nepal = "Nepal",
+//   Bhutan = "Bhutan",
+//   Bangladesh = "Bangladesh",
+//   Myanmar = "Myanmar",
+//   SriLanka = "Sri Lanka",
+//   Afghanistan = "Afghanistan",
+//   Maldives = "Maldives",
+//   Thailand = "Thailand",
+// }
+
 export enum Countries {
   India = "India",
-  Pakistan = "Pakistan",
-  China = "China",
-  Nepal = "Nepal",
-  Bhutan = "Bhutan",
-  Bangladesh = "Bangladesh",
-  Myanmar = "Myanmar",
-  SriLanka = "Sri Lanka",
-  Afghanistan = "Afghanistan",
-  Maldives = "Maldives",
-  Thailand = "Thailand",
+  Non_India = "Non India",
 }
 // Fee types
 

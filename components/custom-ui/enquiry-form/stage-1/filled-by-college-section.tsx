@@ -22,6 +22,14 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { getCounsellors, getTeleCallers } from './enquiry-form-api';
 import { useQueries } from '@tanstack/react-query';
 import { MultiSelectPopoverCheckbox } from '../../common/multi-select-popover-checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { AdmissionReference } from '@/types/enum';
 
 interface UserRoleInterface {
   _id: string;
@@ -69,6 +77,44 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
 
           <AccordionContent>
             <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-4 gap-x-[32px] bg-white p-4 rounded-[10px]">
+              
+            <FormField
+                key="reference"
+                control={form.control}
+                name="reference"
+                render={({ field }) => (
+                  <FormItem className={`${commonFormItemClass}`}>
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                      Reference
+                      <span className="text-red-500 pl-0">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger className={`${commonFieldClass} w-full`}>
+                          <SelectValue className="text-[#9D9D9D]" placeholder="Select reference" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(AdmissionReference).map((ref) => (
+                            <SelectItem key={ref} value={ref}>
+                              {ref}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+<MultiSelectPopoverCheckbox
+  form={form}
+  name="telecaller"
+  label="Telecaller’s Name"
+  options={telecallers}
+  placeholder="Select Telecaller's Name"
+  className="col-span-1"
+/>
               <MultiSelectPopoverCheckbox
                 form={form}
                 name="counsellor"
@@ -78,21 +124,14 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                 className="col-span-1"
               />
               
-              <MultiSelectPopoverCheckbox
-                form={form}
-                name="telecaller"
-                label="Telecaller’s Name"
-                options={telecallers}
-                placeholder="Select Telecaller's Name"
-                className="col-span-1"
-              />
+              
 
               <FormField
                 key="remarks"
                 control={form.control}
                 name="remarks"
                 render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
+                  <FormItem className={`${commonFormItemClass} col-span-2 col-start-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                       Remarks
                     </FormLabel>
@@ -108,6 +147,8 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                   </FormItem>
                 )}
               />
+
+
             </div>
           </AccordionContent>
         </div>

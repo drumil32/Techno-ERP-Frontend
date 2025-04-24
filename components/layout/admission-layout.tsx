@@ -23,7 +23,7 @@ export default function AdmissionLayout({ children }: { children: React.ReactNod
         <>
             <TechnoTopHeader headerItems={HEADER_ITEMS} />
             <div className="flex flex-col px-4 gap-4">
-                <TechnoBreadCrumb />
+                <TechnoBreadCrumb rootUrl='/c/admissions' />
                 {children}
             </div>
         </>

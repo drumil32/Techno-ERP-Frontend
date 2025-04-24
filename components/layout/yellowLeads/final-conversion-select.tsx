@@ -17,18 +17,20 @@ const conversionStyles: Record<FinalConversionStatus, string> = {
 interface FinalConversionSelectProps {
   value: FinalConversionStatus;
   onChange: (value: FinalConversionStatus) => void;
+  isDisable?:boolean;
 }
 
 export default function FinalConversionSelect({
   value,
   onChange,
+  isDisable=false
 }: FinalConversionSelectProps) {
   const selectedStyle = conversionStyles[value];
 
   return (
-    <Select value={value} onValueChange={(val) => onChange(val as FinalConversionStatus)}>
+    <Select value={value} disabled={isDisable} onValueChange={(val) => onChange(val as FinalConversionStatus)}>
       <SelectTrigger
-        className={`cursor-pointer rounded-md text-sm font-medium px-2 py-1 w-[180px] ${selectedStyle}`}
+        className={`hover:border-slate-600 cursor-pointer border-transparent rounded-md text-sm font-medium px-2 py-1 w-[140px] ${selectedStyle}`}
       >
         <SelectValue placeholder="Select Status" />
       </SelectTrigger>
@@ -37,7 +39,7 @@ export default function FinalConversionSelect({
           <SelectItem
             key={status}
             value={status}
-            className={`hover:border-slate-600 border-2 cursor-pointer rounded-md text-sm font-medium px-3 py-2 transition-all ${conversionStyles[status]}`}
+            className={`hover:border-slate-600 border-transparent border-2 cursor-pointer rounded-md text-sm font-medium px-3 py-2 transition-all ${conversionStyles[status]}`}
           >
             {FinalConversionStatusMapper[status]}
           </SelectItem>

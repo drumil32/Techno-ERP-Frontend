@@ -102,6 +102,7 @@ export default function TechnoFilter({
       updateFilter(filterKey, value);
     }
   };
+
   const handleDateChange = (type: 'start' | 'end', selectedDate: Date | undefined) => {
     if (isThisMonth) {
       setIsThisMonth(false);
@@ -174,7 +175,7 @@ export default function TechnoFilter({
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64">
+      <DropdownMenuContent className="w-auto min-w-[200px] max-w-[400px]">
         {isDateFilter ? (
           <div className="p-2 space-y-4">
             <div className="flex items-center space-x-2 cursor-pointer" onClick={handleThisMonth}>
@@ -257,46 +258,48 @@ export default function TechnoFilter({
                 </span>
               </div>
             )}
-            {filteredOptions.map((option, index) => (
-              <div
-                key={index}
-                className="flex items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer"
-                onClick={() => handleSelect(option)}
-              >
-                <Checkbox
-                  checked={
-                    multiSelect
-                      ? filters[filterKey]?.includes(
-                        typeof option === 'string' ? option : option.id
-                      )
-                      : filters[filterKey] === (typeof option === 'string' ? option : option.id)
-                  }
-                />
-                {filterKey === 'leadType' ? (
-                  <TechnoLeadTypeTag
-                    type={
-                      typeof option === 'string'
-                        ? (option as LeadType)
-                        : (option.label as LeadType)
+            <div className="max-h-[300px] overflow-y-auto">
+              {filteredOptions.map((option, index) => (
+                <div
+                  key={index}
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap"
+                  onClick={() => handleSelect(option)}
+                >
+                  <Checkbox
+                    checked={
+                      multiSelect
+                        ? filters[filterKey]?.includes(
+                          typeof option === 'string' ? option : option.id
+                        )
+                        : filters[filterKey] === (typeof option === 'string' ? option : option.id)
                     }
                   />
-                ) : filterKey === 'finalConversionType' ? (
-                  <FinalConversionTag
-                    status={
-                      typeof option === 'string'
-                        ? (option as FinalConversionStatus)
-                        : (option.label as FinalConversionStatus)
-                    }
-                  />
-                ) : filterKey === 'course' ? (
-                  <span>{CourseNameMapper[option as Course]}</span>
-                ) : filterKey === 'source' ? (
-                  <span>{toPascal(typeof option === 'string' ? option : option.label)}</span>
-                ) : (
-                  <span>{typeof option === 'string' ? option : option.label}</span>
-                )}
-              </div>
-            ))}
+                  {filterKey === 'leadType' ? (
+                    <TechnoLeadTypeTag
+                      type={
+                        typeof option === 'string'
+                          ? (option as LeadType)
+                          : (option.label as LeadType)
+                      }
+                    />
+                  ) : filterKey === 'finalConversionType' ? (
+                    <FinalConversionTag
+                      status={
+                        typeof option === 'string'
+                          ? (option as FinalConversionStatus)
+                          : (option.label as FinalConversionStatus)
+                      }
+                    />
+                  ) : filterKey === 'course' ? (
+                    <span>{CourseNameMapper[option as Course]}</span>
+                  ) : filterKey === 'source' ? (
+                    <span>{toPascal(typeof option === 'string' ? option : option.label)}</span>
+                  ) : (
+                    <span>{typeof option === 'string' ? option : option.label}</span>
+                  )}
+                </div>
+              ))}
+            </div>
           </>
         )}
       </DropdownMenuContent>

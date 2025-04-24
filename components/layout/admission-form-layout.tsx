@@ -33,7 +33,7 @@ export default function AdmissionFormLayout({ children }: { children: React.Reac
             <TechnoTopHeader headerItems={HEADER_ITEMS} />
 
             <div className="flex flex-col px-4 py-4 gap-6">
-                <TechnoBreadCrumb />
+                <TechnoBreadCrumb rootUrl='/c/admissions' />
 
                 <div className='flex items-center'>
                     <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">

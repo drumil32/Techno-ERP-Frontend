@@ -40,7 +40,7 @@ import { fetchAssignedToDropdown } from './helpers/fetch-data';
 import { useQuery } from '@tanstack/react-query';
 import { toPascal } from '@/lib/utils';
 import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
-
+import { formatDateView,formatTimeStampView } from '../allLeads/helpers/refine-data';
 interface FormErrors {
   name?: string;
   phoneNumber?: string;
@@ -55,10 +55,10 @@ export const contactNumberSchema = z
   .string()
   .regex(/^[1-9]\d{9}$/, 'Invalid contact number format. Expected: 1234567890');
 
-export default function YellowLeadViewEdit({ data }: any) {
+export default function YellowLeadViewEdit({ data, setIsDrawerOpen,setSelectedRowId,setRefreshKey}: any) {
   const [formData, setFormData] = useState<YellowLead | null>(null);
   const [originalData, setOriginalData] = useState<YellowLead | null>(null);
-  const [isEditing, toggleIsEditing] = useState(false);
+  // const [isEditing, toggleIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -197,7 +197,9 @@ export default function YellowLeadViewEdit({ data }: any) {
 
     if (!hasChanges()) {
       toast.info('No changes to save');
-      toggleIsEditing(false);
+      setSelectedRowId(null);
+      setIsDrawerOpen(false);
+      // toggleIsEditing(false);
       return;
     }
 
@@ -256,7 +258,10 @@ export default function YellowLeadViewEdit({ data }: any) {
       } else {
         setFormData(originalData);
       }
-      toggleIsEditing(false);
+      setRefreshKey((prev:number)=>prev+1);
+      setSelectedRowId(null);
+      setIsDrawerOpen(false);
+      // toggleIsEditing(false);
       setErrors({});
     } catch (err) {
       console.error('Error updating lead:', err);
@@ -309,7 +314,7 @@ export default function YellowLeadViewEdit({ data }: any) {
           <p>{formData.course ? CourseNameMapper[formData.course as Course] : '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Foot Fall</p>
+          <p className="w-1/4 text-[#666666]">Footfall</p>
           {formData.footFall != undefined ? (
             <FootFallTag status={formData.footFall === true ? FootFallStatus.true : FootFallStatus.false} />
           ) : (
@@ -352,7 +357,7 @@ export default function YellowLeadViewEdit({ data }: any) {
     <>
       <div className="flex flex-col gap-2">
         <p className="text-[#666666] font-normal">LTC Date</p>
-        <p>{data.leadTypeModifiedDate}</p>
+        <p>{formatTimeStampView(data.leadTypeModifiedDate)}</p>
         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
       </div>
 
@@ -485,7 +490,7 @@ export default function YellowLeadViewEdit({ data }: any) {
         </div>
 
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="footFall" title={'Foot Fall'} />
+          <EditLabel htmlFor="footFall" title={'Footfall'} />
           <Select
             defaultValue={formData.footFall ? "true" : "false"}
             onValueChange={(value) => handleSelectChange('footFall', value === "true")}
@@ -504,31 +509,31 @@ export default function YellowLeadViewEdit({ data }: any) {
         </div>
       </div>
 
+     
       <div className="flex gap-5">
-        <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
-          <Select
-            defaultValue={formData.assignedTo || ''}
-            onValueChange={(value) => handleSelectChange('assignedTo', value)}
-          >
-            <SelectTrigger id="assignedTo" className="w-full rounded-[5px]" disabled>
-              <SelectValue
-                placeholder={
-                  assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)
-                    ?.name || 'Select Assigned To'
-                }
-              />
-            </SelectTrigger>
-
-            <SelectContent>
-              {assignedToDropdownData.map((user: any) => (
-                <SelectItem key={user._id} value={user._id}>
-                  {user.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+      <div className="space-y-2 w-1/2">
+        <EditLabel htmlFor="nextDueDate" title={'Next Call Date'} />
+        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-full justify-start text-left pl-20">
+              <CalendarIcon className="left-3 h-5 w-5 text-gray-400" />
+              {formData.nextDueDate || 'Select a date'}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={parseDateString(formData.nextDueDate)}
+              onSelect={handleDateChange}
+              initialFocus
+              captionLayout={"dropdown-buttons"}
+              fromYear={new Date().getFullYear() - 100}
+              toYear={new Date().getFullYear() + 10}
+            />
+          </PopoverContent>
+        </Popover>
+        {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
+      </div>
 
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="yellowLeadsFollowUpCount" title={'Follow-ups'} />
@@ -542,11 +547,11 @@ export default function YellowLeadViewEdit({ data }: any) {
               <SelectValue placeholder="Select follow-up count" />
             </SelectTrigger>
             <SelectContent>
-              {[1, 2, 3, 4, 5].map((count) => (
-                <SelectItem key={count} value={count.toString()}>
-                  {count.toString().padStart(2, '0')}
+            {Array.from({ length: formData.yellowLeadsFollowUpCount + 2 }, (_, i) => ((
+                <SelectItem key={i} value={i.toString()}>
+                  {i.toString().padStart(2, '0')}
                 </SelectItem>
-              ))}
+              )))}
             </SelectContent>
           </Select>
         </div>
@@ -567,6 +572,7 @@ export default function YellowLeadViewEdit({ data }: any) {
       <div className="space-y-2">
         <EditLabel htmlFor="finalConversion" title={'Final Conversion'} />
         <Select
+          disabled={!formData.footFall}
           defaultValue={String(formData.finalConversion) as FinalConversionStatus}
           onValueChange={(value) => handleSelectChange('finalConversion', value)}
         >
@@ -594,47 +600,50 @@ export default function YellowLeadViewEdit({ data }: any) {
           placeholder="Enter remarks here"
         />
       </div>
+      
+      <div className="space-y-2 w-full">
+          <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
+          <Select
+            defaultValue={formData.assignedTo || ''}
+            onValueChange={(value) => handleSelectChange('assignedTo', value)}
+          >
+            <SelectTrigger id="assignedTo" className="w-full rounded-[5px]" disabled>
+              <SelectValue
+                placeholder={
+                  assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)
+                    ?.name || 'Select Assigned To'
+                }
+              />
+            </SelectTrigger>
 
-      <div className="space-y-2 w-1/2">
-        <EditLabel htmlFor="nextDueDate" title={'Next Call Date'} />
-        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full justify-start text-left pl-20">
-              <CalendarIcon className="left-3 h-5 w-5 text-gray-400" />
-              {formData.nextDueDate || 'Select a date'}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={parseDateString(formData.nextDueDate)}
-              onSelect={handleDateChange}
-              initialFocus
-              captionLayout={"dropdown-buttons"}
-              fromYear={new Date().getFullYear() - 100}
-              toYear={new Date().getFullYear() + 10}
-            />
-          </PopoverContent>
-        </Popover>
-        {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
-      </div>
+            <SelectContent>
+              {assignedToDropdownData.map((user: any) => (
+                <SelectItem key={user._id} value={user._id}>
+                  {user.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
     </>
   );
 
   return (
     <div className="w-full h-full max-w-2xl mx-auto border-none flex flex-col">
       <CardContent className="px-3 space-y-6 mb-20">
-        {isEditing ? EditView : ReadOnlyView}
+        {EditView }
       </CardContent>
 
-      {isEditing ? (
+      
         <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
           <>
             <Button
               variant="outline"
               onClick={() => {
                 setFormData(originalData);
-                toggleIsEditing(false);
+                setSelectedRowId(null);
+                setIsDrawerOpen(false);
+                // toggleIsEditing(false);
                 setErrors({});
                 setChangedFields(new Set());
               }}
@@ -656,31 +665,7 @@ export default function YellowLeadViewEdit({ data }: any) {
             </Button>
           </>
         </CardFooter>
-      ) : (
-        <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
-          <div className="w-full flex">
-            <Button
-              onClick={() => {
-                // Validate critical fields before entering edit mode
-                if (formData) {
-                  ['name', 'phoneNumber', 'email'].forEach((field) => {
-                    validateField(field, formData[field as keyof YellowLead]);
-                  });
-                  // If altPhoneNumber has a value, validate it too
-                  if (formData.altPhoneNumber) {
-                    validateField('altPhoneNumber', formData.altPhoneNumber);
-                  }
-                }
-                toggleIsEditing(true);
-              }}
-              className="ml-auto"
-              icon={Pencil}
-            >
-              Edit Lead
-            </Button>
-          </div>
-        </CardFooter>
-      )}
+      
     </div>
   );
 }

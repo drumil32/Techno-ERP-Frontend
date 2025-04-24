@@ -58,10 +58,10 @@ interface FormErrors {
   remarks?: string;
 }
 
-export default function LeadViewEdit({ data }: any) {
+export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, setRefreshKey }: any) {
   const [formData, setFormData] = useState<LeadData | null>(null);
   const [originalData, setOriginalData] = useState<LeadData | null>(null);
-  const [isEditing, toggleIsEditing] = useState(false);
+  // const [isEditing, toggleIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -204,7 +204,9 @@ export default function LeadViewEdit({ data }: any) {
     // Check if there are any changes
     if (!hasChanges()) {
       toast.info('No changes to save');
-      toggleIsEditing(false);
+      setSelectedRowId(null);
+      setIsDrawerOpen(false);
+      // toggleIsEditing(false);
       return;
     }
 
@@ -258,7 +260,10 @@ export default function LeadViewEdit({ data }: any) {
       } else {
         setFormData(originalData);
       }
-      toggleIsEditing(false);
+      setSelectedRowId(null);
+      setRefreshKey((prev: number) => prev + 1);
+      setIsDrawerOpen(false);
+      // toggleIsEditing(false);
       setErrors({});
     } catch (err) {
       console.error('Error updating lead:', err);
@@ -349,7 +354,7 @@ export default function LeadViewEdit({ data }: any) {
     <>
       <div className="flex flex-col gap-2">
         <p className="text-[#666666] font-normal">Date</p>
-        <p>{data.date}</p>
+        <p>{formatDateView(data.date)}</p>
       </div>
 
       <div className="space-y-2">
@@ -488,6 +493,7 @@ export default function LeadViewEdit({ data }: any) {
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="leadType" title={'Lead Type'} />
           <Select
+          disabled={formData.leadType==LeadType.INTERESTED}
             defaultValue={formData.leadType || ''}
             onValueChange={(value) => handleSelectChange('leadType', value)}
           >
@@ -506,70 +512,6 @@ export default function LeadViewEdit({ data }: any) {
       </div>
 
       <div className="flex gap-5">
-        <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
-          <Select
-            defaultValue={formData.assignedTo || ''}
-            onValueChange={(value) => handleSelectChange('assignedTo', value)}
-          >
-            <SelectTrigger id="assignedTo" className="w-full rounded-[5px]" disabled>
-              <SelectValue placeholder={assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)?.name || 'Select Assigned To'} />
-            </SelectTrigger>
-
-            <SelectContent>
-              {assignedToDropdownData.map((user: any) => (
-                <SelectItem key={user._id} value={user._id}>
-                  {user.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="leadsFollowUpCount" title={'Follow-up Count'} />
-          <Select
-            defaultValue={formData.leadsFollowUpCount?.toString() || ''}
-            onValueChange={(value) => handleFollowUpCountChange('leadsFollowUpCount', Number(value))}
-          >
-            <SelectTrigger id="leadsFollowUpCount" className="w-full rounded-[5px]">
-              <SelectValue placeholder="Select follow-up count" />
-            </SelectTrigger>
-            <SelectContent>
-              {[1, 2, 3, 4, 5].map((count) => (
-                <SelectItem key={count} value={count.toString()}>
-                  {count.toString().padStart(2, '0')}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <EditLabel htmlFor="schoolName" title={'School Name'} />
-        <Input
-          id="schoolName"
-          name="schoolName"
-          value={formData.schoolName || ''}
-          onChange={handleChange}
-          className="rounded-[5px]"
-        />
-        {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <EditLabel htmlFor="remarks" title={'Remarks'} />
-        <textarea
-          id="remarks"
-          name="remarks"
-          value={formData.remarks || ''}
-          onChange={handleChange}
-          className="w-full min-h-20 px-3 py-2 border rounded-[5px]"
-          placeholder="Enter remarks here"
-        />
-      </div>
-
       <div className="space-y-2 w-1/2">
         <EditLabel htmlFor="nextDueDate" title={'Next Due Date'} />
         <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
@@ -594,9 +536,75 @@ export default function LeadViewEdit({ data }: any) {
         {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
       </div>
 
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="leadsFollowUpCount" title={'Follow-up Count'} />
+          <Select
+            defaultValue={formData.leadsFollowUpCount?.toString() || ''}
+            onValueChange={(value) => handleFollowUpCountChange('leadsFollowUpCount', Number(value))}
+          >
+            <SelectTrigger id="leadsFollowUpCount" className="w-full rounded-[5px]">
+              <SelectValue placeholder="Select follow-up count" />
+            </SelectTrigger>
+            <SelectContent>
+              {Array.from({ length: formData?.leadsFollowUpCount! + 2 }, (_, i) => ((
+                <SelectItem key={i} value={i.toString()}>
+                  {i.toString().padStart(2, '0')}
+                </SelectItem>
+              )))}
+
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <EditLabel htmlFor="schoolName" title={'School Name'} />
+        <Input
+          id="schoolName"
+          name="schoolName"
+          value={formData.schoolName || ''}
+          onChange={handleChange}
+          className="rounded-[5px]"
+        />
+        {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
+      </div>
+  
+
+      <div className="space-y-2">
+        <EditLabel htmlFor="remarks" title={'Remarks'} />
+        <textarea
+          id="remarks"
+          name="remarks"
+          value={formData.remarks || ''}
+          onChange={handleChange}
+          className="w-full min-h-20 px-3 py-2 border rounded-[5px]"
+          placeholder="Enter remarks here"
+        />
+      </div>
+
+      <div className="space-y-2 w-full">
+          <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
+          <Select
+            defaultValue={formData.assignedTo || ''}
+            onValueChange={(value) => handleSelectChange('assignedTo', value)}
+          >
+            <SelectTrigger id="assignedTo" className="w-full rounded-[5px]" disabled>
+              <SelectValue placeholder={assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)?.name || 'Select Assigned To'} />
+            </SelectTrigger>
+
+            <SelectContent>
+              {assignedToDropdownData.map((user: any) => (
+                <SelectItem key={user._id} value={user._id}>
+                  {user.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
       <div className="flex flex-col gap-2">
         <p className="text-[#666666]">Last Modified Date</p>
-        <p>{formData.leadTypeModifiedDate}</p>
+        <p>{formatDateView(formData.leadTypeModifiedDate)}</p>
       </div>
     </>
   );
@@ -604,49 +612,40 @@ export default function LeadViewEdit({ data }: any) {
   return (
     <div className="w-full h-full max-w-2xl mx-auto border-none flex flex-col">
       <CardContent className="px-3 space-y-6 mb-20">
-        {isEditing ? EditView : ReadOnlyView}
+        {EditView}
       </CardContent>
 
-      {isEditing ? (
-        <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
-          <>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setFormData(originalData);
-                toggleIsEditing(false);
-                setErrors({});
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={isSubmitting || Object.keys(errors).length > 0}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving
-                </>
-              ) : (
-                'Save Lead'
-              )}
-            </Button>
-          </>
-        </CardFooter>
-      ) : (
-        <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
-          <div className="w-full flex">
-            <>
-              <Button onClick={() => toggleIsEditing(true)} className="ml-auto" icon={Pencil}>
-                Edit Lead
-              </Button>
-            </>
 
-          </div>
-        </CardFooter>
-      )}
+      <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
+        <>
+          <Button
+            variant="outline"
+            onClick={() => {
+              setFormData(originalData);
+              setSelectedRowId(null);
+              setIsDrawerOpen(false);
+              // toggleIsEditing(false);
+              setErrors({});
+            }}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={isSubmitting || Object.keys(errors).length > 0}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving
+              </>
+            ) : (
+              'Save Lead'
+            )}
+          </Button>
+        </>
+      </CardFooter>
+
     </div>
   );
 }

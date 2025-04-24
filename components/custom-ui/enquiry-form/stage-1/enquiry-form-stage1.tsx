@@ -143,7 +143,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
     );
 
-    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber'];
+    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber','emailId'];
 
     const filteredKeys = Array.from(new Set([...Object.keys(values), ...alwaysIncludeKeys])).filter(
       (key) => schemaKeys.includes(key)

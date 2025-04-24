@@ -45,7 +45,7 @@ export const cleanDataForDraft = (data: any) => {
 
   if (Array.isArray(data.counsellor)) {
     const validCounsellors = data.counsellor.filter((c: any) => !isEmpty(c));
-    if (validCounsellors.length > 0) {
+    if (validCounsellors.length >= 0) {
       cleaned.counsellor = validCounsellors;
     }
   }
@@ -53,7 +53,7 @@ export const cleanDataForDraft = (data: any) => {
 
   if (Array.isArray(data.telecaller)) {
     const validTelecaller = data.telecaller.filter((c: any) => !isEmpty(c));
-    if (validTelecaller.length > 0) {
+    if (validTelecaller.length >= 0) {
       cleaned.telecaller = validTelecaller;
     }
   }
