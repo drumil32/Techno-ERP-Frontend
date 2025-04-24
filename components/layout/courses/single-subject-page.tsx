@@ -1,10 +1,3 @@
-// export const SingleSubjectPage = () => {
-//     return (
-//         <div>Hello THis is schedule page!</div>
-//     )
-// }
-
-
 "use client";
 import DynamicInfoGrid from "@/components/custom-ui/info-grid/info-grid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -66,6 +59,26 @@ interface ScheduleApiResponse {
     schedule: Schedule,
     academicYear: string,
 }
+
+
+const confirmationStatus: Record<LectureConfirmation, { name: string; textStyle: string; bgStyle: string }> = {
+    [LectureConfirmation.TO_BE_DONE]: {
+        name: "To Be Done",
+        textStyle: "text-gray-700",
+        bgStyle: "bg-yellow-100",
+    },
+    [LectureConfirmation.CONFIRMED]: {
+        name: "Confirmed",
+        textStyle: "text-green-800",
+        bgStyle: "bg-green-100",
+    },
+    [LectureConfirmation.DELAYED]: {
+        name: "Delayed",
+        textStyle: "text-red-700",
+        bgStyle: "bg-red-100",
+    },
+};
+
 
 const calculateAttendance = (plan: Plan) => {
     const strength = plan.classStrength ?? 0;
@@ -456,7 +469,7 @@ export const SingleSubjectPage = () => {
             id: 'actions',
             header: 'Actions',
             cell: ({ row }: any) => (
-                <div className="flex items-right gap-2">
+                <div className="flex justify-center items-center gap-4">
                     <center>
                         <button
                             onClick={() => handleDelete(row.original)}

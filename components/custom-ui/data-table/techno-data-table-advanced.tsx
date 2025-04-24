@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,10 +40,32 @@ import {
   Check,
   FolderPlus,
   Edit2Icon,
-  Edit2
+  Edit2,
+  Trash2,
+  Upload
 } from 'lucide-react';
 import { LuDownload, LuUpload } from 'react-icons/lu';
 import { AddMoreDataBtn } from '../add-more-data-btn/add-data-btn';
+import { LectureConfirmation } from '@/types/enum';
+import { CustomStyledDropdown } from '../custom-dropdown/custom-styled-dropdown';
+
+const confirmationStatus: Record<LectureConfirmation, { name: string; textStyle: string; bgStyle: string }> = {
+  [LectureConfirmation.TO_BE_DONE]: {
+    name: "To Be Done",
+    textStyle: "text-yellow-900 text-center",
+    bgStyle: "bg-yellow-100",
+  },
+  [LectureConfirmation.CONFIRMED]: {
+    name: "Confirmed",
+    textStyle: "text-green-000  text-center",
+    bgStyle: "bg-green-100",
+  },
+  [LectureConfirmation.DELAYED]: {
+    name: "Delayed",
+    textStyle: "text-red-800  text-center",
+    bgStyle: "bg-red-100",
+  },
+};
 
 export default function TechnoDataTableAdvanced({
   columns,
@@ -71,6 +94,8 @@ export default function TechnoDataTableAdvanced({
   addViaDialog = false,
   onAddClick
 }: any) {
+
+  console.log("Columns are : ", columns)
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -142,10 +167,10 @@ export default function TechnoDataTableAdvanced({
 
 
 
-  const nonClickableColumns = ['actions', 'leadType', 'finalConversion', "leadsFollowUpCount", 'yellowLeadsFollowUpCount'];
+  // const nonClickableColumns = ['actions', 'leadType', 'finalConversion', "leadsFollowUpCount", 'yellowLeadsFollowUpCount'];
 
   return (
-    <div className="w-full mb-10 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
+    <div className="w-full mb-3 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="flex w-full items-center py-4 px-4">
 
         {/* Table Header */}
@@ -204,48 +229,152 @@ export default function TechnoDataTableAdvanced({
         <Table className="w-full">
           <TableHeader className="bg-[#F7F7F7] sticky top-0">
             <TableRow>
-            {columns.map((column: any, idx: number) => (
-              <TableHead key={idx} className="text-center font-light h-10">
-                {column.header === 'Date' || column.header === 'Next Due Date' ? (
-                  <Button variant="ghost" onClick={() => handleSort(column.accessorKey)}>
-                    {column.header} {getSortIcon(column.accessorKey)}
-                  </Button>
-                ) : (
-                  column.header
-                )}
-              </TableHead>
-            ))}
+              {columns.map((column: any, idx: number) => (
+                <TableHead key={idx} className="text-center font-light h-10">
+                  {column.header}
+                </TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody className="[&_tr]:h-[39px]">
-            {table.getRowModel().rows.length > 0 && !addingRow ? (
-              table.getRowModel().rows.map((row: any, rowIndex: number) => (
-                <TableRow
-                  key={row.id}
-                  className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
-                  onClick={() => {
-                    setSelectedRowId(row.id);
-                    handleViewMore?.({ ...row.original, leadType: row.original._leadType });
-                  }}
-                >
-                  {row.getVisibleCells().map((cell: any) => {
-                    const isExcluded = nonClickableColumns.includes(cell.column.id);
-                    return (
-                      <TableCell
-                        key={cell.id}
-                        className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-' ? 'text-left max-w-[225px] truncate' : 'text-center'}`}
-                        // className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-' ? 'text-left w-auto truncate' : 'text-center w-auto'}`}
-                        onClick={(e) => {
-                          if (isExcluded) e.stopPropagation();
-                        }}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))
-            ) : !addingRow ? (
+            {table.getRowModel().rows.length > 0 && (
+              <>
+                {table.getRowModel().rows.map((row: any, rowIndex: number) => (
+                  <TableRow
+                    key={row.id}
+                    className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
+                    onClick={() => {
+                      setSelectedRowId(row.id);
+                      handleViewMore?.({ ...row.original, leadType: row.original._leadType });
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell: any) => {
+                      // const isExcluded = nonClickableColumns.includes(cell.column.id);
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          className={`h-[39px] w-[20px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-' ? 'text-center w-[40px] max-w-[400px] truncate' : 'text-center'}`}
+                          onClick={(e) => {
+                            // if (isExcluded) e.stopPropagation();
+                          }}
+                        >
+                          {(() => {
+                            const columnId = cell.column.id;
+                            const value = cell.getValue();
+
+                            if (columnId === 'actions') {
+                              if (editing || addingRow) {
+                                return (
+                                  <div className="flex justify-center items-center">
+                                    <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
+                                      <Trash2 size={20} className="text-gray-400" />
+                                    </Button>
+                                    <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
+                                      <Upload size={20} className="text-gray-400" />
+                                    </Button>
+                                  </div>
+                                );
+                              }
+                              return flexRender(cell.column.columnDef.cell, cell.getContext());
+                            }
+
+                            if (columnId === 'confirmation') {
+                              if (editing || addingRow) {
+                                return (
+                                  <CustomStyledDropdown
+                                    value={value}
+                                    onChange={(newValue) =>
+                                      editing
+                                        ? handleEditedChange(rowIndex, 'confirmation', newValue)
+                                        : handleNewRowChange('confirmation', newValue)
+                                    }
+                                    data={confirmationStatus}
+                                  />
+                                );
+                              }
+
+                              const style = confirmationStatus[value as keyof typeof confirmationStatus];
+                              return (
+                                <span className={`inline-block rounded-md px-3 py-1 text-sm font-medium ${style?.bgStyle} ${style?.textStyle}`}>
+                                  {style?.name || value}
+                                </span>
+                              );
+                            }
+
+                            if (editing || addingRow) {
+                              return (
+                                <input
+                                  type="text"
+                                  className="border rounded px-2 py-1 text-sm w-3/4"
+                                  value={value ?? ''}
+                                  onChange={(e) =>
+                                    editing
+                                      ? handleEditedChange(rowIndex, columnId, e.target.value)
+                                      : handleNewRowChange(columnId, e.target.value)
+                                  }
+                                />
+                              );
+                            }
+
+                            return flexRender(cell.column.columnDef.cell, cell.getContext());
+                          })()}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))}
+                {!addViaDialog && addingRow && (
+                  <TableRow className="h-[39px] cursor-pointer bg-gray-50">
+                    {columns.map((column: any, idx: number) => {
+                      const columnId = column.accessorKey || column.id;
+                      console.log("Here, column Id : ", columnId);
+                      if (columnId === 'actions') {
+                        return (
+                          <TableCell key={idx} className="h-[39px] text-center">
+                            <div className="flex justify-center items-center gap-2">
+                              <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
+                                <Trash2 size={20} className="text-gray-400" />
+                              </Button>
+                              <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
+                                <Upload size={20} className="text-gray-400" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        );
+                      }
+
+                      else if (columnId === 'confirmation') {
+                        const defaultValue = newRow[columnId] ?? `${LectureConfirmation.TO_BE_DONE}`; // adjust the default key if needed
+                        return (
+                          <TableCell key={idx} className="h-[39px] text-center">
+                            <CustomStyledDropdown
+                              value={defaultValue}
+                              onChange={(newValue) => handleNewRowChange(columnId, newValue)}
+                              data={confirmationStatus}
+                            />
+                          </TableCell>
+                        );
+                      }
+                      else {
+                        return (
+                          <TableCell key={idx} className="h-[39px]">
+                            <Input
+                              className="editable-cell px-2 py-2"
+                              value={newRow[columnId] || ''}
+                              onChange={(e) => handleNewRowChange(columnId, e.target.value)}
+                            />
+                          </TableCell>
+                        );
+                      }
+
+
+                    })}
+                  </TableRow>
+                )}
+              </>
+            )}
+
+            {table.getRowModel().rows.length === 0 && !addingRow && (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-[450px] text-center">
                   <div className="flex flex-col items-center justify-center h-full">
@@ -257,20 +386,6 @@ export default function TechnoDataTableAdvanced({
                   </div>
                 </TableCell>
               </TableRow>
-            ) : null}
-
-            {!addViaDialog && addingRow && (
-              <TableRow className='h-[39px] cursor-pointer'>
-                {columns.map((column: any, idx: number) => (
-                  <TableCell key={idx} className='h-[39px]'>
-                    <Input
-                      className="editable-cell px-2 py-2"
-                      value={newRow[column.accessorKey] || ''}
-                      onChange={(e) => handleNewRowChange(column.accessorKey, e.target.value)}
-                    />
-                  </TableCell>
-                ))}
-              </TableRow>
             )}
           </TableBody>
         </Table>
@@ -278,12 +393,12 @@ export default function TechnoDataTableAdvanced({
         {addButtonPlacement === "bottom" && (
           <div className="flex justify-between items-center mt-2 w-full">
             {/* By default mode of add mode */}
-
             <AddMoreDataBtn
               onClick={() => {
                 if (addViaDialog && onAddClick) {
                   onAddClick();
-                } else {
+                }
+                else {
                   setAddingRow(true);
                   setNewRow({});
                 }
