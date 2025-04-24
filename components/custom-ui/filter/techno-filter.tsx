@@ -36,7 +36,7 @@ interface TechnoFilterProps {
   applyFilters: () => void;
 }
 
-const formatDateForAPI = (date: Date | undefined): string | undefined => {
+export const formatDateForAPI = (date: Date | undefined): string | undefined => {
   if (!date) return undefined;
   return format(date, 'dd/MM/yyyy');
 };

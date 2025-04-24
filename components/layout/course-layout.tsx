@@ -1,6 +1,5 @@
 'use client';
 
-
 import { SITE_MAP } from "@/common/constants/frontendRouting";
 import { useSidebarContext } from "../custom-ui/sidebar/sidebar-context";
 import { SIDEBAR_ITEMS } from "@/common/constants/sidebarItems";

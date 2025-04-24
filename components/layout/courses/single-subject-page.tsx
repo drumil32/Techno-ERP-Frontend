@@ -15,6 +15,7 @@ import { API_ENDPOINTS } from "@/common/constants/apiEndpoints";
 import axios from 'axios';
 import { ConfirmDialog } from "@/components/custom-ui/confirm-dialog/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { IFetchScheduleSchema, IScheduleSchema } from "./schemas/scheduleSchema";
 
 
 export interface Plan {
@@ -102,7 +103,7 @@ export const SingleSubjectPage = () => {
     console.log("Subject Id : ", subjectId);
     console.log("Instructor Id : ", instructorId);
 
-    const rows = [3, 4, 4];
+    const rows = [4, 4, 3];
 
     const [materials, setMaterials] = useState([{}]);
     const [refreshKey, setRefreshKey] = useState(0);
@@ -176,6 +177,44 @@ export const SingleSubjectPage = () => {
             queryClient.invalidateQueries({ queryKey: ['scheduleInfo'] });
             setUploadContext(null);
             setShowDocumentUploader(false);
+        }
+        else {
+            toast.error(response.data.ERROR);
+        }
+    };
+
+    const batchUpdatePlan = async (courseId : string, semesterId : string, subjectId : string, instructorId : string,batchUpdateData: IFetchScheduleSchema[], type : "LPlan" | "PPlan") => {
+        console.log("Handling Batch Update");
+
+        const sanitizedData = batchUpdateData.map((row : IFetchScheduleSchema) => {
+            return {
+              ...row,
+              classStrength: row.classStrength ? parseInt(row.classStrength) : row.classStrength,
+              attendance: row.attendance ? parseInt(row.attendance) : row.attendance,
+              absent: row.absent ? parseInt(row.absent) : row.absent,
+            };
+          });
+
+        const updateObject = {
+            courseId : courseId,
+            semesterId : semesterId,
+            subjectId : subjectId,
+            instructorId : instructorId,
+            type : type,
+            data : sanitizedData
+        }
+      
+        console.log("Update Object : ", updateObject);
+
+        const response = await axios.put(API_ENDPOINTS.batchUpdatePlan, updateObject, {
+            headers: { // No need to handle headers, it will be done by axios
+            },
+            withCredentials: true,
+        });
+
+        if (response.data.SUCCESS) {
+            toast.success(response.data.MESSAGE);
+            queryClient.invalidateQueries({ queryKey: ['scheduleInfo'] });
         }
         else {
             toast.error(response.data.ERROR);
@@ -628,7 +667,10 @@ export const SingleSubjectPage = () => {
                     console.log("Saving new row:", newRowData);
                     savePlan(CourseMaterialType.LPLAN, courseId!, semesterId!, subjectId!, instructorId!, newRowData);
                 }}
-            >
+                handleBatchEdit={(batchEditedData: any) => {
+                    console.log("Batch Updated Data", batchEditedData);
+                    batchUpdatePlan(courseId!, semesterId!, subjectId!, instructorId!,  batchEditedData,"LPlan" )
+                }} >
             </TechnoDataTableAdvanced>
 
             <UploaderDialogWrapper
@@ -657,6 +699,10 @@ export const SingleSubjectPage = () => {
                 onSaveNewRow={(newRowData: any) => {
                     console.log("Saving new row:", newRowData);
                     savePlan(CourseMaterialType.PPLAN, courseId!, semesterId!, subjectId!, instructorId!, newRowData);
+                }}
+                handleBatchEdit={(batchEditedData: any) => {
+                    console.log("Batch Updated Data", batchEditedData);
+                    batchUpdatePlan(courseId!, semesterId!, subjectId!, instructorId!,  batchEditedData,"PPlan" )
                 }} >
             </TechnoDataTableAdvanced>
 

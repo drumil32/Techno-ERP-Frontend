@@ -1,4 +1,5 @@
 import { clsx, type ClassValue } from 'clsx';
+import { isValid, parse } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
 import { z, ZodObject } from 'zod';
 
@@ -91,4 +92,17 @@ export const handleNumericInputChange = (
   if (/^\d+$/.test(rawValue)) {
     onChange(Number(rawValue));
   }
+};
+
+
+export const parseDateFromAPI = (dateString: string | undefined): Date | undefined => {
+  if (!dateString) return undefined;
+  const parsed = parse(dateString, 'dd/MM/yyyy', new Date());
+  const [day, month, year] = dateString.split('/');
+  const isExact =
+    isValid(parsed) &&
+    parsed.getDate() === Number(day) &&
+    parsed.getMonth() + 1 === Number(month) &&
+    parsed.getFullYear() === Number(year);
+  return isExact ? parsed : undefined;
 };

@@ -15,6 +15,7 @@ import TechnoFiltersGroup from '@/components/custom-ui/filter/techno-filters-gro
 import { useRouter } from 'next/navigation';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { CreateCourseDialog } from '@/components/custom-ui/create-dialog/create-course-dialog';
+import TechnoDataTableAdvanced from '@/components/custom-ui/data-table/techno-data-table-advanced';
 
 export interface Course {
   courseName: string;
@@ -293,7 +294,7 @@ export default function AllCoursesPage() {
       </span>
 
 
-      <TechnoDataTable
+      <TechnoDataTableAdvanced
         columns={columns}
         data={coursesWithSerialNo}
         tableName="Course List"
@@ -309,7 +310,7 @@ export default function AllCoursesPage() {
         selectedRowId={selectedRowId}
         setSelectedRowId={setSelectedRowId}
       >
-      </TechnoDataTable>
+      </TechnoDataTableAdvanced>
     </>
   );
 }
