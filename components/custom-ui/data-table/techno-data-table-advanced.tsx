@@ -117,15 +117,15 @@ export default function TechnoDataTableAdvanced({
   const validateRow = (row: any): boolean => {
     try {
       console.log("Row to be validated : ", row);
-      if(row.unit)
+      if (row.unit)
         row.unit = parseInt(row.unit);
-      if(row.lectureNumber)
+      if (row.lectureNumber)
         row.lectureNumber = parseInt(row.lectureNumber);
-      if(row.classStrength)
+      if (row.classStrength)
         row.classStrength = parseInt(row.classStrength);
-      if(row.attendance)
+      if (row.attendance)
         row.attendance = parseInt(row.attendance);
-      if(row.absent)
+      if (row.absent)
         row.absent = parseInt(row.absent);
       const validation = scheduleSchema.parse(row);
       console.log("Validation result : ", validation);
@@ -146,6 +146,15 @@ export default function TechnoDataTableAdvanced({
       }
       return false;
     }
+  };
+
+  const attendanceValue = (row: any) => {
+    const classStrength = parseInt(row.classStrength || 0);
+    const absent = parseInt(row.absent || 0);
+    if (!isNaN(classStrength) && !isNaN(absent)) {
+      return Math.max(classStrength - absent, 0);
+    }
+    return '';
   };
 
 
@@ -268,7 +277,8 @@ export default function TechnoDataTableAdvanced({
                 {table.getRowModel().rows.map((row: any, rowIndex: number) => (
                   <TableRow
                     key={row.id}
-                    className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
+                    //Here there was bg-gray-100 for selected Row
+                    className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? '' : ''}`}
                     onClick={() => {
                       setSelectedRowId(row.id);
                       handleViewMore?.({ ...row.original, leadType: row.original._leadType });
@@ -351,63 +361,64 @@ export default function TechnoDataTableAdvanced({
                     })}
                   </TableRow>
                 ))}
-                {!addViaDialog && addingRow && (
-                  <TableRow className="h-[39px] cursor-pointer">
-                    {columns.map((column: any, idx: number) => {
-                      const columnId = column.accessorKey || column.id;
-                      console.log("Here, column Id : ", columnId);
-                      if (columnId === 'actions') {
-                        return (
-                          <TableCell key={idx} className="h-[39px] text-center">
-                            <div className="flex justify-center items-center gap-2">
-                              <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
-                                <Trash2 size={20} className="text-gray-400" />
-                              </Button>
-                              <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
-                                <Upload size={20} className="text-gray-400" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        );
-                      }
-
-                      else if (columnId === 'confirmation') {
-                        const defaultValue = newRow[columnId] ?? `${LectureConfirmation.TO_BE_DONE}`; // adjust the default key if needed
-                        return (
-                          <TableCell key={idx} className="h-[39px] text-center">
-                            <CustomStyledDropdown
-                              value={defaultValue}
-                              onChange={(newValue) => handleNewRowChange(columnId, newValue)}
-                              data={confirmationStatus}
-                            />
-                          </TableCell>
-                        );
-                      }
-                      else {
-                        return (
-                          <TableCell key={idx} className="h-[39px]">
-                            <div className="flex flex-col items-center">
-                              <Input
-                                className={`editable-cell px-2 py-2 ${validationErrors[columnId] ? 'border-red-500' : ''}`}
-                                value={newRow[columnId] || ''}
-                                onChange={(e) => {
-                                  handleNewRowChange(columnId, e.target.value);
-                                  setValidationErrors((prev) => ({ ...prev, [columnId]: '' }));
-                                }}
-                              />
-                              {validationErrors[columnId] && (
-                                <span className="text-xs text-red-500">{validationErrors[columnId]}</span>
-                              )}
-                            </div>
-                          </TableCell>
-                        );
-                      }
-
-
-                    })}
-                  </TableRow>
-                )}
+                {/* Here */}
               </>
+            )}
+            {!addViaDialog && addingRow && (
+              <TableRow className="h-[39px] cursor-pointer">
+                {columns.map((column: any, idx: number) => {
+                  const columnId = column.accessorKey || column.id;
+                  console.log("Here, column Id : ", columnId);
+                  if (columnId === 'actions') {
+                    return (
+                      <TableCell key={idx} className="h-[39px] text-center">
+                        <div className="flex justify-center items-center gap-2">
+                          <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
+                            <Trash2 size={20} className="text-gray-400" />
+                          </Button>
+                          <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
+                            <Upload size={20} className="text-gray-400" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    );
+                  }
+
+                  else if (columnId === 'confirmation') {
+                    const defaultValue = newRow[columnId] ?? `${LectureConfirmation.TO_BE_DONE}`; // adjust the default key if needed
+                    return (
+                      <TableCell key={idx} className="h-[39px] text-center">
+                        <CustomStyledDropdown
+                          value={defaultValue}
+                          onChange={(newValue) => handleNewRowChange(columnId, newValue)}
+                          data={confirmationStatus}
+                        />
+                      </TableCell>
+                    );
+                  }
+                  else {
+                    return (
+                      <TableCell key={idx} className="h-[39px]">
+                        <div className="flex flex-col items-center">
+                          <Input
+                            className={`editable-cell px-2 py-2 ${validationErrors[columnId] ? 'border-red-500' : ''}`}
+                            value={newRow[columnId] || ''}
+                            onChange={(e) => {
+                              handleNewRowChange(columnId, e.target.value);
+                              setValidationErrors((prev) => ({ ...prev, [columnId]: '' }));
+                            }}
+                          />
+                          {validationErrors[columnId] && (
+                            <span className="text-xs text-red-500">{validationErrors[columnId]}</span>
+                          )}
+                        </div>
+                      </TableCell>
+                    );
+                  }
+
+
+                })}
+              </TableRow>
             )}
 
             {table.getRowModel().rows.length === 0 && !addingRow && (
@@ -430,7 +441,7 @@ export default function TechnoDataTableAdvanced({
           <div className="h-[50px] flex justify-between items-center pt-2 w-full">
             <Button
               variant="outline"
-              className="h-[40px] p-2 pr-3 upload-materials-border-box transition btnLabelAdd                                                                                       font-inter bg-white text-black hover:bg-gray-200"
+              className="h-[40px] p-2 pr-3 upload-materials-border-box transition btnLabelAdd font-inter bg-white text-black hover:bg-gray-200"
               onClick={() => {
                 setValidationErrors({});
                 if (addViaDialog && onAddClick) {
@@ -455,8 +466,7 @@ export default function TechnoDataTableAdvanced({
                   if (addingRow) {
                     const isValid = validateRow(newRow);
                     console.log("Is valid : ", isValid);
-                    if(isValid)
-                    {
+                    if (isValid) {
                       onSaveNewRow?.(newRow);
                       data.push(newRow);
                       setAddingRow(false);

@@ -109,6 +109,16 @@ export const SingleSubjectPage = () => {
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [showDocumentUploader, setShowDocumentUploader] = useState(false);
+    const [deletePlanInfo, setDeletePlanInfo] = useState<{
+        planId: string;
+        type: "LPlan" | "PPlan";
+        courseId: string;
+        semesterId: string;
+        subjectId: string;
+        instructorId: string;
+        lectureNumber: string;
+    } | null>(null);
+
     const [uploadContext, setUploadContext] = useState<{
         planId: string;
         type: "LPlan" | "PPlan";
@@ -176,42 +186,19 @@ export const SingleSubjectPage = () => {
         //TODO : This won't be there anymore
     };
 
-    const handleDelete = (row: any) => {
-
-    }
-
-    const saveLecturePlan = async (courseId : string, semesterId : string, subjectId : string, instructorId : string, newRowData : any) => {
-        console.log("Saving lecture plan: ");
-        console.log("Data to save, courseId : ", courseId);
-        console.log("Data to save, semesterId : ", semesterId);
-        console.log("Data to save, subjectId : ", subjectId);
-        console.log("Data to save, instructorId : ", instructorId);
-        console.log("Data to save, new data : ", newRowData);
-        const requestObject = {
-            courseId : courseId,
-            semesterId : semesterId,
-            subjectId : subjectId,
-            instructorId : instructorId,
-            ...newRowData,
-            type : CourseMaterialType.LPLAN
-        }
-
-        const response = await axios.post(API_ENDPOINTS.createPlan, requestObject, {
-            headers: { // No need to handle headers, it will be done by axios
-            },
-            withCredentials: true,
+    const handleDelete = (row: any, type: "LPlan" | "PPlan") => {
+        console.log("Handling delete : ", row);
+        console.log(row);
+        setDeletePlanInfo({
+            courseId: courseId!,
+            semesterId: semesterId!,
+            subjectId: subjectId!,
+            instructorId: instructorId!,
+            planId: row._id,
+            type: type,
+            lectureNumber: row.lectureNumber
         });
-
-        console.log("Response is : ", response);
-        
-        if (response.data.SUCCESS) {
-            console.log("Response Data : ", response.data)
-            toast.success(response.data.MESSAGE);
-            queryClient.invalidateQueries({ queryKey: ['scheduleInfo'] });
-        }
-        else {
-            toast.error(response.data.ERROR);
-        }
+        console.log("DELETE INFO IS : ", deletePlanInfo);
     }
 
 
@@ -255,6 +242,80 @@ export const SingleSubjectPage = () => {
             console.error(error);
         }
     };
+
+    const savePlan = async (type: CourseMaterialType, courseId: string, semesterId: string, subjectId: string, instructorId: string, newRowData: any) => {
+        console.log("Saving lecture plan: ");
+        console.log("Data to save, courseId : ", courseId);
+        console.log("Data to save, semesterId : ", semesterId);
+        console.log("Data to save, subjectId : ", subjectId);
+        console.log("Data to save, instructorId : ", instructorId);
+        console.log("Data to save, new data : ", newRowData);
+        const requestObject = {
+            courseId: courseId,
+            semesterId: semesterId,
+            subjectId: subjectId,
+            instructorId: instructorId,
+            ...newRowData,
+            type: type
+        }
+
+        const response = await axios.post(API_ENDPOINTS.createPlan, requestObject, {
+            headers: { // No need to handle headers, it will be done by axios
+            },
+            withCredentials: true,
+        });
+
+        console.log("Response is : ", response);
+
+        if (response.data.SUCCESS) {
+            console.log("Response Data : ", response.data)
+            toast.success(response.data.MESSAGE);
+            queryClient.invalidateQueries({ queryKey: ['scheduleInfo'] });
+        }
+        else {
+            toast.error(response.data.ERROR);
+        }
+    }
+
+
+    const handlePlanDelete = async () => {
+        if (!deletePlanInfo)
+            return;
+
+        const { courseId, semesterId, subjectId, instructorId, planId, type } = deletePlanInfo;
+
+        console.log("Delete Plan Info is:", deleteInfo);
+
+        const payload: Record<string, any> = {
+            courseId,
+            semesterId,
+            subjectId,
+            instructorId,
+            planId,
+            type
+        };
+
+        try {
+            const response = await axios.delete(API_ENDPOINTS.deletePlan, {
+                data: payload,
+                withCredentials: true,
+            });
+
+            if (response.data.SUCCESS) {
+                toast.success(response.data.MESSAGE);
+                queryClient.invalidateQueries({ queryKey: ["scheduleInfo"] });
+                setDeletePlanInfo(null);
+            }
+            else {
+                toast.error(response.data.ERROR);
+            }
+        }
+        catch (error) {
+            toast.error("An error occurred while deleting the document.");
+            console.error(error);
+        }
+    };
+
 
 
     const handleUpload = (row: any, type: "LPlan" | "PPlan") => {
@@ -506,7 +567,7 @@ export const SingleSubjectPage = () => {
                 <div className="flex justify-center items-center gap-4">
                     <center>
                         <button
-                            onClick={() => handleDelete(row.original)}
+                            onClick={() => handleDelete(row.original, type)}
                             className="font-light hover:text-gray-500"
                         >
                             <Trash2 size={20} />
@@ -562,12 +623,12 @@ export const SingleSubjectPage = () => {
                 showAddButton={true}
                 showEditButton={true}
                 addButtonPlacement={"bottom"}
-                addBtnLabel={"Add Lecture Plan"} 
+                addBtnLabel={"Add Lecture Plan"}
                 onSaveNewRow={(newRowData: any) => {
                     console.log("Saving new row:", newRowData);
-                    saveLecturePlan(courseId!, semesterId!, subjectId!, instructorId!, newRowData);
+                    savePlan(CourseMaterialType.LPLAN, courseId!, semesterId!, subjectId!, instructorId!, newRowData);
                 }}
-                >
+            >
             </TechnoDataTableAdvanced>
 
             <UploaderDialogWrapper
@@ -577,7 +638,6 @@ export const SingleSubjectPage = () => {
                 onSave={uploadContext ? handlePlanFileSave : handleAdditionalResourceFileSave}
                 headingText="Upload Subject Materials"
             />
-
 
             <TechnoDataTableAdvanced
                 columns={getColumns("PPlan")}
@@ -592,8 +652,12 @@ export const SingleSubjectPage = () => {
                 visibleRows={5}
                 showAddButton={true}
                 showEditButton={true}
-                addButtonPlacement={"top"}
-                addBtnLabel={"Add Practical Plan"} >
+                addButtonPlacement={"bottom"}
+                addBtnLabel={"Add Practical Plan"}
+                onSaveNewRow={(newRowData: any) => {
+                    console.log("Saving new row:", newRowData);
+                    savePlan(CourseMaterialType.PPLAN, courseId!, semesterId!, subjectId!, instructorId!, newRowData);
+                }} >
             </TechnoDataTableAdvanced>
 
             <SubjectMaterialsSection
@@ -604,6 +668,21 @@ export const SingleSubjectPage = () => {
                 onUpload={handleAdditionalResourceUpload}
                 nameFontSize="text-sm"
                 metadataFontSize="text-xs"
+            />
+
+            <ConfirmDialog
+                open={!!deletePlanInfo}
+                icon={<Trash2 className=" pb-1 text-gray-500" />}
+                title="Deleting a Plan?"
+                description={
+                    <>
+                        Are you sure you want to delete the {deletePlanInfo?.type === CourseMaterialType.LPLAN ? "Lecture" : 
+                        "Practical" }{" "}
+                        <strong>{deletePlanInfo?.lectureNumber}</strong>?<br />
+                    </>
+                }
+                onCancel={() => setDeletePlanInfo(null)}
+                onConfirm={handlePlanDelete}
             />
 
             <ConfirmDialog
