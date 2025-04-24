@@ -1,3 +1,4 @@
+import { toPascal } from "@/lib/utils";
 export enum FootFallStatus {
   true = 'YES',
   false = 'NO'
@@ -15,5 +16,5 @@ interface FootFallTagProps {
 export default function FootFallTag({ status }: FootFallTagProps) {
   const style = footfallStyles[status] || 'bg-gray-100 text-gray-700';
 
-  return <span className={`px-2 py-1 rounded-md text-sm font-medium ${style}`}>{status}</span>;
+  return <span className={`px-2 py-1 rounded-md text-sm font-medium ${style}`}>{toPascal(status)}</span>;
 }

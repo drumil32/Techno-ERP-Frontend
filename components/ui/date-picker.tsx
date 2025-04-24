@@ -1,5 +1,5 @@
 import React from 'react';
-import { Control, FieldPath, FieldValues } from 'react-hook-form';
+import { Control, FieldPath, FieldValues, PathValue } from 'react-hook-form';
 import { format, parse, isValid } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
 
@@ -26,12 +26,14 @@ interface DatePickerProps<
   disabled?: boolean;
   calendarProps?: Omit<
     ShadcnCalendarProps,
-    'mode' | 'selected' | 'onSelect' | 'initialFocus' | 'captionLayout' | 'fromYear' | 'toYear' // Also omit props controlled by DatePicker logic
+    'mode' | 'selected' | 'onSelect' | 'initialFocus' | 'captionLayout' | 'fromYear' | 'toYear' | 'defaultMonth'
   >;
   showYearMonthDropdowns?: boolean;
   fromYear?: number;
   toYear?: number;
-  isRequired ?: boolean;
+  isRequired?: boolean;
+  defaultMonth?: Date;
+  defaultSelectedDate?: Date; 
 }
 
 const parseDateString = (
@@ -67,11 +69,18 @@ export function DatePicker<
   fromYear = new Date().getFullYear() - 100,
   toYear = new Date().getFullYear() + 10,
   isRequired = false,
+  defaultMonth = new Date(),
+  defaultSelectedDate, 
 }: DatePickerProps<TFieldValues, TName>) {
   return (
     <FormField
       control={control}
       name={name}
+      defaultValue={
+        defaultSelectedDate ? 
+          format(defaultSelectedDate, dateFormat) as PathValue<TFieldValues, TName> 
+          : undefined
+      } 
       render={({ field, fieldState: { error } }) => {
         const selectedDate = parseDateString(field.value, dateFormat);
 
@@ -118,6 +127,7 @@ export function DatePicker<
                   onSelect={handleDateSelect}
                   disabled={disabled || calendarProps?.disabled}
                   initialFocus
+                  defaultMonth={selectedDate || defaultMonth} // Show selected date's month if available, otherwise fall back to defaultMonth
                   captionLayout={showYearMonthDropdowns ? 'dropdown-buttons' : 'buttons'}
                   fromYear={showYearMonthDropdowns ? fromYear : undefined}
                   toYear={showYearMonthDropdowns ? toYear : undefined}

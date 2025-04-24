@@ -21,6 +21,7 @@ export default function AdmissionsLandingPage() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const router = useRouter()
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const handleViewMore = (row: AdmissionTableRow) => {
     if (row && row.id) {
@@ -85,7 +86,7 @@ export default function AdmissionsLandingPage() {
     queryKey: ['admissions', filterParams],
     queryFn: fetchAdmissionsData,
     placeholderData: (previousData) => previousData,
-    refetchOnWindowFocus: false, 
+    refetchOnWindowFocus: false,
     enabled: true
   })
 
@@ -112,6 +113,8 @@ export default function AdmissionsLandingPage() {
       {
         admissionsData && (
           <TechnoDataTable
+            selectedRowId={selectedRowId}
+            setSelectedRowId={setSelectedRowId}
             columns={columns}
             data={admissionsData}
             tableName="Ongoing Admissions"

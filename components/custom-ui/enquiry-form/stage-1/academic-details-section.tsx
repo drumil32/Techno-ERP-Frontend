@@ -79,7 +79,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
         <div className="space-y-2">
           <AccordionTrigger className="w-full items-center">
             {/* Section Title */}
-            <h3 className="font-inter text-[16px] font-semibold">Academic Details</h3>
+            <h3 className="font-inter text-[16px] font-semibold">Past Academic Details</h3>
             <hr className="flex-1 border-t border-[#DADADA] ml-2" />
           </AccordionTrigger>
 

@@ -2,15 +2,31 @@ import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-c
 import { Course, CourseNameMapper, LeadType } from '@/static/enum';
 import { toPascal } from '@/lib/utils';
 
-export const formatDateView=(dateStr:string)=> {
-  if (!dateStr || typeof dateStr !== "string") return "";
+export const formatDateView = (dateStr: string) => {
+  if (!dateStr || typeof dateStr !== "string") return null;
 
   const parts = dateStr.split("/");
-  if (parts.length !== 3) return "";
+  if (parts.length !== 3) return null;
 
   const [day, month, year] = parts;
   return `${day}/${month}/${year.slice(-2)}`;
 }
+export const formatTimeStampView = (dateStr: string) => {
+  if (!dateStr || typeof dateStr !== "string") return null;
+
+  const [datePart, timePart] = dateStr.split("|").map(part => part.trim());
+  if (!datePart) return null;
+
+  const parts = datePart.split("/");
+  if (parts.length !== 3) return null;
+
+  const [day, month, year] = parts;
+  const formattedDate = `${day}/${month}/${year.slice(-2)}`;
+
+  return timePart ? `${formattedDate} | ${timePart}` : formattedDate;
+};
+
+
 
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   // Modified parameters to get Assigned To Dropdown Data
@@ -24,19 +40,19 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       _id: lead._id,
       id: index + 1,
       date: lead.date,
-      dateView:formatDateView(lead.date),
+      dateView: formatDateView(lead.date),
       name: lead.name,
       phoneNumber: lead.phoneNumber,
       altPhoneNumber: lead.altPhoneNumber,
       altPhoneNumberView: lead.altPhoneNumber ?? '-',
       email: lead.email,
       emailView: lead.email ?? '-',
-      gender:  lead.gender,
-      genderView:  toPascal(lead.gender),
+      gender: lead.gender,
+      genderView: toPascal(lead.gender),
       city: lead.city,
-      cityView:lead.city ?? 'Not Provided',
-      area:lead.area,
-      areaView:lead.area ?? '-',
+      cityView: lead.city ?? 'Not Provided',
+      area: lead.area,
+      areaView: lead.area ?? '-',
       course: lead.course,
       courseView: CourseNameMapper[lead.course as Course] ?? '-',
       leadType: LeadType[lead.leadType as keyof typeof LeadType] ?? lead.leadType,
@@ -44,17 +60,18 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       source: lead.source,
       sourceView: lead.source ?? '-',
       assignedTo: lead.assignedTo,
-      schoolName:lead.schoolName,
+      schoolName: lead.schoolName,
       assignedToView: lead.assignedTo ?? '-',
       assignedToName: assignedToName,
-      nextDueDate: lead.nextDueDate ,
-      nextDueDateView: lead.nextDueDate ?? '-' ,
-      leadsFollowUpCount:lead.leadsFollowUpCount ?? 0,
+      nextDueDate: lead.nextDueDate,
+      nextDueDateView: formatDateView(lead.nextDueDate) ?? '-',
+      leadsFollowUpCount: lead.leadsFollowUpCount ?? 0,
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: new Date(lead.updatedAt).toLocaleString(),
-      remarks: lead.remarks ,
+      remarks: lead.remarks,
       remarksView: lead.remarks ?? '-',
-    leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'NA'
+      leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'NA',
+      leadTypeModifiedDateView: formatTimeStampView(lead.leadTypeModifiedDate)?? 'NA'
     };
   });
 
@@ -91,7 +108,7 @@ export const refineAnalytics = (analytics: any) => {
     {
       heading: analytics.openLeads ?? '',
       subheading: calculatePercentage(analytics.openLeads),
-      title: 'Open Leads',
+      title: 'Left Over Leads',
       color: 'text-orange-600'
     },
     {

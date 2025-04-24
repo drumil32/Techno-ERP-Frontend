@@ -118,7 +118,7 @@ export const enquirySchema = z.object({
     .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
     .nonempty('Student Name is required'),
   studentPhoneNumber: contactNumberSchema,
-  emailId: z.string().email('Invalid email format').optional(),
+  emailId: z.string({required_error:'Email is required'}).email('Invalid email format').nonempty('Email is required'),
   fatherName: z
     .string({ required_error: 'Father Name is required' })
     .regex(/^[A-Za-z\s]+$/, 'Father Name must only contain alphabets and spaces')
@@ -132,12 +132,12 @@ export const enquirySchema = z.object({
     .string({ required_error: "Mother's Name is required" })
     .regex(/^[A-Za-z\s]+$/, 'Mother Name must only contain alphabets and spaces')
     .nonempty("Mother's Name is required"),
-  motherPhoneNumber: contactNumberSchema,
+  motherPhoneNumber: contactNumberSchema.optional(),
   motherOccupation: z
     .string({ required_error: 'Mother occupation is required' })
     .regex(/^[A-Za-z\s]+$/, 'Mother occupation must only contain alphabets and spaces')
     .nonempty('Mother occupation is required'),
-  gender: z.nativeEnum(Gender).default(Gender.NOT_TO_MENTION),
+  gender: z.nativeEnum(Gender),
   dateOfBirth: requestDateSchema,
   category: z.nativeEnum(Category),
   course: z.nativeEnum(Course),

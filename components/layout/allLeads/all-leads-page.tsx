@@ -20,7 +20,7 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { apiRequest } from '@/lib/apiClient';
 import LeadTypeSelect from '@/components/custom-ui/lead-type-select/lead-type-select';
-import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
+import { cityDropdown, marketingSourcesDropdown } from '../admin-tracker/helpers/fetch-data';
 
 export default function AllLeadsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -37,8 +37,11 @@ export default function AllLeadsPage() {
 
   const handleSortChange = (column: string, order: string) => {
 
-    if (column === "nextDueDateView") {
+    if (column === "nextDueDateView" ) {
       column = "nextDueDate"
+    }
+    if (column === "dateView" ) {
+      column = "date"
     }
 
     setSortState(
@@ -280,6 +283,11 @@ export default function AllLeadsPage() {
         const [selectedType, setSelectedType] = useState<LeadType>(row.original.leadType);
 
         const handleDropdownChange = async (value: LeadType) => {
+          if (row.original.leadType == LeadType.INTERESTED) {
+            toast.info('Please refer to Active Leads page to change Active Lead Type');
+            return;
+          }
+
           setSelectedType(value);
 
           const {
@@ -302,6 +310,7 @@ export default function AllLeadsPage() {
             remarks,
             remarksView,
             leadTypeModifiedDate,
+            leadTypeModifiedDateView,
             ...cleanedRow
           } = row.original;
 
@@ -330,6 +339,8 @@ export default function AllLeadsPage() {
         };
 
         return (
+
+          
           <LeadTypeSelect value={selectedType} onChange={handleDropdownChange} />
         );
       },
@@ -372,6 +383,7 @@ export default function AllLeadsPage() {
             remarks,
             remarksView,
             leadTypeModifiedDate,
+            leadTypeModifiedDateView,
             ...cleanedRow
           } = filteredData;
 
@@ -406,7 +418,7 @@ export default function AllLeadsPage() {
       },
     }
     ,
-    { accessorKey: 'leadTypeModifiedDate', header: 'Timestamp' },
+    { accessorKey: 'leadTypeModifiedDateView', header: 'Timestamp' },
     {
       id: 'actions',
       header: 'Actions',
@@ -414,7 +426,10 @@ export default function AllLeadsPage() {
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
+          onClick={() => {
+            setSelectedRowId(row.id);
+            handleViewMore({ ...row.original, leadType: row.original._leadType })
+          }}
         >
           <span className="font-inter font-semibold text-[12px] text-primary">View More</span>
         </Button>
@@ -422,12 +437,30 @@ export default function AllLeadsPage() {
     },
   ];
 
+  const marketingSourceQuery = useQuery({
+    queryKey: ['marketingSources'],
+    queryFn: marketingSourcesDropdown
+  })
+  const marketingSource = Array.isArray(marketingSourceQuery.data) ? marketingSourceQuery.data : [];
+
+
   const getFiltersData = () => {
     return [
       {
         filterKey: 'date',
         label: 'Date',
         isDateFilter: true
+      },
+      {
+        filterKey: 'source',
+        label: 'Source',
+        options: marketingSource.map((item: string) => {
+          return {
+            label: item,
+            id: item
+          };
+        }),
+        multiSelect: true
       },
       {
         filterKey: 'city',
@@ -451,7 +484,7 @@ export default function AllLeadsPage() {
       },
       {
         filterKey: 'leadType',
-        label: 'Lead Type',
+        label: 'Lead Status',
         options: Object.values(LeadType),
         multiSelect: true
       },
@@ -524,6 +557,9 @@ export default function AllLeadsPage() {
       >
         {isDrawerOpen && editRow && (
           <LeadViewEdit
+            setIsDrawerOpen={setIsDrawerOpen}
+            setSelectedRowId={setSelectedRowId}
+            setRefreshKey={setRefreshKey}
             key={editRow._id}
             data={editRow}
           />

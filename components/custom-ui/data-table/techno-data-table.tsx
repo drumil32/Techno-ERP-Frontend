@@ -28,6 +28,7 @@ import {
   ChevronDown,
   ArrowUp,
   ArrowDown,
+  ArrowUpDown,
   Search,
   ChevronLeft,
   ChevronRight,
@@ -50,7 +51,7 @@ export default function TechnoDataTable({
   onSort,
   totalEntries,
   handleViewMore,
-  selectedRowId=null,
+  selectedRowId = null,
   setSelectedRowId,
   rowCursor = true,
   showPagination = true,
@@ -58,8 +59,14 @@ export default function TechnoDataTable({
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
-  const [sortColumn, setSortColumn] = useState<string | null>(null);
-  const [sortOrder, setSortOrder] = useState<string>('asc');
+
+  const [sortConfig, setSortConfig] = useState<Record<string, string>>(() => {
+    const initialConfig: Record<string, string> = {};
+    ['dateView', 'nextDueDateView', 'Next Call Date', 'LTC Date','leadTypeModifiedDate'].forEach(column => {
+      initialConfig[column] = 'desc';
+    });
+    return initialConfig;
+  });
 
   useEffect(() => {
     setGlobalFilter(searchTerm);
@@ -91,35 +98,44 @@ export default function TechnoDataTable({
   });
 
   const handleSort = (columnName: string) => {
-    const newOrder = sortColumn === columnName ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc';
-    setSortColumn(columnName);
-    setSortOrder(newOrder);
-    if (onSort) onSort(columnName, newOrder);
-  };
+    const newSortConfig = { ...sortConfig };
 
+    if (!newSortConfig[columnName]) {
+      newSortConfig[columnName] = 'desc';
+    } else if (newSortConfig[columnName] === 'desc') {
+      newSortConfig[columnName] = 'asc';
+    } else {
+      newSortConfig[columnName] = 'desc';
+    }
+
+    setSortConfig(newSortConfig);
+    if (onSort) onSort(columnName, newSortConfig[columnName]);
+  };
+  
   const getSortIcon = (columnName: string) => {
-    if (sortColumn === columnName) {
-      return sortOrder === 'asc' ? (
+    if (sortConfig[columnName]) {
+      return sortConfig[columnName] === 'asc' ? (
         <ArrowUp className="ml-1 h-4 w-4" />
       ) : (
         <ArrowDown className="ml-1 h-4 w-4" />
       );
     }
-    return null;
+    return <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />;
   };
 
   const nonClickableColumns = ['actions', 'leadType', 'finalConversion', "leadsFollowUpCount", 'yellowLeadsFollowUpCount'];
 
+  const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate'];
+
   return (
     <div className="w-full mb-10 bg-white space-y-4 my-[8px] mb-0 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
-      {/* Header Section */}
       <div className="flex w-full items-center py-4 px-4">
         <div className="flex items-center">
           <h2 className="text-xl font-bold">{tableName}</h2>
           {children && <div className="ml-2">{children}</div>}
         </div>
         <div className="flex items-center space-x-2 ml-auto">
-          <div className="relative">
+        <div className="relative">
             <Input
               placeholder="Search here"
               value={globalFilter}
@@ -130,10 +146,10 @@ export default function TechnoDataTable({
               <Search className="h-4 w-4 text-gray-500" />
             </span>
           </div>
-          <Button variant="outline" className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
+          <Button disabled variant="outline" className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
             <span className="font-inter font-medium text-[12px]">Upload</span>
           </Button>
-          <Button className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
+          <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
             <span className="font-inter font-semibold text-[12px]">Download</span>
           </Button>
         </div>
@@ -144,29 +160,34 @@ export default function TechnoDataTable({
           <TableHeader className="bg-[#F7F7F7] sticky top-0 ">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="h-10">
-                {headerGroup.headers.map((header, index) => (
-                  <TableHead
-                    key={header.id}
-                    className={`text-center font-light h-10 ${index === 0 ? 'rounded-l-[5px]' : ''} ${index === headerGroup.headers.length - 1 ? 'rounded-r-[5px]' : ''
-                      }`}
-                  >
-                    {header.column.columnDef.header === 'Date' ||
-                      header.column.columnDef.header === 'Next Due Date' ||
-                      header.column.columnDef.header === 'Next Call Date' ||
-                      header.column.columnDef.header === 'LTC Date' ? (
-                      <Button variant="ghost" onClick={() => handleSort(header.column.id)}>
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        {getSortIcon(header.column.id)}
-                      </Button>
-                    ) : (
-                      flexRender(header.column.columnDef.header, header.getContext())
-                    )}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header, index) => {
+                  const columnId = header.column.id;
+                  const isSortable = sortableColumns.includes(columnId);
+                  const isNonClickable = nonClickableColumns.includes(columnId);
+                  
+                  return (
+                    <TableHead
+                      key={header.id}
+                      className={`text-center font-light h-10 ${index === 0 ? 'rounded-l-[5px]' : ''} ${index === headerGroup.headers.length - 1 ? 'rounded-r-[5px]' : ''}`}
+                    >
+                      {isSortable && !isNonClickable ? (
+                        <div 
+                          className="flex items-center justify-center cursor-pointer" 
+                          onClick={() => handleSort(columnId)}
+                        >
+                          <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                          {getSortIcon(columnId)}
+                        </div>
+                      ) : (
+                        flexRender(header.column.columnDef.header, header.getContext())
+                      )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody className="[&_tr]:h-[39px]">
+          <TableBody className="[&_tr]:h-[39px] ">
             {table.getRowModel().rows.length ? (
               table.getRowModel().rows.map((row: any) => (
                 <TableRow
@@ -184,12 +205,12 @@ export default function TechnoDataTable({
                     return (
                       <TableCell
                         key={cell.id}
-                        className={`h-[39px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-'
-                          ? 'text-left max-w-[225px] truncate'
+                        className={`h-[39px] py-2 ${(cell.column.columnDef.header === 'Remarks'|| cell.column.columnDef.header==='Area'|| cell.column.columnDef.header==='Name'|| cell.column.columnDef.header==='Assigned To') && cell.getValue() !== '-'
+                          ? 'text-left max-w-[120px] truncate'
                           : 'text-center'
                           }`}
                         onClick={(e) => {
-                          if (isExcluded) e.stopPropagation(); // Block row click from excluded cells
+                          if (isExcluded) e.stopPropagation();
                         }}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -228,7 +249,6 @@ export default function TechnoDataTable({
         </Table>
       </div>
 
-      {/* Pagination Section */}
       {showPagination &&
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center space-x-2">

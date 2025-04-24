@@ -12,8 +12,10 @@ import {
 } from '@/components/ui/breadcrumb';
 import { usePathname } from 'next/navigation';
 import React from 'react';
-
-export default function TechnoBreadCrumb() {
+type BreadCrumbProps={
+    rootUrl:string;
+}
+export default function TechnoBreadCrumb({rootUrl}:BreadCrumbProps) {
     const pathname = usePathname();
     const pathSegments = pathname.split('/').filter(Boolean);
     const findSidebarKey = () => {
@@ -40,7 +42,7 @@ export default function TechnoBreadCrumb() {
 
         breadcrumbs.push(
             <BreadcrumbItem key="sidebar">
-                <BreadcrumbLink href="/">{sidebarTitle}</BreadcrumbLink>
+                <BreadcrumbLink href={rootUrl}>{sidebarTitle}</BreadcrumbLink>
             </BreadcrumbItem>
         );
 
