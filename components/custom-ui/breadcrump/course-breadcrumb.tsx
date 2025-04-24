@@ -12,10 +12,8 @@ import {
 } from '@/components/ui/breadcrumb';
 import { usePathname } from 'next/navigation';
 import React from 'react';
-type BreadCrumbProps={
-    rootUrl:string;
-}
-export default function TechnoBreadCrumb({rootUrl}:BreadCrumbProps) {
+
+export default function CourseBreadCrumb() {
     const pathname = usePathname();
     const pathSegments = pathname.split('/').filter(Boolean);
     const findSidebarKey = () => {
@@ -42,12 +40,12 @@ export default function TechnoBreadCrumb({rootUrl}:BreadCrumbProps) {
 
         breadcrumbs.push(
             <BreadcrumbItem key="sidebar">
-                <BreadcrumbLink href={rootUrl}>{sidebarTitle}</BreadcrumbLink>
+                <BreadcrumbLink href="/">{sidebarTitle}</BreadcrumbLink>
             </BreadcrumbItem>
         );
 
         // Start from the third segment
-        for (let i = 2; i < Math.min(pathSegments.length,3); i++) {
+        for (let i = 2; i < pathSegments.length; i++) {
             const segment = pathSegments[i];
             console.log("Segment is : ", segment);
             const formattedSegment = segment
@@ -55,7 +53,7 @@ export default function TechnoBreadCrumb({rootUrl}:BreadCrumbProps) {
                 .replace(/\b\w/g, (char) => char.toUpperCase());
 
             const href = `/${pathSegments.slice(0, i + 1).join('/')}`;
-            const isLastItem = i === Math.min(pathSegments.length-1,2);
+            const isLastItem = i === pathSegments.length - 1;
 
             breadcrumbs.push(
                 <React.Fragment key={href}>

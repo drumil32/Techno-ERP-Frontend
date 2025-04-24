@@ -128,7 +128,7 @@ export default function TechnoDataTable({
   const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate'];
 
   return (
-    <div className="w-full mb-10 bg-white space-y-4 my-[16px]  px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
+    <div className="w-full mb-10 bg-white space-y-4 my-[8px] mb-0 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="flex w-full items-center py-4 px-4">
         <div className="flex items-center">
           <h2 className="text-xl font-bold">{tableName}</h2>
@@ -137,7 +137,7 @@ export default function TechnoDataTable({
         <div className="flex items-center space-x-2 ml-auto">
         <div className="relative">
             <Input
-              placeholder="Search for leads"
+              placeholder="Search here"
               value={globalFilter}
               onChange={handleSearchChange}
               className="max-w-[243px] h-[32px] rounded-md bg-[#f3f3f3] px-4 py-2 pr-10 text-gray-600 placeholder-gray-400"
@@ -156,8 +156,8 @@ export default function TechnoDataTable({
       </div>
 
       <div className="relative min-h-[580px] overflow-auto">
-        <Table className="w-full zoom-out-60 ">
-          <TableHeader className="bg-[#F7F7F7] sticky top-0 z-5">
+        <Table className="w-full">
+          <TableHeader className="bg-[#F7F7F7] sticky top-0 ">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="h-10">
                 {headerGroup.headers.map((header, index) => {

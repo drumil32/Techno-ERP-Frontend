@@ -62,4 +62,30 @@ export const API_ENDPOINTS = {
   // Document Upload
   uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,
 
+
+  //Department Meta Data
+  createDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
+  updateDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
+  getDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
+
+  //Courses 
+  createCourse : `${API_DOMAIN}/course`,
+  getCourseDetails : `${API_DOMAIN}/course/course-details`,
+  getUniqueCourseDetails : `${API_DOMAIN}/course/unique-courses`,
+  updateCourse : `${API_DOMAIN}/course`,
+  
+  createSubject : `${API_DOMAIN}/course/subject`,
+  getSubjectDetails : `${API_DOMAIN}/course/subject/subject-details`,
+  getFilteredSubjectDetails : `${API_DOMAIN}/course/subject/filtered-subject-details`,
+  updateSubject : `${API_DOMAIN}/course/subject`,
+  deleteSubject : `${API_DOMAIN}/course/subject`,
+  
+  createPlan : `${API_DOMAIN}/course/subject/schedule/plan`,
+  uploadPlan : `${API_DOMAIN}/course/subject/schedule/upload-plan`,
+  uploadAdditionalResources : `${API_DOMAIN}/course/subject/schedule/upload-additional-resource`,
+  getScheduleDetails : `${API_DOMAIN}/course/subject/schedule/schedule-details`,
+  batchUpdatePlan : `${API_DOMAIN}/course/subject/schedule/plan`,
+  deletePlan : `${API_DOMAIN}/course/subject/schedule/plan`,
+  deleteFileUsingURL : `${API_DOMAIN}/course/subject/schedule/delete-file`
+
 };
