@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
 import { Course, CourseNameMapper, Gender, LeadType, Locations } from '@/static/enum';
 import TechnoLeadTypeTag from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
@@ -20,13 +19,31 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { Calendar } from '@/components/ui/calendar';
 import { parse, format, isValid } from 'date-fns';
 import { toast } from 'sonner';
-import { toPascal } from '@/lib/utils';
+import { removeNullValues, toPascal } from '@/lib/utils';
 import { updateLeadRequestSchema } from './validators';
 import z from 'zod';
 import { useQuery } from '@tanstack/react-query';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
 import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
-import { formatDateView } from './helpers/refine-data';
+import { formatDateView, formatTimeStampView } from './helpers/refine-data';
+import { MultiSelectCustomDropdown } from '@/components/custom-ui/common/multi-select-custom-editable';
+import { cleanDataForDraft } from '@/components/custom-ui/enquiry-form/stage-2/helpers/refine-data';
+import { Badge } from "@/components/ui/badge";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown, X } from "lucide-react";
 
 export interface LeadData {
   _id: string;
@@ -38,7 +55,7 @@ export interface LeadData {
   area: string;
   city: string;
   course?: string;
-  assignedTo?: string;
+  assignedTo: string[];
   schoolName?: string;
   leadsFollowUpCount?: number;
   leadType?: string;
@@ -51,11 +68,13 @@ interface FormErrors {
   name?: string;
   phoneNumber?: string;
   altPhoneNumber?: string;
+  course?: string;
   email?: string;
   area?: string;
   nextDueDate?: string;
   schoolName?: string;
   remarks?: string;
+  city?: string;
 }
 
 export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, setRefreshKey }: any) {
@@ -82,9 +101,11 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
     if (!formData) return;
 
     try {
-      const tempData = { ...formData, [name]: value };
+      let tempData = { ...formData, [name]: value };
 
-      const validationData = {
+      tempData = removeNullValues(tempData);
+      console.log(tempData);
+      let validationData = {
         _id: tempData._id,
         date: tempData.date,
         name: tempData.name,
@@ -104,10 +125,11 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         leadTypeModifiedDate: tempData.leadTypeModifiedDate,
       };
 
-      // First, validate the entire schema
+      validationData = removeNullValues(validationData);
+      console.log('Validation Data', validationData);
+
       const response = updateLeadRequestSchema.parse(validationData);
 
-      // If validation passes, remove any existing error for this field
       setErrors((prevErrors: any) => {
         const newErrors = { ...prevErrors };
         delete newErrors[name];
@@ -117,6 +139,8 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
 
 
     } catch (error) {
+
+      console.log(error);
       if (error instanceof z.ZodError) {
         // Collect all field errors
         const newErrors: FormErrors = { ...errors }; // Preserve existing errors
@@ -142,7 +166,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
     validateField(name, value);
   };
 
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string | string[]) => {
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
     validateField(name, value);
   };
@@ -234,9 +258,9 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         Object.entries(formData).filter(([key]) => allowedFields.includes(key))
       );
 
-      const { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
-
-      const validation = updateLeadRequestSchema.safeParse(filteredData);
+      let { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
+      toBeUpdatedData = removeNullValues(toBeUpdatedData)
+      const validation = updateLeadRequestSchema.safeParse(toBeUpdatedData);
       if (!validation.success) {
         const newErrors: FormErrors = {};
         validation.error.errors.forEach((err) => {
@@ -436,8 +460,8 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
 
       </div>
 
-      <div className="flex gap-5 w-full">
-        <div className="space-y-2 w-1/2">
+      <div className="flex gap-5 h-max w-full items-end">
+        <div className="space-y-2 flex-1">
           <EditLabel htmlFor="area" title={'Area'} />
           <Input
             id="area"
@@ -445,55 +469,49 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
             type="area"
             value={formData.area || ''}
             onChange={handleChange}
-            className="rounded-[5px]"
+            className="rounded-[5px] w-full"
           />
           {errors.area && <p className="text-red-500 text-xs mt-1">{errors.area}</p>}
         </div>
 
-        <div className="space-y-2 w-1/2">
+        <div className="space-y-2 flex-1">
           <EditLabel htmlFor="city" title={'City'} />
-          <Select
-            defaultValue={formData.city}
-            onValueChange={(value) => handleSelectChange('city', value)}
-          >
-            <SelectTrigger id="location" className="w-full rounded-[5px]">
-              <SelectValue placeholder="Select location" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.values(cityDropdownData).map((location) => (
-                <SelectItem key={location} value={location}>
-                  {location}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <MultiSelectCustomDropdown
+            form={formData}
+            name="city"
+            options={Object.values(cityDropdownData).map(city => ({ _id: city, name: city }))}
+            placeholder="Select city"
+            allowCustomInput={true}
+            onChange={(value) => {
+              setFormData((prev) => (prev ? { ...prev, city: value } : null));
+              validateField('city', value);
+            }}
+          />
+          {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
         </div>
       </div>
 
       <div className="flex gap-5">
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="course" title={'Course'} />
-          <Select
-            defaultValue={formData.course || ''}
-            onValueChange={(value) => handleSelectChange('course', value)}
-          >
-            <SelectTrigger id="course" className="w-full rounded-[5px]">
-              <SelectValue placeholder="Select course" />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.values(Course).map((course) => (
-                <SelectItem key={course} value={course}>
-                  {CourseNameMapper[course as Course]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <MultiSelectCustomDropdown
+            form={formData}
+            name="course"
+            options={Object.values(Course).map(course => ({ _id: course, name: course }))}
+            placeholder="Select course"
+            allowCustomInput={true}
+            onChange={(value) => {
+              setFormData((prev) => (prev ? { ...prev, course: value } : null));
+              validateField('course', value);
+            }}
+          />
+          {errors.course && <p className="text-red-500 text-xs mt-1">{errors.course}</p>}
         </div>
 
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="leadType" title={'Lead Type'} />
           <Select
-          disabled={formData.leadType==LeadType.INTERESTED}
+            disabled={formData.leadType == LeadType.INTERESTED}
             defaultValue={formData.leadType || ''}
             onValueChange={(value) => handleSelectChange('leadType', value)}
           >
@@ -512,29 +530,29 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
       </div>
 
       <div className="flex gap-5">
-      <div className="space-y-2 w-1/2">
-        <EditLabel htmlFor="nextDueDate" title={'Next Due Date'} />
-        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" className="w-full justify-start text-left pl-20">
-              <CalendarIcon className="left-3 h-5 w-5 text-gray-400" />
-              {formData.nextDueDate || 'Select a date'}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={parseDateString(formData.nextDueDate)}
-              onSelect={handleDateChange}
-              initialFocus
-              captionLayout={"dropdown-buttons"}
-              fromYear={new Date().getFullYear() - 100}
-              toYear={new Date().getFullYear() + 10}
-            />
-          </PopoverContent>
-        </Popover>
-        {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
-      </div>
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="nextDueDate" title={'Next Due Date'} />
+          <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-full justify-start text-left pl-20">
+                <CalendarIcon className="left-3 h-5 w-5 text-gray-400" />
+                {formData.nextDueDate || 'Select a date'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={parseDateString(formData.nextDueDate)}
+                onSelect={handleDateChange}
+                initialFocus
+                captionLayout={"dropdown-buttons"}
+                fromYear={new Date().getFullYear() - 100}
+                toYear={new Date().getFullYear() + 10}
+              />
+            </PopoverContent>
+          </Popover>
+          {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
+        </div>
 
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="leadsFollowUpCount" title={'Follow-up Count'} />
@@ -568,7 +586,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         />
         {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
       </div>
-  
+
 
       <div className="space-y-2">
         <EditLabel htmlFor="remarks" title={'Remarks'} />
@@ -582,29 +600,120 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         />
       </div>
 
-      <div className="space-y-2 w-full">
-          <EditLabel htmlFor="assignedTo" title={'Assigned To'} />
-          <Select
-            defaultValue={formData.assignedTo || ''}
-            onValueChange={(value) => handleSelectChange('assignedTo', value)}
-          >
-            <SelectTrigger id="assignedTo" className="w-full rounded-[5px]" disabled>
-              <SelectValue placeholder={assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)?.name || 'Select Assigned To'} />
-            </SelectTrigger>
 
-            <SelectContent>
-              {assignedToDropdownData.map((user: any) => (
-                <SelectItem key={user._id} value={user._id}>
-                  {user.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      <div className="space-y-2 w-full">
+        <EditLabel htmlFor="assignedTo" title="Assigned To" />
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              className={cn(
+                "w-full justify-between rounded-[5px] min-h-10",
+                !formData.assignedTo?.length && "text-muted-foreground"
+              )}
+            >
+              <div className="flex gap-1 flex-wrap overflow-hidden max-w-[calc(100%-30px)]">
+                {formData.assignedTo?.length > 0 ? (
+                  assignedToDropdownData
+                    .filter((user) => formData.assignedTo.includes(user._id))
+                    .map((user) => (
+                      <Badge
+                        key={user._id}
+                        variant="secondary"
+                        className="mb-0.5 max-w-full truncate"
+                      >
+                        <span className="truncate">{user.name}</span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectChange(
+                              "assignedTo",
+                              formData.assignedTo.filter((id) => id !== user._id)
+                            );
+                          }}
+                          className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))
+                ) : (
+                  <span className="truncate">Select Assigned To</span>
+                )}
+              </div>
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0" align="start">
+            <Command shouldFilter={true}>
+              <CommandInput placeholder="Search users..." />
+              <CommandEmpty>No users found.</CommandEmpty>
+              <CommandGroup>
+                <ScrollArea className="h-48">
+                  {assignedToDropdownData.map((user: { _id: string, name: string }) => (
+                    <CommandItem
+                      key={user._id}
+                      value={user.name}
+                      onSelect={() => {
+                        const currentAssigned = formData.assignedTo || [];
+                        const newAssigned = currentAssigned.includes(user._id)
+                          ? currentAssigned.filter((id) => id !== user._id)
+                          : [...currentAssigned, user._id];
+                        handleSelectChange("assignedTo", newAssigned);
+                      }}
+                      className="cursor-pointer"
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          formData.assignedTo?.includes(user._id)
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      <span className="truncate">{user.name}</span>
+                    </CommandItem>
+                  ))}
+                </ScrollArea>
+              </CommandGroup>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </div>
+
+      <div className="flex gap-5">
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="nextDueDate" title={'Next Call Date'} />
+          <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="w-full justify-start text-left pl-20">
+                <CalendarIcon className="left-3 h-5 w-5 text-gray-400" />
+                {formData.nextDueDate || 'Select a date'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={parseDateString(formData.nextDueDate)}
+                onSelect={handleDateChange}
+                initialFocus
+                captionLayout={"dropdown-buttons"}
+                fromYear={new Date().getFullYear() - 100}
+                toYear={new Date().getFullYear() + 10}
+              />
+            </PopoverContent>
+          </Popover>
+          {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
         </div>
+
+
+      </div>
 
       <div className="flex flex-col gap-2">
         <p className="text-[#666666]">Last Modified Date</p>
-        <p>{formatDateView(formData.leadTypeModifiedDate)}</p>
+        <p>{formatTimeStampView(formData.leadTypeModifiedDate)}</p>
       </div>
     </>
   );

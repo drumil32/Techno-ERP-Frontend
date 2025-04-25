@@ -93,6 +93,25 @@ export enum Course {
   MVAP = 'MVAP',
   MSCC = 'MSCC'
 }
+export const ReverseCourseNameMapper: Record<string, Course> = {
+  'B.COM': Course.BCOM,
+  'B.COM (HONS)': Course.BCOMH,
+  'BA-JMC': Course.BAJMC,
+  'B.ED': Course.BED,
+  'B.SC (PCM)': Course.BSCM,
+  'B.SC (ZBC)': Course.BSCB,
+  'BBA': Course.BBA,
+  'BCA': Course.BCA,
+  'BVA (App Art)': Course.BVAA,
+  'BVA (Painting)': Course.BVAP,
+  'MA-JMC': Course.MAJMC,
+  'M.COM (COM)': Course.MCOMC,
+  'MBA': Course.MBA,
+  'LLB': Course.LLB,
+  'MCA': Course.MCA,
+  'MVA (Paint)': Course.MVAP,
+  'M.SC (Chem)': Course.MSCC
+};
 
 export const CourseNameMapper: Record<Course, string> = {
   [Course.BCOM]: 'B.COM',

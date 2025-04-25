@@ -58,11 +58,11 @@ const EnquiryFormStage3 = () => {
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id, refreshKey],
     queryFn: () => getEnquiry(id ? id : ''),
-    refetchOnWindowFocus: false, 
-    enabled: !!id 
+    refetchOnWindowFocus: false,
+    enabled: !!id
   });
 
-  const [currentDocuments, setCurrentDocuments]= useState<EnquiryDocument[]>(data?.documents as EnquiryDocument[] ?? []);
+  const [currentDocuments, setCurrentDocuments] = useState<EnquiryDocument[]>(data?.documents as EnquiryDocument[] ?? []);
 
   useEffect(() => {
     setCurrentDocuments(data?.documents as EnquiryDocument[] ?? [])
@@ -91,7 +91,7 @@ const EnquiryFormStage3 = () => {
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
     );
 
-    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber'];
+    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber', 'emailId'];
 
     const filteredKeys = Array.from(new Set([...Object.keys(values), ...alwaysIncludeKeys])).filter(
       (key) => schemaKeys.includes(key)
@@ -106,6 +106,7 @@ const EnquiryFormStage3 = () => {
         {} as Partial<Record<keyof typeof enquiryDraftStep3Schema.shape, true>>
       )
     );
+    console.log('Partial Schema',partialSchema);
 
     const validationResult = partialSchema.safeParse(filteredValues);
     // Clear previous errors before setting new ones
@@ -159,7 +160,7 @@ const EnquiryFormStage3 = () => {
     const filteredData = filterBySchema(formSchemaStep3, values);
     console.log('Filtered Data:', filteredData);
 
-    const documentTypesPresent = currentDocuments.map((doc:any) => doc.type);
+    const documentTypesPresent = currentDocuments.map((doc: any) => doc.type);
     const missingDocuments = mandatoryDocuments.filter(
       (requiredType) => !documentTypesPresent.includes(requiredType)
     );
@@ -184,7 +185,7 @@ const EnquiryFormStage3 = () => {
         });
       }
     }
-    
+
 
     console.log(rest)
 
@@ -313,7 +314,7 @@ const EnquiryFormStage3 = () => {
             commonFormItemClass={commonFormItemClass}
           />
 
-          <AllDocuments enquiryDocuments={currentDocuments} setCurrentDocuments={setCurrentDocuments}/>
+          <AllDocuments enquiryDocuments={currentDocuments} setCurrentDocuments={setCurrentDocuments} />
 
           <ConfirmationSection form={form} />
           <OfficeUseSection

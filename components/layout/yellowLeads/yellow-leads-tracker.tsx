@@ -240,7 +240,7 @@ export default function YellowLeadsTracker() {
   ]);
 
   const columns = [
-    { accessorKey: 'id', header: 'S. No.' },
+    { accessorKey: 'id', header: 'S. No.',meta: { align: 'center' } },
     { accessorKey: 'leadTypeModifiedDate', header: 'LTC Date' },
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
@@ -288,6 +288,7 @@ export default function YellowLeadsTracker() {
     { accessorKey: 'nextDueDateView', header: 'Next Call Date' },
     {
       accessorKey: 'yellowLeadsFollowUpCount',
+      meta: { align: 'center' },
       header: 'Follow Ups',
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.yellowLeadsFollowUpCount);
@@ -365,6 +366,7 @@ export default function YellowLeadsTracker() {
     {
       id: 'actions',
       header: 'Actions',
+      meta: { align: 'center' },
       cell: ({ row }: any) => (
         <Button
           variant="ghost"

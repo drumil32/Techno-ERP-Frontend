@@ -29,7 +29,7 @@ export default function AdmissionsLandingPage() {
     }
   };
   const columns = [
-    { accessorKey: 'id', header: 'S. No' },
+    { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry' },
     { accessorKey: 'studentName', header: 'Name' },
     { accessorKey: 'studentPhoneNumber', header: 'Phone Number' },
@@ -37,7 +37,7 @@ export default function AdmissionsLandingPage() {
     { accessorKey: 'district', header: 'District' },
     { accessorKey: 'course', header: 'Course' },
     {
-      accessorKey: 'applicationStatus', header: 'Application Status', cell: ({ getValue }: CellContext<AdmissionTableRow, string>) => {
+      accessorKey: 'applicationStatus', header: 'Application Status',meta:{align:'center'}, cell: ({ getValue }: CellContext<AdmissionTableRow, string>) => {
         const rawStatus = getValue<string>();
         return formatApplicationStatus(rawStatus);
       }

@@ -36,7 +36,12 @@ import {
   ChevronsLeft
 } from 'lucide-react';
 import { LuDownload, LuUpload } from 'react-icons/lu';
-
+import clsx from 'clsx';
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData extends unknown, TValue> {
+    align?: 'left' | 'center' | 'right';
+  }
+}
 export default function TechnoDataTable({
   columns,
   data,
@@ -62,7 +67,7 @@ export default function TechnoDataTable({
 
   const [sortConfig, setSortConfig] = useState<Record<string, string>>(() => {
     const initialConfig: Record<string, string> = {};
-    ['dateView', 'nextDueDateView', 'Next Call Date', 'LTC Date','leadTypeModifiedDate'].forEach(column => {
+    ['dateView', 'nextDueDateView', 'Next Call Date', 'LTC Date', 'leadTypeModifiedDate'].forEach(column => {
       initialConfig[column] = 'desc';
     });
     return initialConfig;
@@ -111,7 +116,7 @@ export default function TechnoDataTable({
     setSortConfig(newSortConfig);
     if (onSort) onSort(columnName, newSortConfig[columnName]);
   };
-  
+
   const getSortIcon = (columnName: string) => {
     if (sortConfig[columnName]) {
       return sortConfig[columnName] === 'asc' ? (
@@ -135,7 +140,7 @@ export default function TechnoDataTable({
           {children && <div className="ml-2">{children}</div>}
         </div>
         <div className="flex items-center space-x-2 ml-auto">
-        <div className="relative">
+          <div className="relative">
             <Input
               placeholder="Search here"
               value={globalFilter}
@@ -164,15 +169,25 @@ export default function TechnoDataTable({
                   const columnId = header.column.id;
                   const isSortable = sortableColumns.includes(columnId);
                   const isNonClickable = nonClickableColumns.includes(columnId);
-                  
+                  const align = header.column.columnDef.meta?.align || 'left';
+
                   return (
                     <TableHead
                       key={header.id}
-                      className={`text-center font-light h-10 ${index === 0 ? 'rounded-l-[5px]' : ''} ${index === headerGroup.headers.length - 1 ? 'rounded-r-[5px]' : ''}`}
+                      className={clsx(
+                        'font-light h-10',
+                        {
+                          'text-left': align === 'left',
+                          'text-center': !align || align === 'center',
+                          'text-right': align === 'right',
+                          'rounded-l-[5px]': index === 0,
+                          'rounded-r-[5px]': index === headerGroup.headers.length - 1
+                        }
+                      )}
                     >
                       {isSortable && !isNonClickable ? (
-                        <div 
-                          className="flex items-center justify-center cursor-pointer" 
+                        <div
+                          className="flex items-center justify-center cursor-pointer"
                           onClick={() => handleSort(columnId)}
                         >
                           <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
@@ -201,14 +216,24 @@ export default function TechnoDataTable({
                 >
                   {row.getVisibleCells().map((cell: any) => {
                     const isExcluded = nonClickableColumns.includes(cell.column.id);
-
+                    const align = cell.column.columnDef.meta?.align || 'left';
                     return (
                       <TableCell
                         key={cell.id}
-                        className={`h-[39px] py-2 ${(cell.column.columnDef.header === 'Remarks'|| cell.column.columnDef.header==='Area'|| cell.column.columnDef.header==='Name'|| cell.column.columnDef.header==='Assigned To') && cell.getValue() !== '-'
-                          ? 'text-left max-w-[120px] truncate'
-                          : 'text-center'
-                          }`}
+                        className={clsx(
+                          'h-[39px] py-2',
+                          {
+                            'text-left': align === 'left',
+                            'text-center': cell.getValue()==='-'|| cell.getValue()==='N/A' || align === 'center',
+                            'text-right': align === 'right',
+                            'max-w-[120px] truncate':
+                              (cell.column.columnDef.header === 'Remarks' ||
+                                cell.column.columnDef.header === 'Area' ||
+                                cell.column.columnDef.header === 'Name' ||
+                                cell.column.columnDef.header === 'Assigned To') &&
+                              cell.getValue() !== '-'
+                          }
+                        )}
                         onClick={(e) => {
                           if (isExcluded) e.stopPropagation();
                         }}

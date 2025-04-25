@@ -2,7 +2,7 @@ import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-c
 import { FinalConversionStatus } from '../final-conversion-tag';
 import { Course, CourseNameMapper } from '@/static/enum';
 import { toPascal } from '@/lib/utils';
-import { formatTimeStampView,formatDateView} from '../../allLeads/helpers/refine-data';
+import { formatTimeStampView, formatDateView } from '../../allLeads/helpers/refine-data';
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   const refinedLeads = data.yellowLeads?.map((lead: any, index: number) => {
     const assignedToUser = assignedToDropdownData?.find(
@@ -20,14 +20,14 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       email: lead.email ?? '-',
       gender: lead.gender,
       genderView: toPascal(lead.gender),
-      assignedTo: lead.assignedTo ?? '-',
+      assignedTo: lead.assignedTo,
       assignedToName: assignedToName,
       area: lead.area,
       areaView: lead.area ?? '-',
       city: lead.city,
       cityView: lead.city ?? 'Not Provided',
       course: lead.course,
-      courseView: CourseNameMapper[lead.course as Course] ?? '-',
+      courseView: lead.course ?? '-',
       footFall: lead.footFall,
       schoolName: lead.schoolName,
       finalConversion:
@@ -39,7 +39,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       date: lead.date,
       leadTypeModifiedDate: formatTimeStampView(lead.leadTypeModifiedDate) ?? '-',
       nextDueDate: lead.nextDueDate,
-      nextDueDateView: formatDateView( lead.nextDueDate) ?? '-',
+      nextDueDateView: formatDateView(lead.nextDueDate) ?? '-',
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: new Date(lead.updatedAt).toLocaleString()
     };

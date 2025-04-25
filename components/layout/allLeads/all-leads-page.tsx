@@ -37,10 +37,10 @@ export default function AllLeadsPage() {
 
   const handleSortChange = (column: string, order: string) => {
 
-    if (column === "nextDueDateView" ) {
+    if (column === "nextDueDateView") {
       column = "nextDueDate"
     }
-    if (column === "dateView" ) {
+    if (column === "dateView") {
       column = "date"
     }
 
@@ -269,7 +269,7 @@ export default function AllLeadsPage() {
   ]);
 
   const columns = [
-    { accessorKey: 'id', header: 'S. No' },
+    { accessorKey: 'id', header: 'S. No', meta: { align: 'center' }, },
     { accessorKey: 'dateView', header: 'Date' },
     { accessorKey: 'name', header: 'Name' },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
@@ -278,6 +278,7 @@ export default function AllLeadsPage() {
     { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'leadType',
+      meta: { align: 'center' },
       header: 'Lead Type',
       cell: ({ row }: any) => {
         const [selectedType, setSelectedType] = useState<LeadType>(row.original.leadType);
@@ -311,6 +312,8 @@ export default function AllLeadsPage() {
             remarksView,
             leadTypeModifiedDate,
             leadTypeModifiedDateView,
+            phoneNumber,
+            altPhoneNumber,
             ...cleanedRow
           } = row.original;
 
@@ -334,13 +337,13 @@ export default function AllLeadsPage() {
             setRefreshKey((prevKey) => prevKey + 1);
           } else {
             toast.error('Failed to update lead type');
-            setSelectedType(row.original.leadType); // rollback
+            setSelectedType(row.original.leadType);
           }
         };
 
         return (
 
-          
+
           <LeadTypeSelect value={selectedType} onChange={handleDropdownChange} />
         );
       },
@@ -351,12 +354,13 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'leadsFollowUpCount',
       header: 'Follow Ups',
+      meta: { align: 'center' },
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.leadsFollowUpCount);
 
         const handleDropdownChange = async (newValue: number) => {
           const previousValue = selectedValue;
-          setSelectedValue(newValue); // optimistic update
+          setSelectedValue(newValue);
 
           const filteredData = {
             ...row.original,
@@ -384,6 +388,8 @@ export default function AllLeadsPage() {
             remarksView,
             leadTypeModifiedDate,
             leadTypeModifiedDateView,
+            phoneNumber,
+            altPhoneNumber,
             ...cleanedRow
           } = filteredData;
 
@@ -422,6 +428,7 @@ export default function AllLeadsPage() {
     {
       id: 'actions',
       header: 'Actions',
+      meta: { align: 'center' },
       cell: ({ row }: any) => (
         <Button
           variant="ghost"

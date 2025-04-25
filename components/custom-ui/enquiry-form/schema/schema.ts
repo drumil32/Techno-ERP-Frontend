@@ -1,5 +1,5 @@
 // External Libraries
-import { z, ZodIssueCode } from 'zod'; 
+import { z, ZodIssueCode } from 'zod';
 
 // Common Schemas
 import {
@@ -65,7 +65,7 @@ export const academicDetailBaseSchema = z.object({
 export const academicDetailPartialSchema = academicDetailBaseSchema.partial();
 
 export const academicDetailSchema = z.object({
-  educationLevel : z.nativeEnum(EducationLevel), // Only allows fixed values
+  educationLevel: z.nativeEnum(EducationLevel), // Only allows fixed values
   schoolCollegeName: z.string().min(1, 'School/College Name is required'),
   universityBoardName: z.string().min(1, 'University/Board Name is required'),
   passingYear: z
@@ -118,7 +118,7 @@ export const enquirySchema = z.object({
     .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
     .nonempty('Student Name is required'),
   studentPhoneNumber: contactNumberSchema,
-  emailId: z.string({required_error:'Email is required'}).email('Invalid email format').nonempty('Email is required'),
+  emailId: z.string({ required_error: 'Email is required' }).email('Invalid email format').nonempty('Email is required'),
   fatherName: z
     .string({ required_error: 'Father Name is required' })
     .regex(/^[A-Za-z\s]+$/, 'Father Name must only contain alphabets and spaces')
@@ -250,7 +250,6 @@ export const enquiryDraftStep3Schema = enquiryStep3UpdateRequestSchema
     dateOfBirth: requestDateSchema.optional(),
     entranceExamDetails: entranceExamDetailSchema.partial().optional()
   })
-  .partial()
   .strict();
 
 export const enquiryDraftStep1RequestSchema = enquiryStep1RequestSchema

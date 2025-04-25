@@ -1,5 +1,5 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
-import { Course, CourseNameMapper, LeadType } from '@/static/enum';
+import { Course, CourseNameMapper, LeadType, ReverseCourseNameMapper } from '@/static/enum';
 import { toPascal } from '@/lib/utils';
 
 export const formatDateView = (dateStr: string) => {
@@ -54,7 +54,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       area: lead.area,
       areaView: lead.area ?? '-',
       course: lead.course,
-      courseView: CourseNameMapper[lead.course as Course] ?? '-',
+      courseView: lead.course ?? '-',
       leadType: LeadType[lead.leadType as keyof typeof LeadType] ?? lead.leadType,
       _leadType: lead.leadType,
       source: lead.source,
@@ -70,8 +70,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       updatedAt: new Date(lead.updatedAt).toLocaleString(),
       remarks: lead.remarks,
       remarksView: lead.remarks ?? '-',
-      leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'NA',
-      leadTypeModifiedDateView: formatTimeStampView(lead.leadTypeModifiedDate)?? 'NA'
+      leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'N/A',
+      leadTypeModifiedDateView: formatTimeStampView(lead.leadTypeModifiedDate)?? 'N/A'
     };
   });
 
