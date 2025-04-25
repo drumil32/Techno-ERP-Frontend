@@ -72,6 +72,13 @@ const confirmationStatus: Record<LectureConfirmation, { name: string; textStyle:
   },
 };
 
+interface AttendanceRow {
+  classStrength?: string;
+  attendance?: string;
+  absent?: string;
+  [key: string]: any;
+}
+
 export default function TechnoDataTableAdvanced({
   columns,
   data,
@@ -417,7 +424,6 @@ export default function TechnoDataTableAdvanced({
                                   </div>
                                 );
                               }
-
                               return (
                                 <div className="flex flex-col items-center">
                                   <input
@@ -425,21 +431,90 @@ export default function TechnoDataTableAdvanced({
                                     className={`border rounded px-2 py-1 text-sm w-3/4 ${errorMsg ? 'border-red-500' : ''}`}
                                     value={value ?? ''}
                                     onChange={(e) => {
-                                      handleEditedChange(rowIndex, columnId, e.target.value);
-                                      setBatchValidationErrors((prevErrors) => {
-                                        const newErrors = [...prevErrors];
-                                        if (!newErrors[rowIndex]) newErrors[rowIndex] = {};
-                                        newErrors[rowIndex][columnId] = '';
-                                        return newErrors;
-                                      });
+                                      const newValue = e.target.value;
+                                      const updatedErrors = [...batchValidationErrors];
+                                      if (!updatedErrors[rowIndex]) updatedErrors[rowIndex] = {};
+
+                                      const row = (table.getRowModel().rows[rowIndex]?.original ?? {}) as AttendanceRow;
+                                      const updatedRow = { ...row, [columnId]: newValue };
+
+                                      const classStrength = parseInt(
+                                        columnId === 'classStrength' ? newValue : (updatedRow?.classStrength ?? ''),
+                                        10
+                                      );
+
+                                      const attendance = parseInt(
+                                        columnId === 'attendance' ? newValue : updatedRow?.attendance ?? '',
+                                        10
+                                      );
+                                      const absent = parseInt(
+                                        columnId === 'absent' ? newValue : updatedRow?.absent ?? '',
+                                        10
+                                      );
+
+                                      const isValidNumber = (num: number) => !isNaN(num) && num >= 0;
+
+                                      updatedErrors[rowIndex][columnId] = '';
+
+                                      if (!/^\d*$/.test(newValue)) {
+                                        updatedErrors[rowIndex][columnId] = 'Only numeric values allowed';
+                                      }
+
+                                      if (columnId === 'classStrength') {
+                                        if (!isValidNumber(classStrength)) {
+                                          updatedErrors[rowIndex][columnId] = 'Class strength must be a non-negative number';
+                                        } else {
+                                          if (isValidNumber(attendance)) {
+                                            if (attendance > classStrength) {
+                                              updatedErrors[rowIndex]['attendance'] = 'Attendance cannot exceed class strength';
+                                            } else {
+                                              handleEditedChange(rowIndex, 'absent', classStrength - attendance);
+                                              updatedErrors[rowIndex]['attendance'] = '';
+                                              updatedErrors[rowIndex]['absent'] = '';
+                                            }
+                                          } else if (isValidNumber(absent)) {
+                                            if (absent > classStrength) {
+                                              updatedErrors[rowIndex]['absent'] = 'Absent cannot exceed class strength';
+                                            } else {
+                                              handleEditedChange(rowIndex, 'attendance', classStrength - absent);
+                                              updatedErrors[rowIndex]['attendance'] = '';
+                                              updatedErrors[rowIndex]['absent'] = '';
+                                            }
+                                          }
+                                        }
+                                      }
+
+                                      if (columnId === 'attendance') {
+                                        if (!isValidNumber(attendance)) {
+                                          updatedErrors[rowIndex][columnId] = 'Attendance must be a non-negative number';
+                                        } else if (isValidNumber(classStrength) && attendance > classStrength) {
+                                          updatedErrors[rowIndex][columnId] = 'Attendance cannot exceed class strength';
+                                        } else {
+                                          handleEditedChange(rowIndex, 'absent', classStrength - attendance);
+                                          updatedErrors[rowIndex]['absent'] = '';
+                                        }
+                                      }
+
+                                      if (columnId === 'absent') {
+                                        if (!isValidNumber(absent)) {
+                                          updatedErrors[rowIndex][columnId] = 'Absent must be a non-negative number';
+                                        } else if (isValidNumber(classStrength) && absent > classStrength) {
+                                          updatedErrors[rowIndex][columnId] = 'Absent cannot exceed class strength';
+                                        } else {
+                                          handleEditedChange(rowIndex, 'attendance', classStrength - absent);
+                                          updatedErrors[rowIndex]['attendance'] = '';
+                                        }
+                                      }
+
+                                      handleEditedChange(rowIndex, columnId, newValue);
+                                      setBatchValidationErrors(updatedErrors);
                                     }}
                                   />
                                   {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>}
                                 </div>
+
                               );
                             }
-
-
                             return flexRender(cell.column.columnDef.cell, cell.getContext());
                           })()}
                         </TableCell>
@@ -507,7 +582,6 @@ export default function TechnoDataTableAdvanced({
                       </TableCell>
                     );
                   }
-
                   else {
                     return (
                       <TableCell key={idx} className="h-[39px]">
@@ -516,8 +590,79 @@ export default function TechnoDataTableAdvanced({
                             className={`editable-cell px-2 py-2 ${validationErrors[columnId] ? 'border-red-500' : ''}`}
                             value={newRow[columnId] || ''}
                             onChange={(e) => {
-                              handleNewRowChange(columnId, e.target.value);
-                              setValidationErrors((prev) => ({ ...prev, [columnId]: '' }));
+                              const newValue = e.target.value;
+                              const updatedRow = { ...newRow, [columnId]: newValue };
+                              const newErrors = { ...validationErrors };
+
+                              const classStrength = parseInt(
+                                columnId === 'classStrength' ? newValue : newRow.classStrength ?? '',
+                                10
+                              );
+                              const attendance = parseInt(
+                                columnId === 'attendance' ? newValue : newRow.attendance ?? '',
+                                10
+                              );
+                              const absent = parseInt(
+                                columnId === 'absent' ? newValue : newRow.absent ?? '',
+                                10
+                              );
+
+                              const isValidNumber = (num: number) => !isNaN(num) && num >= 0;
+
+                              newErrors[columnId] = '';
+
+                              if (!/^\d*$/.test(newValue)) {
+                                newErrors[columnId] = 'Only numeric values allowed';
+                              }
+
+                              if (columnId === 'classStrength') {
+                                if (!isValidNumber(classStrength)) {
+                                  newErrors[columnId] = 'Class strength must be a non-negative number';
+                                } else {
+                                  if (isValidNumber(attendance)) {
+                                    if (attendance > classStrength) {
+                                      newErrors['attendance'] = 'Attendance cannot exceed class strength';
+                                    } else {
+                                      updatedRow.absent = classStrength - attendance;
+                                      newErrors['attendance'] = '';
+                                      newErrors['absent'] = '';
+                                    }
+                                  } else if (isValidNumber(absent)) {
+                                    if (absent > classStrength) {
+                                      newErrors['absent'] = 'Absent cannot exceed class strength';
+                                    } else {
+                                      updatedRow.attendance = classStrength - absent;
+                                      newErrors['attendance'] = '';
+                                      newErrors['absent'] = '';
+                                    }
+                                  }
+                                }
+                              }
+
+                              if (columnId === 'attendance') {
+                                if (!isValidNumber(attendance)) {
+                                  newErrors[columnId] = 'Attendance must be a non-negative number';
+                                } else if (isValidNumber(classStrength) && attendance > classStrength) {
+                                  newErrors[columnId] = 'Attendance cannot exceed class strength';
+                                } else {
+                                  updatedRow.absent = isValidNumber(classStrength) ? classStrength - attendance : '';
+                                  newErrors['absent'] = '';
+                                }
+                              }
+
+                              if (columnId === 'absent') {
+                                if (!isValidNumber(absent)) {
+                                  newErrors[columnId] = 'Absent must be a non-negative number';
+                                } else if (isValidNumber(classStrength) && absent > classStrength) {
+                                  newErrors[columnId] = 'Absent cannot exceed class strength';
+                                } else {
+                                  updatedRow.attendance = isValidNumber(classStrength) ? classStrength - absent : '';
+                                  newErrors['attendance'] = '';
+                                }
+                              }
+
+                              setNewRow(updatedRow);
+                              setValidationErrors(newErrors);
                             }}
                           />
                           {validationErrors[columnId] && (
@@ -527,6 +672,7 @@ export default function TechnoDataTableAdvanced({
                       </TableCell>
                     );
                   }
+
 
 
                 })}
