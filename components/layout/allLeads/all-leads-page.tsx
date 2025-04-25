@@ -4,8 +4,6 @@ import TechnoAnalyticCardsGroup from '../../custom-ui/analytic-card/techno-analy
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
-import TechnoLeadTypeTag from '../../custom-ui/lead-type-tag/techno-lead-type-tag';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
