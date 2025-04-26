@@ -5,7 +5,7 @@ import { generateAcademicYearDropdown } from "@/lib/generateAcademicYearDropdown
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as Dialog from '@radix-ui/react-dialog';
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -85,28 +85,18 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
 
   console.log("Department Name : ", data.departmentName);
 
-  const getQueryParams = () => {
-    const params: { [key: string]: any } = {
-      departmentName: data.departmentName
-    };
-    return params;
-  };
-
-  const filterParams = getQueryParams();
+  const filterParams = useMemo(() => ({
+    departmentName: data.departmentName
+  }), [data.departmentName]);
+  
   console.log("FIlter params : ", filterParams);
+
   const instructorsQuery = useQuery({
     queryKey: ['instructorsmetadata', filterParams],
     queryFn: fetchInstructors,
-    placeholderData: (previousData) => previousData,
-    enabled: true
+    enabled: !!data?.departmentName
   });
-
-  // const instructorsQuery = useQuery({
-  //   queryKey: ["instructorsmetadata", { "departmentName"  : data.departmentName}],
-  //   queryFn: fetchInstructors
-  // });
-
-  // console.log("INSTRUCTOR QUERY : ", instructorsQuery)
+  
   const instructors: Instructor[] = instructorsQuery.data as Instructor[] || [];
   console.log("Instructors info : ", instructors)
   const instructorsInfo = formatInstructors(instructors);
@@ -119,7 +109,7 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
 
     if (toastIdRef.current) {
       if (isLoading || isFetching) {
-        toast.loading('Loading course data...', {
+        toast.loading('Loading instructors data...', {
           id: toastIdRef.current,
           duration: Infinity
         });
@@ -143,11 +133,13 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
         });
         toastIdRef.current = null;
       }
-    } else if (hasError) {
-      toastIdRef.current = toast.error('Failed to load instructors data', {
-        duration: 3000
-      });
-    } else if (isLoading || isFetching) {
+    } 
+    // else if (hasError) {
+    //   toastIdRef.current = toast.error('Failed to load instructors data', {
+    //     duration: 3000
+    //   });
+    // } 
+    else if (isLoading || isFetching) {
       toastIdRef.current = toast.loading('Loading instructors data...', {
         duration: Infinity
       });
