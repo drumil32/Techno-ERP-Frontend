@@ -15,6 +15,7 @@ import { fetchDepartmentDropdown, fetchCourses, fetchFilteredSubjects, fetchUniq
 import TechnoDataTableAdvanced from "@/components/custom-ui/data-table/techno-data-table-advanced";
 import { SITE_MAP } from "@/common/constants/frontendRouting";
 import { useRouter } from "next/navigation";
+import FilterBadges from "../allLeads/components/filter-badges";
 
 interface UniqueCourseInformation{
     courseCode : string;
@@ -88,6 +89,24 @@ export const AllSubjectsPage = () => {
         updateFilter('academicYear', currentAcademicYear);
     };
 
+    const handleFilterRemove = (filterKey: string) => {
+        const updatedFilters = { ...appliedFilters };
+    
+        if (filterKey == 'academicYear') {
+          const academicYearList = generateAcademicYearDropdown();
+          const currentAcademicYear = academicYearList[5];
+          updateFilter('academicYear', currentAcademicYear);
+        } 
+        else {
+          delete updatedFilters[filterKey];
+          updateFilter(filterKey, undefined);
+        }
+    
+        setAppliedFilters(updatedFilters);
+        setPage(1);
+        setRefreshKey((prevKey) => prevKey + 1);
+      };
+    
 
     const handleSearch = (value: string) => {
         setSearch(value);
@@ -329,6 +348,10 @@ export const AllSubjectsPage = () => {
                 selectedRowId={selectedRowId}
                 setSelectedRowId={setSelectedRowId}
                 >
+                    <FilterBadges
+            onFilterRemove={handleFilterRemove}
+            appliedFilters={appliedFilters}
+          />
             </TechnoDataTableAdvanced>
         </>
     )

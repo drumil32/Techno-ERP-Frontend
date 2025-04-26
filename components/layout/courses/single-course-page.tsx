@@ -225,7 +225,7 @@ export const SingleCoursePage = () => {
                     data={courseData}
                     design={{
                         containerWidth: "1339px",
-                        containerHeight: "119px",
+                        containerHeight: "149px",
                         columnWidth: "475px",
                         columnHeight: "96px",
                         columnGap: "65px",

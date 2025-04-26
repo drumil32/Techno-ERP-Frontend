@@ -13,15 +13,17 @@ type BadgeData = {
 
 interface FilterBadgesProps {
   onFilterRemove: (filterKey: string) => void;
-  assignedToData: any[];
+  assignedToData?: any[];
   appliedFilters: Record<string, any>;
 }
 
 const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: FilterBadgesProps) => {
+  
+  console.log("Applied filters : ", appliedFilters);
   const [badges, setBadges] = useState<BadgeData[]>([]);
 
   const getAssignedToLabel = (id: string) => {
-    const user = assignedToData.find((item) => item._id === id);
+    const user = assignedToData!.find((item) => item._id === id);
     return user?.name || id;
   };
 
@@ -73,7 +75,33 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
       });
     }
 
+    if (appliedFilters.academicYear) {
+      newBadges.push({
+        key: 'academicYear',
+        label: 'Academic Year',
+        value: appliedFilters.academicYear
+      });
+    }
+
+    if (appliedFilters.courseCode) {
+      newBadges.push({
+        key: 'courseCode',
+        label: 'Course Code',
+        value: appliedFilters.courseCode
+      });
+    }
+
+    if (appliedFilters.semester) {
+      newBadges.push({
+        key: 'semester',
+        label: 'Semester',
+        value: appliedFilters.semester
+      });
+    }
+
     Object.entries(appliedFilters).forEach(([key, value]) => {
+      console.log("Key is : ", key);
+      console.log("Value is : ", value);
       if (key === 'startDate' || key === 'endDate') return; // Skip startDate and endDate because handled above
       if (Array.isArray(value) && value.length > 0) {
         let displayValue: string;
@@ -88,6 +116,7 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
         } else if (key === 'source') {
           getLabel = (val: string) => toPascal(val);
         } else {
+          console.log("We are here!");
           getLabel = (val: string) => val;
         }
 
@@ -102,6 +131,9 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
           label: key.charAt(0).toUpperCase() + key.slice(1),
           value: displayValue
         });
+
+        console.log("New badges : ", newBadges);
+
       }
     });
 

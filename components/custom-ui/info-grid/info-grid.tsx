@@ -60,7 +60,7 @@ const DynamicInfoGrid: React.FC<InfoGridProps> = ({
         padding: containerPadding,
         display: "flex",
         gap: columnGap,
-        backgroundColor: "#fff",
+  
         borderRadius: "12px",
       }}
     >
@@ -92,7 +92,7 @@ const DynamicInfoGrid: React.FC<InfoGridProps> = ({
               <div className="font-dark font-inter"
                 style={{
                   width: valueWidth,
-                  color: "#000",
+                 
                 }}
               >
                 {value}

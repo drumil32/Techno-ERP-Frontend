@@ -173,7 +173,7 @@ export const fetchInstructors = async ({ queryKey }: any) => {
     console.log("Query key is : ", queryKey);
     const [, params] = queryKey;
     console.log("Params are : ", params);
-    const res = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchInstructorsMetaData, params);
+    const res = await apiRequest(API_METHODS.POST, API_ENDPOINTS.fetchInstructorsMetaData, params);
     console.log("Response is : ", res);
     return res;
 };

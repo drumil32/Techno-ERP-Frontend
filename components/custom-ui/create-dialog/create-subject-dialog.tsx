@@ -248,8 +248,8 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
     }}>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/30" />
-        <Dialog.Content className="bg-white p-6 rounded-xl shadow-xl w-full max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <Dialog.Overlay className="fixed z-30 inset-0 bg-black/30" />
+        <Dialog.Content className="bg-white z-40 p-6 rounded-xl shadow-xl w-full max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <div className="flex justify-between items-center mb-4">
             <Dialog.Title className="text-xl font-semibold flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-gray-500 text-xl" />
