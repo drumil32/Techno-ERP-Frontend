@@ -64,9 +64,10 @@ export const API_ENDPOINTS = {
   uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,
 
   //Department Meta Data
-  createDepartmentMetaData: `${API_DOMAIN}/department-metadata`,
-  updateDepartmentMetaData: `${API_DOMAIN}/department-metadata`,
-  getDepartmentMetaData: `${API_DOMAIN}/department-metadata`,
+  createDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
+  updateDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
+  getDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
+  fetchInstructorsMetaData : `${API_DOMAIN}/department-metadata/instructors`,
 
   //Courses
   createCourse: `${API_DOMAIN}/course`,

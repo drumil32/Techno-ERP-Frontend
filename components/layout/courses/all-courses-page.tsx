@@ -15,6 +15,8 @@ import TechnoFiltersGroup from '@/components/custom-ui/filter/techno-filters-gro
 import { useRouter } from 'next/navigation';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { CreateCourseDialog } from '@/components/custom-ui/create-dialog/create-course-dialog';
+import TechnoDataTableAdvanced from '@/components/custom-ui/data-table/techno-data-table-advanced';
+import FilterBadges from '../allLeads/components/filter-badges';
 
 export interface Course {
   courseName: string;
@@ -76,6 +78,7 @@ export default function AllCoursesPage() {
   const applyFilter = () => {
     currentFiltersRef.current = { ...filters };
     setPage(1);
+    console.log("Filters are : ", filters);
     setAppliedFilters({ ...filters });
     setRefreshKey((prevKey) => prevKey + 1);
   };
@@ -89,6 +92,25 @@ export default function AllCoursesPage() {
     const academicYearList = generateAcademicYearDropdown();
     const currentAcademicYear = academicYearList[5];
     updateFilter('academicYear', currentAcademicYear);
+  };
+
+
+  const handleFilterRemove = (filterKey: string) => {
+    const updatedFilters = { ...appliedFilters };
+
+    if (filterKey == 'academicYear') {
+      const academicYearList = generateAcademicYearDropdown();
+      const currentAcademicYear = academicYearList[5];
+      updateFilter('academicYear', currentAcademicYear);
+    } 
+    else {
+      delete updatedFilters[filterKey];
+      updateFilter(filterKey, undefined);
+    }
+
+    setAppliedFilters(updatedFilters);
+    setPage(1);
+    setRefreshKey((prevKey) => prevKey + 1);
   };
 
 
@@ -293,7 +315,7 @@ export default function AllCoursesPage() {
       </span>
 
 
-      <TechnoDataTable
+      <TechnoDataTableAdvanced
         columns={columns}
         data={coursesWithSerialNo}
         tableName="Course List"
@@ -309,7 +331,11 @@ export default function AllCoursesPage() {
         selectedRowId={selectedRowId}
         setSelectedRowId={setSelectedRowId}
       >
-      </TechnoDataTable>
+         <FilterBadges
+            onFilterRemove={handleFilterRemove}
+            appliedFilters={appliedFilters}
+          />
+      </TechnoDataTableAdvanced>
     </>
   );
 }

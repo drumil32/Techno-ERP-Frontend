@@ -167,3 +167,13 @@ export const fetchDepartmentDropdown = async () => {
   const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.getDepartmentMetaData);
   return result;
 };
+
+export const fetchInstructors = async ({ queryKey }: any) => {
+    console.log("Fetching Unique courses : ");
+    console.log("Query key is : ", queryKey);
+    const [, params] = queryKey;
+    console.log("Params are : ", params);
+    const res = await apiRequest(API_METHODS.POST, API_ENDPOINTS.fetchInstructorsMetaData, params);
+    console.log("Response is : ", res);
+    return res;
+};

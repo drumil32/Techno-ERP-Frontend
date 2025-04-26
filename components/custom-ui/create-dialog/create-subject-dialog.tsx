@@ -1,10 +1,10 @@
 "use client";
 
-import { createSubject } from "@/components/layout/courses/helpers/fetch-data";
+import { createSubject, fetchInstructors } from "@/components/layout/courses/helpers/fetch-data";
 import { generateAcademicYearDropdown } from "@/lib/generateAcademicYearDropdown";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as Dialog from '@radix-ui/react-dialog';
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -24,6 +24,7 @@ const academicYears = generateAcademicYearDropdown();
 
 
 interface SubjectData {
+  departmentName: string;
   courseName: string;
   academicYear: string;
   semester: number;
@@ -38,29 +39,11 @@ interface CreateSubjectDialogProps {
 }
 
 interface Instructor {
+  _id: string;
   instructorId: string;
   name: string;
   email: string;
 }
-// DTODO : This is to be replaced with original data.
-const instructors = [
-  {
-    instructorId: "67c94fa741b61185e06b32f2",
-    name: "Disha Modi36",
-    email: "dishakmodi36@gmail.com"
-  },
-  {
-    instructorId: "67c69b45a5632b20905eb7e2",
-    name: "Disha Modi",
-    email: "dishamodi3105@gmail.com"
-  },
-  {
-    instructorId: "67c97c72d57d9caafb11fc23",
-    name: "drumil akhenia",
-    email: "akheniad@gmail.com"
-  }
-];
-
 
 export const formatInstructors = (instructors: Instructor[]) => {
   const inst = []
@@ -100,7 +83,89 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
     },
   });
 
+  console.log("Department Name : ", data.departmentName);
+
+  const getQueryParams = () => {
+    const params: { [key: string]: any } = {
+      departmentName: data.departmentName
+    };
+    return params;
+  };
+
+  const filterParams = getQueryParams();
+  console.log("FIlter params : ", filterParams);
+  const instructorsQuery = useQuery({
+    queryKey: ['instructorsmetadata', filterParams],
+    queryFn: fetchInstructors,
+    placeholderData: (previousData) => previousData,
+    enabled: true
+  });
+
+  // const instructorsQuery = useQuery({
+  //   queryKey: ["instructorsmetadata", { "departmentName"  : data.departmentName}],
+  //   queryFn: fetchInstructors
+  // });
+
+  // console.log("INSTRUCTOR QUERY : ", instructorsQuery)
+  const instructors: Instructor[] = instructorsQuery.data as Instructor[] || [];
+  console.log("Instructors info : ", instructors)
   const instructorsInfo = formatInstructors(instructors);
+
+  useEffect(() => {
+    const isLoading = instructorsQuery.isLoading || instructorsQuery.isLoading;
+    const hasError = instructorsQuery.isError || instructorsQuery.isError;
+    const isSuccess = instructorsQuery.isSuccess && instructorsQuery.isSuccess;
+    const isFetching = instructorsQuery.isFetching || instructorsQuery.isFetching;
+
+    if (toastIdRef.current) {
+      if (isLoading || isFetching) {
+        toast.loading('Loading course data...', {
+          id: toastIdRef.current,
+          duration: Infinity
+        });
+      }
+
+      if (hasError) {
+        toast.error('Failed to load instructors data', {
+          id: toastIdRef.current,
+          duration: 3000
+        });
+        setTimeout(() => {
+          toastIdRef.current = null;
+        }, 3000);
+        toastIdRef.current = null;
+      }
+
+      if (isSuccess) {
+        toast.success('Instructors data loaded successfully', {
+          id: toastIdRef.current!,
+          duration: 2000
+        });
+        toastIdRef.current = null;
+      }
+    } else if (hasError) {
+      toastIdRef.current = toast.error('Failed to load instructors data', {
+        duration: 3000
+      });
+    } else if (isLoading || isFetching) {
+      toastIdRef.current = toast.loading('Loading instructors data...', {
+        duration: Infinity
+      });
+    }
+
+    return () => {
+      if (toastIdRef.current) {
+        toast.dismiss(toastIdRef.current);
+      }
+    };
+  }, [
+    // refreshKey,
+    instructorsQuery.isLoading,
+    instructorsQuery.isError,
+    instructorsQuery.isSuccess,
+    instructorsQuery.isFetching,
+  ]);
+
   const toastIdRef = useRef<string | number | null>(null);
 
   useEffect(() => {
@@ -183,8 +248,8 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
     }}>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black/30" />
-        <Dialog.Content className="bg-white p-6 rounded-xl shadow-xl w-full max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <Dialog.Overlay className="fixed z-30 inset-0 bg-black/30" />
+        <Dialog.Content className="bg-white z-40 p-6 rounded-xl shadow-xl w-full max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <div className="flex justify-between items-center mb-4">
             <Dialog.Title className="text-xl font-semibold flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-gray-500 text-xl" />

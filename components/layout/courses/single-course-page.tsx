@@ -225,7 +225,7 @@ export const SingleCoursePage = () => {
                     data={courseData}
                     design={{
                         containerWidth: "1339px",
-                        containerHeight: "119px",
+                        containerHeight: "149px",
                         columnWidth: "475px",
                         columnHeight: "96px",
                         columnGap: "65px",
@@ -241,6 +241,7 @@ export const SingleCoursePage = () => {
                 openDialog={createSubjectDialogOpen}
                 onOpenChange={setCreateSubjectDialogOpen}
                 data={{
+                    departmentName : subjectResponse?.subjectInformation?.departmentName!,
                     courseId : courseId!,
                     semesterId : semesterId!,
                     courseName : subjectResponse?.subjectInformation?.courseName,
@@ -263,7 +264,7 @@ export const SingleCoursePage = () => {
                 showEditButton={false}
                 visibleRows={10}
                 addButtonPlacement={"top"}
-                addBtnLabel={"Add"}
+                addBtnLabel={"Add a Subject"}
                 addViaDialog={true}
                 onAddClick={() => setCreateSubjectDialogOpen(true)}
             >
