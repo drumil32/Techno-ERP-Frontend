@@ -42,7 +42,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       remarks: lead.remarks,
       remarksView: lead.remarks ?? '-',
       date: lead.date,
-      leadTypeModifiedDate: formatTimeStampView(lead.leadTypeModifiedDate) ?? '-',
+      leadTypeModifiedDate:
+        formatTimeStampView(lead.leadTypeModifiedDate) ?? formatDateView(lead.date),
       nextDueDate: lead.nextDueDate,
       nextDueDateView: formatDateView(lead.nextDueDate) ?? '-',
       createdAt: new Date(lead.createdAt).toLocaleString(),

@@ -336,7 +336,7 @@ export default function TechnoDataTable({
               <ChevronLeft />
             </Button>
             {currentPage > 1 && <span>1 ..</span>}
-            <span>{currentPage}</span>
+            <span className=" underline">{currentPage}</span>
             {currentPage < totalPages && <span>..{totalPages}</span>}
             <Button
               variant="ghost"

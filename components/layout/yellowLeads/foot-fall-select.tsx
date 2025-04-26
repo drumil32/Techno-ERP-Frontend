@@ -47,12 +47,12 @@ export default function FootFallSelect({ value, onChange, disabled = false }: Fo
   };
 
   return (
-    <div className="relative w-[75px] mx-auto" ref={dropdownRef}>
+    <div className="mx-auto relative w-[75px] " ref={dropdownRef}>
       <button
         onClick={handleTriggerClick}
         disabled={disabled}
         className={`w-full  hover:border-slate-500 border-1 border-transparent flex items-center justify-between gap-1 cursor-pointer rounded-md text-sm font-medium px-2 py-1 hover:opacity-90 ${footfallStyles[value]} ${
-          disabled ? 'border-transparent  opacity-50 cursor-not-allowed' : ''
+          disabled ? 'border-transparent  opacity-70 cursor-not-allowed' : ''
         }`}
       >
         <span className="truncate">{toPascal(value)}</span>

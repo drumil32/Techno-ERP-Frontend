@@ -536,7 +536,7 @@ export default function YellowLeadViewEdit({
 
       <div className="flex gap-5">
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="nextDueDate" title={'Next Due Date'} />
+          <EditLabel htmlFor="nextDueDate" title={'Next Call Date'} />
           <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-full justify-start text-left pl-20">
@@ -580,37 +580,37 @@ export default function YellowLeadViewEdit({
           </Select>
         </div>
       </div>
-
-      <div className="space-y-2">
-        <EditLabel htmlFor="schoolName" title={'School Name'} />
-        <Input
-          id="schoolName"
-          name="schoolName"
-          value={formData.schoolName || ''}
-          onChange={handleChange}
-          className="rounded-[5px]"
-        />
-        {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
-      </div>
-
-      <div className="space-y-2">
-        <EditLabel htmlFor="finalConversion" title={'Final Conversion'} />
-        <Select
-          disabled={!formData.footFall}
-          defaultValue={String(formData.finalConversion) as FinalConversionStatus}
-          onValueChange={(value) => handleSelectChange('finalConversion', value)}
-        >
-          <SelectTrigger id="finalConversion" className="w-full rounded-[5px]">
-            <SelectValue placeholder="Select Final Conversion Type" />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.values(FinalConversionStatus).map((status) => (
-              <SelectItem key={status} value={status}>
-                <FinalConversionTag status={status} />
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div className="flex gap-5">
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="schoolName" title={'School Name'} />
+          <Input
+            id="schoolName"
+            name="schoolName"
+            value={formData.schoolName || ''}
+            onChange={handleChange}
+            className="rounded-[5px]"
+          />
+          {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
+        </div>
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="finalConversion" title={'Final Conversion'} />
+          <Select
+            disabled={!formData.footFall}
+            defaultValue={String(formData.finalConversion) as FinalConversionStatus}
+            onValueChange={(value) => handleSelectChange('finalConversion', value)}
+          >
+            <SelectTrigger id="finalConversion" className="w-full rounded-[5px]">
+              <SelectValue placeholder="Select Final Conversion Type" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.values(FinalConversionStatus).map((status) => (
+                <SelectItem key={status} value={status}>
+                  <FinalConversionTag status={status} />
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="space-y-2">

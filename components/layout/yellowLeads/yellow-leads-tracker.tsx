@@ -116,7 +116,7 @@ export default function YellowLeadsTracker() {
   }, []);
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
 
@@ -242,10 +242,10 @@ export default function YellowLeadsTracker() {
 
   const columns = [
     { accessorKey: 'id', header: 'S. No.', meta: { align: 'center' } },
-    { accessorKey: 'leadTypeModifiedDate', header: 'LTC Date' },
-    { accessorKey: 'name', header: 'Name', meta: { align: 'center' } },
+    { accessorKey: 'leadTypeModifiedDate', header: 'LTC Date', meta: { align: 'center' } },
+    { accessorKey: 'name', header: 'Name', meta: { align: 'left' } },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'areaView', header: 'Area', meta: { align: 'center' } },
+    { accessorKey: 'areaView', header: 'Area', meta: { align: 'left' } },
     { accessorKey: 'cityView', header: 'City' },
     { accessorKey: 'courseView', header: 'Course' },
     {
@@ -285,7 +285,7 @@ export default function YellowLeadsTracker() {
       }
     },
 
-    { accessorKey: 'nextDueDateView', header: 'Next Call Date' },
+    { accessorKey: 'nextDueDateView', header: 'Next Call Date', meta: { align: 'center' } },
     {
       accessorKey: 'yellowLeadsFollowUpCount',
       meta: { align: 'center' },
@@ -321,7 +321,7 @@ export default function YellowLeadsTracker() {
           <select
             value={selectedValue}
             onChange={(e) => handleDropdownChange(Number(e.target.value))}
-            className="border bg-white rounded px-2 py-1 cursor-pointer"
+            className="border bg-white rounded pl-1 pr-3 py-1 cursor-pointer"
             aria-label="Follow-up count"
           >
             {Array.from({ length: selectedValue + 2 }, (_, i) => (
@@ -336,6 +336,7 @@ export default function YellowLeadsTracker() {
     {
       accessorKey: 'finalConversion',
       header: 'Final Conversion',
+      meta: { align: 'center' },
       cell: ({ row }: any) => {
         const value = row.original.finalConversion as FinalConversionStatus;
 
@@ -354,7 +355,13 @@ export default function YellowLeadsTracker() {
             toast.success('Final conversion updated successfully');
             setRefreshKey((prevKey) => prevKey + 1);
           } else {
-            toast.error('Failed to update final conversion');
+            if (
+              row.original.finalConversion === FinalConversionStatus.UNCONFIRMED &&
+              newValue === FinalConversionStatus.NO_FOOTFALL
+            ) {
+            } else {
+              toast.error('Failed to update final conversion');
+            }
           }
         };
 

@@ -9,7 +9,7 @@ const typeStyles: Record<LeadType, string> = {
   [LeadType.COURSE_UNAVAILABLE]: 'bg-[#CECECE] text-[#696969]',
   [LeadType.NO_CLARITY]: 'bg-[#C8E4FF] text-[#006ED8]',
   [LeadType.DID_NOT_PICK]: 'bg-[#F5F5F5] text-[#9E9E9E]',
-  [LeadType.INVALID]: 'bg-[#BDBDBD] text-[#FFFFFF]'
+  [LeadType.INVALID]: 'bg-black text-[#FFFFFF]'
 };
 
 interface LeadTypeSelectProps {
@@ -48,7 +48,7 @@ export default function LeadTypeSelect({
         disabled={isDisable}
         className={`w-full flex items-center justify-between gap-2 rounded-[5px] text-sm font-medium px-3 py-1 ${typeStyles[value]} ${
           isDisable
-            ? 'opacity-50 cursor-not-allowed'
+            ? 'opacity-70 cursor-not-allowed'
             : 'hover:opacity-90 hover:border-slate-500 border-1 border-transparent'
         }`}
       >

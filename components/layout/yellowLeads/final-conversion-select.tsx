@@ -52,7 +52,7 @@ export default function FinalConversionSelect({
   };
 
   return (
-    <div className="relative w-[140px]" ref={dropdownRef}>
+    <div className=" mx-auto relative w-[140px]" ref={dropdownRef}>
       <button
         onClick={handleTriggerClick}
         disabled={isDisable}

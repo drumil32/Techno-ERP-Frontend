@@ -145,7 +145,7 @@ export default function AllLeadsPage() {
   }, []);
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
 
@@ -264,10 +264,10 @@ export default function AllLeadsPage() {
   const columns = [
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'dateView', header: 'Date' },
-    { accessorKey: 'name', header: 'Name', meta: { align: 'center' } },
+    { accessorKey: 'name', header: 'Name', meta: { align: 'left' } },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'areaView', header: 'Area', meta: { align: 'center' } },
-    { accessorKey: 'cityView', header: 'City' },
+    { accessorKey: 'areaView', header: 'Area', meta: { align: 'left' } },
+    { accessorKey: 'cityView', header: 'City', meta: { align: 'left' } },
     { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'leadType',
@@ -341,7 +341,7 @@ export default function AllLeadsPage() {
     },
 
     { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } },
-    { accessorKey: 'nextDueDateView', header: 'Next Due Date', meta: { align: 'left' } },
+    { accessorKey: 'nextDueDateView', header: 'Next Due Date', meta: { align: 'center' } },
     {
       accessorKey: 'leadsFollowUpCount',
       header: 'Follow Ups',
@@ -402,7 +402,7 @@ export default function AllLeadsPage() {
           <select
             value={selectedValue}
             onChange={(e) => handleDropdownChange(Number(e.target.value))}
-            className="border bg-white rounded px-2 py-1 cursor-pointer"
+            className="border bg-white rounded pl-1 pr-3 py-1 cursor-pointer"
             aria-label="Follow-up count"
           >
             {Array.from({ length: selectedValue + 2 }, (_, i) => (
@@ -414,7 +414,7 @@ export default function AllLeadsPage() {
         );
       }
     },
-    { accessorKey: 'leadTypeModifiedDateView', header: 'Timestamp' },
+    { accessorKey: 'leadTypeModifiedDateView', header: 'Timestamp', meta: { align: 'center' } },
     {
       id: 'actions',
       header: 'Actions',
