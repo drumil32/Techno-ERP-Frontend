@@ -24,26 +24,26 @@ import { updateLeadRequestSchema } from './validators';
 import z from 'zod';
 import { useQuery } from '@tanstack/react-query';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
-import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
+import {
+  cityDropdown,
+  fixCityDropdown,
+  fixCourseDropdown
+} from '../admin-tracker/helpers/fetch-data';
 import { formatDateView, formatTimeStampView } from './helpers/refine-data';
 import { MultiSelectCustomDropdown } from '@/components/custom-ui/common/multi-select-custom-editable';
 import { cleanDataForDraft } from '@/components/custom-ui/enquiry-form/stage-2/helpers/refine-data';
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge';
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown, X } from "lucide-react";
+  CommandItem
+} from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
+import { Check, ChevronsUpDown, X } from 'lucide-react';
 
 export interface LeadData {
   _id: string;
@@ -77,7 +77,12 @@ interface FormErrors {
   city?: string;
 }
 
-export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, setRefreshKey }: any) {
+export default function LeadViewEdit({
+  data,
+  setIsDrawerOpen,
+  setSelectedRowId,
+  setRefreshKey
+}: any) {
   const [formData, setFormData] = useState<LeadData | null>(null);
   const [originalData, setOriginalData] = useState<LeadData | null>(null);
   // const [isEditing, toggleIsEditing] = useState(false);
@@ -91,11 +96,18 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
       setOriginalData(data);
     }
   }, [data]);
-  const cityDropdownQuery = useQuery({
+  const fixCityDropdownQuery = useQuery({
     queryKey: ['cities'],
-    queryFn: cityDropdown
-  })
-  const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
+    queryFn: fixCityDropdown
+  });
+  const fixCityDropdownData = Array.isArray(fixCityDropdownQuery.data)
+    ? fixCityDropdownQuery.data
+    : [];
+  const fixCourseQuery = useQuery({
+    queryKey: ['courses'],
+    queryFn: fixCourseDropdown
+  });
+  const fixCourses = Array.isArray(fixCourseQuery.data) ? fixCourseQuery.data : [];
 
   const validateField = (name: string, value: any) => {
     if (!formData) return;
@@ -122,7 +134,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate,
         assignedTo: tempData.assignedTo,
-        leadTypeModifiedDate: tempData.leadTypeModifiedDate,
+        leadTypeModifiedDate: tempData.leadTypeModifiedDate
       };
 
       validationData = removeNullValues(validationData);
@@ -135,15 +147,11 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         delete newErrors[name];
         return newErrors;
       });
-
-
-
     } catch (error) {
-
       console.log(error);
       if (error instanceof z.ZodError) {
         // Collect all field errors
-        const newErrors: FormErrors = { ...errors }; // Preserve existing errors
+        const newErrors: FormErrors = { ...errors };
         error.errors.forEach((err) => {
           const key = err.path[0] as keyof FormErrors;
           newErrors[key] = err.message;
@@ -174,7 +182,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
   const handleFollowUpCountChange = (name: string, value: number) => {
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
     validateField(name, value);
-  }
+  };
 
   const handleDateChange = (date: Date | undefined) => {
     if (!date) return;
@@ -251,7 +259,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         'assignedTo',
         'leadsFollowUpCount',
         'remarks',
-        'nextDueDate',
+        'nextDueDate'
       ];
 
       const filteredData = Object.fromEntries(
@@ -259,7 +267,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
       );
 
       let { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
-      toBeUpdatedData = removeNullValues(toBeUpdatedData)
+      toBeUpdatedData = removeNullValues(toBeUpdatedData);
       const validation = updateLeadRequestSchema.safeParse(toBeUpdatedData);
       if (!validation.success) {
         const newErrors: FormErrors = {};
@@ -335,7 +343,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Course</p>
-          <p>{formData.course ? CourseNameMapper[formData.course as Course] : '-'}</p>
+          <p>{formData.course ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Lead Type</p>
@@ -421,10 +429,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         </div>
       </div>
 
-
-
       <div className="flex gap-5 w-full">
-
         <div className="space-y-2  w-1/2">
           <EditLabel htmlFor="email" title={'Email'} />
           <Input
@@ -456,8 +461,6 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
             </SelectContent>
           </Select>
         </div>
-
-
       </div>
 
       <div className="flex gap-5 h-max w-full items-end">
@@ -479,7 +482,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
           <MultiSelectCustomDropdown
             form={formData}
             name="city"
-            options={Object.values(cityDropdownData).map(city => ({ _id: city, name: city }))}
+            options={Object.values(fixCityDropdownData).map((city) => ({ _id: city, name: city }))}
             placeholder="Select city"
             allowCustomInput={true}
             onChange={(value) => {
@@ -497,7 +500,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
           <MultiSelectCustomDropdown
             form={formData}
             name="course"
-            options={Object.values(Course).map(course => ({ _id: course, name: course }))}
+            options={Object.values(fixCourses).map((course) => ({ _id: course, name: course }))}
             placeholder="Select course"
             allowCustomInput={true}
             onChange={(value) => {
@@ -545,7 +548,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
                 selected={parseDateString(formData.nextDueDate)}
                 onSelect={handleDateChange}
                 initialFocus
-                captionLayout={"dropdown-buttons"}
+                captionLayout={'dropdown-buttons'}
                 fromYear={new Date().getFullYear() - 100}
                 toYear={new Date().getFullYear() + 10}
               />
@@ -558,18 +561,19 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
           <EditLabel htmlFor="leadsFollowUpCount" title={'Follow-up Count'} />
           <Select
             defaultValue={formData.leadsFollowUpCount?.toString() || ''}
-            onValueChange={(value) => handleFollowUpCountChange('leadsFollowUpCount', Number(value))}
+            onValueChange={(value) =>
+              handleFollowUpCountChange('leadsFollowUpCount', Number(value))
+            }
           >
             <SelectTrigger id="leadsFollowUpCount" className="w-full rounded-[5px]">
               <SelectValue placeholder="Select follow-up count" />
             </SelectTrigger>
             <SelectContent>
-              {Array.from({ length: formData?.leadsFollowUpCount! + 2 }, (_, i) => ((
+              {Array.from({ length: formData?.leadsFollowUpCount! + 2 }, (_, i) => (
                 <SelectItem key={i} value={i.toString()}>
                   {i.toString().padStart(2, '0')}
                 </SelectItem>
-              )))}
-
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -587,7 +591,6 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
       </div>
 
-
       <div className="space-y-2">
         <EditLabel htmlFor="remarks" title={'Remarks'} />
         <textarea
@@ -600,7 +603,6 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         />
       </div>
 
-
       <div className="space-y-2 w-full">
         <EditLabel htmlFor="assignedTo" title="Assigned To" />
         <Popover>
@@ -609,8 +611,8 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
               variant="outline"
               role="combobox"
               className={cn(
-                "w-full justify-between rounded-[5px] min-h-10",
-                !formData.assignedTo?.length && "text-muted-foreground"
+                'w-full justify-between rounded-[5px] min-h-10',
+                !formData.assignedTo?.length && 'text-muted-foreground'
               )}
             >
               <div className="flex gap-1 flex-wrap overflow-hidden max-w-[calc(100%-30px)]">
@@ -618,26 +620,38 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
                   assignedToDropdownData
                     .filter((user) => formData.assignedTo.includes(user._id))
                     .map((user) => (
-                      <Badge
+                      <div
                         key={user._id}
-                        variant="secondary"
-                        className="mb-0.5 max-w-full truncate"
+                        className="inline-flex items-center"
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <span className="truncate">{user.name}</span>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSelectChange(
-                              "assignedTo",
-                              formData.assignedTo.filter((id) => id !== user._id)
-                            );
-                          }}
-                          className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </Badge>
+                        <Badge variant="secondary" className="mb-0.5 max-w-full truncate pr-1">
+                          <span className="truncate">{user.name}</span>
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleSelectChange(
+                                  'assignedTo',
+                                  formData.assignedTo.filter((id) => id !== user._id)
+                                );
+                              }
+                            }}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleSelectChange(
+                                'assignedTo',
+                                formData.assignedTo.filter((id) => id !== user._id)
+                              );
+                            }}
+                            className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                          >
+                            <X className="h-3 w-3" />
+                          </span>
+                        </Badge>
+                      </div>
                     ))
                 ) : (
                   <span className="truncate">Select Assigned To</span>
@@ -652,25 +666,24 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
               <CommandEmpty>No users found.</CommandEmpty>
               <CommandGroup>
                 <ScrollArea className="h-48">
-                  {assignedToDropdownData.map((user: { _id: string, name: string }) => (
+                  {assignedToDropdownData.map((user: { _id: string; name: string }) => (
                     <CommandItem
                       key={user._id}
-                      value={user.name}
+                      value={`${user.name}${user._id}`}
                       onSelect={() => {
                         const currentAssigned = formData.assignedTo || [];
                         const newAssigned = currentAssigned.includes(user._id)
                           ? currentAssigned.filter((id) => id !== user._id)
                           : [...currentAssigned, user._id];
-                        handleSelectChange("assignedTo", newAssigned);
+                        handleSelectChange('assignedTo', newAssigned);
                       }}
-                      className="cursor-pointer"
+                      className="cursor-pointer aria-selected:bg-accent aria-selected:text-accent-foreground"
+                      data-user-id={user._id}
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
-                          formData.assignedTo?.includes(user._id)
-                            ? "opacity-100"
-                            : "opacity-0"
+                          'mr-2 h-4 w-4',
+                          formData.assignedTo?.includes(user._id) ? 'opacity-100' : 'opacity-0'
                         )}
                       />
                       <span className="truncate">{user.name}</span>
@@ -683,34 +696,6 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
         </Popover>
       </div>
 
-      <div className="flex gap-5">
-        <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="nextDueDate" title={'Next Call Date'} />
-          <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-full justify-start text-left pl-20">
-                <CalendarIcon className="left-3 h-5 w-5 text-gray-400" />
-                {formData.nextDueDate || 'Select a date'}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
-              <Calendar
-                mode="single"
-                selected={parseDateString(formData.nextDueDate)}
-                onSelect={handleDateChange}
-                initialFocus
-                captionLayout={"dropdown-buttons"}
-                fromYear={new Date().getFullYear() - 100}
-                toYear={new Date().getFullYear() + 10}
-              />
-            </PopoverContent>
-          </Popover>
-          {errors.nextDueDate && <p className="text-red-500 text-xs mt-1">{errors.nextDueDate}</p>}
-        </div>
-
-
-      </div>
-
       <div className="flex flex-col gap-2">
         <p className="text-[#666666]">Last Modified Date</p>
         <p>{formatTimeStampView(formData.leadTypeModifiedDate)}</p>
@@ -720,10 +705,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
 
   return (
     <div className="w-full h-full max-w-2xl mx-auto border-none flex flex-col">
-      <CardContent className="px-3 space-y-6 mb-20">
-        {EditView}
-      </CardContent>
-
+      <CardContent className="px-3 space-y-6 mb-20">{EditView}</CardContent>
 
       <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
         <>
@@ -739,10 +721,7 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting || Object.keys(errors).length > 0}
-          >
+          <Button onClick={handleSubmit} disabled={isSubmitting || Object.keys(errors).length > 0}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -754,7 +733,6 @@ export default function LeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, 
           </Button>
         </>
       </CardFooter>
-
     </div>
   );
 }

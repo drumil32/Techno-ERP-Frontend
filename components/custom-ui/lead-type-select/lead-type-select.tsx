@@ -1,11 +1,6 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { LeadType, LeadTypeMapper } from "@/static/enum";
+import { useEffect, useRef, useState } from 'react';
+import { ChevronDown, Check } from 'lucide-react';
+import { LeadType, LeadTypeMapper } from '@/static/enum';
 
 const typeStyles: Record<LeadType, string> = {
   [LeadType.OPEN]: 'bg-[#FFE3CB] text-[#E06C06]',
@@ -14,35 +9,72 @@ const typeStyles: Record<LeadType, string> = {
   [LeadType.COURSE_UNAVAILABLE]: 'bg-[#CECECE] text-[#696969]',
   [LeadType.NO_CLARITY]: 'bg-[#C8E4FF] text-[#006ED8]',
   [LeadType.DID_NOT_PICK]: 'bg-[#F5F5F5] text-[#9E9E9E]',
-  [LeadType.INVALID]: 'bg-[#BDBDBD] text-[#FFFFFF]',
+  [LeadType.INVALID]: 'bg-[#BDBDBD] text-[#FFFFFF]'
 };
 
 interface LeadTypeSelectProps {
   value: LeadType;
   onChange: (value: LeadType) => void;
+  isDisable?: boolean;
 }
 
-export default function LeadTypeSelect({ value, onChange }: LeadTypeSelectProps) {
-  const selectedStyle = typeStyles[value];
+export default function LeadTypeSelect({
+  value,
+  onChange,
+  isDisable = false
+}: LeadTypeSelectProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isDisable) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDisable]);
 
   return (
-    <Select value={value} onValueChange={(val) => onChange(val as LeadType)}>
-      <SelectTrigger
-        className={`hover:border-slate-600 cursor-pointer border-transparent rounded-[5px] text-sm font-medium  w-[140px] px-2 py-1 ${selectedStyle}`}
+    <div className="relative w-[150px] mx-auto" ref={dropdownRef}>
+      <button
+        onClick={() => !isDisable && setIsOpen(!isOpen)}
+        disabled={isDisable}
+        className={`w-full flex items-center justify-between gap-2 rounded-[5px] text-sm font-medium px-3 py-1 ${typeStyles[value]} ${
+          isDisable
+            ? 'opacity-50 cursor-not-allowed'
+            : 'hover:opacity-90 hover:border-slate-500 border-1 border-transparent'
+        }`}
       >
-        <SelectValue placeholder="Select Type" />
-      </SelectTrigger>
-      <SelectContent className="space-y-1 py-1">
-        {Object.values(LeadType).map((type) => (
-          <SelectItem
-            key={type}
-            value={type}
-            className={`border-transparent hover:border-slate-600 border-2 cursor-pointer rounded-[5px] text-sm font-medium px-3 py-2 transition-all ${typeStyles[type]} `}
-          >
-            {LeadTypeMapper[type]}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+        <span className="truncate">{LeadTypeMapper[value]}</span>
+        {!isDisable && (
+          <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        )}
+      </button>
+
+      {isOpen && !isDisable && (
+        <div className="absolute z-10 mt-1 w-full bg-white rounded-[5px] shadow-lg border border-gray-200 py-1">
+          {Object.values(LeadType).map((type) => (
+            <div
+              key={type}
+              onClick={() => {
+                onChange(type);
+                setIsOpen(false);
+              }}
+              className={`flex items-center justify-between px-3 py-2 mx-1 rounded-[3px] text-sm font-medium cursor-pointer transition-colors hover:opacity-80 ${typeStyles[type]}`}
+            >
+              <span>{LeadTypeMapper[type]}</span>
+              {value === type && <Check className="w-4 h-4" />}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

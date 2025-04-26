@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Check } from 'lucide-react';
 
 interface MultiSelectCustomDropdownProps {
   form: any;
@@ -19,31 +19,37 @@ export const MultiSelectCustomDropdown = ({
   name,
   label,
   options,
-  placeholder = "Select options",
+  placeholder = 'Select option',
   allowCustomInput = false,
-  onChange,
+  onChange
 }: MultiSelectCustomDropdownProps) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [customValue, setCustomValue] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-
   const currentValue = form[name] || '';
 
-  const filteredOptions = options.filter(option =>
+  const filteredOptions = options.filter((option) =>
     option.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleValueChange = (newValue: string) => {
-    onChange?.(newValue);
+  const handleSelect = (value: string) => {
+    onChange?.(value);
     setIsPopoverOpen(false);
+    setSearchTerm('');
   };
 
-  const handleAddCustomValue = () => {
-    if (customValue.trim()) {
-      handleValueChange(customValue.trim());
-      setCustomValue("");
+  const handleAddFromSearch = () => {
+    if (
+      searchTerm.trim() &&
+      !options.some((opt) => opt.name.toLowerCase() === searchTerm.toLowerCase())
+    ) {
+      handleSelect(searchTerm.trim());
     }
   };
+
+  const showAddButton =
+    allowCustomInput &&
+    searchTerm.trim() &&
+    !options.some((opt) => opt.name.toLowerCase() === searchTerm.toLowerCase());
 
   return (
     <div className="space-y-2 w-full">
@@ -52,67 +58,45 @@ export const MultiSelectCustomDropdown = ({
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="text-left rounded-sm bg-inherit w-full max-w-full truncate font-normal h-full"
+            className="text-left rounded-sm bg-inherit w-full font-normal h-full justify-start"
           >
-            <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full">
-              {currentValue 
-                ? options.find(opt => opt._id === currentValue)?.name || currentValue
-                : placeholder}
-            </span>
+            {currentValue
+              ? options.find((opt) => opt._id === currentValue)?.name || currentValue
+              : placeholder}
           </Button>
         </PopoverTrigger>
-        <PopoverContent 
-          className="w-[250px] rounded-sm" 
-          align="start"
-          onInteractOutside={(e) => {
-            if (customValue.trim()) {
-              handleAddCustomValue();
-            }
-          }}
-        >
+        <PopoverContent className="w-[250px] rounded-sm p-2" align="start">
           <div className="space-y-2">
-            <Input
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="h-8"
-            />
-            <div className="max-h-60 overflow-y-auto flex flex-col gap-2">
-              {filteredOptions.map((option) => (
-                <div
-                  key={option._id}
-                  className="flex items-center space-x-2 cursor-pointer"
-                  onClick={() => handleValueChange(option._id)}
-                >
-                  <Checkbox
-                    id={option._id}
-                    checked={currentValue === option._id}
-                    className="rounded-sm"
-                  />
-                  <label htmlFor={option._id} className="text-[12px] cursor-pointer">
-                    {option.name}
-                  </label>
-                </div>
-              ))}
-            </div>
-            {allowCustomInput && (
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Add custom value"
-                  value={customValue}
-                  onChange={(e) => setCustomValue(e.target.value)}
-                  className="h-8"
-                  onKeyDown={(e) => e.key === 'Enter' && handleAddCustomValue()}
-                />
+            <div className="relative">
+              <Input
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="h-8 pr-10"
+                onKeyDown={(e) => e.key === 'Enter' && handleAddFromSearch()}
+              />
+              {showAddButton && (
                 <Button
                   size="sm"
-                  onClick={handleAddCustomValue}
-                  disabled={!customValue.trim()}
+                  className="absolute right-1 top-1 h-6 px-2 text-xs"
+                  onClick={handleAddFromSearch}
                 >
                   Add
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
+            <div className="max-h-60 overflow-y-auto">
+              {filteredOptions.map((option) => (
+                <div
+                  key={option._id}
+                  className="flex items-center justify-between p-2 hover:bg-gray-100 rounded cursor-pointer"
+                  onClick={() => handleSelect(option._id)}
+                >
+                  <span className="text-sm">{option.name}</span>
+                  {currentValue === option._id && <Check className="h-4 w-4 text-primary" />}
+                </div>
+              ))}
+            </div>
           </div>
         </PopoverContent>
       </Popover>

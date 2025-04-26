@@ -18,7 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 
 // Static data and enums
-import { Course, CourseNameMapper, Gender, Locations } from '@/static/enum';
+import { Course, Gender, Locations } from '@/static/enum';
 
 // Utility functions and constants
 import { apiRequest } from '@/lib/apiClient';
@@ -39,7 +39,7 @@ import { fetchAssignedToDropdown } from './helpers/fetch-data';
 // React Query
 import { useQuery } from '@tanstack/react-query';
 import { removeNullValues, toPascal } from '@/lib/utils';
-import { cityDropdown } from '../admin-tracker/helpers/fetch-data';
+import { cityDropdown, fixCourseDropdown } from '../admin-tracker/helpers/fetch-data';
 import { formatDateView, formatTimeStampView } from '../allLeads/helpers/refine-data';
 import { MultiSelectCustomDropdown } from '@/components/custom-ui/common/multi-select-custom-editable';
 import { MultiSelectDropdown } from '@/components/custom-ui/multi-select/mutli-select';
@@ -48,12 +48,12 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown, X } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+  CommandItem
+} from '@/components/ui/command';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
+import { Check, ChevronsUpDown, X } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 interface FormErrors {
   name?: string;
   phoneNumber?: string;
@@ -70,7 +70,12 @@ export const contactNumberSchema = z
   .string()
   .regex(/^[1-9]\d{9}$/, 'Invalid contact number format. Expected: 1234567890');
 
-export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedRowId, setRefreshKey }: any) {
+export default function YellowLeadViewEdit({
+  data,
+  setIsDrawerOpen,
+  setSelectedRowId,
+  setRefreshKey
+}: any) {
   const [formData, setFormData] = useState<YellowLead | null>(null);
   const [originalData, setOriginalData] = useState<YellowLead | null>(null);
   // const [isEditing, toggleIsEditing] = useState(false);
@@ -136,12 +141,17 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
     queryKey: ['assignedToDropdown'],
     queryFn: fetchAssignedToDropdown
   });
+  const fixCourseQuery = useQuery({
+    queryKey: ['courses'],
+    queryFn: fixCourseDropdown
+  });
+  const fixCourses = Array.isArray(fixCourseQuery.data) ? fixCourseQuery.data : [];
 
   const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
   const cityDropdownQuery = useQuery({
     queryKey: ['cities'],
     queryFn: cityDropdown
-  })
+  });
   const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
 
   const parseDateString = (dateString?: string): Date | undefined => {
@@ -161,7 +171,6 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
   };
 
   const handleSelectChange = (name: string, value: string | boolean | string[]) => {
-
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
     validateField(name, value);
   };
@@ -262,7 +271,6 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
         return;
       }
 
-
       const { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
 
       const response: YellowLead | null = await apiRequest(
@@ -332,12 +340,14 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Course</p>
-          <p>{formData.course ? CourseNameMapper[formData.course as Course] : '-'}</p>
+          <p>{formData.course ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Footfall</p>
           {formData.footFall != undefined ? (
-            <FootFallTag status={formData.footFall === true ? FootFallStatus.true : FootFallStatus.false} />
+            <FootFallTag
+              status={formData.footFall === true ? FootFallStatus.true : FootFallStatus.false}
+            />
           ) : (
             <p>-</p>
           )}
@@ -366,7 +376,7 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
           <p>{formData.remarks ?? '-'}</p>
         </div>
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Next Call Date</p>
+          <p className="w-1/4 text-[#666666]">Next Due Date</p>
           <p>{formData.nextDueDate ?? '-'}</p>
         </div>
       </div>
@@ -475,7 +485,7 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
           <MultiSelectCustomDropdown
             form={formData}
             name="city"
-            options={Object.values(cityDropdownData).map(city => ({ _id: city, name: city }))}
+            options={Object.values(cityDropdownData).map((city) => ({ _id: city, name: city }))}
             placeholder="Select city"
             allowCustomInput={true}
             onChange={(value) => {
@@ -493,7 +503,7 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
           <MultiSelectCustomDropdown
             form={formData}
             name="course"
-            options={Object.values(Course).map(course => ({ _id: course, name: course }))}
+            options={Object.values(fixCourses).map((course) => ({ _id: course, name: course }))}
             placeholder="Select course"
             allowCustomInput={true}
             onChange={(value) => {
@@ -507,8 +517,8 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="footFall" title={'Footfall'} />
           <Select
-            defaultValue={formData.footFall ? "true" : "false"}
-            onValueChange={(value) => handleSelectChange('footFall', value === "true")}
+            defaultValue={formData.footFall ? 'true' : 'false'}
+            onValueChange={(value) => handleSelectChange('footFall', value === 'true')}
           >
             <SelectTrigger id="footFall" className="w-full rounded-[5px]">
               <SelectValue placeholder="Select Foot Fall" />
@@ -524,11 +534,9 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
         </div>
       </div>
 
-
-
       <div className="flex gap-5">
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="nextDueDate" title={'Next Call Date'} />
+          <EditLabel htmlFor="nextDueDate" title={'Next Due Date'} />
           <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
             <PopoverTrigger asChild>
               <Button variant="outline" className="w-full justify-start text-left pl-20">
@@ -542,7 +550,7 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
                 selected={parseDateString(formData.nextDueDate)}
                 onSelect={handleDateChange}
                 initialFocus
-                captionLayout={"dropdown-buttons"}
+                captionLayout={'dropdown-buttons'}
                 fromYear={new Date().getFullYear() - 100}
                 toYear={new Date().getFullYear() + 10}
               />
@@ -563,11 +571,11 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
               <SelectValue placeholder="Select follow-up count" />
             </SelectTrigger>
             <SelectContent>
-              {Array.from({ length: formData.yellowLeadsFollowUpCount + 2 }, (_, i) => ((
+              {Array.from({ length: formData.yellowLeadsFollowUpCount + 2 }, (_, i) => (
                 <SelectItem key={i} value={i.toString()}>
                   {i.toString().padStart(2, '0')}
                 </SelectItem>
-              )))}
+              ))}
             </SelectContent>
           </Select>
         </div>
@@ -616,7 +624,6 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
           placeholder="Enter remarks here"
         />
       </div>
-
       <div className="space-y-2 w-full">
         <EditLabel htmlFor="assignedTo" title="Assigned To" />
         <Popover>
@@ -625,8 +632,8 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
               variant="outline"
               role="combobox"
               className={cn(
-                "w-full justify-between rounded-[5px] min-h-10",
-                !formData.assignedTo?.length && "text-muted-foreground"
+                'w-full justify-between rounded-[5px] min-h-10',
+                !formData.assignedTo?.length && 'text-muted-foreground'
               )}
             >
               <div className="flex gap-1 flex-wrap overflow-hidden max-w-[calc(100%-30px)]">
@@ -634,26 +641,38 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
                   assignedToDropdownData
                     .filter((user) => formData.assignedTo.includes(user._id))
                     .map((user) => (
-                      <Badge
+                      <div
                         key={user._id}
-                        variant="secondary"
-                        className="mb-0.5 max-w-full truncate"
+                        className="inline-flex items-center"
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <span className="truncate">{user.name}</span>
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSelectChange(
-                              "assignedTo",
-                              formData.assignedTo.filter((id) => id !== user._id)
-                            );
-                          }}
-                          className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </Badge>
+                        <Badge variant="secondary" className="mb-0.5 max-w-full truncate pr-1">
+                          <span className="truncate">{user.name}</span>
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                handleSelectChange(
+                                  'assignedTo',
+                                  formData.assignedTo.filter((id) => id !== user._id)
+                                );
+                              }
+                            }}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleSelectChange(
+                                'assignedTo',
+                                formData.assignedTo.filter((id) => id !== user._id)
+                              );
+                            }}
+                            className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                          >
+                            <X className="h-3 w-3" />
+                          </span>
+                        </Badge>
+                      </div>
                     ))
                 ) : (
                   <span className="truncate">Select Assigned To</span>
@@ -668,25 +687,24 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
               <CommandEmpty>No users found.</CommandEmpty>
               <CommandGroup>
                 <ScrollArea className="h-48">
-                  {assignedToDropdownData.map((user: { _id: string, name: string }) => (
+                  {assignedToDropdownData.map((user: { _id: string; name: string }) => (
                     <CommandItem
                       key={user._id}
-                      value={user.name}
+                      value={`${user.name}${user._id}`}
                       onSelect={() => {
                         const currentAssigned = formData.assignedTo || [];
                         const newAssigned = currentAssigned.includes(user._id)
                           ? currentAssigned.filter((id) => id !== user._id)
                           : [...currentAssigned, user._id];
-                        handleSelectChange("assignedTo", newAssigned);
+                        handleSelectChange('assignedTo', newAssigned);
                       }}
-                      className="cursor-pointer"
+                      className="cursor-pointer aria-selected:bg-accent aria-selected:text-accent-foreground"
+                      data-user-id={user._id}
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
-                          formData.assignedTo?.includes(user._id)
-                            ? "opacity-100"
-                            : "opacity-0"
+                          'mr-2 h-4 w-4',
+                          formData.assignedTo?.includes(user._id) ? 'opacity-100' : 'opacity-0'
                         )}
                       />
                       <span className="truncate">{user.name}</span>
@@ -698,16 +716,12 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
           </PopoverContent>
         </Popover>
       </div>
-
     </>
   );
 
   return (
     <div className="w-full h-full max-w-2xl mx-auto border-none flex flex-col">
-      <CardContent className="px-3 space-y-6 mb-20">
-        {EditView}
-      </CardContent>
-
+      <CardContent className="px-3 space-y-6 mb-20">{EditView}</CardContent>
 
       <CardFooter className="flex w-[439px] justify-end gap-2 fixed bottom-0 right-0 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] px-[10px] py-[12px] bg-white">
         <>
@@ -724,10 +738,7 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting || Object.keys(errors).length > 0}
-          >
+          <Button onClick={handleSubmit} disabled={isSubmitting || Object.keys(errors).length > 0}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -739,7 +750,6 @@ export default function YellowLeadViewEdit({ data, setIsDrawerOpen, setSelectedR
           </Button>
         </>
       </CardFooter>
-
     </div>
   );
 }

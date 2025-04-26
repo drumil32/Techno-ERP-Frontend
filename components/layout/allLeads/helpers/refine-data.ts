@@ -3,21 +3,21 @@ import { Course, CourseNameMapper, LeadType, ReverseCourseNameMapper } from '@/s
 import { toPascal } from '@/lib/utils';
 
 export const formatDateView = (dateStr: string) => {
-  if (!dateStr || typeof dateStr !== "string") return null;
+  if (!dateStr || typeof dateStr !== 'string') return null;
 
-  const parts = dateStr.split("/");
+  const parts = dateStr.split('/');
   if (parts.length !== 3) return null;
 
   const [day, month, year] = parts;
   return `${day}/${month}/${year.slice(-2)}`;
-}
+};
 export const formatTimeStampView = (dateStr: string) => {
-  if (!dateStr || typeof dateStr !== "string") return null;
+  if (!dateStr || typeof dateStr !== 'string') return null;
 
-  const [datePart, timePart] = dateStr.split("|").map(part => part.trim());
+  const [datePart, timePart] = dateStr.split('|').map((part) => part.trim());
   if (!datePart) return null;
 
-  const parts = datePart.split("/");
+  const parts = datePart.split('/');
   if (parts.length !== 3) return null;
 
   const [day, month, year] = parts;
@@ -26,15 +26,27 @@ export const formatTimeStampView = (dateStr: string) => {
   return timePart ? `${formattedDate} | ${timePart}` : formattedDate;
 };
 
-
-
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
-  // Modified parameters to get Assigned To Dropdown Data
   const refinedLeads = data.leads?.map((lead: any, index: number) => {
-    const assignedToUser = assignedToDropdownData?.find(
-      (user: any) => user._id === lead.assignedTo
-    );
-    const assignedToName = assignedToUser ? assignedToUser.name : 'N/A'; // Or handle default as needed
+    const assignedToUsers = Array.isArray(lead.assignedTo)
+      ? lead.assignedTo
+          .map((id: string) => assignedToDropdownData?.find((user: any) => user._id === id))
+          .filter(Boolean)
+      : [];
+
+    // Create assignedToName string
+    let assignedToName = 'N/A';
+    let assignedToView = '-';
+
+    if (assignedToUsers.length > 0) {
+      assignedToName = assignedToUsers[0].name;
+      assignedToView = assignedToUsers[0].name;
+
+      if (assignedToUsers.length > 1) {
+        assignedToName += ` +${assignedToUsers.length - 1}`;
+        assignedToView += ` +${assignedToUsers.length - 1}`;
+      }
+    }
 
     return {
       _id: lead._id,
@@ -50,9 +62,9 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       gender: lead.gender,
       genderView: toPascal(lead.gender),
       city: lead.city,
-      cityView: lead.city ?? 'Not Provided',
+      cityView: !lead.city || lead.city === '' ? '-' : lead.city,
       area: lead.area,
-      areaView: lead.area ?? '-',
+      areaView: !lead.area || lead.area === '' ? '-' : lead.area,
       course: lead.course,
       courseView: lead.course ?? '-',
       leadType: LeadType[lead.leadType as keyof typeof LeadType] ?? lead.leadType,
@@ -61,7 +73,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       sourceView: lead.source ?? '-',
       assignedTo: lead.assignedTo,
       schoolName: lead.schoolName,
-      assignedToView: lead.assignedTo ?? '-',
+      assignedToView: assignedToView,
       assignedToName: assignedToName,
       nextDueDate: lead.nextDueDate,
       nextDueDateView: formatDateView(lead.nextDueDate) ?? '-',
@@ -71,7 +83,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       remarks: lead.remarks,
       remarksView: lead.remarks ?? '-',
       leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'N/A',
-      leadTypeModifiedDateView: formatTimeStampView(lead.leadTypeModifiedDate)?? 'N/A'
+      leadTypeModifiedDateView: formatTimeStampView(lead.leadTypeModifiedDate) ?? 'N/A'
     };
   });
 

@@ -5,10 +5,15 @@ import { toPascal } from '@/lib/utils';
 import { formatTimeStampView, formatDateView } from '../../allLeads/helpers/refine-data';
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   const refinedLeads = data.yellowLeads?.map((lead: any, index: number) => {
-    const assignedToUser = assignedToDropdownData?.find(
-      (user: any) => user._id === lead.assignedTo
-    );
-    const assignedToName = assignedToUser ? assignedToUser.name : 'N/A';
+    const assignedToUsers = Array.isArray(lead.assignedTo)
+      ? lead.assignedTo
+          .map((id: string) => assignedToDropdownData?.find((user: any) => user._id === id))
+          .filter(Boolean)
+      : [];
+    const assignedToName =
+      assignedToUsers.length > 0
+        ? `${assignedToUsers[0].name}${assignedToUsers.length > 1 ? ` +${assignedToUsers.length - 1}` : ''}`
+        : 'N/A';
 
     return {
       _id: lead._id,
@@ -23,9 +28,9 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       assignedTo: lead.assignedTo,
       assignedToName: assignedToName,
       area: lead.area,
-      areaView: lead.area ?? '-',
+      areaView: !lead.area || lead.area === '' ? '-' : lead.area,
       city: lead.city,
-      cityView: lead.city ?? 'Not Provided',
+      cityView: !lead.city || lead.city === '' ? '-' : lead.city,
       course: lead.course,
       courseView: lead.course ?? '-',
       footFall: lead.footFall,
@@ -44,7 +49,6 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       updatedAt: new Date(lead.updatedAt).toLocaleString()
     };
   });
-
   return {
     leads: refinedLeads,
     currentPage: data.currentPage,
@@ -105,7 +109,7 @@ export const refineAnalytics = (analytics: YellowLeadAnalytics) => {
       subheading: calculatePercentage(analytics.admissions ?? 0),
       title: 'Admissions',
       color: 'text-[#0EA80E]'
-    },
+    }
   ];
   return analyticsCardsData;
 };
