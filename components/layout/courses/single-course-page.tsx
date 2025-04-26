@@ -241,6 +241,7 @@ export const SingleCoursePage = () => {
                 openDialog={createSubjectDialogOpen}
                 onOpenChange={setCreateSubjectDialogOpen}
                 data={{
+                    departmentName : subjectResponse?.subjectInformation?.departmentName!,
                     courseId : courseId!,
                     semesterId : semesterId!,
                     courseName : subjectResponse?.subjectInformation?.courseName,

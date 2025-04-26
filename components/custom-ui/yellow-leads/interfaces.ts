@@ -9,7 +9,7 @@ export interface YellowLead {
   altPhoneNumber: string;
   email: string;
   gender: string;
-  assignedTo: string;
+  assignedTo: string[];
   location: string;
   course: string;
   footFall: boolean;

@@ -36,7 +36,12 @@ import {
   ChevronsLeft
 } from 'lucide-react';
 import { LuDownload, LuUpload } from 'react-icons/lu';
-
+import clsx from 'clsx';
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData extends unknown, TValue> {
+    align?: 'left' | 'center' | 'right';
+  }
+}
 export default function TechnoDataTable({
   columns,
   data,
@@ -62,9 +67,11 @@ export default function TechnoDataTable({
 
   const [sortConfig, setSortConfig] = useState<Record<string, string>>(() => {
     const initialConfig: Record<string, string> = {};
-    ['dateView', 'nextDueDateView', 'Next Call Date', 'LTC Date','leadTypeModifiedDate'].forEach(column => {
-      initialConfig[column] = 'desc';
-    });
+    ['dateView', 'nextDueDateView', 'Next Call Date', 'LTC Date', 'leadTypeModifiedDate'].forEach(
+      (column) => {
+        initialConfig[column] = 'desc';
+      }
+    );
     return initialConfig;
   });
 
@@ -111,7 +118,7 @@ export default function TechnoDataTable({
     setSortConfig(newSortConfig);
     if (onSort) onSort(columnName, newSortConfig[columnName]);
   };
-  
+
   const getSortIcon = (columnName: string) => {
     if (sortConfig[columnName]) {
       return sortConfig[columnName] === 'asc' ? (
@@ -123,7 +130,14 @@ export default function TechnoDataTable({
     return <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />;
   };
 
-  const nonClickableColumns = ['actions', 'leadType', 'finalConversion', "leadsFollowUpCount", 'yellowLeadsFollowUpCount'];
+  const nonClickableColumns = [
+    'actions',
+    'leadType',
+    'footFall',
+    'finalConversion',
+    'leadsFollowUpCount',
+    'yellowLeadsFollowUpCount'
+  ];
 
   const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate'];
 
@@ -135,7 +149,7 @@ export default function TechnoDataTable({
           {children && <div className="ml-2">{children}</div>}
         </div>
         <div className="flex items-center space-x-2 ml-auto">
-        <div className="relative">
+          <div className="relative">
             <Input
               placeholder="Search here"
               value={globalFilter}
@@ -146,7 +160,12 @@ export default function TechnoDataTable({
               <Search className="h-4 w-4 text-gray-500" />
             </span>
           </div>
-          <Button disabled variant="outline" className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
+          <Button
+            disabled
+            variant="outline"
+            className="h-8 w-[85px] rounded-[10px] border"
+            icon={LuUpload}
+          >
             <span className="font-inter font-medium text-[12px]">Upload</span>
           </Button>
           <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
@@ -164,18 +183,27 @@ export default function TechnoDataTable({
                   const columnId = header.column.id;
                   const isSortable = sortableColumns.includes(columnId);
                   const isNonClickable = nonClickableColumns.includes(columnId);
-                  
+                  const align = header.column.columnDef.meta?.align || 'left';
+
                   return (
                     <TableHead
                       key={header.id}
-                      className={`text-center font-light h-10 ${index === 0 ? 'rounded-l-[5px]' : ''} ${index === headerGroup.headers.length - 1 ? 'rounded-r-[5px]' : ''}`}
+                      className={clsx('font-light h-10', {
+                        'text-left': align === 'left',
+                        'text-center': !align || align === 'center',
+                        'text-right': align === 'right',
+                        'rounded-l-[5px]': index === 0,
+                        'rounded-r-[5px]': index === headerGroup.headers.length - 1
+                      })}
                     >
                       {isSortable && !isNonClickable ? (
-                        <div 
-                          className="flex items-center justify-center cursor-pointer" 
+                        <div
+                          className="flex items-center justify-center cursor-pointer"
                           onClick={() => handleSort(columnId)}
                         >
-                          <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                          <span>
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                          </span>
                           {getSortIcon(columnId)}
                         </div>
                       ) : (
@@ -195,20 +223,26 @@ export default function TechnoDataTable({
                   className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
                   onClick={() => {
                     setSelectedRowId(row.id);
-                    handleViewMore({ ...row.original, leadType: row.original._leadType })
-                  }
-                  }
+                    handleViewMore({ ...row.original, leadType: row.original._leadType });
+                  }}
                 >
                   {row.getVisibleCells().map((cell: any) => {
                     const isExcluded = nonClickableColumns.includes(cell.column.id);
-
+                    const align = cell.column.columnDef.meta?.align || 'left';
                     return (
                       <TableCell
                         key={cell.id}
-                        className={`h-[39px] py-2 ${(cell.column.columnDef.header === 'Remarks'|| cell.column.columnDef.header==='Area'|| cell.column.columnDef.header==='Name'|| cell.column.columnDef.header==='Assigned To') && cell.getValue() !== '-'
-                          ? 'text-left max-w-[120px] truncate'
-                          : 'text-center'
-                          }`}
+                        className={clsx('h-[39px] py-2', {
+                          'text-left': align === 'left',
+                          'text-center': cell.getValue() === 'N/A' || align === 'center',
+                          'text-right': align === 'right',
+                          'max-w-[120px] truncate':
+                            (cell.column.columnDef.header === 'Remarks' ||
+                              cell.column.columnDef.header === 'Area' ||
+                              cell.column.columnDef.header === 'Name' ||
+                              cell.column.columnDef.header === 'Assigned To') &&
+                            cell.getValue() !== '-'
+                        })}
                         onClick={(e) => {
                           if (isExcluded) e.stopPropagation();
                         }}
@@ -249,13 +283,13 @@ export default function TechnoDataTable({
         </Table>
       </div>
 
-      {showPagination &&
+      {showPagination && (
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center space-x-2">
             <span>Rows per page:</span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className='cursor-pointer'>
+                <Button variant="outline" size="sm" className="cursor-pointer">
                   {pageSize} <ChevronDown className="ml-1" />
                 </Button>
               </DropdownMenuTrigger>
@@ -287,7 +321,7 @@ export default function TechnoDataTable({
               onClick={() => onPageChange(1)}
               disabled={currentPage === 1}
               aria-label="Go to first page"
-              className='cursor-pointer'
+              className="cursor-pointer"
             >
               <ChevronsLeft />
             </Button>
@@ -297,12 +331,12 @@ export default function TechnoDataTable({
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
               aria-label="Go to previous page"
-              className='cursor-pointer'
+              className="cursor-pointer"
             >
               <ChevronLeft />
             </Button>
             {currentPage > 1 && <span>1 ..</span>}
-            <span>{currentPage}</span>
+            <span className=" underline">{currentPage}</span>
             {currentPage < totalPages && <span>..{totalPages}</span>}
             <Button
               variant="ghost"
@@ -310,7 +344,7 @@ export default function TechnoDataTable({
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               aria-label="Go to next page"
-              className='cursor-pointer'
+              className="cursor-pointer"
             >
               <ChevronRight />
             </Button>
@@ -320,13 +354,13 @@ export default function TechnoDataTable({
               onClick={() => onPageChange(totalPages)}
               disabled={currentPage === totalPages}
               aria-label="Go to last page"
-              className='cursor-pointer'
+              className="cursor-pointer"
             >
               <ChevronsRight />
             </Button>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 }

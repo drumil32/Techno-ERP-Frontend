@@ -21,16 +21,30 @@ const ROLE_PRIORITY: UserRoles[] = [
 ];
 
 export const fetchAssignedToDropdown = async () => {
-  const result= await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchAssignedToDropdown);
+  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchAssignedToDropdown);
   return result;
 };
 
-export const marketingSourcesDropdown=async()=>{
-  const result=await apiRequest(API_METHODS.GET,API_ENDPOINTS.fetchMarketingSourcesDropdown);
+export const marketingSourcesDropdown = async () => {
+  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchMarketingSourcesDropdown);
   return result;
-}
+};
 
-export const cityDropdown=async()=>{
-  const result=await apiRequest(API_METHODS.GET,API_ENDPOINTS.fetchCityDropdown);
+export const cityDropdown = async () => {
+  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchCityDropdown);
   return result;
-}
+};
+
+export const fixCityDropdown = async () => {
+  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchFixCityDropdown);
+  return result;
+};
+
+export const courseDropdown = async () => {
+  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchCourseDropdown);
+  return result;
+};
+export const fixCourseDropdown = async () => {
+  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchFixCourseDropdown);
+  return result;
+};

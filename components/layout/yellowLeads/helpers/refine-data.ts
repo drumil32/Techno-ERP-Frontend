@@ -2,13 +2,18 @@ import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-c
 import { FinalConversionStatus } from '../final-conversion-tag';
 import { Course, CourseNameMapper } from '@/static/enum';
 import { toPascal } from '@/lib/utils';
-import { formatTimeStampView,formatDateView} from '../../allLeads/helpers/refine-data';
+import { formatTimeStampView, formatDateView } from '../../allLeads/helpers/refine-data';
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   const refinedLeads = data.yellowLeads?.map((lead: any, index: number) => {
-    const assignedToUser = assignedToDropdownData?.find(
-      (user: any) => user._id === lead.assignedTo
-    );
-    const assignedToName = assignedToUser ? assignedToUser.name : 'N/A';
+    const assignedToUsers = Array.isArray(lead.assignedTo)
+      ? lead.assignedTo
+          .map((id: string) => assignedToDropdownData?.find((user: any) => user._id === id))
+          .filter(Boolean)
+      : [];
+    const assignedToName =
+      assignedToUsers.length > 0
+        ? `${assignedToUsers[0].name}${assignedToUsers.length > 1 ? ` +${assignedToUsers.length - 1}` : ''}`
+        : 'N/A';
 
     return {
       _id: lead._id,
@@ -20,14 +25,14 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       email: lead.email ?? '-',
       gender: lead.gender,
       genderView: toPascal(lead.gender),
-      assignedTo: lead.assignedTo ?? '-',
+      assignedTo: lead.assignedTo,
       assignedToName: assignedToName,
       area: lead.area,
-      areaView: lead.area ?? '-',
+      areaView: !lead.area || lead.area === '' ? '-' : lead.area,
       city: lead.city,
-      cityView: lead.city ?? 'Not Provided',
+      cityView: !lead.city || lead.city === '' ? '-' : lead.city,
       course: lead.course,
-      courseView: CourseNameMapper[lead.course as Course] ?? '-',
+      courseView: lead.course ?? '-',
       footFall: lead.footFall,
       schoolName: lead.schoolName,
       finalConversion:
@@ -37,14 +42,14 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       remarks: lead.remarks,
       remarksView: lead.remarks ?? '-',
       date: lead.date,
-      leadTypeModifiedDate: formatTimeStampView(lead.leadTypeModifiedDate) ?? '-',
+      leadTypeModifiedDate:
+        formatTimeStampView(lead.leadTypeModifiedDate) ?? formatDateView(lead.date),
       nextDueDate: lead.nextDueDate,
-      nextDueDateView: formatDateView( lead.nextDueDate) ?? '-',
+      nextDueDateView: formatDateView(lead.nextDueDate) ?? '-',
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: new Date(lead.updatedAt).toLocaleString()
     };
   });
-
   return {
     leads: refinedLeads,
     currentPage: data.currentPage,
@@ -105,7 +110,7 @@ export const refineAnalytics = (analytics: YellowLeadAnalytics) => {
       subheading: calculatePercentage(analytics.admissions ?? 0),
       title: 'Admissions',
       color: 'text-[#0EA80E]'
-    },
+    }
   ];
   return analyticsCardsData;
 };

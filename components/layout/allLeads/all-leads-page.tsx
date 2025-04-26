@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import TechnoAnalyticCardsGroup from '../../custom-ui/analytic-card/techno-analytic-cards-group';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
@@ -20,7 +20,11 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { apiRequest } from '@/lib/apiClient';
 import LeadTypeSelect from '@/components/custom-ui/lead-type-select/lead-type-select';
-import { cityDropdown, marketingSourcesDropdown } from '../admin-tracker/helpers/fetch-data';
+import {
+  cityDropdown,
+  courseDropdown,
+  marketingSourcesDropdown
+} from '../admin-tracker/helpers/fetch-data';
 
 export default function AllLeadsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -30,34 +34,31 @@ export default function AllLeadsPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editRow, setEditRow] = useState<any>(null);
   const [sortState, setSortState] = useState<any>({
-    sortBy: ["date", "nextDueDate"],
-    orderBy: ["desc", "desc"]
-  })
+    sortBy: ['date', 'nextDueDate'],
+    orderBy: ['desc', 'desc']
+  });
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const handleSortChange = (column: string, order: string) => {
-
-    if (column === "nextDueDateView" ) {
-      column = "nextDueDate"
+    if (column === 'nextDueDateView') {
+      column = 'nextDueDate';
     }
-    if (column === "dateView" ) {
-      column = "date"
+    if (column === 'dateView') {
+      column = 'date';
     }
 
-    setSortState(
-      (prevState: any) => {
-        const currentIndex = prevState.sortBy.indexOf(column)
-        let newOrderBy = [...prevState.orderBy]
-        if (currentIndex != -1) {
-          newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == "asc" ? "desc" : "asc"
-        }
-
-        return {
-          ...prevState,
-          orderBy: newOrderBy
-        }
+    setSortState((prevState: any) => {
+      const currentIndex = prevState.sortBy.indexOf(column);
+      let newOrderBy = [...prevState.orderBy];
+      if (currentIndex != -1) {
+        newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == 'asc' ? 'desc' : 'asc';
       }
-    )
+
+      return {
+        ...prevState,
+        orderBy: newOrderBy
+      };
+    });
 
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
@@ -90,13 +91,9 @@ export default function AllLeadsPage() {
     const updatedFilters = { ...appliedFilters };
 
     if (filterKey === 'date' || filterKey.includes('Date')) {
-      const dateKeys = [
-        'startDate', 'endDate',
-        'startLTCDate', 'endLTCDate',
-        'date'
-      ];
+      const dateKeys = ['startDate', 'endDate', 'startLTCDate', 'endLTCDate', 'date'];
 
-      dateKeys.forEach(key => {
+      dateKeys.forEach((key) => {
         delete updatedFilters[key];
         updateFilter(key, undefined);
       });
@@ -113,13 +110,9 @@ export default function AllLeadsPage() {
   const clearFilters = () => {
     getFiltersData().forEach((filter) => {
       if (filter.filterKey === 'date' || filter.isDateFilter) {
-        const dateKeys = [
-          'startDate', 'endDate',
-          'startLTCDate', 'endLTCDate',
-          'date'
-        ];
+        const dateKeys = ['startDate', 'endDate', 'startLTCDate', 'endLTCDate', 'date'];
 
-        dateKeys.forEach(key => updateFilter(key, undefined));
+        dateKeys.forEach((key) => updateFilter(key, undefined));
       } else {
         updateFilter(filter.filterKey, undefined);
       }
@@ -152,7 +145,7 @@ export default function AllLeadsPage() {
   }, []);
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
 
@@ -176,8 +169,8 @@ export default function AllLeadsPage() {
       refreshKey
     };
 
-    params.sortBy = sortState.sortBy
-    params.orderBy = sortState.orderBy
+    params.sortBy = sortState.sortBy;
+    params.orderBy = sortState.orderBy;
 
     return params;
   };
@@ -201,7 +194,7 @@ export default function AllLeadsPage() {
   const cityDropdownQuery = useQuery({
     queryKey: ['cities'],
     queryFn: cityDropdown
-  })
+  });
   const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
   const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data) : [];
   const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
@@ -269,15 +262,16 @@ export default function AllLeadsPage() {
   ]);
 
   const columns = [
-    { accessorKey: 'id', header: 'S. No' },
+    { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'dateView', header: 'Date' },
-    { accessorKey: 'name', header: 'Name' },
+    { accessorKey: 'name', header: 'Name', meta: { align: 'left' } },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'areaView', header: 'Area' },
-    { accessorKey: 'cityView', header: 'City' },
+    { accessorKey: 'areaView', header: 'Area', meta: { align: 'left' } },
+    { accessorKey: 'cityView', header: 'City', meta: { align: 'left' } },
     { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'leadType',
+      meta: { align: 'center' },
       header: 'Lead Type',
       cell: ({ row }: any) => {
         const [selectedType, setSelectedType] = useState<LeadType>(row.original.leadType);
@@ -311,17 +305,15 @@ export default function AllLeadsPage() {
             remarksView,
             leadTypeModifiedDate,
             leadTypeModifiedDateView,
+            phoneNumber,
+            altPhoneNumber,
             ...cleanedRow
           } = row.original;
 
           const updatedData = {
             ...cleanedRow,
-            leadType: value,
+            leadType: value
           };
-          // const{leadTypeModifiedDate, ...updatedData} = {
-          //   ...row.original,
-          //   leadType: value,
-          // };
 
           const response: LeadData | null = await apiRequest(
             API_METHODS.PUT,
@@ -334,33 +326,36 @@ export default function AllLeadsPage() {
             setRefreshKey((prevKey) => prevKey + 1);
           } else {
             toast.error('Failed to update lead type');
-            setSelectedType(row.original.leadType); // rollback
+            setSelectedType(row.original.leadType);
           }
         };
 
         return (
-
-          
-          <LeadTypeSelect value={selectedType} onChange={handleDropdownChange} />
+          <LeadTypeSelect
+            isDisable={row.original.leadType == LeadType.INTERESTED}
+            value={selectedType}
+            onChange={handleDropdownChange}
+          />
         );
-      },
+      }
     },
 
-    { accessorKey: 'assignedToName', header: 'Assigned To' },
-    { accessorKey: 'nextDueDateView', header: 'Next Due Date' },
+    { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } },
+    { accessorKey: 'nextDueDateView', header: 'Next Due Date', meta: { align: 'center' } },
     {
       accessorKey: 'leadsFollowUpCount',
       header: 'Follow Ups',
+      meta: { align: 'center' },
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.leadsFollowUpCount);
 
         const handleDropdownChange = async (newValue: number) => {
           const previousValue = selectedValue;
-          setSelectedValue(newValue); // optimistic update
+          setSelectedValue(newValue);
 
           const filteredData = {
             ...row.original,
-            leadsFollowUpCount: newValue,
+            leadsFollowUpCount: newValue
           };
 
           const {
@@ -384,6 +379,8 @@ export default function AllLeadsPage() {
             remarksView,
             leadTypeModifiedDate,
             leadTypeModifiedDateView,
+            phoneNumber,
+            altPhoneNumber,
             ...cleanedRow
           } = filteredData;
 
@@ -405,7 +402,7 @@ export default function AllLeadsPage() {
           <select
             value={selectedValue}
             onChange={(e) => handleDropdownChange(Number(e.target.value))}
-            className="border rounded px-2 py-1 cursor-pointer"
+            className="border bg-white rounded pl-1 pr-3 py-1 cursor-pointer"
             aria-label="Follow-up count"
           >
             {Array.from({ length: selectedValue + 2 }, (_, i) => (
@@ -415,34 +412,39 @@ export default function AllLeadsPage() {
             ))}
           </select>
         );
-      },
-    }
-    ,
-    { accessorKey: 'leadTypeModifiedDateView', header: 'Timestamp' },
+      }
+    },
+    { accessorKey: 'leadTypeModifiedDateView', header: 'Timestamp', meta: { align: 'center' } },
     {
       id: 'actions',
       header: 'Actions',
+      meta: { align: 'center' },
       cell: ({ row }: any) => (
         <Button
           variant="ghost"
           className="cursor-pointer"
           onClick={() => {
             setSelectedRowId(row.id);
-            handleViewMore({ ...row.original, leadType: row.original._leadType })
+            handleViewMore({ ...row.original, leadType: row.original._leadType });
           }}
         >
           <span className="font-inter font-semibold text-[12px] text-primary">View More</span>
         </Button>
-      ),
-    },
+      )
+    }
   ];
 
   const marketingSourceQuery = useQuery({
     queryKey: ['marketingSources'],
     queryFn: marketingSourcesDropdown
-  })
+  });
   const marketingSource = Array.isArray(marketingSourceQuery.data) ? marketingSourceQuery.data : [];
 
+  const courseQuery = useQuery({
+    queryKey: ['courses'],
+    queryFn: courseDropdown
+  });
+  const courses = Array.isArray(courseQuery.data) ? courseQuery.data : [];
 
   const getFiltersData = () => {
     return [
@@ -477,8 +479,12 @@ export default function AllLeadsPage() {
       {
         filterKey: 'course',
         label: 'Course',
-        options: Object.values(Course),
-        placeholder: 'courses',
+        options: courses.map((item: string) => {
+          return {
+            label: item,
+            id: item
+          };
+        }),
         hasSearch: true,
         multiSelect: true
       },
@@ -565,7 +571,6 @@ export default function AllLeadsPage() {
           />
         )}
       </TechnoRightDrawer>
-
     </>
   );
 }

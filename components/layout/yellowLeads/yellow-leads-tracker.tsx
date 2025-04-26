@@ -1,6 +1,8 @@
-"use client"
+'use client';
 
-import TechnoAnalyticCardsGroup, { CardItem } from '../../custom-ui/analytic-card/techno-analytic-cards-group';
+import TechnoAnalyticCardsGroup, {
+  CardItem
+} from '../../custom-ui/analytic-card/techno-analytic-cards-group';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
@@ -26,7 +28,11 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { apiRequest } from '@/lib/apiClient';
 import FinalConversionSelect from './final-conversion-select';
-import { cityDropdown, marketingSourcesDropdown } from '../admin-tracker/helpers/fetch-data';
+import {
+  cityDropdown,
+  courseDropdown,
+  marketingSourcesDropdown
+} from '../admin-tracker/helpers/fetch-data';
 import FootFallSelect from './foot-fall-select';
 
 export default function YellowLeadsTracker() {
@@ -38,36 +44,32 @@ export default function YellowLeadsTracker() {
   const [editRow, setEditRow] = useState<any>(null);
 
   const [sortState, setSortState] = useState<any>({
-    sortBy: ["leadTypeModifiedDate", "nextDueDate"],
-    orderBy: ["desc", "desc"]
-  })
+    sortBy: ['leadTypeModifiedDate', 'nextDueDate'],
+    orderBy: ['desc', 'desc']
+  });
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const handleSortChange = (column: string, order: string) => {
-
-    if (column === "nextDueDateView") {
-      column = "nextDueDate"
+    if (column === 'nextDueDateView') {
+      column = 'nextDueDate';
     }
 
-    setSortState(
-      (prevState: any) => {
-        const currentIndex = prevState.sortBy.indexOf(column)
-        let newOrderBy = [...prevState.orderBy]
-        if (currentIndex != -1) {
-          newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == "asc" ? "desc" : "asc"
-        }
-
-        return {
-          ...prevState,
-          orderBy: newOrderBy
-        }
+    setSortState((prevState: any) => {
+      const currentIndex = prevState.sortBy.indexOf(column);
+      let newOrderBy = [...prevState.orderBy];
+      if (currentIndex != -1) {
+        newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == 'asc' ? 'desc' : 'asc';
       }
-    )
+
+      return {
+        ...prevState,
+        orderBy: newOrderBy
+      };
+    });
 
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
-
 
   const assignedToQuery = useQuery({
     queryKey: ['assignedToDropdown'],
@@ -114,7 +116,7 @@ export default function YellowLeadsTracker() {
   }, []);
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(20);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
 
@@ -138,9 +140,8 @@ export default function YellowLeadsTracker() {
       refreshKey
     };
 
-
-    params.sortBy = sortState.sortBy
-    params.orderBy = sortState.orderBy
+    params.sortBy = sortState.sortBy;
+    params.orderBy = sortState.orderBy;
 
     return params;
   };
@@ -240,36 +241,37 @@ export default function YellowLeadsTracker() {
   ]);
 
   const columns = [
-    { accessorKey: 'id', header: 'S. No.' },
-    { accessorKey: 'leadTypeModifiedDate', header: 'LTC Date' },
-    { accessorKey: 'name', header: 'Name' },
+    { accessorKey: 'id', header: 'S. No.', meta: { align: 'center' } },
+    { accessorKey: 'leadTypeModifiedDate', header: 'LTC Date', meta: { align: 'center' } },
+    { accessorKey: 'name', header: 'Name', meta: { align: 'left' } },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'areaView', header: 'Area' },
+    { accessorKey: 'areaView', header: 'Area', meta: { align: 'left' } },
     { accessorKey: 'cityView', header: 'City' },
     { accessorKey: 'courseView', header: 'Course' },
     {
       accessorKey: 'footFall',
+      meta: { align: 'center' },
       header: 'Footfall',
       cell: ({ row }: any) => {
         const [selectedStatus, setSelectedStatus] = useState<FootFallStatus>(
           row.original.footFall === true ? FootFallStatus.true : FootFallStatus.false
         );
-    
+
         const handleFootfallChange = async (newValue: FootFallStatus) => {
           const previousValue = selectedStatus;
           setSelectedStatus(newValue);
-    
+
           const updatedData = {
             _id: row.original._id,
-            footFall: newValue === FootFallStatus.true,
+            footFall: newValue === FootFallStatus.true
           };
-    
+
           const response: LeadData | null = await apiRequest(
             API_METHODS.PUT,
             API_ENDPOINTS.updateYellowLead,
             updatedData
           );
-    
+
           if (response) {
             toast.success('Footfall status updated successfully');
             setRefreshKey((prevKey) => prevKey + 1);
@@ -278,16 +280,15 @@ export default function YellowLeadsTracker() {
             setSelectedStatus(previousValue);
           }
         };
-    
-        return (
-          <FootFallSelect value={selectedStatus} onChange={handleFootfallChange} />
-        );
+
+        return <FootFallSelect value={selectedStatus} onChange={handleFootfallChange} />;
       }
     },
-    
-    { accessorKey: 'nextDueDateView', header: 'Next Call Date' },
+
+    { accessorKey: 'nextDueDateView', header: 'Next Call Date', meta: { align: 'center' } },
     {
       accessorKey: 'yellowLeadsFollowUpCount',
+      meta: { align: 'center' },
       header: 'Follow Ups',
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.yellowLeadsFollowUpCount);
@@ -298,7 +299,7 @@ export default function YellowLeadsTracker() {
 
           const filteredData = {
             _id: row.original._id,
-            yellowLeadsFollowUpCount: newValue,
+            yellowLeadsFollowUpCount: newValue
           };
 
           const response: LeadData | null = await apiRequest(
@@ -320,7 +321,7 @@ export default function YellowLeadsTracker() {
           <select
             value={selectedValue}
             onChange={(e) => handleDropdownChange(Number(e.target.value))}
-            className="border rounded px-2 py-1 cursor-pointer"
+            className="border bg-white rounded pl-1 pr-3 py-1 cursor-pointer"
             aria-label="Follow-up count"
           >
             {Array.from({ length: selectedValue + 2 }, (_, i) => (
@@ -330,19 +331,19 @@ export default function YellowLeadsTracker() {
             ))}
           </select>
         );
-      },
-    }
-    ,
+      }
+    },
     {
       accessorKey: 'finalConversion',
       header: 'Final Conversion',
+      meta: { align: 'center' },
       cell: ({ row }: any) => {
         const value = row.original.finalConversion as FinalConversionStatus;
 
         const handleChange = async (newValue: FinalConversionStatus) => {
           const updatedData = {
             _id: row.original._id,
-            finalConversion: newValue,
+            finalConversion: newValue
           };
           const response: LeadData | null = await apiRequest(
             API_METHODS.PUT,
@@ -354,21 +355,34 @@ export default function YellowLeadsTracker() {
             toast.success('Final conversion updated successfully');
             setRefreshKey((prevKey) => prevKey + 1);
           } else {
-            toast.error('Failed to update final conversion');
+            if (
+              row.original.finalConversion === FinalConversionStatus.UNCONFIRMED &&
+              newValue === FinalConversionStatus.NO_FOOTFALL
+            ) {
+            } else {
+              toast.error('Failed to update final conversion');
+            }
           }
         };
 
-        return <FinalConversionSelect isDisable={!row.original.footFall} value={value} onChange={handleChange} />;
-      },
+        return (
+          <FinalConversionSelect
+            isDisable={!row.original.footFall}
+            value={value}
+            onChange={handleChange}
+          />
+        );
+      }
     },
-    { accessorKey: 'assignedToName', header: 'Assigned To' },
+    { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } },
     {
       id: 'actions',
       header: 'Actions',
+      meta: { align: 'center' },
       cell: ({ row }: any) => (
         <Button
           variant="ghost"
-          className='cursor-pointer'
+          className="cursor-pointer"
           onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
         >
           <span className="font-inter font-semibold text-[12px] text-primary ">View More</span>
@@ -380,14 +394,20 @@ export default function YellowLeadsTracker() {
   const cityDropdownQuery = useQuery({
     queryKey: ['cities'],
     queryFn: cityDropdown
-  })
+  });
   const marketingSourceQuery = useQuery({
     queryKey: ['marketingSources'],
     queryFn: marketingSourcesDropdown
-  })
+  });
   const marketingSource = Array.isArray(marketingSourceQuery.data) ? marketingSourceQuery.data : [];
 
   const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
+
+  const courseQuery = useQuery({
+    queryKey: ['courses'],
+    queryFn: courseDropdown
+  });
+  const courses = Array.isArray(courseQuery.data) ? courseQuery.data : [];
   const getFiltersData = () => {
     return [
       {
@@ -421,7 +441,12 @@ export default function YellowLeadsTracker() {
       {
         filterKey: 'course',
         label: 'Course',
-        options: Object.values(Course),
+        options: courses.map((item: string) => {
+          return {
+            label: item,
+            id: item
+          };
+        }),
         hasSearch: true,
         multiSelect: true
       },
@@ -449,16 +474,10 @@ export default function YellowLeadsTracker() {
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
 
-
     if (filterKey === 'date' || filterKey.includes('Date')) {
+      const dateKeys = ['startDate', 'endDate', 'startLTCDate', 'endLTCDate', 'date'];
 
-      const dateKeys = [
-        'startDate', 'endDate',
-        'startLTCDate', 'endLTCDate',
-        'date'
-      ];
-
-      dateKeys.forEach(key => {
+      dateKeys.forEach((key) => {
         delete updatedFilters[key];
         updateFilter(key, undefined);
       });
@@ -475,13 +494,9 @@ export default function YellowLeadsTracker() {
   const clearFilters = () => {
     getFiltersData().forEach((filter) => {
       if (filter.filterKey === 'date' || filter.isDateFilter) {
-        const dateKeys = [
-          'startDate', 'endDate',
-          'startLTCDate', 'endLTCDate',
-          'date'
-        ];
+        const dateKeys = ['startDate', 'endDate', 'startLTCDate', 'endLTCDate', 'date'];
 
-        dateKeys.forEach(key => updateFilter(key, undefined));
+        dateKeys.forEach((key) => updateFilter(key, undefined));
       } else {
         updateFilter(filter.filterKey, undefined);
       }

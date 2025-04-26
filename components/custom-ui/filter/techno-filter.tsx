@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useTechnoFilterContext } from './filter-context';
@@ -15,7 +15,9 @@ import { format, parse } from 'date-fns';
 import TechnoLeadTypeTag from '../lead-type-tag/techno-lead-type-tag';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import FinalConversionTag, { FinalConversionStatus } from '@/components/layout/yellowLeads/final-conversion-tag';
+import FinalConversionTag, {
+  FinalConversionStatus
+} from '@/components/layout/yellowLeads/final-conversion-tag';
 import { Course, CourseNameMapper } from '@/types/enum';
 import { toPascal } from '@/lib/utils';
 import { LeadType } from '@/static/enum';
@@ -113,7 +115,10 @@ export default function TechnoFilter({
     const startDateKey = `start${datePrefix}Date`;
     const endDateKey = `end${datePrefix}Date`;
 
-    updateFilter(startDateKey, type === 'start' ? formatDateForAPI(selectedDate) : filters[startDateKey]);
+    updateFilter(
+      startDateKey,
+      type === 'start' ? formatDateForAPI(selectedDate) : filters[startDateKey]
+    );
     updateFilter(endDateKey, type === 'end' ? formatDateForAPI(selectedDate) : filters[endDateKey]);
 
     if (type === 'start') {
@@ -170,7 +175,7 @@ export default function TechnoFilter({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className='cursor-pointer' variant="outline">
+        <Button className="cursor-pointer" variant="outline">
           {filterLabel}
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
@@ -204,7 +209,7 @@ export default function TechnoFilter({
                       mode="single"
                       selected={startDate}
                       onSelect={(date) => handleDateChange('start', date)}
-                      captionLayout={"dropdown-buttons"}
+                      captionLayout={'dropdown-buttons'}
                       fromYear={new Date().getFullYear() - 100}
                       toYear={new Date().getFullYear() + 10}
                       initialFocus
@@ -234,7 +239,7 @@ export default function TechnoFilter({
                       onSelect={(date) => handleDateChange('end', date)}
                       initialFocus
                       disabled={(date) => (startDate ? date < startDate : false)}
-                      captionLayout={"dropdown-buttons"}
+                      captionLayout={'dropdown-buttons'}
                       fromYear={new Date().getFullYear() - 100}
                       toYear={new Date().getFullYear() + 10}
                     />
@@ -246,12 +251,12 @@ export default function TechnoFilter({
         ) : (
           <>
             {hasSearch && (
-              <div className="p-2 relative">
+              <div className="p-2 w-max relative">
                 <Input
                   placeholder={`Search for ${filterPlaceholder}`}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="max-w-full h-[32px] rounded-md bg-[#f3f3f3]  text-gray-600 placeholder-gray-400"
+                  className="max-w-full w-max h-[32px] rounded-md bg-[#f3f3f3]  text-gray-600 placeholder-gray-400"
                 />
                 <span className="absolute inset-y-0 right-0 flex items-center pr-5">
                   <Search className="h-4 w-4 text-gray-500" />
@@ -269,8 +274,8 @@ export default function TechnoFilter({
                     checked={
                       multiSelect
                         ? filters[filterKey]?.includes(
-                          typeof option === 'string' ? option : option.id
-                        )
+                            typeof option === 'string' ? option : option.id
+                          )
                         : filters[filterKey] === (typeof option === 'string' ? option : option.id)
                     }
                   />
@@ -290,8 +295,6 @@ export default function TechnoFilter({
                           : (option.label as FinalConversionStatus)
                       }
                     />
-                  ) : filterKey === 'course' ? (
-                    <span>{CourseNameMapper[option as Course]}</span>
                   ) : filterKey === 'source' ? (
                     <span>{toPascal(typeof option === 'string' ? option : option.label)}</span>
                   ) : (

@@ -16,12 +16,11 @@ export enum Gender {
   NOT_TO_MENTION = 'NOT_TO_MENTION'
 }
 
-
 export enum FinalConversionType {
   NO_FOOTFALL = 'NO_FOOTFALL',
   UNCONFIRMED = 'UNCONFIRMED',
   CONVERTED = 'CONVERTED',
-  DEAD = 'DEAD',
+  DEAD = 'DEAD'
 }
 
 export enum LeadType {
@@ -33,23 +32,23 @@ export enum LeadType {
   DID_NOT_PICK = 'DID_NOT_PICK',
   INVALID = 'INVALID'
 }
-export const LeadTypeMapper:Record<LeadType,string>={
-  [LeadType.OPEN]:'Left Over Data',
-  [LeadType.DEAD]:'Dead Data',
-  [LeadType.COURSE_UNAVAILABLE]:'Course NA',
-  [LeadType.INTERESTED]:'Active Data',
-  [LeadType.NO_CLARITY]:'Neutral Data',
-  [LeadType.DID_NOT_PICK]:'Did Not Pick',
-  [LeadType.INVALID]:'Invalid Data'
-}
+export const LeadTypeMapper: Record<LeadType, string> = {
+  [LeadType.OPEN]: 'Left Over Data',
+  [LeadType.DEAD]: 'Dead Data',
+  [LeadType.COURSE_UNAVAILABLE]: 'Course NA',
+  [LeadType.INTERESTED]: 'Active Data',
+  [LeadType.NO_CLARITY]: 'Neutral Data',
+  [LeadType.DID_NOT_PICK]: 'Did Not Pick',
+  [LeadType.INVALID]: 'Invalid Data'
+};
 
-// Open Lead - Left Over Data	
-// Not Interested - Dead Data	
-// Interested - Active Data	
-// No Clarity - Neutral Data	
-// Did not pick - Not Connected	
-// Invalid Data	
-// Course Unavailable	
+// Open Lead - Left Over Data
+// Not Interested - Dead Data
+// Interested - Active Data
+// No Clarity - Neutral Data
+// Did not pick - Not Connected
+// Invalid Data
+// Course Unavailable
 /**
  * Admission Module Enums
  */
@@ -93,6 +92,25 @@ export enum Course {
   MVAP = 'MVAP',
   MSCC = 'MSCC'
 }
+export const ReverseCourseNameMapper: Record<string, Course> = {
+  'B.COM': Course.BCOM,
+  'B.COM (HONS)': Course.BCOMH,
+  'BA-JMC': Course.BAJMC,
+  'B.ED': Course.BED,
+  'B.SC (PCM)': Course.BSCM,
+  'B.SC (ZBC)': Course.BSCB,
+  BBA: Course.BBA,
+  BCA: Course.BCA,
+  'BVA (App Art)': Course.BVAA,
+  'BVA (Painting)': Course.BVAP,
+  'MA-JMC': Course.MAJMC,
+  'M.COM (COM)': Course.MCOMC,
+  MBA: Course.MBA,
+  LLB: Course.LLB,
+  MCA: Course.MCA,
+  'MVA (Paint)': Course.MVAP,
+  'M.SC (Chem)': Course.MSCC
+};
 
 export const CourseNameMapper: Record<Course, string> = {
   [Course.BCOM]: 'B.COM',
@@ -209,7 +227,6 @@ export enum Marketing_Source {
   SCHOOL = 'School',
   DIGITAL_MARKETING = 'Digital_Marketing'
 }
-
 
 export const ADMISSION = 'admissions';
 

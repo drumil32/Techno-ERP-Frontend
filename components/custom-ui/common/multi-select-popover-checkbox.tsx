@@ -10,7 +10,7 @@ interface MultiSelectPopoverCheckboxProps {
   options: { _id: string; name: string }[];
   placeholder?: string;
   className?: string;
-  disabled?: boolean; // Added disabled prop
+  disabled?: boolean;
 }
 
 export const MultiSelectPopoverCheckbox: React.FC<MultiSelectPopoverCheckboxProps> = ({
@@ -20,7 +20,7 @@ export const MultiSelectPopoverCheckbox: React.FC<MultiSelectPopoverCheckboxProp
   options,
   placeholder = "Select options",
   className = "",
-  disabled = false, // Default to false
+  disabled = false,
 }) => {
   return (
     <FormField
@@ -43,14 +43,14 @@ export const MultiSelectPopoverCheckbox: React.FC<MultiSelectPopoverCheckboxProp
                   <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full">
                     {field.value && field.value.length > 0
                       ? options
-                          .filter((opt) => field?.value?.includes(opt._id))
-                          .map((opt) => opt.name)
-                          .join(", ")
+                        .filter((opt) => field?.value?.includes(opt._id))
+                        .map((opt) => opt.name)
+                        .join(", ")
                       : placeholder}
                   </span>
                 </Button>
               </PopoverTrigger>
-              {!disabled && ( // Only show popover content if not disabled
+              {!disabled && (
                 <PopoverContent className="w-[180px] p-2 rounded-sm">
                   <div className="max-h-60 overflow-y-auto flex flex-col gap-2">
                     {options?.map((option) => (

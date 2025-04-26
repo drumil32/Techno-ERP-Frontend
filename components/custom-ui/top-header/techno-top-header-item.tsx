@@ -12,12 +12,12 @@ interface TechnoTopHeaderItemProps {
 
 export default function TechnoTopHeaderItem({ item }: TechnoTopHeaderItemProps) {
   const { headerActiveItem, setHeaderActiveItem } = useTopHeaderContext();
-  const router = useRouter(); 
+  const router = useRouter();
   const isActive = item.title === headerActiveItem;
 
   const handleClick = () => {
     setHeaderActiveItem(item.title);
-    router.push(item.route); 
+    router.push(item.route);
   };
 
   return (

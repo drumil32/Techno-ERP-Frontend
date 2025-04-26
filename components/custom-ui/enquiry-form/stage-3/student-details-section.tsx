@@ -235,6 +235,8 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                       Email ID
+                      <span className="text-red-500 pl-0">*</span>
+
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -406,7 +408,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                     return date >= new Date(today.setHours(0, 0, 0, 0));
                   },
                 }}
-                defaultMonth = {new Date(new Date().getFullYear() - 10, 0, 1)} 
+                defaultMonth={new Date(new Date().getFullYear() - 10, 0, 1)}
                 isRequired={true}
               />
 

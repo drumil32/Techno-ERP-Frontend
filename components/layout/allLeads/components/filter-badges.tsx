@@ -50,7 +50,7 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
       return '';
     } catch (error) {
       console.error('Error formatting date range:', error);
-      return 'Invalid Date'; // Or some other fallback
+      return 'Invalid Date';
     }
   };
 
@@ -58,11 +58,10 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
     const newBadges: BadgeData[] = [];
 
     if (appliedFilters.startDate || appliedFilters.endDate) {
-      // Check for start or end date
       newBadges.push({
         key: 'date',
         label: 'Date',
-        value: formatDateRange(appliedFilters.startDate, appliedFilters.endDate) // Use individual start/end
+        value: formatDateRange(appliedFilters.startDate, appliedFilters.endDate)
       });
     }
 
@@ -114,7 +113,7 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
       {badges.map((badge) => (
         <div
           className="flex flex-row flex-wrap gap-2"
-          onClick={() => onFilterRemove(badge.key)} // Remove by badge.key
+          onClick={() => onFilterRemove(badge.key)}
           key={badge.key}
         >
           <Badge variant="secondary" className="py-1 px-2 flex items-center gap-1 cursor-pointer">

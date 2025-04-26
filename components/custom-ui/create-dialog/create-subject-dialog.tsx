@@ -24,6 +24,7 @@ const academicYears = generateAcademicYearDropdown();
 
 
 interface SubjectData {
+  departmentName: string;
   courseName: string;
   academicYear: string;
   semester: number;
@@ -38,7 +39,7 @@ interface CreateSubjectDialogProps {
 }
 
 interface Instructor {
-  _id : string;
+  _id: string;
   instructorId: string;
   name: string;
   email: string;
@@ -82,13 +83,32 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
     },
   });
 
+  console.log("Department Name : ", data.departmentName);
+
+  const getQueryParams = () => {
+    const params: { [key: string]: any } = {
+      departmentName: data.departmentName
+    };
+    return params;
+  };
+
+  const filterParams = getQueryParams();
+  console.log("FIlter params : ", filterParams);
   const instructorsQuery = useQuery({
-    queryKey: ["instructorsmetadata"],
-    queryFn: fetchInstructors
+    queryKey: ['instructorsmetadata', filterParams],
+    queryFn: fetchInstructors,
+    placeholderData: (previousData) => previousData,
+    enabled: true
   });
 
-  const instructors: Instructor[] = instructorsQuery.data as Instructor[] || [];
+  // const instructorsQuery = useQuery({
+  //   queryKey: ["instructorsmetadata", { "departmentName"  : data.departmentName}],
+  //   queryFn: fetchInstructors
+  // });
 
+  // console.log("INSTRUCTOR QUERY : ", instructorsQuery)
+  const instructors: Instructor[] = instructorsQuery.data as Instructor[] || [];
+  console.log("Instructors info : ", instructors)
   const instructorsInfo = formatInstructors(instructors);
 
   useEffect(() => {

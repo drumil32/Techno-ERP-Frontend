@@ -5,6 +5,7 @@ import './globals.css';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { Toaster } from '@/components/ui/sonner';
+import Head from 'next/head';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -33,7 +34,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}>
+      <head>
+        <link rel="icon" href="/images/techno-logo.png" />
+      </head>
+      <body
+        className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
+      >
         <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         <Toaster richColors theme="light" position="top-center" />
       </body>

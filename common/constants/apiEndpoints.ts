@@ -1,9 +1,6 @@
-import { updateEnquiryStep3 } from "@/components/custom-ui/enquiry-form/stage-3/helper/apirequests";
-
 export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
 
 export const API_ENDPOINTS = {
-
   // Auth
   login: `${API_DOMAIN}/auth/login`,
   profile: `${API_DOMAIN}/user/profile`,
@@ -29,7 +26,7 @@ export const API_ENDPOINTS = {
 
   // Admissions
   admissionData: `${API_DOMAIN}/admission/enquiry/search`,
-  getEnquiry: (enquiry_id : string) => `${API_DOMAIN}/admission/enquiry/${enquiry_id}`,
+  getEnquiry: (enquiry_id: string) => `${API_DOMAIN}/admission/enquiry/${enquiry_id}`,
   createEnquiry: `${API_DOMAIN}/admission/enquiry/step-1`,
   updateEnquiry: `${API_DOMAIN}/admission/enquiry/step-1`,
 
@@ -38,10 +35,14 @@ export const API_ENDPOINTS = {
 
   updateEnquiryStatus: `${API_DOMAIN}/admission/enquiry/update-status`,
 
+  // Dropdowns
   fetchTeleCallersDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=ADMISSION`,
   fetchCounsellorsDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=COUNSELOR&moduleName=ADMISSION`,
   fetchMarketingSourcesDropdown: `${API_DOMAIN}/dropdown/MAKRETING_SOURCE`,
   fetchCityDropdown: `${API_DOMAIN}/dropdown/CITY`,
+  fetchFixCityDropdown: `${API_DOMAIN}/dropdown/FIX_CITY`,
+  fetchCourseDropdown: `${API_DOMAIN}/dropdown/COURSE`,
+  fetchFixCourseDropdown: `${API_DOMAIN}/dropdown/FIX_COURSE`,
 
   // Fees Details
   getOtherFees: `${API_DOMAIN}/fees-structure/other-fees`,
@@ -62,31 +63,29 @@ export const API_ENDPOINTS = {
   // Document Upload
   uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,
 
-
   //Department Meta Data
   createDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
   updateDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
   getDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
   fetchInstructorsMetaData : `${API_DOMAIN}/department-metadata/instructors`,
 
-  //Courses 
-  createCourse : `${API_DOMAIN}/course`,
-  getCourseDetails : `${API_DOMAIN}/course/course-details`,
-  getUniqueCourseDetails : `${API_DOMAIN}/course/unique-courses`,
-  updateCourse : `${API_DOMAIN}/course`,
-  
-  createSubject : `${API_DOMAIN}/course/subject`,
-  getSubjectDetails : `${API_DOMAIN}/course/subject/subject-details`,
-  getFilteredSubjectDetails : `${API_DOMAIN}/course/subject/filtered-subject-details`,
-  updateSubject : `${API_DOMAIN}/course/subject`,
-  deleteSubject : `${API_DOMAIN}/course/subject`,
-  
-  createPlan : `${API_DOMAIN}/course/subject/schedule/plan`,
-  uploadPlan : `${API_DOMAIN}/course/subject/schedule/upload-plan`,
-  uploadAdditionalResources : `${API_DOMAIN}/course/subject/schedule/upload-additional-resource`,
-  getScheduleDetails : `${API_DOMAIN}/course/subject/schedule/schedule-details`,
-  batchUpdatePlan : `${API_DOMAIN}/course/subject/schedule/plan`,
-  deletePlan : `${API_DOMAIN}/course/subject/schedule/plan`,
-  deleteFileUsingURL : `${API_DOMAIN}/course/subject/schedule/delete-file`
+  //Courses
+  createCourse: `${API_DOMAIN}/course`,
+  getCourseDetails: `${API_DOMAIN}/course/course-details`,
+  getUniqueCourseDetails: `${API_DOMAIN}/course/unique-courses`,
+  updateCourse: `${API_DOMAIN}/course`,
 
+  createSubject: `${API_DOMAIN}/course/subject`,
+  getSubjectDetails: `${API_DOMAIN}/course/subject/subject-details`,
+  getFilteredSubjectDetails: `${API_DOMAIN}/course/subject/filtered-subject-details`,
+  updateSubject: `${API_DOMAIN}/course/subject`,
+  deleteSubject: `${API_DOMAIN}/course/subject`,
+
+  createPlan: `${API_DOMAIN}/course/subject/schedule/plan`,
+  uploadPlan: `${API_DOMAIN}/course/subject/schedule/upload-plan`,
+  uploadAdditionalResources: `${API_DOMAIN}/course/subject/schedule/upload-additional-resource`,
+  getScheduleDetails: `${API_DOMAIN}/course/subject/schedule/schedule-details`,
+  batchUpdatePlan: `${API_DOMAIN}/course/subject/schedule/plan`,
+  deletePlan: `${API_DOMAIN}/course/subject/schedule/plan`,
+  deleteFileUsingURL: `${API_DOMAIN}/course/subject/schedule/delete-file`
 };

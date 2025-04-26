@@ -1,4 +1,4 @@
-import { LeadType, LeadTypeMapper } from "@/static/enum";
+import { LeadType, LeadTypeMapper } from '@/static/enum';
 
 const typeStyles = {
   [LeadType.OPEN]: 'bg-[#FFE3CB] text-[#E06C06]',
@@ -7,7 +7,7 @@ const typeStyles = {
   [LeadType.COURSE_UNAVAILABLE]: 'bg-[#CECECE] text-[#696969]',
   [LeadType.NO_CLARITY]: 'bg-[#C8E4FF] text-[#006ED8]',
   [LeadType.DID_NOT_PICK]: 'bg-[#F5F5F5] text-[#9E9E9E]',
-  [LeadType.INVALID]:'bg-[#BDBDBD] text-[#FFFFFF]'
+  [LeadType.INVALID]: 'bg-black text-[#FFFFFF]'
 };
 
 interface TechnoLeadTypeTagProps {

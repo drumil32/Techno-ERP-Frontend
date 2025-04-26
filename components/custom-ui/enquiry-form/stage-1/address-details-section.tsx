@@ -157,7 +157,7 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select onValueChange={field.onChange} defaultValue={StatesOfIndia.UttarPradesh} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the state" />
                         </SelectTrigger>

@@ -32,12 +32,12 @@ export const leadMasterSchema = z.object({
   gender: z.nativeEnum(Gender).default(Gender.NOT_TO_MENTION),
   area: z.string().optional(),
   city: z.string().optional(),
-  course: z.nativeEnum(Course).optional(),
-  assignedTo: objectIdSchema, // TODO: need to test this
+  course: z.string().optional(),
+  assignedTo: objectIdSchema.array(), 
   leadType: z.nativeEnum(LeadType).default(LeadType.OPEN),
   leadTypeModifiedDate: z.string().optional(),
   nextDueDate: z.date().optional(),
-  footFall: z.boolean().optional(), //This is referring to Campus Visit
+  footFall: z.boolean().optional(), 
   finalConversion: z
     .nativeEnum(FinalConversionType)
     .optional()
@@ -73,11 +73,11 @@ export const updateLeadRequestSchema = leadRequestSchema
     phoneNumber: contactNumberSchema.optional(),
     gender: z.nativeEnum(Gender).optional(),
     leadType: z.nativeEnum(LeadType).optional(),
-    assignedTo: objectIdSchema.optional(),
+    assignedTo: objectIdSchema.array().optional(),
     nextDueDate: requestDateSchema.optional()
   })
   .omit({ source: true })
-  .strict(); // strict will restrict extra properties
+  .strict(); 
 
 export const yellowLeadUpdateSchema = yellowLeadSchema
   .extend({
@@ -85,7 +85,7 @@ export const yellowLeadUpdateSchema = yellowLeadSchema
     name: z.string().optional(),
     phoneNumber: contactNumberSchema.optional(),
     footFall: z.boolean().optional(),
-    assignedTo: objectIdSchema.optional(),
+    assignedTo: objectIdSchema.array().optional(),
     date: requestDateSchema.optional(),
     nextDueDate: requestDateSchema.optional()
   })
