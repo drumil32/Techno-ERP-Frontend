@@ -456,10 +456,13 @@ export default function TechnoDataTableAdvanced({
 
                                       updatedErrors[rowIndex][columnId] = '';
 
-                                      if (!/^\d*$/.test(newValue)) {
-                                        updatedErrors[rowIndex][columnId] = 'Only numeric values allowed';
-                                      }
+                                      const numericFields = ['classStrength', 'attendance', 'absent'];
 
+                                      if (numericFields.includes(columnId)) {
+                                        if (!/^\d*$/.test(newValue)) {
+                                          updatedErrors[rowIndex][columnId] = 'Only numeric values allowed';
+                                        }
+                                      }
                                       if (columnId === 'classStrength') {
                                         if (!isValidNumber(classStrength)) {
                                           updatedErrors[rowIndex][columnId] = 'Class strength must be a non-negative number';
@@ -611,8 +614,12 @@ export default function TechnoDataTableAdvanced({
 
                               newErrors[columnId] = '';
 
-                              if (!/^\d*$/.test(newValue)) {
-                                newErrors[columnId] = 'Only numeric values allowed';
+                              const numericFields = ['classStrength', 'attendance', 'absent'];
+
+                              if (numericFields.includes(columnId)) {
+                                if (!/^\d*$/.test(newValue)) {
+                                  newErrors[columnId] = 'Only numeric values allowed';
+                                }
                               }
 
                               if (columnId === 'classStrength') {
