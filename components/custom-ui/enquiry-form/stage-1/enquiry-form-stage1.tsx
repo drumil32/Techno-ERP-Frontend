@@ -68,7 +68,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     queryKey: ['enquiryFormData', id],
     queryFn: () => getEnquiry(id ? id : ''),
     enabled: !!id && !isRedirectChecking && !isRedirectError,
-    refetchOnWindowFocus: false, 
+    refetchOnWindowFocus: false
   });
 
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmation' });
@@ -126,8 +126,8 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     };
   }, [isLoading, isError, isSuccess, isFetching, data]);
 
-  const commonFormItemClass = 'col-span-1 gap-y-0';
-  const commonFieldClass = '';
+  const commonFormItemClass = 'col-span-1 min-h-[50px] gap-y-0  ';
+  const commonFieldClass = 'gap-y-0';
 
   async function saveDraft() {
     let values = form.getValues();
@@ -143,7 +143,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
     );
 
-    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber','emailId'];
+    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber', 'emailId'];
 
     const filteredKeys = Array.from(new Set([...Object.keys(values), ...alwaysIncludeKeys])).filter(
       (key) => schemaKeys.includes(key)
@@ -164,6 +164,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     form.clearErrors();
 
     if (!validationResult.success) {
+      toast.error('Validation failed. Please check the form fields.');
       const errors = validationResult.error.format();
       form.setError('root', {
         type: 'manual',

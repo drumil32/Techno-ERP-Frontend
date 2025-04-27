@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
-import { LeadType, LeadTypeMapper } from '@/static/enum';
+import { LeadType, LeadTypeMapper } from '@/types/enum';
 
 const typeStyles: Record<LeadType, string> = {
   [LeadType.OPEN]: 'bg-[#FFE3CB] text-[#E06C06]',

@@ -1,5 +1,5 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
-import { Course, CourseNameMapper, LeadType, ReverseCourseNameMapper } from '@/static/enum';
+import { Course, CourseNameMapper, LeadType, ReverseCourseNameMapper } from '@/types/enum';
 import { toPascal } from '@/lib/utils';
 
 export const formatDateView = (dateStr: string) => {

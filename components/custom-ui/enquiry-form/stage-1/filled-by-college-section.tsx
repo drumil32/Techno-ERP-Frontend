@@ -66,7 +66,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   const counsellors: UserRoleInterface[] = Array.isArray(results[1].data) ? results[1].data : [];
 
   return (
-    <Accordion type="single" collapsible>
+    <Accordion type="single" collapsible defaultValue="student-details">
       <AccordionItem value="student-details">
         <div className="space-y-2">
           <AccordionTrigger className="w-full items-center">
@@ -76,9 +76,8 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
           </AccordionTrigger>
 
           <AccordionContent>
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-4 gap-x-[32px] bg-white p-4 rounded-[10px]">
-              
-            <FormField
+            <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-1 gap-x-[32px] bg-white p-4 rounded-[10px]">
+              <FormField
                 key="reference"
                 control={form.control}
                 name="reference"
@@ -102,29 +101,29 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
 
-<MultiSelectPopoverCheckbox
-  form={form}
-  name="telecaller"
-  label="Telecaller’s Name"
-  options={telecallers}
-  placeholder="Select Telecaller's Name"
-  className="col-span-1"
-/>
+              <MultiSelectPopoverCheckbox
+                form={form}
+                className={commonFormItemClass}
+                name="telecaller"
+                label="Telecaller’s Name"
+                options={telecallers}
+                placeholder="Select Telecaller's Name"
+              />
               <MultiSelectPopoverCheckbox
                 form={form}
                 name="counsellor"
                 label="Counsellor’s Name"
                 options={counsellors}
                 placeholder="Select Counsellor's Name"
-                className="col-span-1"
+                className={commonFormItemClass}
               />
-              
-              
 
               <FormField
                 key="remarks"
@@ -143,12 +142,12 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                         placeholder="Optional"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
-
-
             </div>
           </AccordionContent>
         </div>

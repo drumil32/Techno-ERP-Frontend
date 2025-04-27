@@ -43,6 +43,7 @@ export const API_ENDPOINTS = {
   fetchFixCityDropdown: `${API_DOMAIN}/dropdown/FIX_CITY`,
   fetchCourseDropdown: `${API_DOMAIN}/dropdown/COURSE`,
   fetchFixCourseDropdown: `${API_DOMAIN}/dropdown/FIX_COURSE`,
+  fetchDistricts: `${API_DOMAIN}/dropdown/DISTRICT`,
 
   // Fees Details
   getOtherFees: `${API_DOMAIN}/fees-structure/other-fees`,
@@ -64,10 +65,10 @@ export const API_ENDPOINTS = {
   uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,
 
   //Department Meta Data
-  createDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
-  updateDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
-  getDepartmentMetaData : `${API_DOMAIN}/department-metadata`,
-  fetchInstructorsMetaData : `${API_DOMAIN}/department-metadata/instructors`,
+  createDepartmentMetaData: `${API_DOMAIN}/department-metadata`,
+  updateDepartmentMetaData: `${API_DOMAIN}/department-metadata`,
+  getDepartmentMetaData: `${API_DOMAIN}/department-metadata`,
+  fetchInstructorsMetaData: `${API_DOMAIN}/department-metadata/instructors`,
 
   //Courses
   createCourse: `${API_DOMAIN}/course`,

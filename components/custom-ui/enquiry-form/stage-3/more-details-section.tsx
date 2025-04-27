@@ -126,7 +126,9 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -154,7 +156,9 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -182,7 +186,9 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -210,7 +216,9 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -239,7 +247,9 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -267,7 +277,9 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -289,7 +301,9 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                         placeholder="Enter the Aadhaar number"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />

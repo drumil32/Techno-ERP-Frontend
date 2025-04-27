@@ -5,8 +5,8 @@ import {
   Gender,
   LeadType,
   Locations,
-  Marketing_Source,
-} from '@/static/enum';
+  Marketing_Source
+} from '@/types/enum';
 
 export const objectIdSchema = z.string();
 
@@ -33,11 +33,11 @@ export const leadMasterSchema = z.object({
   area: z.string().optional(),
   city: z.string().optional(),
   course: z.string().optional(),
-  assignedTo: objectIdSchema.array(), 
+  assignedTo: objectIdSchema.array(),
   leadType: z.nativeEnum(LeadType).default(LeadType.OPEN),
   leadTypeModifiedDate: z.string().optional(),
   nextDueDate: z.date().optional(),
-  footFall: z.boolean().optional(), 
+  footFall: z.boolean().optional(),
   finalConversion: z
     .nativeEnum(FinalConversionType)
     .optional()
@@ -77,7 +77,7 @@ export const updateLeadRequestSchema = leadRequestSchema
     nextDueDate: requestDateSchema.optional()
   })
   .omit({ source: true })
-  .strict(); 
+  .strict();
 
 export const yellowLeadUpdateSchema = yellowLeadSchema
   .extend({

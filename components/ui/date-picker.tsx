@@ -26,14 +26,21 @@ interface DatePickerProps<
   disabled?: boolean;
   calendarProps?: Omit<
     ShadcnCalendarProps,
-    'mode' | 'selected' | 'onSelect' | 'initialFocus' | 'captionLayout' | 'fromYear' | 'toYear' | 'defaultMonth'
+    | 'mode'
+    | 'selected'
+    | 'onSelect'
+    | 'initialFocus'
+    | 'captionLayout'
+    | 'fromYear'
+    | 'toYear'
+    | 'defaultMonth'
   >;
   showYearMonthDropdowns?: boolean;
   fromYear?: number;
   toYear?: number;
   isRequired?: boolean;
   defaultMonth?: Date;
-  defaultSelectedDate?: Date; 
+  defaultSelectedDate?: Date;
 }
 
 const parseDateString = (
@@ -70,17 +77,17 @@ export function DatePicker<
   toYear = new Date().getFullYear() + 10,
   isRequired = false,
   defaultMonth = new Date(),
-  defaultSelectedDate, 
+  defaultSelectedDate
 }: DatePickerProps<TFieldValues, TName>) {
   return (
     <FormField
       control={control}
       name={name}
       defaultValue={
-        defaultSelectedDate ? 
-          format(defaultSelectedDate, dateFormat) as PathValue<TFieldValues, TName> 
+        defaultSelectedDate
+          ? (format(defaultSelectedDate, dateFormat) as PathValue<TFieldValues, TName>)
           : undefined
-      } 
+      }
       render={({ field, fieldState: { error } }) => {
         const selectedDate = parseDateString(field.value, dateFormat);
 
@@ -104,7 +111,7 @@ export function DatePicker<
                 <Button
                   variant={'outline'}
                   className={cn(
-                    'w-full pl-3 text-left font-normal h-9',
+                    'w-full mt-0 pl-3 text-left font-normal h-9',
                     !field.value && 'text-muted-foreground',
                     buttonClassName
                   )}

@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -6,15 +6,20 @@ import { useAdminTrackerContext } from './admin-tracker-context';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import { AdminAnalyticsResponse } from './interfaces';
-import { cityDropdown, fetchAssignedToDropdown, marketingSourcesDropdown } from './helpers/fetch-data';
-import { Locations } from '@/static/enum';
+import {
+  cityDropdown,
+  fetchAssignedToDropdown,
+  marketingSourcesDropdown
+} from './helpers/fetch-data';
+import { Locations } from '@/types/enum';
 import TechnoAnalyticCardsGroup, {
   CardItem
 } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { refineAnalytics } from './helpers/refine-data';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { toast } from 'sonner';
-import FilterBadges from '../allLeads/components/filter-badges'; import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
+import FilterBadges from '../allLeads/components/filter-badges';
+import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
 import { DropDownType } from '@/types/enum';
 
 const AdminTracker = () => {
@@ -36,17 +41,17 @@ const AdminTracker = () => {
     queryKey: ['assignedToDropdown', filterParams, appliedFilters],
     queryFn: fetchAssignedToDropdown
   });
-  const marketingSourceQuery=useQuery({
-    queryKey:['marketingSources'],
-    queryFn:marketingSourcesDropdown
-  })
-  const cityDropdownQuery=useQuery({
-    queryKey:['cities'],
-    queryFn:cityDropdown
-  })
- const cityDropdownData=Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data:[];
+  const marketingSourceQuery = useQuery({
+    queryKey: ['marketingSources'],
+    queryFn: marketingSourcesDropdown
+  });
+  const cityDropdownQuery = useQuery({
+    queryKey: ['cities'],
+    queryFn: cityDropdown
+  });
+  const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
   const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
- const marketingSource=Array.isArray(marketingSourceQuery.data) ? marketingSourceQuery.data:[];
+  const marketingSource = Array.isArray(marketingSourceQuery.data) ? marketingSourceQuery.data : [];
 
   const getFiltersData = () => {
     return [
@@ -60,8 +65,8 @@ const AdminTracker = () => {
         label: 'Source',
         options: marketingSource.map((item: string) => {
           return {
-            label:item,
-            id:item
+            label: item,
+            id: item
           };
         }),
         multiSelect: true
@@ -71,8 +76,8 @@ const AdminTracker = () => {
         label: 'City',
         options: cityDropdownData.map((item: string) => {
           return {
-            label:item,
-            id:item
+            label: item,
+            id: item
           };
         }),
         hasSearch: true,
@@ -167,7 +172,7 @@ const AdminTracker = () => {
       invalidType: data?.allLeadsAnalytics?.invalidType,
       red: data?.allLeadsAnalytics?.red,
       blue: data?.allLeadsAnalytics?.blue,
-      activeLeads: data?.allLeadsAnalytics?.activeLeads,
+      activeLeads: data?.allLeadsAnalytics?.activeLeads
     },
     'reached',
     {
@@ -290,7 +295,6 @@ const AdminTracker = () => {
     data
   ]);
 
-
   return (
     <>
       <TechnoPageTitle title="Admin Tracker" />
@@ -307,7 +311,7 @@ const AdminTracker = () => {
         appliedFilters={appliedFilters}
       />
 
-      {data &&
+      {data && (
         <>
           {/* Total Leads Reached Section */}
           <div className="mt-[32px]">
@@ -320,7 +324,7 @@ const AdminTracker = () => {
           {/* Active Leads Conversion Section */}
           <div className="mt-[32px]">
             <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-            How many leads were converted to Active Leads?
+              How many leads were converted to Active Leads?
             </h1>
             {yellowLeadsConverted && <TechnoAnalyticCardsGroup cardsData={yellowLeadsConverted} />}
           </div>
@@ -328,7 +332,7 @@ const AdminTracker = () => {
           {/* Active Leads Campus Visit Section */}
           <div className="mt-[32px]">
             <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-            How many Active leads visited the campus?
+              How many Active leads visited the campus?
             </h1>
             {yellowLeadsVisited && <TechnoAnalyticCardsGroup cardsData={yellowLeadsVisited} />}
           </div>
@@ -338,10 +342,12 @@ const AdminTracker = () => {
             <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
               Final conversion from those who visited the campus
             </h1>
-            {finalCampusConversion && <TechnoAnalyticCardsGroup cardsData={finalCampusConversion} />}
+            {finalCampusConversion && (
+              <TechnoAnalyticCardsGroup cardsData={finalCampusConversion} />
+            )}
           </div>
         </>
-      }
+      )}
     </>
   );
 };

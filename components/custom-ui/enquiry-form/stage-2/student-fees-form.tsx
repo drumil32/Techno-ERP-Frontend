@@ -5,7 +5,7 @@ import {
   feesRequestSchema,
   finalFeesCreateSchema,
   frontendFeesDraftValidationSchema,
-  IFeesRequestSchema,
+  IFeesRequestSchema
 } from './studentFeesSchema';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -113,7 +113,7 @@ export const StudentFeesForm = () => {
   const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
     queryKey: ['otherFeesData'],
     queryFn: getOtherFees,
-    refetchOnWindowFocus: false, 
+    refetchOnWindowFocus: false,
     staleTime: 1000 * 60 * 5
   });
 
@@ -490,7 +490,7 @@ export const StudentFeesForm = () => {
         toast.success('Enquiry status updated to Step 3.');
 
         await queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
-        
+
         router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_3(enquiry_id));
       } catch (statusError) {
         const errorMsg =
@@ -556,7 +556,7 @@ export const StudentFeesForm = () => {
         delete finalPayload.id;
         await createDraftMutation.mutateAsync(finalPayload);
       }
-    } catch (error) { }
+    } catch (error) {}
   }
 
   async function onSubmit() {
@@ -634,7 +634,6 @@ export const StudentFeesForm = () => {
       await createFinalFeeMutation.mutateAsync(finalPayLoad);
     }
   }
-
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
     return (
@@ -791,10 +790,9 @@ export const StudentFeesForm = () => {
                       disabled: (date) => {
                         const today = new Date();
                         return date <= new Date(today.setHours(0, 0, 0, 0));
-                      },
+                      }
                     }}
                   />
-
                 </div>
               </div>
             </AccordionContent>
@@ -885,7 +883,7 @@ export const StudentFeesForm = () => {
             </AccordionTrigger>
 
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-x-8 gap-y-4">
+              <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-x-8 gap-y-1">
                 <MultiSelectPopoverCheckbox
                   form={form}
                   name="counsellor"
@@ -906,14 +904,14 @@ export const StudentFeesForm = () => {
                   control={form.control}
                   name="remarks"
                   render={({ field }) => (
-                    <FormItem className="col-span-1">
+                    <FormItem className="col-span-2">
                       <FormLabel className="font-inter font-normal text-sm text-gray-600">
                         Remarks
                       </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Optional"
-                          className="resize-none text-sm h-11"
+                          className="resize-none text-sm "
                           {...field}
                           value={field.value ?? ''}
                         />
@@ -1000,7 +998,7 @@ export const StudentFeesForm = () => {
 
                 <Button
                   type="button"
-                  onClick={() => { }}
+                  onClick={() => {}}
                   disabled={isOtpSending || !selectedOtpTarget}
                   className="h-9 text-sm mt-auto"
                 >

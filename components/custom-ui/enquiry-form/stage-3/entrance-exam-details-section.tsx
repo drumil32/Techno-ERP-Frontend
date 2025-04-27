@@ -1,7 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import React, { useEffect, useState } from 'react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@/components/ui/accordion';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { Countries, Districts, StatesOfIndia } from '@/types/enum';
@@ -14,10 +25,11 @@ interface EntranceExamDetailsSectionInterface {
   commonFieldClass: string;
 }
 
-const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> = ({ form, commonFieldClass, commonFormItemClass }) => {
-
-
-
+const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> = ({
+  form,
+  commonFieldClass,
+  commonFormItemClass
+}) => {
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="student-details">
@@ -30,7 +42,6 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
 
           <AccordionContent>
             <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px] bg-white p-4 rounded-[10px]">
-
               <FormField
                 key="nameOfExamination"
                 control={form.control}
@@ -43,17 +54,18 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                     <FormControl>
                       <Input
                         {...field}
-                        type='text'
+                        type="text"
                         value={field.value ?? ''}
                         className=""
                         placeholder="Enter the name of examination"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
-
 
               <FormField
                 key="rollNumber"
@@ -67,13 +79,15 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                     <FormControl>
                       <Input
                         {...field}
-                        type='text'
+                        type="text"
                         value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Enter roll number"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -90,14 +104,16 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                     <FormControl>
                       <Input
                         {...field}
-                        type='text'
+                        type="text"
                         inputMode="numeric"
                         className={commonFieldClass}
                         placeholder="Enter the rank"
                         onChange={(e) => handleNumericInputChange(e, field.onChange)}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -113,8 +129,10 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                     </FormLabel>
                     <FormControl>
                       <Select
-                        onValueChange={(value) => field.onChange(value === "Yes")}
-                        value={field.value === true ? "Yes" : field.value === false ? "No" : undefined}
+                        onValueChange={(value) => field.onChange(value === 'Yes')}
+                        value={
+                          field.value === true ? 'Yes' : field.value === false ? 'No' : undefined
+                        }
                       >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Yes/No" />
@@ -125,19 +143,18 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
-
-
-
             </div>
           </AccordionContent>
         </div>
       </AccordionItem>
     </Accordion>
-  )
-}
+  );
+};
 
 export default EntranceExamDetailsSection;

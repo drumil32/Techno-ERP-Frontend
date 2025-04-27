@@ -32,7 +32,7 @@ export default function AdmissionsLandingPage() {
   };
   const columns = [
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
-    { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry' },
+    { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry', meta: { align: 'center' } },
     { accessorKey: 'studentName', header: 'Name' },
     { accessorKey: 'studentPhoneNumber', header: 'Phone Number' },
     { accessorKey: 'genderDisplay', header: 'Gender' },

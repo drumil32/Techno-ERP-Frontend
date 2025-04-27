@@ -15,7 +15,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { Nationality, Qualification } from '../schema/schema';
-import { AreaType, BloodGroup, Category, Religion, StatesOfIndia } from '@/types/enum';
+import {
+  AdmissionReference,
+  AreaType,
+  BloodGroup,
+  Category,
+  Religion,
+  StatesOfIndia
+} from '@/types/enum';
 import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
 import { useQueries } from '@tanstack/react-query';
 import { getCounsellors, getTeleCallers } from '../stage-1/enquiry-form-api';
@@ -52,11 +59,7 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
 
   return (
     <>
-      <Accordion
-        type="single"
-        collapsible
-        className="w-full space-y-4"
-      >
+      <Accordion type="single" collapsible className="w-full space-y-4">
         <AccordionItem value="college-details" className="border-b-0">
           <AccordionTrigger className="w-full items-center">
             <h3 className="font-inter text-[16px] font-semibold"> For Office purpose only </h3>
@@ -83,6 +86,36 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
                 options={telecallers}
                 placeholder="Select Telecaller's Name"
                 className="col-span-1"
+              />
+              <FormField
+                key="reference"
+                control={form.control}
+                name="reference"
+                render={({ field }) => (
+                  <FormItem className={`${commonFormItemClass}`}>
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                      Reference
+                      <span className="text-red-500 pl-0">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger className={`${commonFieldClass} w-full`}>
+                          <SelectValue className="text-[#9D9D9D]" placeholder="Select Reference" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(AdmissionReference).map((ref) => (
+                            <SelectItem key={ref} value={ref}>
+                              {ref}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
+                  </FormItem>
+                )}
               />
             </div>
           </AccordionContent>

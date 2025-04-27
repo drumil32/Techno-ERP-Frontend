@@ -1,4 +1,4 @@
-import { LeadType, LeadTypeMapper } from '@/static/enum';
+import { LeadType, LeadTypeMapper } from '@/types/enum';
 
 const typeStyles = {
   [LeadType.OPEN]: 'bg-[#FFE3CB] text-[#E06C06]',

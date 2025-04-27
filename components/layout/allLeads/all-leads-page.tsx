@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
 
 import LeadViewEdit, { LeadData } from './leads-view-edit';
-import { Course, LeadType, Locations } from '@/static/enum';
+import { Course, LeadType, Locations } from '@/types/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';

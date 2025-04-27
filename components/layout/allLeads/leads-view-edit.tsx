@@ -11,7 +11,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
-import { Course, CourseNameMapper, Gender, LeadType, Locations } from '@/static/enum';
+import { Course, CourseNameMapper, Gender, LeadType, Locations } from '@/types/enum';
 import TechnoLeadTypeTag from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
-import { Check } from 'lucide-react';
+import { Check, ChevronDown } from 'lucide-react';
 
 interface MultiSelectCustomDropdownProps {
   form: any;
@@ -12,6 +12,7 @@ interface MultiSelectCustomDropdownProps {
   placeholder?: string;
   allowCustomInput?: boolean;
   onChange?: (value: string) => void;
+  onAddOption?: (value: string) => void;
 }
 
 export const MultiSelectCustomDropdown = ({
@@ -21,15 +22,27 @@ export const MultiSelectCustomDropdown = ({
   options,
   placeholder = 'Select option',
   allowCustomInput = false,
-  onChange
+  onChange,
+  onAddOption
 }: MultiSelectCustomDropdownProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [customOptions, setCustomOptions] = useState<{ _id: string; name: string }[]>([]);
   const currentValue = form[name] || '';
 
-  const filteredOptions = options.filter((option) =>
+  const allOptions = [...options, ...customOptions];
+
+  const sortedOptions = [...allOptions].sort((a, b) => {
+    if (a._id === currentValue) return -1;
+    if (b._id === currentValue) return 1;
+    return a.name.localeCompare(b.name);
+  });
+
+  const filteredOptions = sortedOptions.filter((option) =>
     option.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const exactMatch = allOptions.find((opt) => opt.name.toLowerCase() === searchTerm.toLowerCase());
 
   const handleSelect = (value: string) => {
     onChange?.(value);
@@ -38,18 +51,20 @@ export const MultiSelectCustomDropdown = ({
   };
 
   const handleAddFromSearch = () => {
-    if (
-      searchTerm.trim() &&
-      !options.some((opt) => opt.name.toLowerCase() === searchTerm.toLowerCase())
-    ) {
+    if (exactMatch) {
+      handleSelect(exactMatch._id);
+      return;
+    }
+
+    if (searchTerm.trim() && !exactMatch) {
+      const newOption = { _id: searchTerm.trim(), name: searchTerm.trim() };
+      setCustomOptions([...customOptions, newOption]);
+      onAddOption?.(searchTerm.trim());
       handleSelect(searchTerm.trim());
     }
   };
 
-  const showAddButton =
-    allowCustomInput &&
-    searchTerm.trim() &&
-    !options.some((opt) => opt.name.toLowerCase() === searchTerm.toLowerCase());
+  const showAddButton = allowCustomInput && searchTerm.trim() && !exactMatch;
 
   return (
     <div className="space-y-2 w-full">
@@ -58,11 +73,14 @@ export const MultiSelectCustomDropdown = ({
         <PopoverTrigger asChild>
           <Button
             variant="outline"
-            className="text-left rounded-sm bg-inherit w-full font-normal h-full justify-start"
+            className="text-left rounded-sm bg-inherit w-full font-normal h-full justify-between"
           >
-            {currentValue
-              ? options.find((opt) => opt._id === currentValue)?.name || currentValue
-              : placeholder}
+            <span>
+              {currentValue
+                ? allOptions.find((opt) => opt._id === currentValue)?.name || currentValue
+                : placeholder}
+            </span>
+            <ChevronDown className="h-4 w-4 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[250px] rounded-sm p-2" align="start">

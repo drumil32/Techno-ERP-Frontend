@@ -6,7 +6,13 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
@@ -34,18 +40,18 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
       return;
     }
 
-    const result = formSchemaStep3.pick({
-      address: true
-    }).safeParse({ address: addressDetails });
+    const result = formSchemaStep3
+      .pick({
+        address: true
+      })
+      .safeParse({ address: addressDetails });
 
     setIsValid(result.success);
   };
 
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
-
       checkValidity();
-
     });
     return () => subscription.unsubscribe();
   }, [form]);
@@ -54,14 +60,16 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
     checkValidity();
   }, []);
 
-  const hasAddressErrors = !!form.formState.errors.address &&
-  Object.keys(form.formState.errors.address).length > 0;
+  const hasAddressErrors =
+    !!form.formState.errors.address && Object.keys(form.formState.errors.address).length > 0;
 
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="address-details">
         <div className="space-y-2">
-          <AccordionTrigger className={`w-full items-center ${hasAddressErrors ? 'text-red-500' : ''}`}>
+          <AccordionTrigger
+            className={`w-full items-center ${hasAddressErrors ? 'text-red-500' : ''}`}
+          >
             <div className="flex items-center w-full">
               <h3 className="font-inter text-[16px] font-semibold">Address details</h3>
               {isValid && (
@@ -96,13 +104,18 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                 render={({ field }) => (
                   <FormItem className="col-span-2">
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Address Line 1
-                      <span className="text-red-500 pl-0">*</span>
+                      Address Line 1<span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} value={field.value ?? ''} placeholder="Enter Address Line 1" />
+                      <Input
+                        {...field}
+                        value={field.value ?? ''}
+                        placeholder="Enter Address Line 1"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -113,13 +126,18 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                 render={({ field }) => (
                   <FormItem className="col-span-2">
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Address Line 2
-                      <span className="text-red-500 pl-0">*</span>
+                      Address Line 2<span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} value={field.value ?? ''} placeholder="Enter Address Line 2" />
+                      <Input
+                        {...field}
+                        value={field.value ?? ''}
+                        placeholder="Enter Address Line 2"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -134,9 +152,16 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Input {...field} value={field.value ?? ''} className={commonFieldClass} placeholder="Enter pincode" />
+                      <Input
+                        {...field}
+                        value={field.value ?? ''}
+                        className={commonFieldClass}
+                        placeholder="Enter pincode"
+                      />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -164,7 +189,9 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -179,7 +206,11 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} defaultValue={StatesOfIndia.UttarPradesh} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={StatesOfIndia.UttarPradesh}
+                        value={field.value}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select state" />
                         </SelectTrigger>
@@ -192,7 +223,9 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -220,7 +253,9 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />

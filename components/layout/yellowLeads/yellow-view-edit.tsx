@@ -18,7 +18,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 
 // Static data and enums
-import { Course, Gender, Locations } from '@/static/enum';
+import { Course, Gender, Locations } from '@/types/enum';
 
 // Utility functions and constants
 import { apiRequest } from '@/lib/apiClient';

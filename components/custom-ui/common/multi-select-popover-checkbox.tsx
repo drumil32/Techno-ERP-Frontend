@@ -1,7 +1,7 @@
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
 
 interface MultiSelectPopoverCheckboxProps {
   form: any;
@@ -18,9 +18,9 @@ export const MultiSelectPopoverCheckbox: React.FC<MultiSelectPopoverCheckboxProp
   name,
   label,
   options,
-  placeholder = "Select options",
-  className = "",
-  disabled = false,
+  placeholder = 'Select options',
+  className = '',
+  disabled = false
 }) => {
   return (
     <FormField
@@ -43,9 +43,9 @@ export const MultiSelectPopoverCheckbox: React.FC<MultiSelectPopoverCheckboxProp
                   <span className="block overflow-hidden text-ellipsis whitespace-nowrap w-full">
                     {field.value && field.value.length > 0
                       ? options
-                        .filter((opt) => field?.value?.includes(opt._id))
-                        .map((opt) => opt.name)
-                        .join(", ")
+                          .filter((opt) => field?.value?.includes(opt._id))
+                          .map((opt) => opt.name)
+                          .join(', ')
                       : placeholder}
                   </span>
                 </Button>
@@ -54,10 +54,7 @@ export const MultiSelectPopoverCheckbox: React.FC<MultiSelectPopoverCheckboxProp
                 <PopoverContent className="w-[180px] p-2 rounded-sm">
                   <div className="max-h-60 overflow-y-auto flex flex-col gap-2">
                     {options?.map((option) => (
-                      <div
-                        key={option._id}
-                        className="flex items-center space-x-2 cursor-pointer"
-                      >
+                      <div key={option._id} className="flex items-center space-x-2 cursor-pointer">
                         <Checkbox
                           id={option._id}
                           checked={field?.value?.includes(option._id)}
@@ -70,10 +67,7 @@ export const MultiSelectPopoverCheckbox: React.FC<MultiSelectPopoverCheckboxProp
                           className="rounded-sm"
                           disabled={disabled}
                         />
-                        <label
-                          htmlFor={option._id}
-                          className="text-[12px] cursor-pointer"
-                        >
+                        <label htmlFor={option._id} className="text-[12px] cursor-pointer">
                           {option.name}
                         </label>
                       </div>
@@ -83,7 +77,9 @@ export const MultiSelectPopoverCheckbox: React.FC<MultiSelectPopoverCheckboxProp
               )}
             </Popover>
           </FormControl>
-          <FormMessage />
+          <div className="h-[20px]">
+            <FormMessage className="text-[11px]" />
+          </div>
         </FormItem>
       )}
     />

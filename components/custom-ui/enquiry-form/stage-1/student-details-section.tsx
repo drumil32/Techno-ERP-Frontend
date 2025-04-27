@@ -1,4 +1,3 @@
-// UI Components
 import {
   Accordion,
   AccordionContent,
@@ -63,7 +62,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
           </AccordionTrigger>
 
           <AccordionContent>
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6  gap-x-[32px] bg-white p-4 rounded-[10px]">
+            <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-y-1 sm:grid-cols-1 gap-x-[32px] bg-white p-4 rounded-[10px]">
               <FormField
                 key="admissionMode"
                 control={form.control}
@@ -75,7 +74,11 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value} defaultValue={AdmissionMode.OFFLINE}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        defaultValue={AdmissionMode.OFFLINE}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue
                             className="text-[#9D9D9D]"
@@ -91,7 +94,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -99,11 +104,12 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
               <DatePicker
                 control={form.control}
                 name="dateOfEnquiry"
+                formItemClassName={commonFormItemClass}
                 label="Date of Enquiry"
                 placeholder="Select Enquiry Date"
                 showYearMonthDropdowns={true}
                 defaultSelectedDate={new Date()}
-                labelClassName='font-inter font-normal text-[12px] text-[#666666]'
+                labelClassName="font-inter font-normal text-[12px] text-[#666666]"
               />
 
               <FormField
@@ -125,7 +131,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         placeholder="Enter the student name"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -149,7 +157,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         placeholder="Enter the student phone number"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -163,7 +173,6 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                       Email ID
                       <span className="text-red-500 pl-0">*</span>
-                      
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -174,7 +183,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         placeholder="Enter the email ID"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -198,7 +209,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         placeholder="Enter father's name"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -222,7 +235,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         placeholder="Enter father's phone number"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -246,7 +261,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         placeholder="Enter father's occupation"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -270,7 +287,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         placeholder="Enter mother's name"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -293,7 +312,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         placeholder="Enter mother's phone number"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -317,7 +338,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         placeholder="Enter mother's occupation"
                       />
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -327,15 +350,16 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 name="dateOfBirth"
                 label="Date of Birth"
                 placeholder="Select Date of Birth"
+                formItemClassName={commonFormItemClass}
                 showYearMonthDropdowns={true}
                 labelClassName="font-inter font-normal text-[12px] text-[#666666]"
                 calendarProps={{
                   disabled: (date) => {
                     const today = new Date();
-                    return date >= new Date(today.setHours(0, 0, 0, 0)); 
-                  },
+                    return date >= new Date(today.setHours(0, 0, 0, 0));
+                  }
                 }}
-                defaultMonth = {new Date(new Date().getFullYear() - 10, 0, 1)} 
+                defaultMonth={new Date(new Date().getFullYear() - 10, 0, 1)}
                 isRequired={true}
               />
 
@@ -363,7 +387,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -379,7 +405,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value} >
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Gender" />
                         </SelectTrigger>
@@ -392,7 +418,9 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
@@ -421,12 +449,12 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         </SelectContent>
                       </Select>
                     </FormControl>
-                    <FormMessage />
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
                   </FormItem>
                 )}
               />
-
-
             </div>
           </AccordionContent>
         </div>

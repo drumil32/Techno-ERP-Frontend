@@ -177,7 +177,9 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             placeholder="Enter school/college Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -199,7 +201,9 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             placeholder="Enter university/board Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -282,7 +286,9 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                         <FormControl>
                           <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -311,7 +317,9 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             placeholder="Enter school/college Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -333,7 +341,9 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             placeholder="Enter university/board Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -416,7 +426,9 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                         <FormControl>
                           <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -445,7 +457,9 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             placeholder="Enter school/college Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -467,7 +481,9 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                             placeholder="Enter university/board Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -550,7 +566,9 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                         <FormControl>
                           <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />

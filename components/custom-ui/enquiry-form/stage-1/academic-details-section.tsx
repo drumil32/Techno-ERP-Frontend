@@ -51,7 +51,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
             entry.universityBoardName &&
             entry.passingYear &&
             entry.percentageObtained &&
-            (Array.isArray(entry.subjects) || entry.subjects === undefined || (entry.subjects as unknown[]).length === 0);
+            (Array.isArray(entry.subjects) ||
+              entry.subjects === undefined ||
+              (entry.subjects as unknown[]).length === 0);
 
           const expectedLevel = educationLevels[index];
 
@@ -74,7 +76,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
   }, []);
 
   return (
-    <Accordion type="single" collapsible>
+    <Accordion type="single" collapsible defaultValue="student-details">
       <AccordionItem value="student-details">
         <div className="space-y-2">
           <AccordionTrigger className="w-full items-center">
@@ -90,7 +92,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                 {/* Subheading */}
                 <h4 className="font-inter text-[16px] font-semibold">10th</h4>
 
-                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px]">
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-1 gap-x-[32px]">
                   <FormField
                     key="academicDetails.0.schoolCollegeName"
                     control={form.control}
@@ -108,7 +110,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             placeholder="Enter school/college Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -130,7 +134,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             placeholder="Enter university/board Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -215,7 +221,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         <FormControl>
                           <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -245,7 +253,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             placeholder="Enter school/college Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -267,7 +277,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             placeholder="Enter university/board Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -352,7 +364,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         <FormControl>
                           <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -382,7 +396,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             placeholder="Enter school/college Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -404,7 +420,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             placeholder="Enter university/board Name"
                           />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
@@ -489,7 +507,9 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         <FormControl>
                           <TagInput value={field.value || []} onChange={field.onChange} />
                         </FormControl>
-                        <FormMessage />
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />

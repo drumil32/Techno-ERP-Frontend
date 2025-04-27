@@ -20,7 +20,7 @@ import FinalConversionTag, {
 } from '@/components/layout/yellowLeads/final-conversion-tag';
 import { Course, CourseNameMapper } from '@/types/enum';
 import { toPascal } from '@/lib/utils';
-import { LeadType } from '@/static/enum';
+import { LeadType } from '@/types/enum';
 
 export interface FilterOption {
   id: string;

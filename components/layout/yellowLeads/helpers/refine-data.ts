@@ -1,6 +1,6 @@
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { FinalConversionStatus } from '../final-conversion-tag';
-import { Course, CourseNameMapper } from '@/static/enum';
+import { Course, CourseNameMapper } from '@/types/enum';
 import { toPascal } from '@/lib/utils';
 import { formatTimeStampView, formatDateView } from '../../allLeads/helpers/refine-data';
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
@@ -22,7 +22,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       phoneNumber: lead.phoneNumber,
       altPhoneNumber: lead.altPhoneNumber,
       altPhoneNumberView: lead.altPhoneNumber ?? '-',
-      email: lead.email ?? '-',
+      email: lead.email,
       gender: lead.gender,
       genderView: toPascal(lead.gender),
       assignedTo: lead.assignedTo,
