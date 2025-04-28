@@ -141,12 +141,14 @@ export default function LoginPage() {
                 <Button className="bg-white text-indigo-800 hover:bg-gray-100 font-semibold text-sm py-2 px-4 lg:py-3 lg:px-6 rounded-lg">
                   Get Started
                 </Button>
-                <Button
-                  variant="outline"
-                  className="bg-transparent border-white text-white hover:bg-white/10 font-semibold text-sm py-2 px-4 lg:py-3 lg:px-6 rounded-lg"
-                >
-                  Live Demo
-                </Button>
+                <a target="_blank" href="https://www.sprintup.in">
+                  <Button
+                    variant="outline"
+                    className="bg-transparent border-white text-white hover:bg-white/10 font-semibold text-sm py-2 px-4 lg:py-3 lg:px-6 rounded-lg"
+                  >
+                    Live Demo
+                  </Button>
+                </a>
               </div>
             </div>
           </div>
@@ -272,11 +274,11 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-4 text-center text-xs lg:text-sm text-gray-600">
+          {/* <div className="mt-4 text-center text-xs lg:text-sm text-gray-600">
             <a href="#" className="text-indigo-600 hover:text-indigo-800 font-medium">
               Forgot password?
             </a>
-          </div>
+          </div> */}
         </motion.div>
       </div>
     </div>
