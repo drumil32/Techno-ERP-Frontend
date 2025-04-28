@@ -531,7 +531,7 @@ export default function AllLeadsPage() {
         <TechnoDataTable
           columns={columns}
           data={leads.leads}
-          tableName="All Leads Table"
+          tableName="All Leads"
           currentPage={page}
           totalPages={totalPages}
           pageLimit={limit}

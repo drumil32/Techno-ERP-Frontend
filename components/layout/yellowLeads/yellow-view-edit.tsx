@@ -1,7 +1,4 @@
-// React and state management
 import { useEffect, useState } from 'react';
-
-// UI components
 import { CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,27 +13,19 @@ import {
 import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-
-// Static data and enums
 import { Course, Gender, Locations } from '@/types/enum';
-
-// Utility functions and constants
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { parse, format, isValid } from 'date-fns';
 import { toast } from 'sonner';
 import z, { boolean } from 'zod';
-
-// Custom components and helpers
 import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
 import { FootFallStatus } from './foot-fall-tag';
 import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
 import FootFallTag from './foot-fall-tag';
 import { yellowLeadUpdateSchema } from '../allLeads/validators';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
-
-// React Query
 import { useQuery } from '@tanstack/react-query';
 import { removeNullValues, toPascal } from '@/lib/utils';
 import { cityDropdown, fixCourseDropdown } from '../admin-tracker/helpers/fetch-data';
@@ -54,6 +43,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+
 interface FormErrors {
   name?: string;
   phoneNumber?: string;

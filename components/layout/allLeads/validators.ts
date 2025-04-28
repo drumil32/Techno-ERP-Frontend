@@ -1,12 +1,6 @@
 import { z } from 'zod';
-import {
-  Course,
-  FinalConversionType,
-  Gender,
-  LeadType,
-  Locations,
-  Marketing_Source
-} from '@/types/enum';
+import { Course, Gender, LeadType, Locations, Marketing_Source } from '@/types/enum';
+import { FinalConversionStatus } from '../yellowLeads/final-conversion-tag';
 
 export const objectIdSchema = z.string();
 
@@ -24,12 +18,12 @@ export const leadMasterSchema = z.object({
   schoolName: z.string().optional(),
   name: z
     .string()
-    .nonempty('Name field is required')
-    .regex(/^[A-Za-z\s]+$/, 'Name can only contain alphabets and spaces'),
+    .regex(/^[A-Za-z\s]+$/, 'Name can only contain alphabets and spaces')
+    .optional(),
   phoneNumber: contactNumberSchema,
   altPhoneNumber: contactNumberSchema.optional(),
   email: z.string().email('Invalid Email Format').optional(),
-  gender: z.nativeEnum(Gender).default(Gender.NOT_TO_MENTION),
+  gender: z.nativeEnum(Gender),
   area: z.string().optional(),
   city: z.string().optional(),
   course: z.string().optional(),
@@ -39,9 +33,9 @@ export const leadMasterSchema = z.object({
   nextDueDate: z.date().optional(),
   footFall: z.boolean().optional(),
   finalConversion: z
-    .nativeEnum(FinalConversionType)
+    .nativeEnum(FinalConversionStatus)
     .optional()
-    .default(FinalConversionType.NO_FOOTFALL),
+    .default(FinalConversionStatus.NO_FOOTFALL),
   remarks: z.string().optional(),
   leadsFollowUpCount: z.number().optional().default(0),
   yellowLeadsFollowUpCount: z.number().optional().default(0)

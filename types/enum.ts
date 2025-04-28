@@ -22,12 +22,6 @@ export enum Source {
   SCHOOL = 'School'
 }
 
-export enum FinalConversionType {
-  PINK = 'PENDING',
-  GREEN = 'CONVERTED',
-  RED = 'NOT_CONVERTED'
-}
-
 export enum Marketing_Source {
   SCHOOL = 'School',
   DIGITAL_MARKETING = 'Digital_Marketing'
@@ -77,6 +71,15 @@ export enum Course {
   MCA = 'MCA',
   MVAP = 'MVAP',
   MSCC = 'MSCC'
+}
+
+export enum DropDownType {
+  MARKETING_CITY = 'MARKETING_CITY',
+  FIX_CITY = 'FIX_CITY',
+  DISTRICT = 'DISTRICT',
+  MARKETING_SOURCE = 'MARKETING_SOURCE',
+  MARKETING_COURSE_CODE = 'MARKETING_COURSE_CODE',
+  FIX_COURSE_CODE = 'FIX_COURSE_CODE'
 }
 
 export const ReverseCourseNameMapper: Record<string, Course> = {

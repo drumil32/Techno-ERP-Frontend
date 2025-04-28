@@ -10,7 +10,6 @@ import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
-import { Course, FinalConversionType, Locations } from '@/types/enum';
 import {
   fetchAssignedToDropdown,
   fetchYellowLeads,
@@ -520,7 +519,7 @@ export default function YellowLeadsTracker() {
         <TechnoDataTable
           columns={columns}
           data={leads.leads}
-          tableName="Active Leads Table"
+          tableName="Active Leads"
           currentPage={page}
           totalPages={totalPages}
           pageLimit={limit}

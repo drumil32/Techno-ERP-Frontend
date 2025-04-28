@@ -1,3 +1,5 @@
+import { DropDownType } from '@/types/enum';
+
 export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
 
 export const API_ENDPOINTS = {
@@ -38,12 +40,12 @@ export const API_ENDPOINTS = {
   // Dropdowns
   fetchTeleCallersDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=ADMISSION`,
   fetchCounsellorsDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=COUNSELOR&moduleName=ADMISSION`,
-  fetchMarketingSourcesDropdown: `${API_DOMAIN}/dropdown/MAKRETING_SOURCE`,
-  fetchCityDropdown: `${API_DOMAIN}/dropdown/CITY`,
-  fetchFixCityDropdown: `${API_DOMAIN}/dropdown/FIX_CITY`,
-  fetchCourseDropdown: `${API_DOMAIN}/dropdown/COURSE`,
-  fetchFixCourseDropdown: `${API_DOMAIN}/dropdown/FIX_COURSE`,
-  fetchDistricts: `${API_DOMAIN}/dropdown/DISTRICT`,
+  fetchMarketingSourcesDropdown: `${API_DOMAIN}/dropdown/${DropDownType.MARKETING_SOURCE}`,
+  fetchCityDropdown: `${API_DOMAIN}/dropdown/${DropDownType.MARKETING_CITY}`,
+  fetchFixCityDropdown: `${API_DOMAIN}/dropdown/${DropDownType.FIX_CITY}`,
+  fetchCourseDropdown: `${API_DOMAIN}/dropdown/${DropDownType.MARKETING_COURSE_CODE}`,
+  fetchFixCourseDropdown: `${API_DOMAIN}/dropdown/${DropDownType.FIX_COURSE_CODE}`,
+  fetchDistricts: `${API_DOMAIN}/dropdown/${DropDownType.DISTRICT}`,
 
   // Fees Details
   getOtherFees: `${API_DOMAIN}/fees-structure/other-fees`,
