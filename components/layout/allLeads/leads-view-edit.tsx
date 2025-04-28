@@ -11,7 +11,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
-import { Course, CourseNameMapper, Gender, LeadType, Locations } from '@/types/enum';
+import { Course, CourseNameMapper, Gender, LeadType, Locations, UserRoles } from '@/types/enum';
 import TechnoLeadTypeTag from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
@@ -44,6 +44,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
+import useAuthStore from '@/stores/auth-store';
 
 export interface LeadData {
   _id: string;
@@ -89,6 +90,7 @@ export default function LeadViewEdit({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const { hasRole } = useAuthStore();
 
   useEffect(() => {
     if (data) {
@@ -610,6 +612,7 @@ export default function LeadViewEdit({
             <Button
               variant="outline"
               role="combobox"
+              disabled={!hasRole(UserRoles.LEAD_MARKETING)}
               className={cn(
                 'w-full justify-between rounded-[5px] min-h-10',
                 !formData.assignedTo?.length && 'text-muted-foreground'

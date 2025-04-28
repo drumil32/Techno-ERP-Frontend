@@ -13,7 +13,7 @@ import {
 import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Course, Gender, Locations } from '@/types/enum';
+import { Course, Gender, Locations, UserRoles } from '@/types/enum';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
@@ -43,6 +43,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import useAuthStore from '@/stores/auth-store';
 
 interface FormErrors {
   name?: string;
@@ -73,7 +74,7 @@ export default function YellowLeadViewEdit({
   const [errors, setErrors] = useState<FormErrors>({});
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [changedFields, setChangedFields] = useState<Set<string>>(new Set());
-
+  const { hasRole } = useAuthStore();
   useEffect(() => {
     if (data) {
       setFormData(data);
@@ -620,6 +621,7 @@ export default function YellowLeadViewEdit({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
+              disabled={!hasRole(UserRoles.LEAD_MARKETING)}
               role="combobox"
               className={cn(
                 'w-full justify-between rounded-[5px] min-h-10',

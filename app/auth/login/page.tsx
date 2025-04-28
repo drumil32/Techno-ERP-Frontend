@@ -26,12 +26,15 @@ import { SITE_MAP } from '@/common/constants/frontendRouting';
 import Image from 'next/image';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import useAuthStore from '@/stores/auth-store';
+import { AuthResponse } from '@/types/auth';
 
 export default function LoginPage() {
   useAuthRedirect();
   const router = useRouter();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { login } = useAuthStore();
 
   const {
     register,
@@ -45,8 +48,20 @@ export default function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      const response = await apiRequest(API_METHODS.POST, API_ENDPOINTS.login, data);
+      const response = (await apiRequest(
+        API_METHODS.POST,
+        API_ENDPOINTS.login,
+        data
+      )) as AuthResponse;
       if (!response) return;
+
+      login({
+        name: response.userData.name,
+        email: response.userData.email,
+        roles: response.roles,
+        accessToken: response.token
+      });
+
       router.push(SITE_MAP.HOME.DEFAULT);
     } catch (err) {
       setError('Invalid credentials. Please try again.');
@@ -273,12 +288,6 @@ export default function LoginPage() {
               )}
             </Button>
           </form>
-
-          {/* <div className="mt-4 text-center text-xs lg:text-sm text-gray-600">
-            <a href="#" className="text-indigo-600 hover:text-indigo-800 font-medium">
-              Forgot password?
-            </a>
-          </div> */}
         </motion.div>
       </div>
     </div>

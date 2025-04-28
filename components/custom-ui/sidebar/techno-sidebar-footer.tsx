@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { useHoverContext } from './hover-context';
@@ -8,26 +8,36 @@ import { Button } from '@/components/ui/button';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { useRouter } from 'next/navigation';
+import useAuthStore from '@/stores/auth-store';
 
 export default function TechnoSidebarFooter() {
   const router = useRouter();
+  const { logout } = useAuthStore();
+  const hovered = useHoverContext();
 
   const handleLogout = async () => {
-    const res = await fetch(API_ENDPOINTS.logout, {
-      method: API_METHODS.GET,
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include'
-    })
-    const data = await res.json();
+    try {
+      const res = await fetch(API_ENDPOINTS.logout, {
+        method: API_METHODS.GET,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
 
-    if (data &&
-      data.SUCCESS === true) {
-      router.replace("/auth/login");
+      const data = await res.json();
+
+      if (data && data.SUCCESS === true) {
+        logout();
+        router.replace('/auth/login');
+      }
+    } catch (error) {
+      console.error('Logout failed:', error);
+      logout();
+      router.replace('/auth/login');
     }
-  }
-  const hovered = useHoverContext();
+  };
+
   return (
     <>
       {!hovered && (
@@ -37,7 +47,7 @@ export default function TechnoSidebarFooter() {
           <AvatarFallback></AvatarFallback>
         </Avatar>
       )}
-      <TechnoSidebarItem icon={LogOut} text="Logout" onClick={handleLogout}/>
+      <TechnoSidebarItem icon={LogOut} text="Logout" onClick={handleLogout} />
     </>
   );
 }
