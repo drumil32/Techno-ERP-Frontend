@@ -39,13 +39,13 @@ import {
   SingleEnquiryUploadDocument
 } from './documents-section/single-document-form';
 import { useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { fixCourseDropdown } from '@/components/layout/admin-tracker/helpers/fetch-data';
 
 interface StudentDetailsFormPropInterface {
   form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
   commonFormItemClass: string;
   commonFieldClass: string;
-  enquiryDocuments: any;
-  setCurrentDocuments: any;
 }
 
 const StudentDetailsSchema = enquirySchema;
@@ -53,13 +53,9 @@ const StudentDetailsSchema = enquirySchema;
 const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = ({
   form,
   commonFormItemClass,
-  commonFieldClass,
-  enquiryDocuments,
-  setCurrentDocuments
+  commonFieldClass
 }: StudentDetailsFormPropInterface) => {
   const [isValid, setIsValid] = useState(false);
-  const params = useParams();
-  const enquiry_id = params.id as string;
 
   const checkValidity = () => {
     const studentDetails = {
@@ -113,10 +109,12 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
   useEffect(() => {
     checkValidity();
   }, []);
-  const findExistingDocument = (docType: DocumentType): EnquiryDocument | undefined => {
-    const apiDocType = docType.toString();
-    return enquiryDocuments?.find((doc: any) => doc.type == apiDocType);
-  };
+
+  const fixCoursesQuery = useQuery({
+    queryKey: ['courses'],
+    queryFn: fixCourseDropdown
+  });
+  const courses = Array.isArray(fixCoursesQuery.data) ? fixCoursesQuery.data : [];
 
   return (
     <Accordion type="single" collapsible>
@@ -496,7 +494,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Course" />
                         </SelectTrigger>
                         <SelectContent>
-                          {Object.values(Course).map((course) => (
+                          {Object.values(courses).map((course) => (
                             <SelectItem key={course} value={course}>
                               {CourseNameMapper[course as Course]}
                             </SelectItem>
@@ -511,13 +509,6 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 )}
               />
             </div>
-            <SingleEnquiryUploadDocument
-              key={DocumentType.PHOTO}
-              enquiryId={enquiry_id}
-              documentType={DocumentType.PHOTO}
-              existingDocument={findExistingDocument(DocumentType.PHOTO)}
-              onUploadSuccess={setCurrentDocuments}
-            />
           </AccordionContent>
         </div>
       </AccordionItem>

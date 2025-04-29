@@ -657,7 +657,7 @@ export const StudentFeesForm = () => {
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-2/3">
-                <div className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 px-2 pb-1 font-bold text-[16px]">
+                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-5 grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 rounded-[5px] text-[16px]">
                   <div>Fees Details</div>
                   <div className="text-right">Schedule</div>
                   <div className="text-right">Fees</div>
@@ -681,7 +681,7 @@ export const StudentFeesForm = () => {
                   return (
                     <div
                       key={field.id}
-                      className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-8 gap-y-8 items-start px-2 py-1 my-4"
+                      className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-8 gap-y-8 items-start px-2 py-1 "
                     >
                       <div className="pt-2 text-sm">{displayFeeMapper(feeType)}</div>
                       <div className="pt-2 text-sm text-right">{scheduleFeeMapper(feeType)}</div>
@@ -750,7 +750,7 @@ export const StudentFeesForm = () => {
                   );
                 })}
 
-                <div className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mt-2 px-2 py-2 border-t font-semibold">
+                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-5 rounded-[5px] grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mt-2  border-t ">
                   <div className="text-sm">Total Fees</div>
                   <div>{/* Empty cell for Schedule */}</div>
                   <div className="text-sm text-right">
@@ -806,9 +806,9 @@ export const StudentFeesForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-2/3">
+              <div className="w-max">
                 <div className="space-y-4">
-                  <div className="grid grid-cols-[1fr_0.5fr_1fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 px-2 pb-1 border-b">
+                  <div className="grid bg-[#F7F7F7] rounded-[5px] text-[#4E4E4E] p-5 grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-3 gap-y-2 mb-2pb-1 border-b">
                     <div className="font-medium text-sm text-gray-600">Semester</div>
                     <div className="font-medium text-sm text-gray-600 text-right">Fees</div>
                     <div className="font-medium text-sm text-gray-600 text-center">Final Fees</div>
@@ -826,7 +826,7 @@ export const StudentFeesForm = () => {
                     return (
                       <div
                         key={field.id}
-                        className="grid grid-cols-[1fr_0.5fr_1fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 items-start px-2 py-1"
+                        className="grid w-max h-max grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-3 gap-y-2 items-start px-2 py-1"
                       >
                         <div className="pt-2 text-sm">Semester {index + 1}</div>
                         <div className="pt-2 text-sm text-right">

@@ -28,7 +28,7 @@ export const MultiSelectCustomDropdown = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [customOptions, setCustomOptions] = useState<{ _id: string; name: string }[]>([]);
-  const currentValue = form[name] || '';
+  const currentValue = typeof form.watch === 'function' ? form.watch(name) : form[name] || '';
 
   const allOptions = [...options, ...customOptions];
 

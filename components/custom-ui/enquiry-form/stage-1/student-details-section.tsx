@@ -38,6 +38,12 @@ import {
 import React from 'react';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
 import { DatePicker } from '@/components/ui/date-picker';
+import { useQuery } from '@tanstack/react-query';
+import {
+  cityDropdown,
+  fixCityDropdown,
+  fixCourseDropdown
+} from '@/components/layout/admin-tracker/helpers/fetch-data';
 
 // Props Interface
 interface StudentDetailsFormPropInterface<T extends FieldValues = FieldValues> {
@@ -51,6 +57,12 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
   commonFormItemClass,
   commonFieldClass
 }) => {
+  const fixCoursesQuery = useQuery({
+    queryKey: ['courses'],
+    queryFn: fixCourseDropdown
+  });
+  const courses = Array.isArray(fixCoursesQuery.data) ? fixCoursesQuery.data : [];
+
   return (
     <Accordion type="single" collapsible defaultValue="student-details">
       <AccordionItem value="student-details">
@@ -441,7 +453,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select course" />
                         </SelectTrigger>
                         <SelectContent>
-                          {Object.values(Course).map((course) => (
+                          {Object.values(courses).map((course) => (
                             <SelectItem key={course} value={course}>
                               {CourseNameMapper[course as Course]}
                             </SelectItem>

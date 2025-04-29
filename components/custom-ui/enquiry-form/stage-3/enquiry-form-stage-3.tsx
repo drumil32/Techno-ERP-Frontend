@@ -284,14 +284,14 @@ const EnquiryFormStage3 = () => {
             form={form}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
-            enquiryDocuments={currentDocuments}
-            setCurrentDocuments={setCurrentDocuments}
           />
 
           <MoreDetailsSection
             form={form}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
+            enquiryDocuments={currentDocuments}
+            setCurrentDocuments={setCurrentDocuments}
           />
 
           {/* Address details */}

@@ -15,21 +15,39 @@ import {
 import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { Nationality, Qualification } from '../schema/schema';
-import { AreaType, BloodGroup, Category, Religion, StatesOfIndia } from '@/types/enum';
+import {
+  AreaType,
+  BloodGroup,
+  Category,
+  DocumentType,
+  Religion,
+  StatesOfIndia
+} from '@/types/enum';
 import { useEffect, useState } from 'react';
 import { formSchemaStep3 } from './enquiry-form-stage-3';
+import {
+  EnquiryDocument,
+  SingleEnquiryUploadDocument
+} from './documents-section/single-document-form';
+import { useParams } from 'next/navigation';
 interface MoreDetailsSectionInterface {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  enquiryDocuments: any;
+  setCurrentDocuments: any;
 }
 
 const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
   form,
   commonFieldClass,
-  commonFormItemClass
+  commonFormItemClass,
+  enquiryDocuments,
+  setCurrentDocuments
 }) => {
   const [isValid, setIsValid] = useState(false);
+  const params = useParams();
+  const enquiry_id = params.id as string;
 
   const checkValidity = () => {
     const values = form.getValues();
@@ -65,6 +83,10 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
     });
     return () => subscription.unsubscribe();
   }, [form]);
+  const findExistingDocument = (docType: DocumentType): EnquiryDocument | undefined => {
+    const apiDocType = docType.toString();
+    return enquiryDocuments?.find((doc: any) => doc.type == apiDocType);
+  };
 
   useEffect(() => {
     checkValidity();
@@ -307,6 +329,24 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                   </FormItem>
                 )}
               />
+              <br />
+
+              <div className="flex flex-col">
+                <SingleEnquiryUploadDocument
+                  key={DocumentType.PHOTO}
+                  enquiryId={enquiry_id}
+                  documentType={DocumentType.PHOTO}
+                  existingDocument={findExistingDocument(DocumentType.PHOTO)}
+                  onUploadSuccess={setCurrentDocuments}
+                />
+                <SingleEnquiryUploadDocument
+                  key={DocumentType.SIGNATURE}
+                  enquiryId={enquiry_id}
+                  documentType={DocumentType.SIGNATURE}
+                  existingDocument={findExistingDocument(DocumentType.SIGNATURE)}
+                  onUploadSuccess={setCurrentDocuments}
+                />
+              </div>
             </div>
           </AccordionContent>
         </div>
