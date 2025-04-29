@@ -612,7 +612,7 @@ export default function LeadViewEdit({
             <Button
               variant="outline"
               role="combobox"
-              disabled={!hasRole(UserRoles.LEAD_MARKETING)}
+              disabled={!hasRole(UserRoles.LEAD_MARKETING || UserRoles.ADMIN)}
               className={cn(
                 'w-full justify-between rounded-[5px] min-h-10',
                 !formData.assignedTo?.length && 'text-muted-foreground'

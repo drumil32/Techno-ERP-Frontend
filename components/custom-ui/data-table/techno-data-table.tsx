@@ -37,6 +37,13 @@ import {
 } from 'lucide-react';
 import { LuDownload, LuUpload } from 'react-icons/lu';
 import clsx from 'clsx';
+import useAuthStore from '@/stores/auth-store';
+import { UserRoles } from '@/types/enum';
+import { apiRequest } from '@/lib/apiClient';
+import { API_METHODS } from '@/common/constants/apiMethods';
+import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import axios, { HttpStatusCode, AxiosError, AxiosResponse } from 'axios';
+import { toast } from 'sonner';
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends unknown, TValue> {
     align?: 'left' | 'center' | 'right';
@@ -64,6 +71,7 @@ export default function TechnoDataTable({
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
+  const { hasRole, user } = useAuthStore();
 
   const [sortConfig, setSortConfig] = useState<Record<string, string>>(() => {
     const initialConfig: Record<string, string> = {};
@@ -129,7 +137,39 @@ export default function TechnoDataTable({
     }
     return <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />;
   };
+  interface ApiResponse {
+    MESSAGE?: string;
+    SUCCESS?: boolean;
+    ERROR?: string;
+    DATA?: any;
+  }
 
+  const uploadAction = async (): Promise<void> => {
+    try {
+      const response = await axios<ApiResponse>({
+        method: 'POST',
+        url: API_ENDPOINTS.uploadMarketingData,
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === HttpStatusCode.Ok && response.data.SUCCESS) {
+        toast.success(response.data.MESSAGE || 'Marketing Data Uploaded Successfully');
+      }
+    } catch (error: unknown) {
+      if (axios.isAxiosError<ApiResponse>(error)) {
+        const errorMessage =
+          error.response?.data?.ERROR ||
+          error.response?.data?.MESSAGE ||
+          `HTTP Error: ${error.response?.status || 'Unknown'}`;
+        toast.error(errorMessage);
+      } else {
+        toast.error('An unexpected error occurred');
+      }
+    }
+  };
   const nonClickableColumns = [
     'actions',
     'leadType',
@@ -142,7 +182,7 @@ export default function TechnoDataTable({
   const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate'];
 
   return (
-    <div className="w-full mb-10 bg-white space-y-4 my-[8px] mb-0 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
+    <div className="w-full mb-10 bg-white space-y-4 my-[8px]  px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="flex w-full items-center py-4 px-4">
         <div className="flex items-center">
           <h2 className="text-xl font-bold">{tableName}</h2>
@@ -161,7 +201,8 @@ export default function TechnoDataTable({
             </span>
           </div>
           <Button
-            disabled
+            disabled={!hasRole(UserRoles.ADMIN)}
+            onClick={uploadAction}
             variant="outline"
             className="h-8 w-[85px] rounded-[10px] border"
             icon={LuUpload}

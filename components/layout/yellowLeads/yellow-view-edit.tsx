@@ -621,7 +621,7 @@ export default function YellowLeadViewEdit({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              disabled={!hasRole(UserRoles.LEAD_MARKETING)}
+              disabled={!hasRole(UserRoles.LEAD_MARKETING || UserRoles.ADMIN)}
               role="combobox"
               className={cn(
                 'w-full justify-between rounded-[5px] min-h-10',
