@@ -17,7 +17,7 @@ import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { Calendar } from '@/components/ui/calendar';
-import { parse, format, isValid } from 'date-fns';
+import { parse, format, isValid, isBefore, startOfDay } from 'date-fns';
 import { toast } from 'sonner';
 import { removeNullValues, toPascal } from '@/lib/utils';
 import { updateLeadRequestSchema } from './validators';
@@ -547,6 +547,7 @@ export default function LeadViewEdit({
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
+                disabled={(date) => isBefore(date, startOfDay(new Date()))}
                 selected={parseDateString(formData.nextDueDate)}
                 onSelect={handleDateChange}
                 initialFocus

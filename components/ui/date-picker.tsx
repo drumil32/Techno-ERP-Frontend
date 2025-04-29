@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Matcher } from 'react-day-picker';
 
 type ShadcnCalendarProps = React.ComponentProps<typeof Calendar>;
 
@@ -23,7 +24,8 @@ interface DatePickerProps<
   labelClassName?: string;
   buttonClassName?: string;
   formItemClassName?: string;
-  disabled?: boolean;
+  disabled?: any;
+  timelineDisabled?: Matcher | Matcher[];
   calendarProps?: Omit<
     ShadcnCalendarProps,
     | 'mode'
@@ -76,6 +78,7 @@ export function DatePicker<
   fromYear = new Date().getFullYear() - 100,
   toYear = new Date().getFullYear() + 10,
   isRequired = false,
+  timelineDisabled,
   defaultMonth = new Date(),
   defaultSelectedDate
 }: DatePickerProps<TFieldValues, TName>) {
@@ -132,7 +135,7 @@ export function DatePicker<
                   mode="single"
                   selected={selectedDate}
                   onSelect={handleDateSelect}
-                  disabled={disabled || calendarProps?.disabled}
+                  disabled={timelineDisabled}
                   initialFocus
                   defaultMonth={selectedDate || defaultMonth} // Show selected date's month if available, otherwise fall back to defaultMonth
                   captionLayout={showYearMonthDropdowns ? 'dropdown-buttons' : 'buttons'}

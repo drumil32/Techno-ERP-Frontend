@@ -47,12 +47,11 @@ export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).e
   })
 });
 
-
 const EnquiryFormStage3 = () => {
   const queryClient = useQueryClient();
   const pathVariables = useParams();
   const id = pathVariables.id as string;
-  const [refreshKey, setRefreshKey] = useState(0)
+  const [refreshKey, setRefreshKey] = useState(0);
   const router = useRouter();
 
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
@@ -62,11 +61,13 @@ const EnquiryFormStage3 = () => {
     enabled: !!id
   });
 
-  const [currentDocuments, setCurrentDocuments] = useState<EnquiryDocument[]>(data?.documents as EnquiryDocument[] ?? []);
+  const [currentDocuments, setCurrentDocuments] = useState<EnquiryDocument[]>(
+    (data?.documents as EnquiryDocument[]) ?? []
+  );
 
   useEffect(() => {
-    setCurrentDocuments(data?.documents as EnquiryDocument[] ?? [])
-  }, [data])
+    setCurrentDocuments((data?.documents as EnquiryDocument[]) ?? []);
+  }, [data]);
 
   const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
     id,
@@ -74,12 +75,12 @@ const EnquiryFormStage3 = () => {
   });
 
   const form = useForm<z.infer<typeof formSchemaStep3>>({
-    resolver: zodResolver(formSchemaStep3),
+    resolver: zodResolver(formSchemaStep3)
   });
 
   async function saveDraft() {
     let values = form.getValues();
-    console.log(values)
+    console.log(values);
 
     // Remove null values from the entire object
     values = removeNullValues(values);
@@ -106,7 +107,7 @@ const EnquiryFormStage3 = () => {
         {} as Partial<Record<keyof typeof enquiryDraftStep3Schema.shape, true>>
       )
     );
-    console.log('Partial Schema',partialSchema);
+    console.log('Partial Schema', partialSchema);
 
     const validationResult = partialSchema.safeParse(filteredValues);
     // Clear previous errors before setting new ones
@@ -134,7 +135,7 @@ const EnquiryFormStage3 = () => {
           }
         });
       }
-      console.log(errors)
+      console.log(errors);
       setNestedErrors(errors);
       return;
     }
@@ -150,7 +151,7 @@ const EnquiryFormStage3 = () => {
     toast.success('Enquiry draft updated successfully');
 
     form.setValue('confirmation', false);
-    setRefreshKey((prev) => prev + 1)
+    setRefreshKey((prev) => prev + 1);
   }
 
   const onSubmit = async () => {
@@ -166,10 +167,9 @@ const EnquiryFormStage3 = () => {
     );
 
     if (missingDocuments.length > 0) {
-      toast.error("Please upload all mandatory documents before proceeding.");
+      toast.error('Please upload all mandatory documents before proceeding.');
       return;
     }
-
 
     // remove confirmation field from values
     const { confirmation, _id, ...rest } = filteredData;
@@ -186,8 +186,7 @@ const EnquiryFormStage3 = () => {
       }
     }
 
-
-    console.log(rest)
+    console.log(rest);
 
     const enquiry: any = await updateEnquiryStep3(rest);
 
@@ -218,12 +217,10 @@ const EnquiryFormStage3 = () => {
         ...sanitizedData,
         dateOfAdmission: sanitizedData.dateOfAdmission || format(new Date(), 'dd/MM/yyyy'),
         id: id,
-        confirmation: false,
+        confirmation: false
       });
-
     }
   }, [data, form, id, refreshKey, isLoading, isFetching]);
-
 
   const toastIdRef = useRef<string | number | null>(null);
 
@@ -287,6 +284,8 @@ const EnquiryFormStage3 = () => {
             form={form}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
+            enquiryDocuments={currentDocuments}
+            setCurrentDocuments={setCurrentDocuments}
           />
 
           <MoreDetailsSection
@@ -314,7 +313,10 @@ const EnquiryFormStage3 = () => {
             commonFormItemClass={commonFormItemClass}
           />
 
-          <AllDocuments enquiryDocuments={currentDocuments} setCurrentDocuments={setCurrentDocuments} />
+          <AllDocuments
+            enquiryDocuments={currentDocuments}
+            setCurrentDocuments={setCurrentDocuments}
+          />
 
           <ConfirmationSection form={form} />
           <OfficeUseSection
@@ -325,7 +327,12 @@ const EnquiryFormStage3 = () => {
           <ScholarshipDetailsSection form={form} />
           <ConfirmationCheckBoxStage3 form={form} />
 
-          <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} confirmationChecked={confirmationChecked} />
+          <EnquiryFormFooter
+            form={form}
+            onSubmit={onSubmit}
+            saveDraft={saveDraft}
+            confirmationChecked={confirmationChecked}
+          />
         </form>
       </Form>
     </>

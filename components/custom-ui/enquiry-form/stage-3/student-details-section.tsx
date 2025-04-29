@@ -26,6 +26,7 @@ import {
   Category,
   Course,
   CourseNameMapper,
+  DocumentType,
   Gender
 } from '@/types/enum';
 import { FieldErrors, FieldValue, FieldValues, UseFormReturn } from 'react-hook-form';
@@ -33,11 +34,18 @@ import { z } from 'zod';
 import { enquirySchema } from '../schema/schema';
 import { formSchemaStep3 } from './enquiry-form-stage-3';
 import { DatePicker } from '@/components/ui/date-picker';
+import {
+  EnquiryDocument,
+  SingleEnquiryUploadDocument
+} from './documents-section/single-document-form';
+import { useParams } from 'next/navigation';
 
 interface StudentDetailsFormPropInterface {
   form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  enquiryDocuments: any;
+  setCurrentDocuments: any;
 }
 
 const StudentDetailsSchema = enquirySchema;
@@ -45,9 +53,13 @@ const StudentDetailsSchema = enquirySchema;
 const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = ({
   form,
   commonFormItemClass,
-  commonFieldClass
-}) => {
+  commonFieldClass,
+  enquiryDocuments,
+  setCurrentDocuments
+}: StudentDetailsFormPropInterface) => {
   const [isValid, setIsValid] = useState(false);
+  const params = useParams();
+  const enquiry_id = params.id as string;
 
   const checkValidity = () => {
     const studentDetails = {
@@ -101,6 +113,10 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
   useEffect(() => {
     checkValidity();
   }, []);
+  const findExistingDocument = (docType: DocumentType): EnquiryDocument | undefined => {
+    const apiDocType = docType.toString();
+    return enquiryDocuments?.find((doc: any) => doc.type == apiDocType);
+  };
 
   return (
     <Accordion type="single" collapsible>
@@ -495,6 +511,13 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 )}
               />
             </div>
+            <SingleEnquiryUploadDocument
+              key={DocumentType.PHOTO}
+              enquiryId={enquiry_id}
+              documentType={DocumentType.PHOTO}
+              existingDocument={findExistingDocument(DocumentType.PHOTO)}
+              onUploadSuccess={setCurrentDocuments}
+            />
           </AccordionContent>
         </div>
       </AccordionItem>

@@ -1,6 +1,19 @@
-import { FeeType, FeeStatus, Districts, Countries, StatesOfIndia, AdmissionMode, Gender, AreaType, Category, Course, AdmissionReference, EducationLevel } from "./enum";
+import {
+  FeeType,
+  FeeStatus,
+  Districts,
+  Countries,
+  StatesOfIndia,
+  AdmissionMode,
+  Gender,
+  AreaType,
+  Category,
+  Course,
+  AdmissionReference,
+  EducationLevel
+} from './enum';
 
-interface EntranceExamDetails{
+interface EntranceExamDetails {
   nameOfExamination?: string;
   rollNumber?: string;
   rank?: string;
@@ -20,7 +33,7 @@ export interface PreviousCollegeData {
 export interface Address {
   _id: string;
   country: Countries;
-  district: Districts;
+  district: string;
   addressLine1: string;
   addressLine2: string;
   pincode: string;
@@ -92,7 +105,6 @@ interface StudentFees {
   telecaller?: string;
   remarks?: string;
 }
-
 
 /** Admission Type */
 export interface Admission {
