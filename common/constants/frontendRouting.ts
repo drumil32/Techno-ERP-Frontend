@@ -21,7 +21,10 @@ export const SITE_MAP = {
     GO_TO_ENQUIRY: (id: string, stage: string) => `/c/admissions/application-process/${id}/${stage}`
   },
   FINANCE: {
-    DEFAULT: '/c/finance'
+    DEFAULT: '/c/finance/student-dues',
+    STUDENT_DUES: '/c/finance/student-dues',
+    COURSE_DUES: '/c/finance/course-dues',
+    OVERALL_DUES: '/c/finance/overall-dues',
   },
   STUDENT_REPOSITORY: {
     DEFAULT: '/c/student-repository'

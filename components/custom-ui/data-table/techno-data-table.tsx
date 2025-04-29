@@ -60,6 +60,7 @@ export default function TechnoDataTable({
   setSelectedRowId,
   rowCursor = true,
   showPagination = true,
+  tableActionButton,
   children
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -160,17 +161,24 @@ export default function TechnoDataTable({
               <Search className="h-4 w-4 text-gray-500" />
             </span>
           </div>
-          <Button
-            disabled
-            variant="outline"
-            className="h-8 w-[85px] rounded-[10px] border"
-            icon={LuUpload}
-          >
-            <span className="font-inter font-medium text-[12px]">Upload</span>
-          </Button>
-          <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
-            <span className="font-inter font-semibold text-[12px]">Download</span>
-          </Button>
+          {
+            tableActionButton ?
+              tableActionButton
+              :
+              <>
+                <Button
+                  disabled
+                  variant="outline"
+                  className="h-8 w-[85px] rounded-[10px] border"
+                  icon={LuUpload}
+                >
+                  <span className="font-inter font-medium text-[12px]">Upload</span>
+                </Button>
+                <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
+                  <span className="font-inter font-semibold text-[12px]">Download</span>
+                </Button>
+              </>
+          }
         </div>
       </div>
 
@@ -220,7 +228,7 @@ export default function TechnoDataTable({
               table.getRowModel().rows.map((row: any) => (
                 <TableRow
                   key={row.id}
-                  className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
+                  className={clsx(`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`)}
                   onClick={() => {
                     setSelectedRowId(row.id);
                     handleViewMore({ ...row.original, leadType: row.original._leadType });

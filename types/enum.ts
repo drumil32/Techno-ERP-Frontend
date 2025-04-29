@@ -447,3 +447,8 @@ export enum CollegeNames {
   'TIMS' = 'TIMS',
   'TCL' = 'TCL'
 }
+
+export enum FeesPaidStatus {
+  DUE = 'Due',
+  PAID = 'Paid'
+}
