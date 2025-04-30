@@ -154,7 +154,7 @@ export default function LoginPage() {
                 ))}
               </div>
 
-              <div className="flex flex-row gap-2 md:gap-3">
+              {/* <div className="flex flex-row gap-2 md:gap-3">
                 <Button className="bg-white text-indigo-800 hover:bg-gray-100 font-semibold text-xs md:text-sm py-1.5 md:py-2 lg:py-3 flex-1 rounded-lg">
                   Get Started
                 </Button>
@@ -166,7 +166,7 @@ export default function LoginPage() {
                     Live Demo
                   </Button>
                 </a>
-              </div>
+              </div> */}
             </div>
           </div>
 

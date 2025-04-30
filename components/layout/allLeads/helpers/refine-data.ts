@@ -145,7 +145,7 @@ export const refineAnalytics = (analytics: any) => {
     {
       heading: analytics.didNotPickLeads ?? '',
       subheading: calculatePercentage(analytics.didNotPickLeads),
-      title: 'Did Not Picked Leads',
+      title: 'Did Not Pick',
       color: 'text-pink-700'
     }
   ];

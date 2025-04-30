@@ -33,7 +33,8 @@ import {
   marketingSourcesDropdown
 } from '../admin-tracker/helpers/fetch-data';
 import FootFallSelect from './foot-fall-select';
-
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import { SelectValue } from '@radix-ui/react-select';
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -317,18 +318,21 @@ export default function YellowLeadsTracker() {
         };
 
         return (
-          <select
-            value={selectedValue}
-            onChange={(e) => handleDropdownChange(Number(e.target.value))}
-            className="border bg-white rounded pl-1 pr-3 py-1 cursor-pointer"
-            aria-label="Follow-up count"
+          <Select
+            value={selectedValue.toString()}
+            onValueChange={(value) => handleDropdownChange(Number(value))}
           >
-            {Array.from({ length: selectedValue + 2 }, (_, i) => (
-              <option key={i} value={i}>
-                {i.toString().padStart(2, '0')}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-[60px] min-h-[unset] h-8 text-sm">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent className="w-[60px] min-w-[unset]">
+              {Array.from({ length: selectedValue + 2 }, (_, i) => (
+                <SelectItem key={i} value={i.toString()} className="text-sm h-8 justify-center">
+                  {i.toString().padStart(2, '0')}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         );
       }
     },
