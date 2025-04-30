@@ -24,7 +24,8 @@ export const SITE_MAP = {
     DEFAULT: '/c/finance'
   },
   STUDENT_REPOSITORY: {
-    DEFAULT: '/c/student-repository'
+    DEFAULT: '/c/student-repository',
+    SINGLE_STUDENT: (id: string) => `/c/student-repository/${id}`,
   },
   FACULTY: {
     DEFAULT: '/c/faculty'

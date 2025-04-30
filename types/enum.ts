@@ -447,3 +447,10 @@ export enum CollegeNames {
   'TIMS' = 'TIMS',
   'TCL' = 'TCL'
 }
+
+export enum CourseYear {
+  FIRST = 'First',
+  SECOND = 'Second',
+  THIRD = 'Third',
+  FOURTH = 'Fourth'
+}
