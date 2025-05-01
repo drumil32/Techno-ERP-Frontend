@@ -1,27 +1,36 @@
+// React and third-party libraries
 import React, { useState } from 'react';
+import { FieldValues, UseFormReturn } from 'react-hook-form';
+import { z } from 'zod';
+
+// UI components
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger
 } from '@/components/ui/accordion';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { FieldValues, UseFormReturn } from 'react-hook-form';
-import { handleNumericInputChange, toPascal } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Check, Pencil } from 'lucide-react';
-import TagInput from '../enquiry-form/stage-1/tag-input';
+
+// Utility functions and schemas
+import { handleNumericInputChange, toPascal } from '@/lib/utils';
 import { enquirySchema } from '../enquiry-form/schema/schema';
-import { z } from 'zod';
 
+// Custom components
+import TagInput from '../enquiry-form/stage-1/tag-input';
+
+// ---
 const formschema = enquirySchema;
-
 interface AcademicDetailsFormPropInterface<T extends FieldValues = FieldValues> {
   form: UseFormReturn<z.infer<typeof formschema>>;
   commonFormItemClass: string;
   commonFieldClass: string;
 }
+
 
 const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
   form,
@@ -51,7 +60,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
         <div className="space-y-2">
           {/* Section Title */}
           <AccordionTrigger className="w-full items-center">
-            <h3 className="font-inter text-[16px] font-semibold">Address Details</h3>
+            <h3 className="font-inter text-[16px] font-semibold">Academic  Details</h3>
             <Button
               variant="outline"
               className={`rounded-[10px] border font-inter font-medium text-[12px] px-2 py-1 h-fit bg-transparent ${isEditing ? 'text-green-600 border-green-600 hover:text-green-600' : 'text-[#5B31D1] border-[#5B31D1] hover:text-[#5B31D1]'}`}
@@ -96,7 +105,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                           <FormControl>
                             <Input
                               {...field}
-                              value={field.value ?? ''}
+                              value={field.value !== undefined ? String(field.value) : ''}
                               className={commonFieldClass}
                               placeholder="Enter school/college Name"
                             />
@@ -639,6 +648,140 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                     <DisplayField
                       label="Subjects"
                       value={form.getValues('academicDetails.2.subjects')?.join(', ') || null}
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Entrance Exam Details */}
+              <div className="space-y-4">
+                <h4 className="font-inter text-[16px] font-semibold">Entrance Exam</h4>
+
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px]">
+                  {isEditing ? (
+                    <FormField
+                      key="entranceExamDetails.nameOfExamination"
+                      control={form.control}
+                      name="entranceExamDetails.nameOfExamination"
+                      render={({ field }) => (
+                        <FormItem className={`${commonFormItemClass} col-span-1`}>
+                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                            Name of Examination
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              value={field.value ?? ''}
+                              className={commonFieldClass}
+                              placeholder="Enter name of examination"
+                            />
+                          </FormControl>
+                          <div className="h-[20px]">
+                            <FormMessage className="text-[11px]" />
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                  ) : (
+                    <DisplayField
+                      label="Name of Examination"
+                      value={
+                        form.getValues('entranceExamDetails.nameOfExamination')?.toString() || null
+                      }
+                    />
+                  )}
+
+                  {isEditing ? (
+                    <FormField
+                      key="entranceExamDetails.rollNumber"
+                      control={form.control}
+                      name="entranceExamDetails.rollNumber"
+                      render={({ field }) => (
+                        <FormItem className={`${commonFormItemClass} col-span-1`}>
+                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                            Roll Number
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              value={field.value ?? ''}
+                              className={commonFieldClass}
+                              placeholder="Enter roll number"
+                            />
+                          </FormControl>
+                          <div className="h-[20px]">
+                            <FormMessage className="text-[11px]" />
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                  ) : (
+                    <DisplayField
+                      label="Roll Number"
+                      value={form.getValues('entranceExamDetails.rollNumber')?.toString() || null}
+                    />
+                  )}
+
+                  <div className="col-start-1 ">
+                    {isEditing ? (
+                      <FormField
+                        key="entranceExamDetails.rank"
+                        control={form.control}
+                        name="entranceExamDetails.rank"
+                        render={({ field }) => (
+                          <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
+                            <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                              Rank
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                value={field.value ?? ''}
+                                className={commonFieldClass}
+                                placeholder="Enter rank"
+                              />
+                            </FormControl>
+                            <div className="h-[20px]">
+                              <FormMessage className="text-[11px]" />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      <DisplayField
+                        label="Rank"
+                        value={form.getValues('entranceExamDetails.rank')?.toString() || null}
+                      />
+                    )}
+                  </div>
+
+                  {isEditing ? (
+                    <FormField
+                      key="entranceExamDetails.qualified"
+                      control={form.control}
+                      name="entranceExamDetails.qualified"
+                      render={({ field }) => (
+                        <FormItem className={`${commonFormItemClass} col-span-1`}>
+                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                            Qualified
+                          </FormLabel>
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={(checked) => field.onChange(checked)}
+                              className="h-4 w-4"
+                            />
+                          </FormControl>
+                          <div className="h-[20px]">
+                            <FormMessage className="text-[11px]" />
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                  ) : (
+                    <DisplayField
+                      label="Qualified"
+                      value={form.getValues('entranceExamDetails.qualified')?.toString() || null}
                     />
                   )}
                 </div>

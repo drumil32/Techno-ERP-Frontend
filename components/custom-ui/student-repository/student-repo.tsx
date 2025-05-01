@@ -1,17 +1,28 @@
 'use client';
 
+// Import statements categorized by type
+
+// React and Next.js imports
 import { useRef, useState } from 'react';
-import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import { useRouter } from 'next/navigation';
-import { SITE_MAP } from '@/common/constants/frontendRouting';
-import { FilterData, StudentRepoRow } from './helpers/interface';
+
+// Third-party library imports
+import { useQuery } from '@tanstack/react-query';
+
+// Local component imports
+import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import TechnoFiltersGroup from '../filter/techno-filters-group';
+import FilterBadges from '@/components/layout/allLeads/components/filter-badges';
+
+// Context and helper imports
 import { useTechnoFilterContext } from '../filter/filter-context';
 import { courseDropdown } from '@/components/layout/admin-tracker/helpers/fetch-data';
-import { useQuery } from '@tanstack/react-query';
-import { CourseYear } from '@/types/enum';
-import FilterBadges from '@/components/layout/allLeads/components/filter-badges';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
+import { FilterData, StudentRepoRow } from './helpers/interface';
 import { columns } from './helpers/columns';
+
+// Enum imports
+import { CourseYear } from '@/types/enum';
 
 export default function StudentRepositoryPage() {
 
@@ -42,7 +53,7 @@ export default function StudentRepositoryPage() {
   // Handle Navigation to Single Student Page
   const handleViewMore = (row: StudentRepoRow) => {
     if (row && row.id) {
-      router.push(SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(row.studentID));
+      router.push(SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(row.studentID, 'student-details'));
     }
   };
 

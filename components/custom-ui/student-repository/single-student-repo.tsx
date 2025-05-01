@@ -1,47 +1,58 @@
 'use client';
 
+// UI Components
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
-import React from 'react';
-import PersonalDetailsSection from './personal-details';
 import { Form } from '@/components/ui/form';
-import { FieldDefinition, StudentData } from './helpers/interface';
+
+// React and Hooks
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { useParams } from 'next/navigation';
+
+// Schema and Validation
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { enquirySchema } from '../enquiry-form/schema/schema';
-import { useForm } from 'react-hook-form';
+
+// Helpers and Interfaces
+import { FieldDefinition, StudentData } from './helpers/interface';
+import { StudentRepositoryTabs } from './helpers/enum';
+
+// Components
+import PersonalDetailsSection from './personal-details';
 import AddressDetailsSection from './address-details';
 import MoreDetailsHeader from './more-details-header/more-details-header';
-import { StudentRepositoryTabs } from './helpers/enum';
-import { SITE_MAP } from '@/common/constants/frontendRouting';
-import { useParams } from 'next/navigation';
-import { AcademicDetails } from '@/types/enum';
+import { useMoreDetailsHeaderContext } from './more-details-header/more-details-header-context';
 import AcademicDetailsSection from './academic-details';
+import CurrentAcademicDetailsSection from './current-academic-details';
+
+// Constants
+import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 const formSchema = enquirySchema;
 
-
-
 const SingleStudentRepositoryPage: React.FC = () => {
 
-  const { id , stage } : { id : string , stage : string} = useParams();
+  const { id }: { id: string; tabName: string } = useParams();
+  const { headerActiveItem } = useMoreDetailsHeaderContext();
 
   const HEADER_ITEMS = {
     [StudentRepositoryTabs.STUDENT_DETAILS]: {
       title: 'Student Details',
-      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, stage)
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, 'student-details')
     },
     [StudentRepositoryTabs.ACADEMIC_DETAILS]: {
       title: 'Academic Details',
-      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, stage)
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, 'academic-details')
     },
     [StudentRepositoryTabs.ALL_DOCUMENTS]: {
       title: 'All Documents',
-      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, stage)
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, 'all-documents')
     },
     [StudentRepositoryTabs.OFFICE_DETAILS]: {
       title: 'Office Details',
-      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, stage)
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, 'office-details')
     }
   };
 
@@ -56,9 +67,10 @@ const SingleStudentRepositoryPage: React.FC = () => {
     courseYear: 'First',
     formNo: 'TIMS453',
     semester: '1st',
-    lurnNo: 'LURN123456',
+    lurnNo: 'LURN123456'
   };
 
+  // Define the fields for each column
   const column1Fields: FieldDefinition[] = [
     { label: 'Student Name', key: 'name' },
     { label: "Father's Name", key: 'fatherName' },
@@ -75,10 +87,10 @@ const SingleStudentRepositoryPage: React.FC = () => {
 
   const column3Fields: FieldDefinition[] = [
     { label: 'Semester', key: 'semester' },
-    { label: 'Lurn/Pre-registration No.', key: 'lurnNo' },
+    { label: 'Lurn/Pre-registration No.', key: 'lurnNo' }
   ];
 
-  // Component to render a single field with proper truncation
+  // Info Field
   const InfoField: React.FC<{ label: string; value: string }> = ({ label, value }) => (
     <div className="flex flex-row gap-2 items-start">
       <Label className="text-[14px] font-normal text-[#666666] shrink-0">{label} :</Label>
@@ -97,6 +109,7 @@ const SingleStudentRepositoryPage: React.FC = () => {
     </div>
   );
 
+  // Profile Picture Section
   const ProfilePicSection: React.FC<{ name: string; id: string }> = ({ name, id }) => (
     <div className="bg-white rounded-[10px] p-4 flex items-center flex-col gap-2">
       <div className="relative w-24 h-24 overflow-hidden">
@@ -150,27 +163,38 @@ const SingleStudentRepositoryPage: React.FC = () => {
       {/* Student More Details */}
       <div>
         <Form {...form}>
-          {/* Personal Details */}
-          <PersonalDetailsSection
-            form={form}
-            commonFieldClass={commonFieldClass}
-            commonFormItemClass={commonFormItemClass}
-          />
+          {headerActiveItem === HEADER_ITEMS[StudentRepositoryTabs.STUDENT_DETAILS].title && (
+            <>
+              {/* Personal Details */}
+              <PersonalDetailsSection
+                form={form}
+                commonFieldClass={commonFieldClass}
+                commonFormItemClass={commonFormItemClass}
+              />
 
-          {/* Address Details */}
-          <AddressDetailsSection
-            form={form}
-            commonFieldClass={commonFieldClass}
-            commonFormItemClass={commonFormItemClass}
-          />
+              {/* Address Details */}
+              <AddressDetailsSection
+                form={form}
+                commonFieldClass={commonFieldClass}
+                commonFormItemClass={commonFormItemClass}
+              />
 
-          {/* Academic Details */}
-          <AcademicDetailsSection
-            form={form}
-            commonFieldClass={commonFieldClass}
-            commonFormItemClass={commonFormItemClass}
-          />
+              {/* Academic Details */}
+              <AcademicDetailsSection
+                form={form}
+                commonFieldClass={commonFieldClass}
+                commonFormItemClass={commonFormItemClass}
+              />
+            </>
+          )}
 
+          {headerActiveItem === HEADER_ITEMS[StudentRepositoryTabs.ACADEMIC_DETAILS].title && (
+            <CurrentAcademicDetailsSection
+              form={form}
+              commonFieldClass={commonFieldClass}
+              commonFormItemClass={commonFormItemClass}
+            />
+          )}
         </Form>
       </div>
     </div>

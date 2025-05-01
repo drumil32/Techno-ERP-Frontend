@@ -1,4 +1,8 @@
+// React and React Hook Form imports
 import React, { useState } from 'react';
+import { FieldValues, UseFormReturn } from 'react-hook-form';
+
+// UI components imports
 import {
   Accordion,
   AccordionContent,
@@ -14,13 +18,16 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { FieldValues, UseFormReturn } from 'react-hook-form';
 import { DatePicker } from '@/components/ui/date-picker';
+import { Button } from '@/components/ui/button';
+
+// Icon imports
+import { Check, Pencil } from 'lucide-react';
+
+// Utility and helper imports
 import { AreaType, BloodGroup, Category, Gender, Religion, StatesOfIndia } from '@/types/enum';
 import { toPascal } from '@/lib/utils';
 import { Nationality } from '../enquiry-form/schema/schema';
-import { Button } from '@/components/ui/button';
-import { Check, Pencil } from 'lucide-react';
 
 interface PersonalDetailsFormPropInterface<T extends FieldValues = FieldValues> {
   form: UseFormReturn<any>;
@@ -36,8 +43,6 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormPropInterface> = ({
   // State to track edit mode
   const [isEditing, setIsEditing] = useState(false);
 
-  const formData = form.getValues();
-
   // Toggle edit mode
   const toggleEdit = () => {
     setIsEditing((prev) => !prev);
@@ -51,6 +56,33 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormPropInterface> = ({
       <div className="h-5"></div>
     </div>
   );
+
+
+  const formData = form.getValues();
+
+  // Fields to display when not in edit mode
+  const displayFields = [
+    { label: 'Student Name', value: formData.studentName },
+    { label: 'Student Phone Number', value: formData.studentPhoneNumber },
+    { label: 'Email ID', value: formData.emailId },
+    { label: 'Student ID', value: formData.studentID },
+    { label: 'Form No.', value: formData.formNo },
+    { label: "Father's Name", value: formData.fatherName },
+    { label: "Father's Phone Number", value: formData.fatherPhoneNumber },
+    { label: "Father's Occupation", value: formData.fatherOccupation },
+    { label: "Mother's Name", value: formData.motherName },
+    { label: "Mother's Phone Number", value: formData.motherPhoneNumber },
+    { label: "Mother's Occupation", value: formData.motherOccupation },
+    { label: 'Gender', value: formData.gender },
+    { label: 'Date of Birth', value: formData.dateOfBirth },
+    { label: 'Religion', value: formData.religion },
+    { label: 'Category', value: formData.category },
+    { label: 'Blood Group', value: formData.bloodGroup },
+    { label: 'Aadhaar Number', value: formData.aadharNumber },
+    { label: 'State Of Domicile', value: formData.stateOfDomicile },
+    { label: 'Area Type', value: formData.areaType },
+    { label: 'Nationality', value: formData.nationality }
+  ];
 
   return (
     <Accordion type="single" collapsible defaultValue="personal-details">
@@ -630,28 +662,9 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormPropInterface> = ({
                   />
                 </>
               ) : (
-                <>
-                  <DisplayField label="Student Name" value={formData.studentName} />
-                  <DisplayField label="Student Phone Number" value={formData.studentPhoneNumber} />
-                  <DisplayField label="Email ID" value={formData.emailId} />
-                  <DisplayField label="Student ID" value={formData.studentID} />
-                  <DisplayField label="Form No." value={formData.formNo} />
-                  <DisplayField label="Father's Name" value={formData.fatherName} />
-                  <DisplayField label="Father's Phone Number" value={formData.fatherPhoneNumber} />
-                  <DisplayField label="Father's Occupation" value={formData.fatherOccupation} />
-                  <DisplayField label="Mother's Name" value={formData.motherName} />
-                  <DisplayField label="Mother's Phone Number" value={formData.motherPhoneNumber} />
-                  <DisplayField label="Mother's Occupation" value={formData.motherOccupation} />
-                  <DisplayField label="gender" value={formData.gender} />
-                  <DisplayField label="Date of Birth" value={formData.dateOfBirth} />
-                  <DisplayField label="Religion" value={formData.religion} />
-                  <DisplayField label="Category" value={formData.category} />
-                  <DisplayField label="Blood Group" value={formData.bloodGroup} />
-                  <DisplayField label="Aadhaar Number" value={formData.aadharNumber} />
-                  <DisplayField label="State Of Domicile" value={formData.stateOfDomicile} />
-                  <DisplayField label="Area Type" value={formData.areaType} />
-                  <DisplayField label="Nationality" value={formData.nationality} />
-                </>
+                displayFields.map(({ label, value }) => (
+                  <DisplayField key={label} label={label} value={value} />
+                ))
               )}
             </div>
           </AccordionContent>

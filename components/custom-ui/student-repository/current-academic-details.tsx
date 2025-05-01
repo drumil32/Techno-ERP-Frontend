@@ -2,14 +2,13 @@
 import React, { useState } from 'react';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
 
-// UI component imports
+// UI components imports
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import {
   Select,
   SelectContent,
@@ -17,29 +16,45 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { CustomDropdown } from '../custom-dropdown/custom-dropdown';
 
 // Icon imports
 import { Check, Pencil } from 'lucide-react';
 
-// Utility and type imports
-import { toPascal } from '@/lib/utils';
-import { Countries, Districts, StatesOfIndia } from '@/types/enum';
+// Schema and validation imports
+import { enquirySchema } from '../enquiry-form/schema/schema';
+import { z } from 'zod';
 
-interface AddressDetailsFormPropInterface<T extends FieldValues = FieldValues> {
-  form: UseFormReturn<any>;
+// Utility and helper imports
+import { toPascal } from '@/lib/utils';
+import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
+
+// Enum imports
+import { CourseYear } from '@/types/enum';
+
+// ---
+const formschema = enquirySchema;
+const academicYears = generateAcademicYearDropdown();
+const SEMESTER_LIST = [1, 2, 3, 4];
+
+interface CurrentAcademicDetailsFormPropInterface<T extends FieldValues = FieldValues> {
+  form: UseFormReturn<z.infer<typeof formschema>>;
   commonFormItemClass: string;
   commonFieldClass: string;
 }
 
-const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
+const CurrentAcademicDetailsSection: React.FC<CurrentAcademicDetailsFormPropInterface> = ({
   form,
   commonFormItemClass,
   commonFieldClass
 }) => {
   // State to track edit mode
   const [isEditing, setIsEditing] = useState(false);
+
+  const formData: z.infer<typeof formschema> = form.getValues();
 
   // Toggle edit mode
   const toggleEdit = () => {
@@ -55,16 +70,14 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
     </div>
   );
 
-  const formData = form.getValues();
-
   // Fields to display when not in edit mode
   const displayFields = [
-    { label: 'Address Line 1', value: formData.address?.addressLine1 },
-    { label: 'Address Line 2', value: formData.address?.addressLine2 },
-    { label: 'Pincode', value: formData.address?.pincode },
-    { label: 'District', value: toPascal(formData.address?.district) },
-    { label: 'State', value: toPascal(formData.address?.state) },
-    { label: 'Country', value: toPascal(formData.address?.country) }
+    { label: 'Course Name', value: formData.courseName },
+    { label: 'Course Code', value: formData.courseCode },
+    { label: 'Department Name', value: formData.departmentName },
+    { label: 'Current Year', value: toPascal(formData.currentYear) },
+    { label: 'Current Semester', value: toPascal(formData.currentSemester) },
+    { label: 'Academic Year', value: formData.academicYear || 'N/A' }
   ];
 
   return (
@@ -73,7 +86,7 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
         <div className="space-y-2">
           {/* Section Title */}
           <AccordionTrigger className="w-full items-center">
-            <h3 className="font-inter text-[16px] font-semibold">Address Details</h3>
+            <h3 className="font-inter text-[16px] font-semibold">Academic Details</h3>
             <Button
               variant="outline"
               className={`rounded-[10px] border font-inter font-medium text-[12px] px-2 py-1 h-fit bg-transparent ${isEditing ? 'text-green-600 border-green-600 hover:text-green-600' : 'text-[#5B31D1] border-[#5B31D1] hover:text-[#5B31D1]'}`}
@@ -98,23 +111,23 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
           </AccordionTrigger>
 
           <AccordionContent>
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-y-1 sm:grid-cols-1 gap-x-[32px] bg-white p-4 rounded-[10px]">
+            <div className="grid grid-row-3 gap-y-6 bg-white p-4 rounded-[10px]">
               {isEditing ? (
                 <>
-                  {/* Address Line 1 */}
+                  {/* Course Name */}
                   <FormField
                     control={form.control}
-                    name="address.addressLine1"
+                    name="courseName"
                     render={({ field }) => (
                       <FormItem className="col-span-2">
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                          Address Line 1<span className="text-red-500 pl-0">*</span>
+                          Course Name<span className="text-red-500 pl-0">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             value={field.value ?? ''}
-                            placeholder="Enter Address Line 1"
+                            placeholder="Enter Course Name"
                           />
                         </FormControl>
                         <div className="h-[20px]">
@@ -124,21 +137,17 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
                     )}
                   />
 
-                  {/* Address Line 2 */}
+                  {/* Course Code */}
                   <FormField
                     control={form.control}
-                    name="address.addressLine2"
+                    name="courseCode"
                     render={({ field }) => (
                       <FormItem className="col-span-2">
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                          Address Line 2<span className="text-red-500 pl-0">*</span>
+                          Course Code<span className="text-red-500 pl-0">*</span>
                         </FormLabel>
                         <FormControl>
-                          <Input
-                            {...field}
-                            value={field.value ?? ''}
-                            placeholder="Enter Address Line 2"
-                          />
+                          <Input {...field} value={field.value ?? ''} placeholder="Course Code" />
                         </FormControl>
                         <div className="h-[20px]">
                           <FormMessage className="text-[11px]" />
@@ -147,14 +156,14 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
                     )}
                   />
 
-                  {/* PinCode */}
+                  {/* Department Name */}
                   <FormField
                     control={form.control}
-                    name="address.pincode"
+                    name="departmentName"
                     render={({ field }) => (
                       <FormItem className={commonFormItemClass}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                          Pincode
+                          Department Name
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
                         <FormControl>
@@ -162,7 +171,7 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
                             {...field}
                             value={field.value ?? ''}
                             className={commonFieldClass}
-                            placeholder="Enter pincode"
+                            placeholder="Enter department name"
                           />
                         </FormControl>
                         <div className="h-[20px]">
@@ -172,14 +181,14 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
                     )}
                   />
 
-                  {/* District */}
+                  {/* Current Year */}
                   <FormField
                     control={form.control}
-                    name="address.district"
+                    name="currentYear"
                     render={({ field }) => (
                       <FormItem className={commonFormItemClass}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                          District
+                          Current Year
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
                         <FormControl>
@@ -188,9 +197,9 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
                               <SelectValue placeholder="Select district" />
                             </SelectTrigger>
                             <SelectContent>
-                              {Object.values(Districts).map((district) => (
-                                <SelectItem key={district} value={district}>
-                                  {district}
+                              {Object.values(CourseYear).map((year) => (
+                                <SelectItem key={year} value={year}>
+                                  {year}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -203,64 +212,54 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
                     )}
                   />
 
-                  {/* State */}
+                  {/* Current Semester */}
                   <FormField
                     control={form.control}
-                    name="address.state"
+                    name="currentSemester"
                     render={({ field }) => (
                       <FormItem className={commonFormItemClass}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                          State
-                          <span className="text-red-500 pl-0">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={StatesOfIndia.UttarPradesh}
-                            value={field.value}
-                          >
-                            <SelectTrigger className={`${commonFieldClass} w-full`}>
-                              <SelectValue placeholder="Select state" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Object.values(StatesOfIndia).map((state) => (
-                                <SelectItem key={state} value={state}>
-                                  {state}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <div className="h-[20px]">
-                          <FormMessage className="text-[11px]" />
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Country */}
-                  <FormField
-                    control={form.control}
-                    name="address.country"
-                    render={({ field }) => (
-                      <FormItem className={commonFormItemClass}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                          Country
+                          Current Semester
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <SelectTrigger className={`${commonFieldClass} w-full`}>
-                              <SelectValue placeholder="Select country" />
+                              <SelectValue placeholder="Select Semester" />
                             </SelectTrigger>
                             <SelectContent>
-                              {Object.values(Countries).map((country) => (
-                                <SelectItem key={country} value={country}>
-                                  {country}
+                              {SEMESTER_LIST.map((semester) => (
+                                <SelectItem key={semester} value={semester}>
+                                  {semester}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Academic Year */}
+                  <FormField
+                    control={form.control}
+                    name="academicYear"
+                    render={({ field }) => (
+                      <FormItem className={commonFormItemClass}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Academic Year
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <CustomDropdown
+                            options={academicYears}
+                            selected={field.value || ''}
+                            onChange={(val) => field.onChange(val)}
+                            placeholder="Select academic year"
+                          />
                         </FormControl>
                         <div className="h-[20px]">
                           <FormMessage className="text-[11px]" />
@@ -270,8 +269,8 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
                   />
                 </>
               ) : (
-                displayFields.map((field, index) => (
-                  <DisplayField key={index} label={field.label} value={field.value} />
+                displayFields.map(({ label, value }, index) => (
+                  <DisplayField key={index} label={label} value={value} />
                 ))
               )}
             </div>
@@ -282,4 +281,4 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
   );
 };
 
-export default AddressDetailsSection;
+export default CurrentAcademicDetailsSection;
