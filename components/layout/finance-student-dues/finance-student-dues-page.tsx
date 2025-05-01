@@ -10,12 +10,15 @@ import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchStudentDuesMock } from "./helpers/mock-api";
 import { FeesPaidStatus } from "@/types/enum";
+import { useRouter } from "next/navigation";
+import { SITE_MAP } from "@/common/constants/frontendRouting";
 
 interface RefinedStudentDue extends StudentDue {
   id: number
 }
 
 export default function StudentDuesPage() {
+  const router = useRouter()
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [sortState, setSortState] = useState<any>({
@@ -23,6 +26,8 @@ export default function StudentDuesPage() {
     orderBy: ['asc'],
   });
   const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+
 
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -97,7 +102,9 @@ export default function StudentDuesPage() {
   const isError = duesQuery.isError;
   const tableData = duesQuery.data?.dues ?? [];
 
-
+  const handleViewMore = (studentData: StudentDue) => {
+    router.push(SITE_MAP.FINANCE.STUDENT_DUES_ID(studentData._id));
+  }
 
   const columns = [
     { accessorKey: 'id', header: 'S. No' },
@@ -123,10 +130,7 @@ export default function StudentDuesPage() {
         <Button
           variant="ghost"
           className="cursor-pointer"
-          onClick={() => {
-            // setSelectedRowId(row.id);
-            // handleViewMore({ ...row.original, leadType: row.original._leadType });
-          }}
+          onClick={() => handleViewMore(row.original)}
         >
           <span className="font-inter font-semibold text-[12px] text-primary">View More</span>
         </Button>
@@ -138,6 +142,8 @@ export default function StudentDuesPage() {
       <TechnoPageHeading title="Student Dues" />
       {tableData &&
         <TechnoDataTable
+          selectedRowId={selectedRowId}
+          setSelectedRowId={setSelectedRowId}
           columns={columns}
           data={tableData}
           tableName="Student Dues"
@@ -151,6 +157,7 @@ export default function StudentDuesPage() {
           onSearch={handleSearch}
           searchTerm={search}
           isLoading={isLoading}
+          handleViewMore={handleViewMore}
         />
       }
     </>

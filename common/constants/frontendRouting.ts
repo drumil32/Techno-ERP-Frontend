@@ -23,6 +23,7 @@ export const SITE_MAP = {
   FINANCE: {
     DEFAULT: '/c/finance/student-dues',
     STUDENT_DUES: '/c/finance/student-dues',
+    STUDENT_DUES_ID: (id:string) => `/c/finance/student-dues/${id}`,
     COURSE_DUES: '/c/finance/course-dues',
     OVERALL_DUES: '/c/finance/overall-dues',
   },

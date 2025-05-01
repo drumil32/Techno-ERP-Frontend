@@ -13,7 +13,7 @@ import {
 import { usePathname } from 'next/navigation';
 import React from 'react';
 type BreadCrumbProps = {
-  rootUrl: string;
+  rootUrl?: string;
 };
 export default function TechnoBreadCrumb({ rootUrl }: BreadCrumbProps) {
   const pathname = usePathname();

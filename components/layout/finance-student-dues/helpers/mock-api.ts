@@ -1,5 +1,5 @@
 import { FeesPaidStatus } from "@/types/enum";
-import { StudentDue } from "@/types/finance";
+import { FeeBreakupResponse, SemesterFeesResponse, StudentDetails, StudentDue, TransactionsResponse } from "@/types/finance";
 import { QueryFunctionContext } from "@tanstack/react-query";
 
 const generateMockStudentDues = (count: number): StudentDue[] => {
@@ -104,3 +104,295 @@ export const fetchStudentDuesMock = async ({ queryKey }: QueryFunctionContext) =
     limit
   };
 };
+
+const simulateDelay = (ms: number): Promise<void> =>
+  new Promise(resolve => setTimeout(resolve, ms));
+
+export const fetchStudentDetails = async ({ queryKey }: QueryFunctionContext): Promise<StudentDetails> => {
+  const [_key, studentId] = queryKey as [string, string];
+  await simulateDelay(300);
+  return mockStudentDetails; // assume it's always defined
+};
+
+export const fetchSemesterFees = async ({ queryKey }: QueryFunctionContext): Promise<SemesterFeesResponse> => {
+  await simulateDelay(500);
+  return mockSemesterFees;
+};
+
+export const fetchTransactions = async ({ queryKey }: QueryFunctionContext): Promise<TransactionsResponse> => {
+  await simulateDelay(600);
+  return mockTransactions;
+};
+
+export const fetchFeeBreakup = async ({ queryKey }: QueryFunctionContext): Promise<FeeBreakupResponse> => {
+  const [_key, semester] = queryKey as [string, number];
+  await simulateDelay(400);
+  if (semester === 1) {
+    return mockFeeBreakupSemester1;
+  } else if (semester === 2) {
+    return mockFeeBreakupSemester2;
+  }
+  return {
+    semester: semester,
+    breakup: [],
+    totals: { finalFees: 0, feesPaid: 0, totalDues: 0 }
+  };
+};
+
+
+
+const mockStudentDetails: StudentDetails = {
+  studentName: "Vaibhav Gupta",
+  studentId: "TGI2023MBA104",
+  fatherName: "Anil Kumar Gupta",
+  feeStatus: "No Dues",
+  course: "MBA",
+  hod: "Dr Pankaj kumar",
+};
+
+const mockSemesterFees: SemesterFeesResponse = {
+  details: [
+    {
+      sno: 1,
+      academicYear: "2023-24",
+      semester: 1,
+      course: "MBA",
+      finalFeesDue: 18100,
+      feesPaid: 5000,
+      dueFees: 13100,
+      dueDate: "02/20/25",
+    },
+    {
+      sno: 2,
+      academicYear: "2023-24",
+      semester: 2,
+      course: "MBA",
+      finalFeesDue: null,
+      feesPaid: null,
+      dueFees: null,
+      dueDate: null,
+    },
+    {
+      sno: 3,
+      academicYear: "2025-26",
+      semester: 3,
+      course: "MBA",
+      finalFeesDue: null,
+      feesPaid: null,
+      dueFees: null,
+      dueDate: null,
+    },
+    {
+      sno: 4,
+      academicYear: "2025-26",
+      semester: 4,
+      course: "MBA",
+      finalFeesDue: null,
+      feesPaid: null,
+      dueFees: null,
+      dueDate: null,
+    },
+  ],
+  totals: {
+    finalFeesDue: 18100,
+    feesPaid: 5000,
+    dueFees: 13100,
+  },
+};
+
+const mockTransactions: TransactionsResponse = {
+  transactions: [
+    {
+      sno: 1,
+      date: "12/01/23",
+      time: "15:25",
+      transactionId: "349087",
+      feesAction: "Deposit",
+      amount: 18100,
+      transactionType: "Cash",
+      remarks: null,
+    },
+    {
+      sno: 2,
+      date: "12/02/23",
+      time: "14:32",
+      transactionId: "829122",
+      feesAction: "Refund",
+      amount: null,
+      transactionType: "Netbanking",
+      remarks: null,
+    },
+    {
+      sno: 3,
+      date: "12/07/24",
+      time: "12:12",
+      transactionId: "829234",
+      feesAction: "Deposit",
+      amount: null,
+      transactionType: "Netbanking",
+      remarks: null,
+    },
+    {
+      sno: 4,
+      date: "27/11/24",
+      time: "17:46",
+      transactionId: "829759",
+      feesAction: "Deposit",
+      amount: null,
+      transactionType: "Netbanking",
+      remarks: null,
+    },
+  ],
+  totalAmount: 18100,
+};
+
+
+const mockFeeBreakupSemester1: FeeBreakupResponse = {
+  semester: 1,
+  breakup: [
+    {
+      feesCategory: "Prospectus Fees",
+      schedule: "One-time",
+      finalFees: 1000,
+      feesPaid: null,
+      totalDues: 1000,
+    },
+    {
+      feesCategory: "Student ID",
+      schedule: "One-time",
+      finalFees: 100,
+      feesPaid: null,
+      totalDues: 100,
+    },
+    {
+      feesCategory: "Uniform",
+      schedule: "One-time",
+      finalFees: 4000,
+      feesPaid: 3600,
+      totalDues: 4000,
+    },
+    {
+      feesCategory: "Semester Fees",
+      schedule: "Semester",
+      finalFees: 13000,
+      feesPaid: 5000,
+      totalDues: 8000,
+    },
+    {
+      feesCategory: "Student Welfare",
+      schedule: "Yearly",
+      finalFees: null,
+      feesPaid: null,
+      totalDues: 100,
+    },
+    {
+      feesCategory: "Book Bank",
+      schedule: "Semester",
+      finalFees: 100,
+      feesPaid: null,
+      totalDues: null,
+    },
+    {
+      feesCategory: "Misc",
+      schedule: "As applicable",
+      finalFees: null,
+      feesPaid: null,
+      totalDues: null,
+    },
+    {
+      feesCategory: "Hostel Fees",
+      schedule: "Optional",
+      finalFees: null,
+      feesPaid: null,
+      totalDues: null,
+    },
+    {
+      feesCategory: "Transport Fees",
+      schedule: "Optional",
+      finalFees: null,
+      feesPaid: null,
+      totalDues: null,
+    },
+  ],
+  totals: {
+    finalFees: 18100,
+    feesPaid: 8600,
+    totalDues: 9600,
+  },
+};
+
+
+const mockFeeBreakupSemester2: FeeBreakupResponse = {
+  semester: 2,
+  breakup: [
+    {
+      feesCategory: "Prospectus Fees",
+      schedule: "One-time",
+      finalFees: 1000,
+      feesPaid: null,
+      totalDues: 1000,
+    },
+    {
+      feesCategory: "Student ID",
+      schedule: "One-time",
+      finalFees: 100,
+      feesPaid: null,
+      totalDues: 100,
+    },
+    {
+      feesCategory: "Uniform",
+      schedule: "One-time",
+      finalFees: 4000,
+      feesPaid: 3600,
+      totalDues: 4000,
+    },
+    {
+      feesCategory: "Semester Fees",
+      schedule: "Semester",
+      finalFees: 13000,
+      feesPaid: 5000,
+      totalDues: 8000,
+    },
+    {
+      feesCategory: "Student Welfare",
+      schedule: "Yearly",
+      finalFees: null,
+      feesPaid: null,
+      totalDues: 100,
+    },
+    {
+      feesCategory: "Book Bank",
+      schedule: "Semester",
+      finalFees: 100,
+      feesPaid: null,
+      totalDues: null,
+    },
+    {
+      feesCategory: "Misc",
+      schedule: "As applicable",
+      finalFees: null,
+      feesPaid: null,
+      totalDues: null,
+    },
+    {
+      feesCategory: "Hostel Fees",
+      schedule: "Optional",
+      finalFees: null,
+      feesPaid: null,
+      totalDues: null,
+    },
+    {
+      feesCategory: "Transport Fees",
+      schedule: "Optional",
+      finalFees: null,
+      feesPaid: null,
+      totalDues: null,
+    },
+
+  ],
+  totals: {
+    finalFees: 0,
+    feesPaid: 0,
+    totalDues: 0,
+  }
+}
