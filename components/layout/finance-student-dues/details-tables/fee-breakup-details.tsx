@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Pencil } from "lucide-react"
 import { useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import EditFeeBreakupDialogue from "./edit-fee-breakup-dialogue"
 
-export default function FeesBreakupDetails({ studentDuesId }: { studentDuesId: string }) {
+export default function FeesBreakupDetails({ studentDuesId, studentName }: { studentDuesId: string, studentName: string | undefined }) {
   const [selectedSemester, setSelectedSemester] = useState(1)
 
   const semWiseFeesBreakUpDetails = useQuery<FeeBreakupResponse, Error>({
@@ -40,13 +41,7 @@ export default function FeesBreakupDetails({ studentDuesId }: { studentDuesId: s
     <div className="w-full p-3 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="w-full flex p-2 items-center">
         <div className="font-semibold text-[16px]">Fee Breakup</div>
-        <Button
-          variant="outline"
-          className="h-9 rounded-[10px] border ml-auto"
-        >
-          <Pencil className="mr-2 h-4 w-4" />
-          Edit Breakup
-        </Button>
+        <EditFeeBreakupDialogue studentName={studentName} feesBreakup={semWiseFeesBreakUpDetails.data}/>
       </div>
       <div className="flex gap-2 mb-4 p-2 items-center">
         <div className="text-[#5F5F5F]">Select Semester</div>

@@ -23,7 +23,7 @@ export default function SelectedStudentDuesDetails() {
   })
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 pb-6">
       <TechnoPageHeading title="Student Dues" />
       {/*
             <DynamicInfoGrid
@@ -43,8 +43,8 @@ export default function SelectedStudentDuesDetails() {
                 }}
             />
             */}
-      <SemesterWiseFeesDetails studentDuesId={studentDuesId} />
-      <AllTransactionsDetails studentDuesId={studentDuesId} />
+      <SemesterWiseFeesDetails studentDuesId={studentDuesId} studentDetails={studentDetails.data}/>
+      <AllTransactionsDetails studentDuesId={studentDuesId} studentName={studentDetails.data?.studentName}/>
       <FeesBreakupDetails studentDuesId={studentDuesId} />
     </div>
   )

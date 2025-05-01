@@ -1,0 +1,210 @@
+import { Button } from "@/components/ui/button";
+import { StudentDetails } from "@/types/finance";
+import { BookOpen } from "lucide-react";
+import * as Dialog from '@radix-ui/react-dialog';
+import { Label } from "@/components/ui/label";
+import { z } from "zod";
+import { FeesAction, TransactionType } from "@/types/enum";
+import { useState } from "react";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "@/components/ui/input";
+
+const feesActionMapping = {
+  [FeesAction.DEPOSIT]: "DEPOSIT",
+  [FeesAction.REFUND]: "REFUND"
+};
+
+const transactionTypeMapping = {
+  [TransactionType.CASH]: "CASH",
+  [TransactionType.ONLINE]: "ONLINE"
+};
+
+const formSchema = z.object({
+  feesAction: z.nativeEnum(FeesAction, {
+    required_error: "Please select a fees action"
+  }),
+  transactionType: z.nativeEnum(TransactionType, {
+    required_error: "Please select a transaction type"
+  }),
+  amount: z.coerce.number()
+    .min(0, { message: "Amount must be greater than 0" }),
+
+  remarks: z.string().optional()
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+
+
+export default function RecordPaymentDialogue({ studentDetails }: { studentDetails: StudentDetails | undefined }) {
+
+  const [open, setOpen] = useState(false);
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      feesAction: FeesAction.DEPOSIT,
+      transactionType: TransactionType.CASH,
+      amount: 0,
+      remarks: ""
+    }
+  });
+
+  const handleSave = (values: FormValues) => {
+    const payload = {
+      studentId: studentDetails?.studentId,
+      feesAction: feesActionMapping[values.feesAction],
+      transactionType: transactionTypeMapping[values.transactionType],
+      amount: values.amount,
+      remarks: values.remarks || "",
+      date: new Date().toISOString()
+    };
+
+    console.log("Payment payload:", payload);
+    setOpen(false);
+    form.reset();
+  };
+
+
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger asChild>
+        <Button className="ml-auto rounded-[10px]">Record a payment</Button>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed z-30 inset-0 bg-black/30" />
+        <Dialog.Content className="bg-white sm:min-w-[600px] z-40 p-6 rounded-xl shadow-xl w-full max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          {/*Dialogue Title Header*/}
+          <div className="flex justify-between items-center mb-8">
+            <Dialog.Title className="text-xl font-semibold flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-gray-500 text-xl" />
+              &nbsp;Record a payment
+            </Dialog.Title>
+            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold">&times;</Dialog.Close>
+          </div>
+
+          {/*Readable Fields - Student Information*/}
+          <div className="flex flex-row z-100">
+            <div className="flex flex-col w-1/2 gap-6">
+              <div className="flex flex-col gap-3">
+                <Label className="text-gray-500 text-md">Student Name</Label>
+                <Label className="text-gray-800 text-md">{studentDetails?.studentName}</Label>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label className="text-gray-500 text-md">Student ID</Label>
+                <Label className="text-gray-800 text-md">{studentDetails?.studentId}</Label>
+              </div>
+            </div>
+            <div className="flex flex-col w-1/2 gap-6">
+              <div className="flex flex-col gap-3">
+                <Label className="text-gray-500 text-md">Father Name</Label>
+                <Label className="text-gray-800 text-md">{studentDetails?.fatherName}</Label>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label className="text-gray-500 text-md">Date</Label>
+                <Label className="text-gray-800 text-md">{studentDetails?.course}</Label>
+              </div>
+            </div>
+          </div>
+
+          {/*Form*/}
+
+          <div className="my-8">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(handleSave)} className="space-y-6">
+                <div className="flex flex-row gap-4 text-md">
+                  <FormField
+                    control={form.control}
+                    name="feesAction"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel className="text-gray-500 text-md">Fees Action</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="w-full text-md">
+                              <SelectValue placeholder="Select a fees action" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="text-md">
+                            <SelectItem value={FeesAction.DEPOSIT}>{FeesAction.DEPOSIT}</SelectItem>
+                            <SelectItem value={FeesAction.REFUND}>{FeesAction.REFUND}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="transactionType"
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormLabel className="text-gray-500 text-md">Transaction Type</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="w-full text-md">
+                              <SelectValue placeholder="Select a transaction type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent className="text-md">
+                            <SelectItem value={TransactionType.CASH}>{TransactionType.CASH}</SelectItem>
+                            <SelectItem value={TransactionType.ONLINE}>{TransactionType.ONLINE}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="amount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-500 text-md">Amount</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter the amount"
+                          {...field}
+                          type="number"
+                          
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="remarks"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-500 text-md">Remarks</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Write your remarks" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end gap-2 pt-4">
+                  <Dialog.Close asChild>
+                    <Button type="button" variant="outline">Cancel</Button>
+                  </Dialog.Close>
+                  <Button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white">Record</Button>
+                </div>
+              </form>
+            </Form>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
+  )
+}

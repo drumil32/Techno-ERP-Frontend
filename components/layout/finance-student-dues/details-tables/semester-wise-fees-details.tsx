@@ -1,18 +1,16 @@
-import { SemesterFeesResponse } from "@/types/finance"
+import { SemesterFeesResponse, StudentDetails } from "@/types/finance"
 import { useQuery } from "@tanstack/react-query"
 import { fetchSemesterFees } from "../helpers/mock-api"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
+import RecordPaymentDialogue from "./record-payment-dialogue"
 
-export default function SemesterWiseFeesDetails({ studentDuesId }: { studentDuesId: string }) {
+export default function SemesterWiseFeesDetails({ studentDuesId, studentDetails }: { studentDuesId: string, studentDetails: StudentDetails | undefined }) {
   const semesterWise = useQuery<SemesterFeesResponse, Error>({
     queryKey: ['semesterFeeDetail', studentDuesId],
     queryFn: fetchSemesterFees,
     placeholderData: (previousData) => previousData,
   })
-
-  console.log(semesterWise.data?.details)
-
 
   const feeTotals = semesterWise.data?.details.reduce(
     (totals, item) => {
@@ -24,13 +22,11 @@ export default function SemesterWiseFeesDetails({ studentDuesId }: { studentDues
     { finalFeesDue: 0, feesPaid: 0, dueFees: 0 }
   )
 
-
-
   return (
     <div className="w-full p-3 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="w-full flex p-2 items-center">
         <div className="font-semibold text-[16px]">Semester-wise Fees Details</div>
-        <Button className="ml-auto rounded-[10px]">Record a payment</Button>
+        <RecordPaymentDialogue studentDetails={studentDetails}/>
       </div>
       <Table className="w-3/5">
         <TableHeader className="bg-[#F7F7F7] ">

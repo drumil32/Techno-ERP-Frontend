@@ -452,3 +452,13 @@ export enum FeesPaidStatus {
   DUE = 'Due',
   PAID = 'Paid'
 }
+
+export enum FeesAction {
+  DEPOSIT = 'Fee Deposit',
+  REFUND = 'Refund',
+}
+
+export enum TransactionType {
+  CASH = 'Cash',
+  ONLINE = 'Online',
+}
