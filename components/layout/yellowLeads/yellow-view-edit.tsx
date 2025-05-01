@@ -17,7 +17,7 @@ import { Course, Gender, Locations, UserRoles } from '@/types/enum';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
-import { parse, format, isValid } from 'date-fns';
+import { parse, format, isValid, isBefore, startOfDay } from 'date-fns';
 import { toast } from 'sonner';
 import z, { boolean } from 'zod';
 import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
@@ -538,6 +538,7 @@ export default function YellowLeadViewEdit({
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
+                disabled={(date) => isBefore(date, startOfDay(new Date()))}
                 selected={parseDateString(formData.nextDueDate)}
                 onSelect={handleDateChange}
                 initialFocus
@@ -621,7 +622,7 @@ export default function YellowLeadViewEdit({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              disabled={!hasRole(UserRoles.LEAD_MARKETING)}
+              disabled={!hasRole(UserRoles.LEAD_MARKETING || UserRoles.ADMIN)}
               role="combobox"
               className={cn(
                 'w-full justify-between rounded-[5px] min-h-10',

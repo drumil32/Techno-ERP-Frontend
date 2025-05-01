@@ -101,6 +101,7 @@ export interface AllLeadsAnalytics {
   interestedLeads: number;
   notInterestedLeads: number;
   neutralLeads: number;
+  didNotPickLeads: number;
 }
 
 export const refineAnalytics = (analytics: any) => {
@@ -140,6 +141,12 @@ export const refineAnalytics = (analytics: any) => {
       subheading: calculatePercentage(analytics.neutralLeads),
       title: 'Neutral Data',
       color: 'text-[#006ED8]'
+    },
+    {
+      heading: analytics.didNotPickLeads ?? '',
+      subheading: calculatePercentage(analytics.didNotPickLeads),
+      title: 'Did Not Pick',
+      color: 'text-pink-700'
     }
   ];
   return analyticsCardsData;

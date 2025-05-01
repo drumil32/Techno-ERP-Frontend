@@ -7,12 +7,14 @@ import { UserRoles } from '@/types/enum';
 
 export default function AdminTrackerPage() {
   return (
-    <CRMLayout>
-      <TechnoFilterProvider key="admin-tracker">
-        <AdminTrackerProvider key="admin-tracker">
-          <AdminTracker />
-        </AdminTrackerProvider>
-      </TechnoFilterProvider>
-    </CRMLayout>
+    <RoleGuard allowedRoles={[UserRoles.ADMIN]}>
+      <CRMLayout>
+        <TechnoFilterProvider key="admin-tracker">
+          <AdminTrackerProvider key="admin-tracker">
+            <AdminTracker />
+          </AdminTrackerProvider>
+        </TechnoFilterProvider>
+      </CRMLayout>
+    </RoleGuard>
   );
 }

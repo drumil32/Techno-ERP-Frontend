@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -33,15 +33,25 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsRight,
-  ChevronsLeft
+  ChevronsLeft,
+  ArrowLeftCircle,
+  ArrowRightCircle
 } from 'lucide-react';
 import { LuDownload, LuUpload } from 'react-icons/lu';
 import clsx from 'clsx';
+import useAuthStore from '@/stores/auth-store';
+import { UserRoles } from '@/types/enum';
+import { toast } from 'sonner';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends unknown, TValue> {
     align?: 'left' | 'center' | 'right';
+    maxWidth?: number;
   }
 }
+
 export default function TechnoDataTable({
   columns,
   data,
@@ -64,6 +74,10 @@ export default function TechnoDataTable({
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
+  const { hasRole } = useAuthStore();
+  const [showScrollButtons, setShowScrollButtons] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   const [sortConfig, setSortConfig] = useState<Record<string, string>>(() => {
     const initialConfig: Record<string, string> = {};
@@ -78,6 +92,44 @@ export default function TechnoDataTable({
   useEffect(() => {
     setGlobalFilter(searchTerm);
   }, [searchTerm]);
+
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const tableRef = useRef<HTMLTableElement>(null);
+
+  const checkScroll = useCallback(() => {
+    if (tableContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tableContainerRef.current;
+      const hasHorizontalScroll = scrollWidth > clientWidth;
+      setShowScrollButtons(hasHorizontalScroll);
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+    }
+  }, []);
+
+  useEffect(() => {
+    const container = tableContainerRef.current;
+    if (!container) return;
+
+    checkScroll();
+
+    container.addEventListener('scroll', checkScroll);
+    window.addEventListener('resize', checkScroll);
+
+    return () => {
+      container.removeEventListener('scroll', checkScroll);
+      window.removeEventListener('resize', checkScroll);
+    };
+  }, [checkScroll, data]);
+
+  const handleScroll = useCallback((direction: 'left' | 'right') => {
+    if (tableContainerRef.current) {
+      const scrollAmount = tableContainerRef.current.clientWidth * 0.75;
+      tableContainerRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  }, []);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -106,15 +158,9 @@ export default function TechnoDataTable({
 
   const handleSort = (columnName: string) => {
     const newSortConfig = { ...sortConfig };
-
-    if (!newSortConfig[columnName]) {
-      newSortConfig[columnName] = 'desc';
-    } else if (newSortConfig[columnName] === 'desc') {
-      newSortConfig[columnName] = 'asc';
-    } else {
-      newSortConfig[columnName] = 'desc';
-    }
-
+    if (!newSortConfig[columnName]) newSortConfig[columnName] = 'desc';
+    else if (newSortConfig[columnName] === 'desc') newSortConfig[columnName] = 'asc';
+    else newSortConfig[columnName] = 'desc';
     setSortConfig(newSortConfig);
     if (onSort) onSort(columnName, newSortConfig[columnName]);
   };
@@ -130,6 +176,24 @@ export default function TechnoDataTable({
     return <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />;
   };
 
+  const uploadAction = async () => {
+    try {
+      const response = await fetch(API_ENDPOINTS.uploadMarketingData, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await response.json();
+      if (response.ok && data.SUCCESS) {
+        toast.success(data.MESSAGE || 'Marketing Data Uploaded Successfully');
+      } else {
+        throw new Error(data.ERROR || data.MESSAGE);
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Upload failed');
+    }
+  };
+
   const nonClickableColumns = [
     'actions',
     'leadType',
@@ -140,28 +204,70 @@ export default function TechnoDataTable({
   ];
 
   const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate'];
+  const tooltipColumns = ['Remarks', 'Area', 'Name', 'Assigned To'];
+
+  const TruncatedCell = ({ value, maxWidth }: { value: string; maxWidth?: number }) => {
+    const cellRef = useRef<HTMLSpanElement>(null);
+    const [isTruncated, setIsTruncated] = useState(false);
+
+    useEffect(() => {
+      if (cellRef.current) {
+        setIsTruncated(cellRef.current.scrollWidth > (maxWidth || 120));
+      }
+    }, [value, maxWidth]);
+
+    if (!value || value === '-' || value === 'N/A') return <>{value}</>;
+
+    return isTruncated ? (
+      <TooltipProvider delayDuration={200}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span
+              ref={cellRef}
+              className="truncate block hover:text-[#6042D1] hover:underline"
+              style={{ maxWidth: `${maxWidth || 120}px` }}
+            >
+              {value}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent
+            className="max-w-[300px] break-words bg-gray-800 text-white border-gray-600"
+            side="top"
+            align="start"
+          >
+            <p>{value}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ) : (
+      <span ref={cellRef} style={{ maxWidth: `${maxWidth || 120}px` }} className="truncate block">
+        {value}
+      </span>
+    );
+  };
 
   return (
-    <div className="w-full mb-10 bg-white space-y-4 my-[8px] mb-0 px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
+    <div className="w-full mb-10 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="flex w-full items-center py-4 px-4">
         <div className="flex items-center">
           <h2 className="text-xl font-bold">{tableName}</h2>
           {children && <div className="ml-2">{children}</div>}
         </div>
         <div className="flex items-center space-x-2 ml-auto">
-          <div className="relative">
+          <div className="relative w-[300px]">
             <Input
               placeholder="Search here"
               value={globalFilter}
               onChange={handleSearchChange}
-              className="max-w-[243px] h-[32px] rounded-md bg-[#f3f3f3] px-4 py-2 pr-10 text-gray-600 placeholder-gray-400"
+              className="max-w-[500px] h-[32px] rounded-md bg-[#f3f3f3] px-4 py-2 pr-10 text-gray-600 placeholder-gray-400"
             />
             <span className="absolute inset-y-0 right-0 flex items-center pr-3">
               <Search className="h-4 w-4 text-gray-500" />
             </span>
           </div>
           <Button
-            disabled
+            disabled={!hasRole(UserRoles.ADMIN)}
+            onClick={uploadAction}
             variant="outline"
             className="h-8 w-[85px] rounded-[10px] border"
             icon={LuUpload}
@@ -174,113 +280,179 @@ export default function TechnoDataTable({
         </div>
       </div>
 
-      <div className="relative min-h-[580px] overflow-auto">
-        <Table className="w-full">
-          <TableHeader className="bg-[#F7F7F7] sticky top-0 ">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="h-10">
-                {headerGroup.headers.map((header, index) => {
-                  const columnId = header.column.id;
-                  const isSortable = sortableColumns.includes(columnId);
-                  const isNonClickable = nonClickableColumns.includes(columnId);
-                  const align = header.column.columnDef.meta?.align || 'left';
+      <div className="relative">
+        {showScrollButtons && (
+          <>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={clsx(
+                'absolute left-0 top-1/2 transform -translate-y-1/2 z-10',
+                'rounded-full bg-white/80 shadow-md hover:bg-white',
+                'transition-opacity duration-300',
+                {
+                  'opacity-80 hover:opacity-100': canScrollLeft,
+                  'opacity-0 pointer-events-none': !canScrollLeft
+                }
+              )}
+              onClick={() => handleScroll('left')}
+            >
+              <ArrowLeftCircle className="h-8 w-8 text-[#5B31D1]" strokeWidth={1.5} />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={clsx(
+                'absolute right-0 top-1/2 transform -translate-y-1/2 z-10',
+                'rounded-full bg-white/80 shadow-md hover:bg-white',
+                'transition-opacity duration-300',
+                {
+                  'opacity-80 hover:opacity-100': canScrollRight,
+                  'opacity-0 pointer-events-none': !canScrollRight
+                }
+              )}
+              onClick={() => handleScroll('right')}
+            >
+              <ArrowRightCircle className="h-8 w-8 text-[#5B31D1]" strokeWidth={1.5} />
+            </Button>
+          </>
+        )}
+        <div
+          ref={tableContainerRef}
+          className="min-h-[580px] overflow-auto custom-scrollbar relative"
+          style={{ scrollbarGutter: 'stable' }}
+        >
+          <Table ref={tableRef} className="w-full">
+            <TableHeader className="bg-[#5B31D1]/10 font-bolds sticky top-0 z-10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className="h-10">
+                  {headerGroup.headers.map((header, index) => {
+                    const columnId = header.column.id;
+                    const isSortable = sortableColumns.includes(columnId);
+                    const isNonClickable = nonClickableColumns.includes(columnId);
+                    const align = header.column.columnDef.meta?.align || 'left';
 
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className={clsx('font-light h-10', {
-                        'text-left': align === 'left',
-                        'text-center': !align || align === 'center',
-                        'text-right': align === 'right',
-                        'rounded-l-[5px]': index === 0,
-                        'rounded-r-[5px]': index === headerGroup.headers.length - 1
-                      })}
-                    >
-                      {isSortable && !isNonClickable ? (
-                        <div
-                          className="flex items-center justify-center cursor-pointer"
-                          onClick={() => handleSort(columnId)}
-                        >
-                          <span>
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                          </span>
-                          {getSortIcon(columnId)}
-                        </div>
-                      ) : (
-                        flexRender(header.column.columnDef.header, header.getContext())
-                      )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody className="[&_tr]:h-[39px] ">
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row: any) => (
-                <TableRow
-                  key={row.id}
-                  className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
-                  onClick={() => {
-                    setSelectedRowId(row.id);
-                    handleViewMore({ ...row.original, leadType: row.original._leadType });
-                  }}
-                >
-                  {row.getVisibleCells().map((cell: any) => {
-                    const isExcluded = nonClickableColumns.includes(cell.column.id);
-                    const align = cell.column.columnDef.meta?.align || 'left';
                     return (
-                      <TableCell
-                        key={cell.id}
-                        className={clsx('h-[39px] py-2', {
+                      <TableHead
+                        key={header.id}
+                        className={clsx('text-[#5B31D1] font-semibold h-10', {
                           'text-left': align === 'left',
-                          'text-center': cell.getValue() === 'N/A' || align === 'center',
+                          'text-center': !align || align === 'center',
                           'text-right': align === 'right',
-                          'max-w-[120px] truncate':
-                            (cell.column.columnDef.header === 'Remarks' ||
-                              cell.column.columnDef.header === 'Area' ||
-                              cell.column.columnDef.header === 'Name' ||
-                              cell.column.columnDef.header === 'Assigned To') &&
-                            cell.getValue() !== '-'
+                          'rounded-l-[5px]': index === 0,
+                          'rounded-r-[5px]': index === headerGroup.headers.length - 1
                         })}
-                        onClick={(e) => {
-                          if (isExcluded) e.stopPropagation();
-                        }}
                       >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
+                        {isSortable && !isNonClickable ? (
+                          <div
+                            className="flex items-center justify-center cursor-pointer"
+                            onClick={() => handleSort(columnId)}
+                          >
+                            <span>
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                            </span>
+                            {getSortIcon(columnId)}
+                          </div>
+                        ) : (
+                          flexRender(header.column.columnDef.header, header.getContext())
+                        )}
+                      </TableHead>
                     );
                   })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-[580px] text-center">
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <svg
-                      className="w-16 h-16 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1}
-                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    <h3 className="mt-4 text-lg font-medium text-gray-900">No Results Found</h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Try adjusting your search or filter to find what you're looking for.
-                    </p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody className="[&_tr]:h-[39px]">
+              {table.getRowModel().rows.length ? (
+                table.getRowModel().rows.map((row: any) => (
+                  <TableRow
+                    key={row.id}
+                    className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
+                    onClick={() => {
+                      setSelectedRowId(row.id);
+                      handleViewMore({ ...row.original, leadType: row.original._leadType });
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell: any) => {
+                      const isExcluded = nonClickableColumns.includes(cell.column.id);
+                      const align = cell.column.columnDef.meta?.align || 'left';
+                      const cellValue = cell.getValue();
+                      const shouldShowTooltip =
+                        tooltipColumns.includes(cell.column.columnDef.header as string) &&
+                        cellValue &&
+                        cellValue !== '-' &&
+                        cellValue !== 'N/A';
+                      const maxWidth = cell.column.columnDef.meta?.maxWidth;
+
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          className={clsx('h-[39px] py-2', {
+                            'text-left': align === 'left',
+                            'text-center': cellValue === 'N/A' || align === 'center',
+                            'text-right': align === 'right'
+                          })}
+                          onClick={(e) => isExcluded && e.stopPropagation()}
+                        >
+                          {shouldShowTooltip ? (
+                            <TruncatedCell value={cellValue} maxWidth={maxWidth} />
+                          ) : (
+                            flexRender(cell.column.columnDef.cell, cell.getContext())
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-[580px] text-center">
+                    <div className="flex flex-col items-center justify-center h-full">
+                      <svg
+                        className="w-16 h-16 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1}
+                          d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <h3 className="mt-4 text-lg font-medium text-gray-900">No Results Found</h3>
+                      <p className="mt-1 text-sm text-gray-500">
+                        Try adjusting your search or filter to find what you're looking for.
+                      </p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {showScrollButtons && (
+          <div className="flex justify-center mt-2">
+            <div className="bg-gray-200 rounded-full h-1 w-48 relative overflow-hidden">
+              {tableRef.current && (
+                <div
+                  className="absolute top-0 bottom-0 bg-[#5B31D1] rounded-full transition-all duration-300"
+                  style={{
+                    left: tableRef.current
+                      ? `${(tableRef.current.scrollLeft / (tableRef.current.scrollWidth - tableRef.current.clientWidth)) * 100}%`
+                      : '0%',
+                    width: tableRef.current
+                      ? `${(tableRef.current.clientWidth / tableRef.current.scrollWidth) * 100}%`
+                      : '100%'
+                  }}
+                />
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {showPagination && (
@@ -336,7 +508,7 @@ export default function TechnoDataTable({
               <ChevronLeft />
             </Button>
             {currentPage > 1 && <span>1 ..</span>}
-            <span className=" underline">{currentPage}</span>
+            <span className="underline">{currentPage}</span>
             {currentPage < totalPages && <span>..{totalPages}</span>}
             <Button
               variant="ghost"

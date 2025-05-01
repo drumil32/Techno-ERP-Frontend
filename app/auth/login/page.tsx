@@ -12,13 +12,14 @@ import {
   Mail,
   Lock,
   ArrowRight,
+  Eye,
+  EyeOff,
   Phone,
   UserCheck,
-  BookOpen,
-  LineChart,
-  CalendarCheck,
+  Users,
   CreditCard,
-  Users
+  LineChart,
+  CalendarCheck
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import useAuthRedirect from '@/lib/useAuthRedirect';
@@ -34,6 +35,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuthStore();
 
   const {
@@ -71,8 +73,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50">
-      <div className="lg:w-1/2 p-6 lg:p-12 bg-gradient-to-br from-indigo-900 to-purple-800 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
+      <div className="md:w-full lg:w-1/2 p-4 md:p-8 lg:p-12 bg-gradient-to-br from-indigo-900 to-purple-800 relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden opacity-10">
           <div className="absolute -top-20 -left-20 w-64 h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
           <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-purple-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
@@ -80,8 +82,8 @@ export default function LoginPage() {
         </div>
 
         <div className="relative z-10 h-full flex flex-col">
-          <div className="flex items-center gap-3 mb-6 lg:mb-12">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 relative">
+          <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-8 lg:mb-12">
+            <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 relative">
               <Image
                 src="/images/techno-logo.png"
                 alt="Techno ERP Logo"
@@ -89,12 +91,12 @@ export default function LoginPage() {
                 className="object-contain"
               />
             </div>
-            <span className="text-xl lg:text-2xl font-bold text-white">Techno ERP</span>
+            <span className="text-lg md:text-xl lg:text-2xl font-bold text-white">Techno ERP</span>
           </div>
 
-          <div className="flex-grow flex flex-col justify-center">
+          <div className="flex-grow flex flex-col justify-center py-4 md:py-6">
             <div className="max-w-lg mx-auto">
-              <h1 className="text-2xl lg:text-4xl font-bold text-white mb-4 lg:mb-6 leading-tight">
+              <h1 className="text-xl md:text-3xl lg:text-4xl font-bold text-white mb-3 md:mb-4 lg:mb-6 leading-tight">
                 Simplify Telecalling.
                 <br />
                 Boost Admissions.
@@ -102,39 +104,39 @@ export default function LoginPage() {
                 <span className="text-blue-300">Grow Your College.</span>
               </h1>
 
-              <p className="text-sm lg:text-lg text-blue-100 mb-6 lg:mb-8">
+              <p className="text-sm md:text-base lg:text-lg text-blue-100 mb-4 md:mb-6 lg:mb-8">
                 An all-in-one Lead Tracking & ERP solution designed for aspirational colleges.
               </p>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8 lg:mb-12">
+              <div className="grid grid-cols-3 gap-2 md:gap-3 mb-6 md:mb-8 lg:mb-12">
                 {[
                   {
-                    icon: <Phone className="w-4 h-4 lg:w-5 lg:h-5 text-white" />,
+                    icon: <Phone className="w-4 h-4 text-white" />,
                     text: 'Leads',
                     bg: 'from-blue-500 to-blue-600'
                   },
                   {
-                    icon: <UserCheck className="w-4 h-4 lg:w-5 lg:h-5 text-white" />,
+                    icon: <UserCheck className="w-4 h-4 text-white" />,
                     text: 'Admissions',
                     bg: 'from-purple-500 to-purple-600'
                   },
                   {
-                    icon: <Users className="w-4 h-4 lg:w-5 lg:h-5 text-white" />,
+                    icon: <Users className="w-4 h-4 text-white" />,
                     text: 'Staff',
                     bg: 'from-pink-500 to-pink-600'
                   },
                   {
-                    icon: <CreditCard className="w-4 h-4 lg:w-5 lg:h-5 text-white" />,
+                    icon: <CreditCard className="w-4 h-4 text-white" />,
                     text: 'Payments',
                     bg: 'from-indigo-500 to-indigo-600'
                   },
                   {
-                    icon: <LineChart className="w-4 h-4 lg:w-5 lg:h-5 text-white" />,
+                    icon: <LineChart className="w-4 h-4 text-white" />,
                     text: 'Analytics',
                     bg: 'from-green-500 to-green-600'
                   },
                   {
-                    icon: <CalendarCheck className="w-4 h-4 lg:w-5 lg:h-5 text-white" />,
+                    icon: <CalendarCheck className="w-4 h-4 text-white" />,
                     text: 'Scheduling',
                     bg: 'from-yellow-500 to-yellow-600'
                   }
@@ -142,43 +144,67 @@ export default function LoginPage() {
                   <motion.div
                     key={index}
                     whileHover={{ y: -3 }}
-                    className={`bg-gradient-to-r ${item.bg} p-3 rounded-lg shadow-md flex flex-col items-center gap-2 text-white text-xs lg:text-sm`}
+                    className={`bg-gradient-to-r ${item.bg} p-2 md:p-3 rounded-lg shadow-md flex flex-col items-center gap-1 md:gap-2 text-white`}
                   >
-                    <div className="p-1.5 lg:p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                    <div className="p-1 md:p-1.5 bg-white/20 rounded-lg backdrop-blur-sm">
                       {item.icon}
                     </div>
-                    <span className="font-medium text-center">{item.text}</span>
+                    <span className="font-medium text-center text-xs md:text-sm">{item.text}</span>
                   </motion.div>
                 ))}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button className="bg-white text-indigo-800 hover:bg-gray-100 font-semibold text-sm py-2 px-4 lg:py-3 lg:px-6 rounded-lg">
+              {/* <div className="flex flex-row gap-2 md:gap-3">
+                <Button className="bg-white text-indigo-800 hover:bg-gray-100 font-semibold text-xs md:text-sm py-1.5 md:py-2 lg:py-3 flex-1 rounded-lg">
                   Get Started
                 </Button>
-                <a target="_blank" href="https://www.sprintup.in">
+                <a target="_blank" href="https://www.sprintup.in" className="flex-1">
                   <Button
                     variant="outline"
-                    className="bg-transparent border-white text-white hover:bg-white/10 font-semibold text-sm py-2 px-4 lg:py-3 lg:px-6 rounded-lg"
+                    className="bg-transparent border-white text-white  font-semibold text-xs md:text-sm py-1.5 md:py-2 lg:py-3 w-full rounded-lg"
                   >
                     Live Demo
                   </Button>
                 </a>
-              </div>
+              </div> */}
             </div>
           </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="flex items-center justify-center gap-2 mt-4 md:mt-auto pt-4 md:pt-6"
+          >
+            <span className="text-lg text-center text-white/70">
+              Powered by{' '}
+              <a className="underline" target="_blank" href="https://www.sprintup.in">
+                {' '}
+                SprintUp{' '}
+              </a>
+            </span>
+            <motion.div whileHover={{ scale: 1.05 }} className=" relative">
+              <Image
+                src="/images/sprintup-logo-light.png"
+                alt="SprintUp Logo"
+                width={50}
+                height={50}
+                className="object-contain"
+              />
+            </motion.div>
+          </motion.div>
         </div>
       </div>
 
-      <div className="lg:w-1/2 flex items-center justify-center p-6 lg:p-12 bg-white">
+      <div className="md:w-full lg:w-1/2 flex items-center justify-center p-4 md:p-8 lg:p-12 bg-white">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md rounded-xl shadow-lg p-6 lg:p-8 border border-gray-100"
+          className="w-full max-w-md rounded-xl shadow-lg p-4 md:p-6 lg:p-8 border border-gray-100"
         >
-          <div className="text-center mb-6">
-            <div className="flex justify-center mb-3">
-              <div className="w-12 h-12 relative">
+          <div className="text-center mb-4 md:mb-5 lg:mb-6">
+            <div className="flex justify-center mb-2 md:mb-3">
+              <div className="w-10 h-10 md:w-12 md:h-12 relative">
                 <Image
                   src="/images/techno-logo.png"
                   alt="Techno ERP Logo"
@@ -187,13 +213,19 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-            <h2 className="text-xl lg:text-2xl font-bold text-gray-800">Welcome Back</h2>
-            <p className="text-muted-foreground text-sm">Sign in to access your dashboard</p>
+            <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-800">Welcome Back</h2>
+            <p className="text-muted-foreground text-xs md:text-sm">
+              Sign in to access your dashboard
+            </p>
           </div>
 
-          <form onSubmit={handleSubmit(handleLogin)} className="space-y-4">
+          <form onSubmit={handleSubmit(handleLogin)} className="space-y-3 md:space-y-4">
             {error && (
-              <div className="p-2.5 bg-red-50 text-red-600 rounded-lg text-xs lg:text-sm flex items-center gap-2">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-2 bg-red-50 text-red-600 rounded-lg text-xs md:text-sm flex items-center gap-2"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-4 w-4"
@@ -207,12 +239,12 @@ export default function LoginPage() {
                   />
                 </svg>
                 {error}
-              </div>
+              </motion.div>
             )}
 
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               <div>
-                <label className="block text-xs lg:text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                   Email
                 </label>
                 <div className="relative">
@@ -222,8 +254,8 @@ export default function LoginPage() {
                   <Input
                     type="email"
                     {...register('email')}
-                    placeholder="your@email.com"
-                    className="pl-10 py-2 lg:py-2.5 text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                    placeholder="Enter your email address"
+                    className="pl-10 py-2 text-xs md:text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
                   />
                 </div>
                 {errors.email && (
@@ -232,7 +264,7 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <label className="block text-xs lg:text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1">
                   Password
                 </label>
                 <div className="relative">
@@ -240,11 +272,27 @@ export default function LoginPage() {
                     <Lock className="h-4 w-4 text-gray-400" />
                   </div>
                   <Input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     {...register('password')}
-                    placeholder="••••••••"
-                    className="pl-10 py-2 lg:py-2.5 text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                    placeholder="Enter your password"
+                    className="pl-10 pr-10 py-2 text-xs md:text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  >
+                    <motion.div
+                      animate={{ scale: showPassword ? 1.1 : 1 }}
+                      transition={{ type: 'spring', stiffness: 500 }}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
+                      )}
+                    </motion.div>
+                  </button>
                 </div>
                 {errors.password && (
                   <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
@@ -252,13 +300,34 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* <div className="flex items-center justify-between mb-2 md:mb-3">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                />
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-xs md:text-sm text-gray-700"
+                >
+                  Remember me
+                </label>
+              </div>
+              <div className="text-xs md:text-sm">
+                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                  Forgot password?
+                </a>
+              </div>
+            </div> */}
+
             <Button
               type="submit"
-              className="w-full py-2.5 lg:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all"
+              className="w-full mt-5 py-2 md:py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all"
               disabled={loading}
             >
               {loading ? (
-                <span className="flex items-center justify-center gap-2">
+                <span className="flex items-center justify-center gap-2 text-xs md:text-sm">
                   <svg
                     className="animate-spin h-4 w-4 text-white"
                     xmlns="http://www.w3.org/2000/svg"
@@ -282,12 +351,21 @@ export default function LoginPage() {
                   Signing in...
                 </span>
               ) : (
-                <span className="flex items-center justify-center gap-2">
+                <span className="flex items-center justify-center gap-2 text-xs md:text-sm">
                   Sign In <ArrowRight className="h-4 w-4" />
                 </span>
               )}
             </Button>
           </form>
+
+          {/* <div className="mt-4 pt-3 border-t border-gray-200 text-center">
+            <p className="text-xs md:text-sm text-gray-600">
+              Don't have an account?{' '}
+              <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                Sign up now
+              </a>
+            </p>
+          </div> */}
         </motion.div>
       </div>
     </div>

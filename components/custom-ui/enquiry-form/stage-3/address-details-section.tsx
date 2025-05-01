@@ -18,6 +18,9 @@ import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 import { Countries, Districts, StatesOfIndia } from '@/types/enum';
 import { formSchemaStep3 } from './enquiry-form-stage-3';
+import { districtDropdown } from '../stage-1/helpers/fetch-data';
+import { useQuery } from '@tanstack/react-query';
+import { fixCourseDropdown } from '@/components/layout/admin-tracker/helpers/fetch-data';
 
 interface AddressDetailsSectionInterface {
   form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
@@ -62,6 +65,11 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
 
   const hasAddressErrors =
     !!form.formState.errors.address && Object.keys(form.formState.errors.address).length > 0;
+  const districtsQuery = useQuery({
+    queryKey: ['districts'],
+    queryFn: districtDropdown
+  });
+  const districts = Array.isArray(districtsQuery.data) ? districtsQuery.data : [];
 
   return (
     <Accordion type="single" collapsible>
@@ -181,7 +189,7 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                           <SelectValue placeholder="Select district" />
                         </SelectTrigger>
                         <SelectContent>
-                          {Object.values(Districts).map((district) => (
+                          {Object.values(districts).map((district) => (
                             <SelectItem key={district} value={district}>
                               {district}
                             </SelectItem>

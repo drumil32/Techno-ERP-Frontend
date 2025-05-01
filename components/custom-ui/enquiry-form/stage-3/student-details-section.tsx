@@ -26,6 +26,7 @@ import {
   Category,
   Course,
   CourseNameMapper,
+  DocumentType,
   Gender
 } from '@/types/enum';
 import { FieldErrors, FieldValue, FieldValues, UseFormReturn } from 'react-hook-form';
@@ -33,6 +34,13 @@ import { z } from 'zod';
 import { enquirySchema } from '../schema/schema';
 import { formSchemaStep3 } from './enquiry-form-stage-3';
 import { DatePicker } from '@/components/ui/date-picker';
+import {
+  EnquiryDocument,
+  SingleEnquiryUploadDocument
+} from './documents-section/single-document-form';
+import { useParams } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { fixCourseDropdown } from '@/components/layout/admin-tracker/helpers/fetch-data';
 
 interface StudentDetailsFormPropInterface {
   form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
@@ -46,7 +54,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
   form,
   commonFormItemClass,
   commonFieldClass
-}) => {
+}: StudentDetailsFormPropInterface) => {
   const [isValid, setIsValid] = useState(false);
 
   const checkValidity = () => {
@@ -101,6 +109,12 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
   useEffect(() => {
     checkValidity();
   }, []);
+
+  const fixCoursesQuery = useQuery({
+    queryKey: ['courses'],
+    queryFn: fixCourseDropdown
+  });
+  const courses = Array.isArray(fixCoursesQuery.data) ? fixCoursesQuery.data : [];
 
   return (
     <Accordion type="single" collapsible>
@@ -480,7 +494,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Course" />
                         </SelectTrigger>
                         <SelectContent>
-                          {Object.values(Course).map((course) => (
+                          {Object.values(courses).map((course) => (
                             <SelectItem key={course} value={course}>
                               {CourseNameMapper[course as Course]}
                             </SelectItem>
