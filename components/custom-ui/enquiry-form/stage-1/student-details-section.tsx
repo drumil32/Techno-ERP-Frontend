@@ -455,7 +455,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         <SelectContent>
                           {Object.values(courses).map((course) => (
                             <SelectItem key={course} value={course}>
-                              {CourseNameMapper[course as Course]}
+                              {course}
                             </SelectItem>
                           ))}
                         </SelectContent>

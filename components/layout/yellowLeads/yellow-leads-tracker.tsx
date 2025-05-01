@@ -53,18 +53,14 @@ export default function YellowLeadsTracker() {
     if (column === 'nextDueDateView') {
       column = 'nextDueDate';
     }
+    if (column === 'dateView') {
+      column = 'date';
+    }
 
-    setSortState((prevState: any) => {
-      const currentIndex = prevState.sortBy.indexOf(column);
-      let newOrderBy = [...prevState.orderBy];
-      if (currentIndex != -1) {
-        newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == 'asc' ? 'desc' : 'asc';
-      }
-
-      return {
-        ...prevState,
-        orderBy: newOrderBy
-      };
+    setSortState({
+      ...sortState,
+      sortBy: [column],
+      orderBy: [order]
     });
 
     setPage(1);
@@ -243,7 +239,7 @@ export default function YellowLeadsTracker() {
   const columns = [
     { accessorKey: 'id', header: 'S. No.', meta: { align: 'center' } },
     { accessorKey: 'leadTypeModifiedDate', header: 'LTC Date', meta: { align: 'center' } },
-    { accessorKey: 'name', header: 'Name', meta: { align: 'left' } },
+    { accessorKey: 'name', header: 'Name', meta: { align: 'left', maxWidth: 120 } },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'areaView', header: 'Area', meta: { align: 'left' } },
     { accessorKey: 'cityView', header: 'City' },
@@ -261,22 +257,34 @@ export default function YellowLeadsTracker() {
           const previousValue = selectedStatus;
           setSelectedStatus(newValue);
 
+          const toastId = toast.loading('Updating footfall...', {
+            duration: Infinity
+          });
+
           const updatedData = {
             _id: row.original._id,
             footFall: newValue === FootFallStatus.true
           };
 
-          const response: LeadData | null = await apiRequest(
-            API_METHODS.PUT,
-            API_ENDPOINTS.updateYellowLead,
-            updatedData
-          );
+          try {
+            const response = await apiRequest(
+              API_METHODS.PUT,
+              API_ENDPOINTS.updateYellowLead,
+              updatedData
+            );
 
-          if (response) {
-            toast.success('Footfall status updated successfully');
-            setRefreshKey((prevKey) => prevKey + 1);
-          } else {
-            toast.error('Failed to update footfall status');
+            toast.dismiss(toastId);
+
+            if (response) {
+              toast.success('Footfall updated!', { duration: 1500 });
+              setRefreshKey((prevKey) => prevKey + 1);
+            } else {
+              toast.error('Update failed!', { duration: 1500 });
+              setSelectedStatus(previousValue);
+            }
+          } catch (error) {
+            toast.dismiss(toastId);
+            toast.error('Update failed!', { duration: 1500 });
             setSelectedStatus(previousValue);
           }
         };
@@ -292,28 +300,49 @@ export default function YellowLeadsTracker() {
       header: 'Follow Ups',
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.yellowLeadsFollowUpCount);
+        const toastIdRef = useRef<string | number | null>(null);
 
         const handleDropdownChange = async (newValue: number) => {
           const previousValue = selectedValue;
           setSelectedValue(newValue);
+
+          toastIdRef.current = toast.loading('Updating follow-up count...', {
+            duration: Infinity
+          });
 
           const filteredData = {
             _id: row.original._id,
             yellowLeadsFollowUpCount: newValue
           };
 
-          const response: LeadData | null = await apiRequest(
-            API_METHODS.PUT,
-            API_ENDPOINTS.updateYellowLead,
-            filteredData
-          );
-
-          if (response) {
-            toast.success('Follow-up count updated successfully');
-            setRefreshKey((prevKey) => prevKey + 1);
-          } else {
-            toast.error('Failed to update follow-up count');
+          try {
+            const response: LeadData | null = await apiRequest(
+              API_METHODS.PUT,
+              API_ENDPOINTS.updateYellowLead,
+              filteredData
+            );
+            toast.dismiss(toastIdRef.current);
+            if (response) {
+              toast.success('Follow-up count updated successfully', {
+                id: toastIdRef.current,
+                duration: 1500
+              });
+              setRefreshKey((prevKey) => prevKey + 1);
+            } else {
+              toast.error('Failed to update follow-up count', {
+                id: toastIdRef.current,
+                duration: 1500
+              });
+              setSelectedValue(previousValue);
+            }
+          } catch (error) {
+            toast.error('Failed to update follow-up count', {
+              id: toastIdRef.current,
+              duration: 1500
+            });
             setSelectedValue(previousValue);
+          } finally {
+            toastIdRef.current = null;
           }
         };
 
@@ -322,7 +351,7 @@ export default function YellowLeadsTracker() {
             value={selectedValue.toString()}
             onValueChange={(value) => handleDropdownChange(Number(value))}
           >
-            <SelectTrigger className="w-[60px] min-h-[unset] h-8 text-sm">
+            <SelectTrigger className="w-[60px] mx-auto min-h-[unset] h-8 text-sm">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent className="w-[60px] min-w-[unset]">
@@ -378,20 +407,22 @@ export default function YellowLeadsTracker() {
       }
     },
     { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } },
-    {
-      id: 'actions',
-      header: 'Actions',
-      meta: { align: 'center' },
-      cell: ({ row }: any) => (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
-        >
-          <span className="font-inter font-semibold text-[12px] text-primary ">View More</span>
-        </Button>
-      )
-    }
+    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } }
+
+    // {
+    //   id: 'actions',
+    //   header: 'Actions',
+    //   meta: { align: 'center' },
+    //   cell: ({ row }: any) => (
+    //     <Button
+    //       variant="ghost"
+    //       className="cursor-pointer"
+    //       onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
+    //     >
+    //       <span className="font-inter font-semibold text-[12px] text-primary ">View More</span>
+    //     </Button>
+    //   )
+    // }
   ];
 
   const cityDropdownQuery = useQuery({

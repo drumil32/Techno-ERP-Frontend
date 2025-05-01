@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import FilterBadges from '../allLeads/components/filter-badges';
 import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
 import { DropDownType } from '@/types/enum';
+import { LeadConversionDashboard } from './yellow-leads-converted';
 
 const AdminTracker = () => {
   const { filters, updateFilter } = useTechnoFilterContext();
@@ -326,9 +327,8 @@ const AdminTracker = () => {
             <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
               How many leads were converted to Active Leads?
             </h1>
-            {yellowLeadsConverted && <TechnoAnalyticCardsGroup cardsData={yellowLeadsConverted} />}
+            {yellowLeadsConverted && <LeadConversionDashboard data={yellowLeadsConverted} />}
           </div>
-
           {/* Active Leads Campus Visit Section */}
           <div className="mt-[32px]">
             <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">

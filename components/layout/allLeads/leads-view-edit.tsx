@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -95,6 +95,7 @@ export default function LeadViewEdit({
   useEffect(() => {
     if (data) {
       setFormData(data);
+      console.log(data);
       setOriginalData(data);
     }
   }, [data]);
@@ -110,6 +111,48 @@ export default function LeadViewEdit({
     queryFn: fixCourseDropdown
   });
   const fixCourses = Array.isArray(fixCourseQuery.data) ? fixCourseQuery.data : [];
+
+  const toastIdRef = useRef<string | number | null>(null);
+
+  useEffect(() => {
+    const isLoading = fixCityDropdownQuery.isLoading || fixCourseQuery.isLoading;
+    const hasError = fixCityDropdownQuery.isError || fixCourseQuery.isError;
+    const isSuccess = fixCityDropdownQuery.isSuccess && fixCourseQuery.isSuccess;
+    const isFetching = fixCityDropdownQuery.isFetching || fixCourseQuery.isFetching;
+
+    if (toastIdRef.current) {
+      if (isLoading || isFetching) {
+        toast.loading('Loading data...', { id: toastIdRef.current, duration: Infinity });
+      }
+      if (hasError) {
+        toast.error('Failed to load data', { id: toastIdRef.current, duration: 3000 });
+        setTimeout(() => {
+          toastIdRef.current = null;
+        }, 3000);
+      }
+      if (isSuccess) {
+        toast.success('Data loaded successfully', { id: toastIdRef.current!, duration: 3000 });
+        toastIdRef.current = null;
+      }
+    } else if (hasError) {
+      toastIdRef.current = toast.error('Failed to load data', { duration: 3000 });
+    } else if (isLoading || isFetching) {
+      toastIdRef.current = toast.loading('Loading data...', { duration: Infinity });
+    }
+
+    return () => {
+      if (toastIdRef.current) toast.dismiss(toastIdRef.current);
+    };
+  }, [
+    fixCityDropdownQuery.isLoading,
+    fixCityDropdownQuery.isError,
+    fixCityDropdownQuery.isSuccess,
+    fixCityDropdownQuery.isFetching,
+    fixCourseQuery.isLoading,
+    fixCourseQuery.isError,
+    fixCourseQuery.isSuccess,
+    fixCourseQuery.isFetching
+  ]);
 
   const validateField = (name: string, value: any) => {
     if (!formData) return;
@@ -613,7 +656,7 @@ export default function LeadViewEdit({
             <Button
               variant="outline"
               role="combobox"
-              disabled={!hasRole(UserRoles.LEAD_MARKETING || UserRoles.ADMIN)}
+              disabled={!hasRole(UserRoles.LEAD_MARKETING) || !hasRole(UserRoles.ADMIN)}
               className={cn(
                 'w-full justify-between rounded-[5px] min-h-10',
                 !formData.assignedTo?.length && 'text-muted-foreground'
@@ -702,7 +745,7 @@ export default function LeadViewEdit({
 
       <div className="flex flex-col gap-2">
         <p className="text-[#666666]">Last Modified Date</p>
-        <p>{formatTimeStampView(formData.leadTypeModifiedDate)}</p>
+        <p>{formatTimeStampView(formData.leadTypeModifiedDate) ?? 'Not Provided'}</p>
       </div>
     </>
   );

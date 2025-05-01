@@ -40,6 +40,7 @@ import { updateEnquiryDraftStep3, updateEnquiryStep3 } from './helper/apirequest
 import { useRouter } from 'next/navigation';
 import { error } from 'console';
 import { EnquiryDocument } from './documents-section/single-document-form';
+import DocumentVerificationSection from './document-verification';
 
 export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).extend({
   confirmation: z.boolean().refine((value) => value === true, {
@@ -312,6 +313,7 @@ const EnquiryFormStage3 = () => {
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
+          <DocumentVerificationSection form={form} />
 
           <AllDocuments
             enquiryDocuments={currentDocuments}

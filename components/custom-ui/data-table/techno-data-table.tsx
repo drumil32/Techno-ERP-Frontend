@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -34,8 +34,7 @@ import {
   ChevronRight,
   ChevronsRight,
   ChevronsLeft,
-  ArrowLeftCircle,
-  ArrowRightCircle
+  User
 } from 'lucide-react';
 import { LuDownload, LuUpload } from 'react-icons/lu';
 import clsx from 'clsx';
@@ -49,8 +48,45 @@ declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends unknown, TValue> {
     align?: 'left' | 'center' | 'right';
     maxWidth?: number;
+    fixedWidth?: number;
   }
 }
+
+const TruncatedCell = ({ value, maxWidth }: { value: string; maxWidth?: number }) => {
+  const cellRef = useRef<HTMLSpanElement>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+
+  useEffect(() => {
+    if (cellRef.current && maxWidth) {
+      setIsTruncated(cellRef.current.scrollWidth > maxWidth);
+    }
+  }, [value, maxWidth]);
+
+  if (!value || value === '-' || value === 'N/A') return <>{value}</>;
+
+  return isTruncated ? (
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span
+            ref={cellRef}
+            className="truncate block hover:text-[#6042D1] hover:underline"
+            style={{ maxWidth: maxWidth ? `${maxWidth}px` : 'none' }}
+          >
+            {value}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-[300px] break-words bg-gray-800 text-white border-gray-600">
+          <p>{value}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  ) : (
+    <span ref={cellRef} style={{ maxWidth: maxWidth ? `${maxWidth}px` : 'none' }} className="block">
+      {value}
+    </span>
+  );
+};
 
 export default function TechnoDataTable({
   columns,
@@ -75,61 +111,15 @@ export default function TechnoDataTable({
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
   const { hasRole } = useAuthStore();
-  const [showScrollButtons, setShowScrollButtons] = useState(false);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-
-  const [sortConfig, setSortConfig] = useState<Record<string, string>>(() => {
-    const initialConfig: Record<string, string> = {};
-    ['dateView', 'nextDueDateView', 'Next Call Date', 'LTC Date', 'leadTypeModifiedDate'].forEach(
-      (column) => {
-        initialConfig[column] = 'desc';
-      }
-    );
-    return initialConfig;
-  });
-
-  useEffect(() => {
-    setGlobalFilter(searchTerm);
-  }, [searchTerm]);
-
+  const [activeSortColumn, setActiveSortColumn] = useState('dateView');
+  const [sortDirection, setSortDirection] = useState('desc');
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
 
-  const checkScroll = useCallback(() => {
-    if (tableContainerRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = tableContainerRef.current;
-      const hasHorizontalScroll = scrollWidth > clientWidth;
-      setShowScrollButtons(hasHorizontalScroll);
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
-    }
-  }, []);
-
   useEffect(() => {
-    const container = tableContainerRef.current;
-    if (!container) return;
-
-    checkScroll();
-
-    container.addEventListener('scroll', checkScroll);
-    window.addEventListener('resize', checkScroll);
-
-    return () => {
-      container.removeEventListener('scroll', checkScroll);
-      window.removeEventListener('resize', checkScroll);
-    };
-  }, [checkScroll, data]);
-
-  const handleScroll = useCallback((direction: 'left' | 'right') => {
-    if (tableContainerRef.current) {
-      const scrollAmount = tableContainerRef.current.clientWidth * 0.75;
-      tableContainerRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  }, []);
+    setGlobalFilter(searchTerm);
+    if (onSort) onSort(activeSortColumn, sortDirection);
+  }, [searchTerm]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -157,17 +147,20 @@ export default function TechnoDataTable({
   });
 
   const handleSort = (columnName: string) => {
-    const newSortConfig = { ...sortConfig };
-    if (!newSortConfig[columnName]) newSortConfig[columnName] = 'desc';
-    else if (newSortConfig[columnName] === 'desc') newSortConfig[columnName] = 'asc';
-    else newSortConfig[columnName] = 'desc';
-    setSortConfig(newSortConfig);
-    if (onSort) onSort(columnName, newSortConfig[columnName]);
+    if (activeSortColumn === columnName) {
+      const newDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+      setSortDirection(newDirection);
+      if (onSort) onSort(columnName, newDirection);
+    } else {
+      setActiveSortColumn(columnName);
+      setSortDirection('desc');
+      if (onSort) onSort(columnName, 'desc');
+    }
   };
 
   const getSortIcon = (columnName: string) => {
-    if (sortConfig[columnName]) {
-      return sortConfig[columnName] === 'asc' ? (
+    if (activeSortColumn === columnName) {
+      return sortDirection === 'asc' ? (
         <ArrowUp className="ml-1 h-4 w-4" />
       ) : (
         <ArrowDown className="ml-1 h-4 w-4" />
@@ -204,47 +197,6 @@ export default function TechnoDataTable({
   ];
 
   const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate'];
-  const tooltipColumns = ['Remarks', 'Area', 'Name', 'Assigned To'];
-
-  const TruncatedCell = ({ value, maxWidth }: { value: string; maxWidth?: number }) => {
-    const cellRef = useRef<HTMLSpanElement>(null);
-    const [isTruncated, setIsTruncated] = useState(false);
-
-    useEffect(() => {
-      if (cellRef.current) {
-        setIsTruncated(cellRef.current.scrollWidth > (maxWidth || 120));
-      }
-    }, [value, maxWidth]);
-
-    if (!value || value === '-' || value === 'N/A') return <>{value}</>;
-
-    return isTruncated ? (
-      <TooltipProvider delayDuration={200}>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span
-              ref={cellRef}
-              className="truncate block hover:text-[#6042D1] hover:underline"
-              style={{ maxWidth: `${maxWidth || 120}px` }}
-            >
-              {value}
-            </span>
-          </TooltipTrigger>
-          <TooltipContent
-            className="max-w-[300px] break-words bg-gray-800 text-white border-gray-600"
-            side="top"
-            align="start"
-          >
-            <p>{value}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    ) : (
-      <span ref={cellRef} style={{ maxWidth: `${maxWidth || 120}px` }} className="truncate block">
-        {value}
-      </span>
-    );
-  };
 
   return (
     <div className="w-full mb-10 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -266,7 +218,11 @@ export default function TechnoDataTable({
             </span>
           </div>
           <Button
-            disabled={!hasRole(UserRoles.ADMIN)}
+            disabled={
+              !hasRole(UserRoles.EMPLOYEE_MARKETING) ||
+              !hasRole(UserRoles.LEAD_MARKETING) ||
+              tableName != 'All Leads'
+            }
             onClick={uploadAction}
             variant="outline"
             className="h-8 w-[85px] rounded-[10px] border"
@@ -281,46 +237,9 @@ export default function TechnoDataTable({
       </div>
 
       <div className="relative">
-        {showScrollButtons && (
-          <>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={clsx(
-                'absolute left-0 top-1/2 transform -translate-y-1/2 z-10',
-                'rounded-full bg-white/80 shadow-md hover:bg-white',
-                'transition-opacity duration-300',
-                {
-                  'opacity-80 hover:opacity-100': canScrollLeft,
-                  'opacity-0 pointer-events-none': !canScrollLeft
-                }
-              )}
-              onClick={() => handleScroll('left')}
-            >
-              <ArrowLeftCircle className="h-8 w-8 text-[#5B31D1]" strokeWidth={1.5} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={clsx(
-                'absolute right-0 top-1/2 transform -translate-y-1/2 z-10',
-                'rounded-full bg-white/80 shadow-md hover:bg-white',
-                'transition-opacity duration-300',
-                {
-                  'opacity-80 hover:opacity-100': canScrollRight,
-                  'opacity-0 pointer-events-none': !canScrollRight
-                }
-              )}
-              onClick={() => handleScroll('right')}
-            >
-              <ArrowRightCircle className="h-8 w-8 text-[#5B31D1]" strokeWidth={1.5} />
-            </Button>
-          </>
-        )}
         <div
           ref={tableContainerRef}
           className="min-h-[580px] overflow-auto custom-scrollbar relative"
-          style={{ scrollbarGutter: 'stable' }}
         >
           <Table ref={tableRef} className="w-full">
             <TableHeader className="bg-[#5B31D1]/10 font-bolds sticky top-0 z-10">
@@ -331,6 +250,7 @@ export default function TechnoDataTable({
                     const isSortable = sortableColumns.includes(columnId);
                     const isNonClickable = nonClickableColumns.includes(columnId);
                     const align = header.column.columnDef.meta?.align || 'left';
+                    const fixedWidth = header.column.columnDef.meta?.fixedWidth;
 
                     return (
                       <TableHead
@@ -342,6 +262,7 @@ export default function TechnoDataTable({
                           'rounded-l-[5px]': index === 0,
                           'rounded-r-[5px]': index === headerGroup.headers.length - 1
                         })}
+                        style={{ width: fixedWidth ? `${fixedWidth}px` : 'auto' }}
                       >
                         {isSortable && !isNonClickable ? (
                           <div
@@ -367,22 +288,20 @@ export default function TechnoDataTable({
                 table.getRowModel().rows.map((row: any) => (
                   <TableRow
                     key={row.id}
-                    className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
+                    className={`h-[39px] ${rowCursor ? 'cursor-pointer' : ''} ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
                     onClick={() => {
-                      setSelectedRowId(row.id);
-                      handleViewMore({ ...row.original, leadType: row.original._leadType });
+                      if (rowCursor) {
+                        setSelectedRowId(row.id);
+                        handleViewMore({ ...row.original, leadType: row.original._leadType });
+                      }
                     }}
                   >
                     {row.getVisibleCells().map((cell: any) => {
                       const isExcluded = nonClickableColumns.includes(cell.column.id);
                       const align = cell.column.columnDef.meta?.align || 'left';
                       const cellValue = cell.getValue();
-                      const shouldShowTooltip =
-                        tooltipColumns.includes(cell.column.columnDef.header as string) &&
-                        cellValue &&
-                        cellValue !== '-' &&
-                        cellValue !== 'N/A';
                       const maxWidth = cell.column.columnDef.meta?.maxWidth;
+                      const fixedWidth = cell.column.columnDef.meta?.fixedWidth;
 
                       return (
                         <TableCell
@@ -392,9 +311,10 @@ export default function TechnoDataTable({
                             'text-center': cellValue === 'N/A' || align === 'center',
                             'text-right': align === 'right'
                           })}
+                          style={{ width: fixedWidth ? `${fixedWidth}px` : 'auto' }}
                           onClick={(e) => isExcluded && e.stopPropagation()}
                         >
-                          {shouldShowTooltip ? (
+                          {maxWidth ? (
                             <TruncatedCell value={cellValue} maxWidth={maxWidth} />
                           ) : (
                             flexRender(cell.column.columnDef.cell, cell.getContext())
@@ -433,26 +353,6 @@ export default function TechnoDataTable({
             </TableBody>
           </Table>
         </div>
-
-        {showScrollButtons && (
-          <div className="flex justify-center mt-2">
-            <div className="bg-gray-200 rounded-full h-1 w-48 relative overflow-hidden">
-              {tableRef.current && (
-                <div
-                  className="absolute top-0 bottom-0 bg-[#5B31D1] rounded-full transition-all duration-300"
-                  style={{
-                    left: tableRef.current
-                      ? `${(tableRef.current.scrollLeft / (tableRef.current.scrollWidth - tableRef.current.clientWidth)) * 100}%`
-                      : '0%',
-                    width: tableRef.current
-                      ? `${(tableRef.current.clientWidth / tableRef.current.scrollWidth) * 100}%`
-                      : '100%'
-                  }}
-                />
-              )}
-            </div>
-          </div>
-        )}
       </div>
 
       {showPagination && (

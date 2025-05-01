@@ -102,10 +102,19 @@ export const singleDocumentSchema = z.object({
 });
 
 export const academicDetailsPartialArraySchema = z.array(academicDetailPartialSchema);
+export enum PhysicalDocumentNoteStatus {
+  PENDING = 'PENDING',
+  VERIFIED = 'VERIFIED',
+  NOT_APPLICABLE = 'NOT_APPLICABLE'
+}
+export const physicalDocumentNoteSchema = z.object({
+  type: z.string().optional(),
+  status: z.nativeEnum(PhysicalDocumentNoteStatus),
+  dueBy: z.date().optional()
+});
 
 export const enquirySchema = z.object({
   _id: z.string().optional(),
-  // Student Details
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
   dateOfEnquiry: requestDateSchema.optional(),
   studentName: z
@@ -165,7 +174,7 @@ export const enquirySchema = z.object({
     .string()
     .regex(/^\d{12}$/, 'Aadhar Number must be exactly 12 digits')
     .optional(),
-
+  physicalDocumentNote: z.array(physicalDocumentNoteSchema).optional(),
   religion: z.nativeEnum(Religion).optional(),
   bloodGroup: z.nativeEnum(BloodGroup).optional(),
   previousCollegeData: previousCollegeDataSchema.optional(),

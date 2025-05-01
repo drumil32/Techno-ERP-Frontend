@@ -6,9 +6,8 @@ import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
-
 import LeadViewEdit, { LeadData } from './leads-view-edit';
 import { Course, LeadType, Locations } from '@/types/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
@@ -40,6 +39,31 @@ export default function AllLeadsPage() {
   });
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
+  // const handleSortChange = (column: string, order: string) => {
+  //   if (column === 'nextDueDateView') {
+  //     column = 'nextDueDate';
+  //   }
+  //   if (column === 'dateView') {
+  //     column = 'date';
+  //   }
+
+  //   setSortState((prevState: any) => {
+  //     const currentIndex = prevState.sortBy.indexOf(column);
+  //     let newOrderBy = [...prevState.orderBy];
+  //     if (currentIndex != -1) {
+  //       newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == 'asc' ? 'desc' : 'asc';
+  //     }
+
+  //     return {
+  //       ...prevState,
+  //       orderBy: newOrderBy
+  //     };
+  //   });
+
+  //   setPage(1);
+  //   setRefreshKey((prevKey) => prevKey + 1);
+  // };
+
   const handleSortChange = (column: string, order: string) => {
     if (column === 'nextDueDateView') {
       column = 'nextDueDate';
@@ -48,17 +72,10 @@ export default function AllLeadsPage() {
       column = 'date';
     }
 
-    setSortState((prevState: any) => {
-      const currentIndex = prevState.sortBy.indexOf(column);
-      let newOrderBy = [...prevState.orderBy];
-      if (currentIndex != -1) {
-        newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == 'asc' ? 'desc' : 'asc';
-      }
-
-      return {
-        ...prevState,
-        orderBy: newOrderBy
-      };
+    setSortState({
+      ...sortState,
+      sortBy: [column],
+      orderBy: [order]
     });
 
     setPage(1);
@@ -265,7 +282,7 @@ export default function AllLeadsPage() {
   const columns = [
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'dateView', header: 'Date' },
-    { accessorKey: 'name', header: 'Name', meta: { align: 'left' } },
+    { accessorKey: 'name', header: 'Name', meta: { align: 'left', maxWidth: 120 } },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'areaView', header: 'Area', meta: { align: 'left' } },
     { accessorKey: 'cityView', header: 'City', meta: { align: 'left' } },
@@ -276,6 +293,7 @@ export default function AllLeadsPage() {
       header: 'Lead Type',
       cell: ({ row }: any) => {
         const [selectedType, setSelectedType] = useState<LeadType>(row.original.leadType);
+        const toastIdRef = useRef<string | number | null>(null);
 
         const handleDropdownChange = async (value: LeadType) => {
           if (row.original.leadType == LeadType.INTERESTED) {
@@ -284,6 +302,10 @@ export default function AllLeadsPage() {
           }
 
           setSelectedType(value);
+
+          toastIdRef.current = toast.loading('Updating lead type...', {
+            duration: Infinity
+          });
 
           const {
             id,
@@ -316,18 +338,35 @@ export default function AllLeadsPage() {
             leadType: value
           };
 
-          const response: LeadData | null = await apiRequest(
-            API_METHODS.PUT,
-            API_ENDPOINTS.updateLead,
-            updatedData
-          );
+          try {
+            const response: LeadData | null = await apiRequest(
+              API_METHODS.PUT,
+              API_ENDPOINTS.updateLead,
+              updatedData
+            );
+            toast.dismiss(toastIdRef.current);
 
-          if (response) {
-            toast.success('Lead type updated successfully');
-            setRefreshKey((prevKey) => prevKey + 1);
-          } else {
-            toast.error('Failed to update lead type');
+            if (response) {
+              toast.success('Lead type updated successfully', {
+                id: toastIdRef.current,
+                duration: 1500
+              });
+              setRefreshKey((prevKey) => prevKey + 1);
+            } else {
+              toast.error('Failed to update lead type', {
+                id: toastIdRef.current,
+                duration: 1500
+              });
+              setSelectedType(row.original.leadType);
+            }
+          } catch (error) {
+            toast.error('Failed to update lead type', {
+              id: toastIdRef.current,
+              duration: 1500
+            });
             setSelectedType(row.original.leadType);
+          } finally {
+            toastIdRef.current = null;
           }
         };
 
@@ -349,10 +388,15 @@ export default function AllLeadsPage() {
       meta: { align: 'center' },
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.leadsFollowUpCount);
+        const toastIdRef = useRef<string | number | null>(null);
 
         const handleDropdownChange = async (newValue: number) => {
           const previousValue = selectedValue;
           setSelectedValue(newValue);
+
+          toastIdRef.current = toast.loading('Updating follow-up count...', {
+            duration: Infinity
+          });
 
           const filteredData = {
             ...row.original,
@@ -385,26 +429,43 @@ export default function AllLeadsPage() {
             ...cleanedRow
           } = filteredData;
 
-          const response: LeadData | null = await apiRequest(
-            API_METHODS.PUT,
-            API_ENDPOINTS.updateLead,
-            cleanedRow
-          );
-
-          if (response) {
-            toast.success('Follow-up count updated successfully');
-            setRefreshKey((prevKey) => prevKey + 1);
-          } else {
-            toast.error('Failed to update follow-up count');
+          try {
+            const response: LeadData | null = await apiRequest(
+              API_METHODS.PUT,
+              API_ENDPOINTS.updateLead,
+              cleanedRow
+            );
+            toast.dismiss(toastIdRef.current);
+            if (response) {
+              toast.success('Follow-up count updated successfully', {
+                id: toastIdRef.current,
+                duration: 3000
+              });
+              setRefreshKey((prevKey) => prevKey + 1);
+            } else {
+              toast.error('Failed to update follow-up count', {
+                id: toastIdRef.current,
+                duration: 1500
+              });
+              setSelectedValue(previousValue);
+            }
+          } catch (error) {
+            toast.error('Failed to update follow-up count', {
+              id: toastIdRef.current,
+              duration: 1500
+            });
             setSelectedValue(previousValue);
+          } finally {
+            toastIdRef.current = null;
           }
         };
+
         return (
           <Select
             value={selectedValue.toString()}
             onValueChange={(value) => handleDropdownChange(Number(value))}
           >
-            <SelectTrigger className="w-[60px] min-h-[unset] h-8 text-sm">
+            <SelectTrigger className="w-[60px] mx-auto min-h-[unset] h-8 text-sm">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent className="w-[60px] min-w-[unset]">
@@ -436,7 +497,7 @@ export default function AllLeadsPage() {
     //     </Button>
     //   )
     // },
-    { accessorKey: 'remarksView', header: 'Remarks' }
+    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } }
   ];
 
   const marketingSourceQuery = useQuery({
