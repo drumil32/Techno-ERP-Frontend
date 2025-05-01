@@ -1,10 +1,17 @@
+'use client';
+
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import React from 'react';
 import PersonalDetailsSection from './personal-details';
 import { Form } from '@/components/ui/form';
 import { FieldDefinition, StudentData } from './helpers/interface';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { enquirySchema } from '../enquiry-form/schema/schema';
+import { useForm } from 'react-hook-form';
 
+const formSchema = enquirySchema;
 
 const SingleStudentRepositoryPage: React.FC = () => {
   // Sample student data
@@ -86,6 +93,14 @@ const SingleStudentRepositoryPage: React.FC = () => {
     </div>
   );
 
+  // Form initialization
+  const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+  });
+  
+  const commonFormItemClass = 'col-span-1 min-h-[50px] gap-y-0  ';
+  const commonFieldClass = 'gap-y-0';
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center">
@@ -107,13 +122,13 @@ const SingleStudentRepositoryPage: React.FC = () => {
 
       {/* Student More Details */}
       <div>
-        {/* <Form {...form}> */}
+        <Form {...form}>
 
         {/* Personal Details */}
         <div>
-          {/* <PersonalDetailsSection /> */}
+          <PersonalDetailsSection form={form} commonFieldClass={commonFieldClass} commonFormItemClass={commonFormItemClass} />
         </div>
-        {/* </Form> */}
+        </Form>
       </div>
     </div>
   );

@@ -1,22 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react';
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger
-  } from '@/components/ui/accordion';
-  import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-  import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-  import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-  } from '@/components/ui/select';
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
+} from '@/components/ui/accordion';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
-  
+import { DatePicker } from '@/components/ui/date-picker';
+import { AreaType, BloodGroup, Category, Gender, Religion, StatesOfIndia } from '@/types/enum';
+import { toPascal } from '@/lib/utils';
+import { Nationality } from '../enquiry-form/schema/schema';
+import { Button } from '@/components/ui/button';
+import { Check, Pencil } from 'lucide-react';
+
 interface PersonalDetailsFormPropInterface<T extends FieldValues = FieldValues> {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
@@ -28,418 +33,632 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormPropInterface> = ({
   commonFormItemClass,
   commonFieldClass
 }) => {
-    return (
-        // <Accordion type="single" collapsible defaultValue="personal-details">
-        //   <AccordionItem value="personal-details">
-        //     <div className="space-y-2">
-        //       {/* Section Title */}
-        //       <AccordionTrigger className="w-full items-center">
-        //         <h3 className="font-inter text-[16px] font-semibold">Personal Details</h3>
-        //         <hr className="flex-1 border-t border-[#DADADA] ml-2" />
-        //       </AccordionTrigger>
+  // State to track edit mode
+  const [isEditing, setIsEditing] = useState(false);
 
-        //       <AccordionContent>
-        //         <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-y-1 sm:grid-cols-1 gap-x-[32px] bg-white p-4 rounded-[10px]">
-        //           <FormField
-        //             key="admissionMode"
-        //             control={form.control}
-        //             name="admissionMode"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass}`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Admission Mode
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Select
-        //                     onValueChange={field.onChange}
-        //                     value={field.value}
-        //                     defaultValue={AdmissionMode.OFFLINE}
-        //                   >
-        //                     <SelectTrigger className={`${commonFieldClass} w-full`}>
-        //                       <SelectValue
-        //                         className="text-[#9D9D9D]"
-        //                         placeholder="Select Admission Mode"
-        //                       />
-        //                     </SelectTrigger>
-        //                     <SelectContent>
-        //                       {Object.values(AdmissionMode).map((mode) => (
-        //                         <SelectItem key={mode} value={mode}>
-        //                           {toPascal(mode)}
-        //                         </SelectItem>
-        //                       ))}
-        //                     </SelectContent>
-        //                   </Select>
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
+  const formData = form.getValues();
 
-        //           <DatePicker
-        //             control={form.control}
-        //             name="dateOfEnquiry"
-        //             formItemClassName={commonFormItemClass}
-        //             label="Date of Enquiry"
-        //             placeholder="Select Enquiry Date"
-        //             showYearMonthDropdowns={true}
-        //             defaultSelectedDate={new Date()}
-        //             labelClassName="font-inter font-normal text-[12px] text-[#666666]"
-        //           />
+  // Toggle edit mode
+  const toggleEdit = () => {
+    setIsEditing((prev) => !prev);
+  };
 
-        //           <FormField
-        //             key="studentName"
-        //             control={form.control}
-        //             name="studentName"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass} col-start-1`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Student Name
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Input
-        //                     type="text"
-        //                     {...field}
-        //                     value={field.value ?? ''}
-        //                     className={commonFieldClass}
-        //                     placeholder="Enter the student name"
-        //                   />
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
+  // Display field component
+  const DisplayField: React.FC<{ label: string; value: string | null }> = ({ label, value }) => (
+    <div className={commonFormItemClass}>
+      <div className="font-inter font-normal text-xs text-gray-500">{label}</div>
+      <div className="text-sm font-medium py-2">{value || '-'}</div>
+      <div className="h-5"></div>
+    </div>
+  );
 
-        //           <FormField
-        //             key="studentPhoneNumber"
-        //             control={form.control}
-        //             name="studentPhoneNumber"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass}`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Student Phone Number
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Input
-        //                     type="tel"
-        //                     {...field}
-        //                     value={field.value ?? ''}
-        //                     className={commonFieldClass}
-        //                     placeholder="Enter the student phone number"
-        //                   />
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
+  return (
+    <Accordion type="single" collapsible defaultValue="personal-details">
+      <AccordionItem value="personal-details">
+        <div className="space-y-2">
+          {/* Section Title */}
+          <AccordionTrigger className="w-full items-center">
+            <h3 className="font-inter text-[16px] font-semibold">Personal Details</h3>
+            <Button
+              variant="outline"
+              className={`rounded-[10px] border font-inter font-medium text-[12px] px-2 py-1 h-fit bg-transparent ${isEditing ? 'text-green-600 border-green-600 hover:text-green-600' : 'text-[#5B31D1] border-[#5B31D1] hover:text-[#5B31D1]'}`}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent accordion from toggling
+                toggleEdit();
+              }}
+            >
+              {isEditing ? (
+                <>
+                  <Check className="h-3 w-3 mr-1" />
+                  Save
+                </>
+              ) : (
+                <>
+                  <Pencil className="h-3 w-3 mr-1" />
+                  Edit
+                </>
+              )}
+            </Button>
+            <hr className="flex-1 border-t border-[#DADADA] ml-2" />
+          </AccordionTrigger>
 
-        //           <FormField
-        //             key="emailId"
-        //             control={form.control}
-        //             name="emailId"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass}`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-        //                   Email ID
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Input
-        //                     type="text"
-        //                     {...field}
-        //                     value={field.value ?? ''}
-        //                     className={commonFieldClass}
-        //                     placeholder="Enter the email ID"
-        //                   />
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
+          <AccordionContent>
+            <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-y-1 sm:grid-cols-1 gap-x-[32px] bg-white p-4 rounded-[10px]">
+              {isEditing ? (
+                <>
+                  {/* Student Name */}
+                  <FormField
+                    key="studentName"
+                    control={form.control}
+                    name="studentName"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass} col-start-1`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Student Name
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter the student name"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Student Phone Number */}
+                  <FormField
+                    key="studentPhoneNumber"
+                    control={form.control}
+                    name="studentPhoneNumber"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Student Phone Number
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter the student phone number"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Email Id */}
+                  <FormField
+                    key="emailId"
+                    control={form.control}
+                    name="emailId"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          Email ID
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter the email ID"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Student ID */}
+                  <FormField
+                    key="studentID"
+                    control={form.control}
+                    name="studentID"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Student ID
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter the student ID"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Form No. */}
+                  <FormField
+                    key="formNo"
+                    control={form.control}
+                    name="formNo"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Form No.
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter the form number"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Father Name */}
+                  <FormField
+                    key="fatherName"
+                    control={form.control}
+                    name="fatherName"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Father's Name
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter father's name"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Father PhoneNumber */}
+                  <FormField
+                    key="fatherPhoneNumber"
+                    control={form.control}
+                    name="fatherPhoneNumber"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Father's Phone Number
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter father's phone number"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Father Occupation */}
+                  <FormField
+                    key="fatherOccupation"
+                    control={form.control}
+                    name="fatherOccupation"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Father's Occupation
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter father's occupation"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Mother Name */}
+                  <FormField
+                    key="motherName"
+                    control={form.control}
+                    name="motherName"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Mother's Name
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter mother's name"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Mother PhoneNumber */}
+                  <FormField
+                    key="motherPhoneNumber"
+                    control={form.control}
+                    name="motherPhoneNumber"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Mother's Phone Number
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="tel"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter mother's phone number"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Mother Occupation */}
+                  <FormField
+                    key="motherOccupation"
+                    control={form.control}
+                    name="motherOccupation"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Mother's Occupation
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter mother's occupation"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Gender */}
+                  <FormField
+                    key="gender"
+                    control={form.control}
+                    name="gender"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Gender
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue className="text-[#9D9D9D]" placeholder="Select Gender" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(Gender).map((gender) => (
+                                <SelectItem key={gender} value={gender}>
+                                  {toPascal(gender)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Date of Birth */}
+                  <DatePicker
+                    control={form.control}
+                    name="dateOfBirth"
+                    label="Date of Birth"
+                    placeholder="Select Date of Birth"
+                    formItemClassName={commonFormItemClass}
+                    showYearMonthDropdowns={true}
+                    labelClassName="font-inter font-normal text-[12px] text-[#666666]"
+                    calendarProps={{
+                      disabled: (date) => {
+                        const today = new Date();
+                        return date >= new Date(today.setHours(0, 0, 0, 0));
+                      }
+                    }}
+                    defaultMonth={new Date(new Date().getFullYear() - 10, 0, 1)}
+                    isRequired={true}
+                  />
+                  {/* Religion */}
+                  <FormField
+                    key="religion"
+                    control={form.control}
+                    name="religion"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass} col-span-1`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          Religion
+                        </FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue placeholder="Select the religion" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(Religion).map((religion) => (
+                                <SelectItem key={religion} value={religion}>
+                                  {religion}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Category */}
+                  <FormField
+                    key="category"
+                    control={form.control}
+                    name="category"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Category
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue
+                                className="text-[#9D9D9D]"
+                                placeholder="Select category"
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(Category).map((category) => (
+                                <SelectItem key={category} value={category}>
+                                  {category}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Blood Group */}
+                  <FormField
+                    key="bloodGroup"
+                    control={form.control}
+                    name="bloodGroup"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          Blood Group
+                        </FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue placeholder="Select the blood group" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(BloodGroup).map((bloodGroup) => (
+                                <SelectItem key={bloodGroup} value={bloodGroup}>
+                                  {bloodGroup}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Aadhar Number */}
+                  <FormField
+                    key="aadharNumber"
+                    control={form.control}
+                    name="aadharNumber"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass} col-span-1 `}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          Aadhaar Number
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter the Aadhaar number"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* State of Domicile */}
+                  <FormField
+                    key="stateOfDomicile"
+                    control={form.control}
+                    name="stateOfDomicile"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass} col-span-1`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          State Of Domicile
+                        </FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue placeholder="Select the state" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(StatesOfIndia).map((state) => (
+                                <SelectItem key={state} value={state}>
+                                  {state}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Area Type */}
+                  <FormField
+                    key="areaType"
+                    control={form.control}
+                    name="areaType"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass} col-span-1`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          Area Type
+                        </FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue placeholder="Select the area type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(AreaType).map((area) => (
+                                <SelectItem key={area} value={area}>
+                                  {area}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Nationality */}
+                  <FormField
+                    key="nationality"
+                    control={form.control}
+                    name="nationality"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass} col-span-1`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          Nationality
+                        </FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue placeholder="Enter the nationality" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.values(Nationality).map((nationality) => (
+                                <SelectItem key={nationality} value={nationality}>
+                                  {nationality}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </>
+              ) : (
+                <>
+                  <DisplayField label="Student Name" value={formData.studentName} />
+                  <DisplayField label="Student Phone Number" value={formData.studentPhoneNumber} />
+                  <DisplayField label="Email ID" value={formData.emailId} />
+                  <DisplayField label="Student ID" value={formData.studentID} />
+                  <DisplayField label="Form No." value={formData.formNo} />
+                  <DisplayField label="Father's Name" value={formData.fatherName} />
+                  <DisplayField label="Father's Phone Number" value={formData.fatherPhoneNumber} />
+                  <DisplayField label="Father's Occupation" value={formData.fatherOccupation} />
+                  <DisplayField label="Mother's Name" value={formData.motherName} />
+                  <DisplayField label="Mother's Phone Number" value={formData.motherPhoneNumber} />
+                  <DisplayField label="Mother's Occupation" value={formData.motherOccupation} />
+                  <DisplayField label="gender" value={formData.gender} />
+                  <DisplayField label="Date of Birth" value={formData.dateOfBirth} />
+                  <DisplayField label="Religion" value={formData.religion} />
+                  <DisplayField label="Category" value={formData.category} />
+                  <DisplayField label="Blood Group" value={formData.bloodGroup} />
+                  <DisplayField label="Aadhaar Number" value={formData.aadharNumber} />
+                  <DisplayField label="State Of Domicile" value={formData.stateOfDomicile} />
+                  <DisplayField label="Area Type" value={formData.areaType} />
+                  <DisplayField label="Nationality" value={formData.nationality} />
+                </>
+              )}
+            </div>
+          </AccordionContent>
+        </div>
+      </AccordionItem>
+    </Accordion>
+  );
+};
 
-        //           <FormField
-        //             key="fatherName"
-        //             control={form.control}
-        //             name="fatherName"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass}`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Father's Name
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Input
-        //                     type="text"
-        //                     {...field}
-        //                     value={field.value ?? ''}
-        //                     className={commonFieldClass}
-        //                     placeholder="Enter father's name"
-        //                   />
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
-
-        //           <FormField
-        //             key="fatherPhoneNumber"
-        //             control={form.control}
-        //             name="fatherPhoneNumber"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass}`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Father's Phone Number
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Input
-        //                     type="tel"
-        //                     {...field}
-        //                     value={field.value ?? ''}
-        //                     className={commonFieldClass}
-        //                     placeholder="Enter father's phone number"
-        //                   />
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
-
-        //           <FormField
-        //             key="fatherOccupation"
-        //             control={form.control}
-        //             name="fatherOccupation"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass}`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Father's Occupation
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Input
-        //                     type="text"
-        //                     {...field}
-        //                     value={field.value ?? ''}
-        //                     className={commonFieldClass}
-        //                     placeholder="Enter father's occupation"
-        //                   />
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
-
-        //           <FormField
-        //             key="motherName"
-        //             control={form.control}
-        //             name="motherName"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass}`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Mother's Name
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Input
-        //                     type="text"
-        //                     {...field}
-        //                     value={field.value ?? ''}
-        //                     className={commonFieldClass}
-        //                     placeholder="Enter mother's name"
-        //                   />
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
-
-        //           <FormField
-        //             key="motherPhoneNumber"
-        //             control={form.control}
-        //             name="motherPhoneNumber"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass}`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Mother's Phone Number
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Input
-        //                     type="tel"
-        //                     {...field}
-        //                     value={field.value ?? ''}
-        //                     className={commonFieldClass}
-        //                     placeholder="Enter mother's phone number"
-        //                   />
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
-
-        //           <FormField
-        //             key="motherOccupation"
-        //             control={form.control}
-        //             name="motherOccupation"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass}`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Mother's Occupation
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Input
-        //                     type="text"
-        //                     {...field}
-        //                     value={field.value ?? ''}
-        //                     className={commonFieldClass}
-        //                     placeholder="Enter mother's occupation"
-        //                   />
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
-
-        //           <DatePicker
-        //             control={form.control}
-        //             name="dateOfBirth"
-        //             label="Date of Birth"
-        //             placeholder="Select Date of Birth"
-        //             formItemClassName={commonFormItemClass}
-        //             showYearMonthDropdowns={true}
-        //             labelClassName="font-inter font-normal text-[12px] text-[#666666]"
-        //             calendarProps={{
-        //               disabled: (date) => {
-        //                 const today = new Date();
-        //                 return date >= new Date(today.setHours(0, 0, 0, 0));
-        //               }
-        //             }}
-        //             defaultMonth={new Date(new Date().getFullYear() - 10, 0, 1)}
-        //             isRequired={true}
-        //           />
-
-        //           <FormField
-        //             key="category"
-        //             control={form.control}
-        //             name="category"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass}`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Category
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Select onValueChange={field.onChange} value={field.value}>
-        //                     <SelectTrigger className={`${commonFieldClass} w-full`}>
-        //                       <SelectValue className="text-[#9D9D9D]" placeholder="Select category" />
-        //                     </SelectTrigger>
-        //                     <SelectContent>
-        //                       {Object.values(Category).map((category) => (
-        //                         <SelectItem key={category} value={category}>
-        //                           {category}
-        //                         </SelectItem>
-        //                       ))}
-        //                     </SelectContent>
-        //                   </Select>
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
-
-        //           <FormField
-        //             key="gender"
-        //             control={form.control}
-        //             name="gender"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass}`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Gender
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Select onValueChange={field.onChange} value={field.value}>
-        //                     <SelectTrigger className={`${commonFieldClass} w-full`}>
-        //                       <SelectValue className="text-[#9D9D9D]" placeholder="Select Gender" />
-        //                     </SelectTrigger>
-        //                     <SelectContent>
-        //                       {Object.values(Gender).map((gender) => (
-        //                         <SelectItem key={gender} value={gender}>
-        //                           {toPascal(gender)}
-        //                         </SelectItem>
-        //                       ))}
-        //                     </SelectContent>
-        //                   </Select>
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
-
-        //           <FormField
-        //             key="course"
-        //             control={form.control}
-        //             name="course"
-        //             render={({ field }) => (
-        //               <FormItem className={`${commonFormItemClass} col-start-1`}>
-        //                 <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-        //                   Course
-        //                   <span className="text-red-500 pl-0">*</span>
-        //                 </FormLabel>
-        //                 <FormControl>
-        //                   <Select onValueChange={field.onChange} value={field.value}>
-        //                     <SelectTrigger className={`${commonFieldClass} w-full`}>
-        //                       <SelectValue className="text-[#9D9D9D]" placeholder="Select course" />
-        //                     </SelectTrigger>
-        //                     <SelectContent>
-        //                       {Object.values(Course).map((course) => (
-        //                         <SelectItem key={course} value={course}>
-        //                           {CourseNameMapper[course as Course]}
-        //                         </SelectItem>
-        //                       ))}
-        //                     </SelectContent>
-        //                   </Select>
-        //                 </FormControl>
-        //                 <div className="h-[20px]">
-        //                   <FormMessage className="text-[11px]" />
-        //                 </div>
-        //               </FormItem>
-        //             )}
-        //           />
-        //         </div>
-        //       </AccordionContent>
-        //     </div>
-        //   </AccordionItem>
-        // </Accordion>
-        <>
-        </>
-    );
-}
-
-export default PersonalDetailsSection
+export default PersonalDetailsSection;
