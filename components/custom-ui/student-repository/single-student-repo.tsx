@@ -10,10 +10,41 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { enquirySchema } from '../enquiry-form/schema/schema';
 import { useForm } from 'react-hook-form';
+import AddressDetailsSection from './address-details';
+import MoreDetailsHeader from './more-details-header/more-details-header';
+import { StudentRepositoryTabs } from './helpers/enum';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
+import { useParams } from 'next/navigation';
+import { AcademicDetails } from '@/types/enum';
+import AcademicDetailsSection from './academic-details';
 
 const formSchema = enquirySchema;
 
+
+
 const SingleStudentRepositoryPage: React.FC = () => {
+
+  const { id , stage } : { id : string , stage : string} = useParams();
+
+  const HEADER_ITEMS = {
+    [StudentRepositoryTabs.STUDENT_DETAILS]: {
+      title: 'Student Details',
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, stage)
+    },
+    [StudentRepositoryTabs.ACADEMIC_DETAILS]: {
+      title: 'Academic Details',
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, stage)
+    },
+    [StudentRepositoryTabs.ALL_DOCUMENTS]: {
+      title: 'All Documents',
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, stage)
+    },
+    [StudentRepositoryTabs.OFFICE_DETAILS]: {
+      title: 'Office Details',
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, stage)
+    }
+  };
+
   // Sample student data
   const studentData: StudentData = {
     id: 'TGI2025MBA102',
@@ -21,34 +52,30 @@ const SingleStudentRepositoryPage: React.FC = () => {
     fatherName: 'Anil Kumar Gupta',
     courseCode: 'MBA',
     studentPhone: '1234567890',
-    fatherPhone: '9876543210', 
+    fatherPhone: '9876543210',
     courseYear: 'First',
     formNo: 'TIMS453',
-    email: 'vaibhav.gupta@example.com', 
-    address: '123 College Street, New Delhi',
-    dateOfBirth: '15-05-2000',
-    batch: '2023-2025'
+    semester: '1st',
+    lurnNo: 'LURN123456',
   };
 
   const column1Fields: FieldDefinition[] = [
     { label: 'Student Name', key: 'name' },
-    { label: 'Father\'s Name', key: 'fatherName' },
+    { label: "Father's Name", key: 'fatherName' },
     { label: 'Course Code', key: 'courseCode' },
     { label: 'Student ID', key: 'id' }
   ];
 
   const column2Fields: FieldDefinition[] = [
-    { label: 'Student\'s Phone Number', key: 'studentPhone' },
-    { label: 'Father\'s Phone Number', key: 'fatherPhone' },
+    { label: "Student's Phone Number", key: 'studentPhone' },
+    { label: "Father's Phone Number", key: 'fatherPhone' },
     { label: 'Course Year', key: 'courseYear' },
     { label: 'Form No.', key: 'formNo' }
   ];
 
   const column3Fields: FieldDefinition[] = [
-    { label: 'Email', key: 'email' },
-    { label: 'Address', key: 'address' },
-    { label: 'Date of Birth', key: 'dateOfBirth' },
-    { label: 'Batch', key: 'batch' }
+    { label: 'Semester', key: 'semester' },
+    { label: 'Lurn/Pre-registration No.', key: 'lurnNo' },
   ];
 
   // Component to render a single field with proper truncation
@@ -65,11 +92,7 @@ const SingleStudentRepositoryPage: React.FC = () => {
   const FieldsColumn: React.FC<{ fields: FieldDefinition[] }> = ({ fields }) => (
     <div className="flex flex-col justify-between h-full space-y-4">
       {fields.map((field) => (
-        <InfoField 
-          key={field.key} 
-          label={field.label} 
-          value={studentData[field.key] || 'N/A'} 
-        />
+        <InfoField key={field.key} label={field.label} value={studentData[field.key] || 'N/A'} />
       ))}
     </div>
   );
@@ -84,20 +107,21 @@ const SingleStudentRepositoryPage: React.FC = () => {
           className="object-cover rounded-full border border-[#A5A5A5]"
         />
       </div>
-      <h2 className="font-inter text-[16px] font-semibold text-center truncate max-w-[150px]" title={name}>
+      <h2
+        className="font-inter text-[16px] font-semibold text-center truncate max-w-[150px]"
+        title={name}
+      >
         {name}
       </h2>
-      <p className="font-inter text-[13px] font-normal">
-        {id}
-      </p>
+      <p className="font-inter text-[13px] font-normal">{id}</p>
     </div>
   );
 
   // Form initialization
   const form = useForm<z.infer<typeof formSchema>>({
-      resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema)
   });
-  
+
   const commonFormItemClass = 'col-span-1 min-h-[50px] gap-y-0  ';
   const commonFieldClass = 'gap-y-0';
 
@@ -120,14 +144,33 @@ const SingleStudentRepositoryPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Tabs */}
+      <MoreDetailsHeader headerItems={HEADER_ITEMS} />
+
       {/* Student More Details */}
       <div>
         <Form {...form}>
+          {/* Personal Details */}
+          <PersonalDetailsSection
+            form={form}
+            commonFieldClass={commonFieldClass}
+            commonFormItemClass={commonFormItemClass}
+          />
 
-        {/* Personal Details */}
-        <div>
-          <PersonalDetailsSection form={form} commonFieldClass={commonFieldClass} commonFormItemClass={commonFormItemClass} />
-        </div>
+          {/* Address Details */}
+          <AddressDetailsSection
+            form={form}
+            commonFieldClass={commonFieldClass}
+            commonFormItemClass={commonFormItemClass}
+          />
+
+          {/* Academic Details */}
+          <AcademicDetailsSection
+            form={form}
+            commonFieldClass={commonFieldClass}
+            commonFormItemClass={commonFormItemClass}
+          />
+
         </Form>
       </div>
     </div>

@@ -1,26 +1,28 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { usePathname } from "next/navigation"; 
+import { useParams, usePathname } from "next/navigation"; 
 import { SITE_MAP } from "@/common/constants/frontendRouting";
+import { StudentRepositoryTabs } from "../helpers/enum";
 
 const MoreDetailsHeaderContext = createContext<any>(null);
 
-export function TopHeaderProvider({ children }: { children: React.ReactNode }) {
+export function MoreDetailsHeaderProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname(); 
+  const { id, stage } = useParams();
   const [headerActiveItem, setHeaderActiveItem] = useState<string | null>(null);
 
   useEffect(() => {
     if (!headerActiveItem) {
-      if (pathname.includes(SITE_MAP.MARKETING.ALL_LEADS)) {
-        setHeaderActiveItem("All Leads");
-      } else if (pathname.includes(SITE_MAP.MARKETING.ACTIVE_LEADS)) {
-        setHeaderActiveItem("Active Leads");
-      } else if (pathname.includes(SITE_MAP.MARKETING.ADMIN_TRACKER)) {
-        setHeaderActiveItem("Admin Tracker");
+      const validStages = Object.values(StudentRepositoryTabs);
+      if (
+        validStages.includes(stage as StudentRepositoryTabs) &&
+        pathname.includes(SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id as string, stage as string))
+      ) {
+        setHeaderActiveItem(typeof stage === 'string' ? stage : null);
       }
     }
-  }, [pathname, headerActiveItem]);
+  }, [pathname, headerActiveItem, stage]);
 
   return (
     <MoreDetailsHeaderContext.Provider value={{ headerActiveItem, setHeaderActiveItem }}>

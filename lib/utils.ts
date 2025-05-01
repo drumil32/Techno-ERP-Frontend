@@ -8,6 +8,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function toPascal(title: string) {
+
+  if (!title) return '';
+
   if (!title.includes('_')) {
     return title[0].toUpperCase() + title.slice(1).toLowerCase();
   }

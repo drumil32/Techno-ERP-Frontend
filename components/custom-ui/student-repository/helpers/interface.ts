@@ -45,10 +45,8 @@ export interface StudentData {
   fatherPhone: string;
   courseYear: string;
   formNo: string;
-  email: string;
-  address: string;
-  dateOfBirth: string;
-  batch: string;
+  semester: string;
+  lurnNo: string;
 }
 
 export interface FieldDefinition {
