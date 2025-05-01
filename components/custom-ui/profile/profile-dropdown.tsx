@@ -84,6 +84,11 @@ export const ProfileDropdown = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
       });
+
+      // Clear auth cookie
+      document.cookie =
+        'is-authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=strict';
+
       const data = await res.json();
       if (data && data.SUCCESS === true) {
         useAuthStore.getState().logout();
@@ -91,6 +96,9 @@ export const ProfileDropdown = () => {
       }
     } catch (error) {
       console.error('Logout failed:', error);
+      // Still clear cookie even if logout failed
+      document.cookie =
+        'is-authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=strict';
       useAuthStore.getState().logout();
       router.replace('/auth/login');
     }

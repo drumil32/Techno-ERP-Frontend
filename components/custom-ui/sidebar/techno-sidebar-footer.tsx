@@ -18,22 +18,24 @@ export default function TechnoSidebarFooter() {
   const handleLogout = async () => {
     try {
       const res = await fetch(API_ENDPOINTS.logout, {
-        method: API_METHODS.GET,
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
       });
 
-      const data = await res.json();
+      document.cookie =
+        'is-authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=strict';
 
+      const data = await res.json();
       if (data && data.SUCCESS === true) {
-        logout();
+        useAuthStore.getState().logout();
         router.replace('/auth/login');
       }
     } catch (error) {
       console.error('Logout failed:', error);
-      logout();
+      document.cookie =
+        'is-authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=strict';
+      useAuthStore.getState().logout();
       router.replace('/auth/login');
     }
   };

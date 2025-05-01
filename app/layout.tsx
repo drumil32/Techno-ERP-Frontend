@@ -8,7 +8,6 @@ import { Toaster } from '@/components/ui/sonner';
 import Head from 'next/head';
 import ProgressBar from '@/components/custom-ui/progress-bar/progress-bar';
 import { NavigationEvents } from '@/components/custom-ui/router-events/router-event';
-import useAuthRedirect from '@/lib/useAuthRedirect';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
