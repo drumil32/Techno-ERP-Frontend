@@ -43,9 +43,13 @@ export default function TechnoSidebarFooter() {
   return (
     <>
       {!hovered && (
-        <Avatar className="w-[33px] h-[32px] transition-transform duration-300 ease-in-out">
+        <Avatar className="transition-transform duration-300 ease-in-out">
           {/* TODO: Avatar will replace by the College Logo */}
-          <AvatarImage className="" src="/images/techno-logo.png" alt="User Avatar" />
+          <AvatarImage
+            className="rounded-full w-[33px] h-[33px]  object-contain p-1 bg-white"
+            src="/images/techno-logo.webp"
+            alt="User Avatar"
+          />
           <AvatarFallback></AvatarFallback>
         </Avatar>
       )}

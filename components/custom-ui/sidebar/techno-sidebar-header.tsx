@@ -29,9 +29,13 @@ export default function TechnoSidebarHeader() {
       }`}
     >
       {shouldShowExpanded && (
-        <div className="flex items-center gap-4 transition-opacity duration-100 ease-in-out opacity-100">
-          <Avatar className="w-[30px] h-[30px] transition-transform duration-100 ease-in-out">
-            <AvatarImage className="rounded-full" src="/images/techno-logo.png" alt="User Avatar" />
+        <div className="flex w-full items-center gap-4 transition-opacity duration-100 ease-in-out opacity-100">
+          <Avatar className=" transition-transform duration-100 ease-in-out">
+            <AvatarImage
+              className="rounded-full object-contain p-1 bg-white w-[40px] h-[40px]"
+              src="/images/techno-logo.webp"
+              alt="User Avatar"
+            />
           </Avatar>
           <p className="text-xl font-bold transition-all duration-100 ease-in-out">TECHNO</p>
         </div>

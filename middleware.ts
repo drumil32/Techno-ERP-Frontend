@@ -11,7 +11,6 @@ export async function middleware(request: NextRequest) {
 
   if (!isAuthenticated && request.nextUrl.pathname !== SITE_MAP.AUTH.LOGIN) {
     const loginUrl = new URL(SITE_MAP.AUTH.LOGIN, request.url);
-    loginUrl.searchParams.set('redirect', request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -19,5 +18,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|assets).*)']
+  matcher: ['/((?!api|images|_next/static|_next/image|favicon.ico|assets).*)']
 };

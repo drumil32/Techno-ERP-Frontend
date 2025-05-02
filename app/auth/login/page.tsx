@@ -85,10 +85,10 @@ export default function LoginPage() {
           <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-8 lg:mb-12">
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 relative">
               <Image
-                src="/images/techno-logo.png"
+                src="/images/techno-logo.webp"
                 alt="Techno ERP Logo"
                 fill
-                className="object-contain"
+                className="object-contain bg-white rounded-full"
               />
             </div>
             <span className="text-lg md:text-xl lg:text-2xl font-bold text-white">Techno ERP</span>
@@ -206,7 +206,7 @@ export default function LoginPage() {
             <div className="flex justify-center mb-2 md:mb-3">
               <div className="w-10 h-10 md:w-12 md:h-12 relative">
                 <Image
-                  src="/images/techno-logo.png"
+                  src="/images/techno-logo.webp"
                   alt="Techno ERP Logo"
                   fill
                   className="object-contain"
