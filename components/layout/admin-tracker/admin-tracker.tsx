@@ -22,6 +22,7 @@ import FilterBadges from '../allLeads/components/filter-badges';
 import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
 import { DropDownType } from '@/types/enum';
 import { LeadConversionDashboard } from './yellow-leads-converted';
+import Loading from '@/app/loading';
 
 const AdminTracker = () => {
   const { filters, updateFilter } = useTechnoFilterContext();
@@ -296,23 +297,27 @@ const AdminTracker = () => {
     data
   ]);
 
+  if (!data) {
+    return <Loading />;
+  }
+
   return (
-    <>
-      <TechnoPageTitle title="Admin Tracker" />
+    data && (
+      <>
+        <TechnoPageTitle title="Admin Tracker" />
 
-      {/* Filters Section */}
-      <TechnoFiltersGroup
-        filters={getFiltersData()}
-        handleFilters={applyFilter}
-        clearFilters={clearFilters}
-      />
-      <FilterBadges
-        onFilterRemove={handleFilterRemove}
-        assignedToData={assignedToDropdownData}
-        appliedFilters={appliedFilters}
-      />
+        {/* Filters Section */}
+        <TechnoFiltersGroup
+          filters={getFiltersData()}
+          handleFilters={applyFilter}
+          clearFilters={clearFilters}
+        />
+        <FilterBadges
+          onFilterRemove={handleFilterRemove}
+          assignedToData={assignedToDropdownData}
+          appliedFilters={appliedFilters}
+        />
 
-      {data && (
         <>
           {/* Total Leads Reached Section */}
           <div className="mt-[32px]">
@@ -347,8 +352,8 @@ const AdminTracker = () => {
             )}
           </div>
         </>
-      )}
-    </>
+      </>
+    )
   );
 };
 

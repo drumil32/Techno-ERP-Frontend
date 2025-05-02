@@ -35,6 +35,7 @@ import {
 import FootFallSelect from './foot-fall-select';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { SelectValue } from '@radix-ui/react-select';
+import Loading from '@/app/loading';
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -44,8 +45,8 @@ export default function YellowLeadsTracker() {
   const [editRow, setEditRow] = useState<any>(null);
 
   const [sortState, setSortState] = useState<any>({
-    sortBy: ['leadTypeModifiedDate', 'nextDueDate'],
-    orderBy: ['desc', 'desc']
+    sortBy: ['leadTypeModifiedDate'],
+    orderBy: ['desc']
   });
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
@@ -541,59 +542,65 @@ export default function YellowLeadsTracker() {
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
+  if (!leads?.leads || !analytics) {
+    return <Loading />;
+  }
 
   return (
-    <>
-      <TechnoFiltersGroup
-        filters={getFiltersData()}
-        handleFilters={applyFilter}
-        clearFilters={clearFilters}
-      />
-      {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
-      {leads?.leads && (
-        <TechnoDataTable
-          columns={columns}
-          data={leads.leads}
-          tableName="Active Leads"
-          currentPage={page}
-          totalPages={totalPages}
-          pageLimit={limit}
-          onPageChange={handlePageChange}
-          onLimitChange={handleLimitChange}
-          onSearch={handleSearch}
-          searchTerm={search}
-          onSort={handleSortChange}
-          totalEntries={totalEntries}
-          handleViewMore={handleViewMore}
-          selectedRowId={selectedRowId}
-          setSelectedRowId={setSelectedRowId}
-        >
-          <FilterBadges
-            onFilterRemove={handleFilterRemove}
-            assignedToData={assignedToDropdownData}
-            appliedFilters={appliedFilters}
-          />
-        </TechnoDataTable>
-      )}
-      <TechnoRightDrawer
-        title={'Lead Details'}
-        isOpen={isDrawerOpen}
-        onClose={() => {
-          setSelectedRowId(null);
-          setIsDrawerOpen(false);
-          setRefreshKey((prev) => prev + 1);
-        }}
-      >
-        {isDrawerOpen && editRow && (
-          <YellowLeadViewEdit
-            setIsDrawerOpen={setIsDrawerOpen}
+    leads?.leads &&
+    analytics && (
+      <>
+        <TechnoFiltersGroup
+          filters={getFiltersData()}
+          handleFilters={applyFilter}
+          clearFilters={clearFilters}
+        />
+        {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
+        {leads?.leads && (
+          <TechnoDataTable
+            columns={columns}
+            data={leads.leads}
+            tableName="Active Leads"
+            currentPage={page}
+            totalPages={totalPages}
+            pageLimit={limit}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            onSearch={handleSearch}
+            searchTerm={search}
+            onSort={handleSortChange}
+            totalEntries={totalEntries}
+            handleViewMore={handleViewMore}
+            selectedRowId={selectedRowId}
             setSelectedRowId={setSelectedRowId}
-            setRefreshKey={setRefreshKey}
-            key={editRow._id}
-            data={editRow}
-          />
+          >
+            <FilterBadges
+              onFilterRemove={handleFilterRemove}
+              assignedToData={assignedToDropdownData}
+              appliedFilters={appliedFilters}
+            />
+          </TechnoDataTable>
         )}
-      </TechnoRightDrawer>
-    </>
+        <TechnoRightDrawer
+          title={'Lead Details'}
+          isOpen={isDrawerOpen}
+          onClose={() => {
+            setSelectedRowId(null);
+            setIsDrawerOpen(false);
+            setRefreshKey((prev) => prev + 1);
+          }}
+        >
+          {isDrawerOpen && editRow && (
+            <YellowLeadViewEdit
+              setIsDrawerOpen={setIsDrawerOpen}
+              setSelectedRowId={setSelectedRowId}
+              setRefreshKey={setRefreshKey}
+              key={editRow._id}
+              data={editRow}
+            />
+          )}
+        </TechnoRightDrawer>
+      </>
+    )
   );
 }

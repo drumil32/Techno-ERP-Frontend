@@ -43,12 +43,12 @@ export default function RootLayout({
       <body
         className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
-        <Suspense>
-          <ProgressBar />
-          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-          <NavigationEvents />
-          <Toaster richColors theme="light" position="top-center" />
-        </Suspense>
+        {/* <Suspense>s */}
+        <ProgressBar />
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+        <NavigationEvents />
+        <Toaster richColors theme="light" position="top-center" />
+        {/* </Suspense> */}
       </body>
     </html>
   );

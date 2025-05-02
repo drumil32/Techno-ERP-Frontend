@@ -13,6 +13,7 @@ import { Course, LeadType, Locations } from '@/types/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
+1;
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { toast } from 'sonner';
 import { API_METHODS } from '@/common/constants/apiMethods';
@@ -26,6 +27,7 @@ import {
 } from '../admin-tracker/helpers/fetch-data';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { SelectValue } from '@radix-ui/react-select';
+import Loading from '@/app/loading';
 export default function AllLeadsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -34,8 +36,8 @@ export default function AllLeadsPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editRow, setEditRow] = useState<any>(null);
   const [sortState, setSortState] = useState<any>({
-    sortBy: ['date', 'nextDueDate'],
-    orderBy: ['desc', 'desc']
+    sortBy: ['date'],
+    orderBy: ['desc']
   });
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
@@ -583,60 +585,67 @@ export default function AllLeadsPage() {
     }
   }, [leads]);
 
+  if (!leads?.leads || !analytics) {
+    return <Loading />;
+  }
+
   return (
-    <>
-      <TechnoFiltersGroup
-        filters={getFiltersData()}
-        handleFilters={applyFilter}
-        clearFilters={clearFilters}
-      />
+    leads?.leads &&
+    analytics && (
+      <>
+        <TechnoFiltersGroup
+          filters={getFiltersData()}
+          handleFilters={applyFilter}
+          clearFilters={clearFilters}
+        />
 
-      {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
+        {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
 
-      {leads?.leads && (
-        <TechnoDataTable
-          columns={columns}
-          data={leads.leads}
-          tableName="All Leads"
-          currentPage={page}
-          totalPages={totalPages}
-          pageLimit={limit}
-          onPageChange={handlePageChange}
-          onLimitChange={handleLimitChange}
-          onSearch={handleSearch}
-          searchTerm={search}
-          onSort={handleSortChange}
-          totalEntries={totalEntries}
-          handleViewMore={handleViewMore}
-          selectedRowId={selectedRowId}
-          setSelectedRowId={setSelectedRowId}
-        >
-          <FilterBadges
-            onFilterRemove={handleFilterRemove}
-            assignedToData={assignedToDropdownData}
-            appliedFilters={appliedFilters}
-          />
-        </TechnoDataTable>
-      )}
-      <TechnoRightDrawer
-        title={'Edit Lead Details'}
-        isOpen={isDrawerOpen}
-        onClose={() => {
-          setSelectedRowId(null);
-          setIsDrawerOpen(false);
-          setRefreshKey((prev) => prev + 1);
-        }}
-      >
-        {isDrawerOpen && editRow && (
-          <LeadViewEdit
-            setIsDrawerOpen={setIsDrawerOpen}
+        {leads?.leads && (
+          <TechnoDataTable
+            columns={columns}
+            data={leads.leads}
+            tableName="All Leads"
+            currentPage={page}
+            totalPages={totalPages}
+            pageLimit={limit}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            onSearch={handleSearch}
+            searchTerm={search}
+            onSort={handleSortChange}
+            totalEntries={totalEntries}
+            handleViewMore={handleViewMore}
+            selectedRowId={selectedRowId}
             setSelectedRowId={setSelectedRowId}
-            setRefreshKey={setRefreshKey}
-            key={editRow._id}
-            data={editRow}
-          />
+          >
+            <FilterBadges
+              onFilterRemove={handleFilterRemove}
+              assignedToData={assignedToDropdownData}
+              appliedFilters={appliedFilters}
+            />
+          </TechnoDataTable>
         )}
-      </TechnoRightDrawer>
-    </>
+        <TechnoRightDrawer
+          title={'Edit Lead Details'}
+          isOpen={isDrawerOpen}
+          onClose={() => {
+            setSelectedRowId(null);
+            setIsDrawerOpen(false);
+            setRefreshKey((prev) => prev + 1);
+          }}
+        >
+          {isDrawerOpen && editRow && (
+            <LeadViewEdit
+              setIsDrawerOpen={setIsDrawerOpen}
+              setSelectedRowId={setSelectedRowId}
+              setRefreshKey={setRefreshKey}
+              key={editRow._id}
+              data={editRow}
+            />
+          )}
+        </TechnoRightDrawer>
+      </>
+    )
   );
 }

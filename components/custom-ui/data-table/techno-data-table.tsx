@@ -111,14 +111,15 @@ export default function TechnoDataTable({
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
   const { hasRole } = useAuthStore();
+
   const [activeSortColumn, setActiveSortColumn] = useState('dateView');
   const [sortDirection, setSortDirection] = useState('desc');
+
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
 
   useEffect(() => {
     setGlobalFilter(searchTerm);
-    if (onSort) onSort(activeSortColumn, sortDirection);
   }, [searchTerm]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
