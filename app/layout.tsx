@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import Head from 'next/head';
 import ProgressBar from '@/components/custom-ui/progress-bar/progress-bar';
 import { NavigationEvents } from '@/components/custom-ui/router-events/router-event';
+import { Suspense } from 'react';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -42,10 +43,12 @@ export default function RootLayout({
       <body
         className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
-        <ProgressBar />
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-        <NavigationEvents />
-        <Toaster richColors theme="light" position="top-center" />
+        <Suspense>
+          <ProgressBar />
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+          <NavigationEvents />
+          <Toaster richColors theme="light" position="top-center" />
+        </Suspense>
       </body>
     </html>
   );
