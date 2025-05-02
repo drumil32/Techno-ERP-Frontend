@@ -25,27 +25,25 @@ export default function SelectedStudentDuesDetails() {
   return (
     <div className="flex flex-col gap-6 pb-6">
       <TechnoPageHeading title="Student Dues" />
-      {/*
-            <DynamicInfoGrid
-                columns={3}
-                rowsPerColumn={rows}
-                data={studentDetails.data ?? {}}
-                design={{
-                    containerWidth: "1339px",
-                    containerHeight: "119px",
-                    columnWidth: "475px",
-                    columnHeight: "96px",
-                    columnGap: "65px",
-                    rowGap: "12px",
-                    keyWidth: "125px",
-                    valueWidth: "333px",
-                    fontSize: "14px"
-                }}
-            />
-            */}
-      <SemesterWiseFeesDetails studentDuesId={studentDuesId} studentDetails={studentDetails.data}/>
-      <AllTransactionsDetails studentDuesId={studentDuesId} studentName={studentDetails.data?.studentName}/>
-      <FeesBreakupDetails studentDuesId={studentDuesId} />
+      <DynamicInfoGrid
+        columns={3}
+        rowsPerColumn={rows}
+        data={studentDetails.data ?? {}}
+        design={{
+          containerWidth: "1339px",
+          containerHeight: "119px",
+          columnWidth: "475px",
+          columnHeight: "96px",
+          columnGap: "65px",
+          rowGap: "12px",
+          keyWidth: "125px",
+          valueWidth: "333px",
+          fontSize: "14px"
+        }}
+      />
+      <SemesterWiseFeesDetails studentDuesId={studentDuesId} studentDetails={studentDetails.data} />
+      <AllTransactionsDetails studentDuesId={studentDuesId} />
+      <FeesBreakupDetails studentDuesId={studentDuesId} studentName={studentDetails.data?.studentName} />
     </div>
   )
 }

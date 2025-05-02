@@ -4,14 +4,14 @@ import TechnoDataTable from "@/components/custom-ui/data-table/techno-data-table
 import TechnoPageHeading from "@/components/custom-ui/page-heading/techno-page-heading";
 import FeesPaidTag from "./fees-paid-status-tag";
 import { Button } from "@/components/ui/button";
-import { LuDownload } from "react-icons/lu";
-import { StudentDue, StudentDuesApiResponse } from "@/types/finance";
-import { useEffect, useRef, useState } from "react";
+import { LuDownload } from "react-icons/lu"; import { StudentDue, StudentDuesApiResponse } from "@/types/finance"; import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchStudentDuesMock } from "./helpers/mock-api";
 import { FeesPaidStatus } from "@/types/enum";
 import { useRouter } from "next/navigation";
 import { SITE_MAP } from "@/common/constants/frontendRouting";
+import BulkFeeUpdateDialogue from "./bulk-fees-update-dialogue";
+import { TechnoFilterProvider } from "@/components/custom-ui/filter/filter-context";
 
 interface RefinedStudentDue extends StudentDue {
   id: number
@@ -167,12 +167,10 @@ export default function StudentDuesPage() {
 function TableActionButton() {
   return (
     <>
-      <Button
-        variant="outline"
-        className="h-8  rounded-[10px] border"
-      >
-        <span className="font-inter font-medium text-[12px]">Bulk Fee update</span>
-      </Button>
+
+      <TechnoFilterProvider key="bul-update">
+        <BulkFeeUpdateDialogue />
+      </TechnoFilterProvider>
       <Button disabled className="h-8 rounded-[10px] border" icon={LuDownload}>
         <span className="font-inter font-semibold text-[12px]">Download</span>
       </Button>

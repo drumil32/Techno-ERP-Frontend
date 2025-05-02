@@ -23,7 +23,7 @@ import { toPascal } from '@/lib/utils';
 import { LeadType } from '@/types/enum';
 
 export interface FilterOption {
-  id: string;
+  id: string | number;
   label: string;
 }
 

@@ -15,14 +15,14 @@ const feeSchema = z.object({
 });
 
 export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave}: {
-  studentName: string | undefined, 
+  studentName: string | undefined,
   feesBreakup: FeeBreakupResponse | undefined,
   onSave?: (updatedBreakup: any) => void
 }) {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   // State to track edited fee values
   const [editedFees, setEditedFees] = useState<Record<string, number | null>>({});
 
@@ -55,10 +55,10 @@ export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave
       }
 
       const numValue = parseFloat(value);
-      
+
       // Validate the value
       feeSchema.shape.finalFees.parse(numValue);
-      
+
       // Update edited fees
       setEditedFees({
         ...editedFees,
@@ -100,7 +100,7 @@ export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave
     if (onSave) {
       onSave(updatedBreakup);
     }
-    
+
     setOpen(false);
   };
 
@@ -138,7 +138,7 @@ export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave
           </div>
 
           <div className="mb-3">Semester {feesBreakup?.semester}</div>
-          
+
           <Table className="w-full mb-4">
             <TableHeader className="bg-[#F7F7F7]">
               <TableRow>
@@ -153,7 +153,6 @@ export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave
                   <TableCell>{item.feesCategory}</TableCell>
                   <TableCell>{item.schedule}</TableCell>
                   <TableCell className="text-right">
-                    {item.schedule !== "Optional" && item.schedule !== "As applicable" ? (
                       <div className="flex flex-col items-end">
                         <Input
                           className="w-24 text-right"
@@ -167,9 +166,6 @@ export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave
                           <span className="text-red-500 text-xs mt-1">{errors[item.feesCategory]}</span>
                         )}
                       </div>
-                    ) : (
-                      <span>—</span>
-                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -183,12 +179,12 @@ export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave
           </Table>
 
           <div className="flex items-center space-x-2 mb-6">
-            <Checkbox 
-              id="confirm" 
+            <Checkbox
+              id="confirm"
               checked={isConfirmed}
               onCheckedChange={(checked) => setIsConfirmed(checked === true)}
             />
-            <Label htmlFor="confirm" className="text-gray-600">
+            <Label htmlFor="confirm" className="text-gray-600 cursor-pointer">
               Are you sure you want to update the fees of this student ({studentName})
             </Label>
           </div>
@@ -197,8 +193,8 @@ export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave
             <Button variant="outline" onClick={handleDiscard}>
               Discard
             </Button>
-            <Button 
-              disabled={!isConfirmed || Object.keys(errors).length > 0} 
+            <Button
+              disabled={!isConfirmed || Object.keys(errors).length > 0}
               onClick={handleSave}
               className="bg-indigo-600 text-white hover:bg-indigo-700"
             >
