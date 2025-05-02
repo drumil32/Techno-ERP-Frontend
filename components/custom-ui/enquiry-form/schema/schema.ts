@@ -110,7 +110,7 @@ export enum PhysicalDocumentNoteStatus {
 export const physicalDocumentNoteSchema = z.object({
   type: z.string().optional(),
   status: z.nativeEnum(PhysicalDocumentNoteStatus),
-  dueBy: z.date().optional()
+  dueBy: requestDateSchema.optional()
 });
 
 export const enquirySchema = z.object({

@@ -77,7 +77,7 @@ export enum DropDownType {
   MARKETING_CITY = 'MARKETING_CITY',
   FIX_MARKETING_CITY = 'FIX_MARKETING_CITY',
   DISTRICT = 'DISTRICT',
-  MARKETING_SOURCE = 'MARKETING_SOURCE', 
+  MARKETING_SOURCE = 'MARKETING_SOURCE',
   MARKETING_COURSE_CODE = 'MARKETING_COURSE_CODE',
   FIX_MARKETING_COURSE_CODE = 'FIX_MARKETING_COURSE_CODE'
 }
@@ -197,7 +197,8 @@ export enum ApplicationStatus {
   STEP_1 = 'Step_1',
   STEP_2 = 'Step_2',
   STEP_3 = 'Step_3',
-  STEP_4 = 'Step_4'
+  STEP_4 = 'Step_4',
+  CONFIRMED = 'Confirmed'
 }
 export enum ApplicationIdPrefix {
   'TIHS' = 'TIHS',
