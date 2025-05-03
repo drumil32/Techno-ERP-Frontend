@@ -45,14 +45,15 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ form
   const [error, setError] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
 
+  const course = form.watch('course');
+  const physicalDocumentNote = form.watch('physicalDocumentNote');
+
   useEffect(() => {
-    const subscription = form.watch((value, { name }) => {
-      if ((name === 'course' || !initialized) && value.course) {
-        initializeDocuments(value.course);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, [form, initialized]);
+    console.log(course, initialized);
+    if (course && !initialized) {
+      initializeDocuments(course);
+    }
+  }, [form, initialized, course, physicalDocumentNote]);
 
   const initializeDocuments = async (course: string) => {
     try {
