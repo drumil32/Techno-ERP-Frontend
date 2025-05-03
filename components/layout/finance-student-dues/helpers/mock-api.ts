@@ -1,5 +1,5 @@
 import { FeesPaidStatus } from "@/types/enum";
-import { FeeBreakupResponse, SemesterFeesResponse, StudentDetails, StudentDue, TransactionsResponse } from "@/types/finance";
+import { CourseDue, FeeBreakupResponse, SemesterFeesResponse, StudentDetails, StudentDue, TransactionsResponse } from "@/types/finance";
 import { QueryFunctionContext } from "@tanstack/react-query";
 
 const generateMockStudentDues = (count: number): StudentDue[] => {
@@ -35,28 +35,27 @@ const generateMockStudentDues = (count: number): StudentDue[] => {
   return dues;
 };
 
-const allMockDues = generateMockStudentDues(40);
+const allMockDues = generateMockStudentDues(100); // Generate more mock data for better testing
 
+export const fetchStudentDuesMock = async ({ queryKey }: any) => {
+  // Safe extraction of parameters with type checking and defaults
+  const [_key, params] = queryKey;
+  
+  const page = params?.page || 1;
+  const limit = params?.limit || 10;
+  const search = params?.search || '';
+  const sortBy = params?.sortBy || ['studentName'];
+  const orderBy = params?.orderBy || ['asc'];
 
-export const fetchStudentDuesMock = async ({ queryKey }: QueryFunctionContext) => {
-  const [_key, params] = queryKey as [string, any];
-
-  const {
-    page = 1,
-    limit = 10,
-    search = '',
-    sortBy = ['studentName'],
-    orderBy = ['asc']
-  } = params || {};
-
-  console.log("Fetching mock dues with params:", params);
-
+  // Add a small delay to simulate network latency
   await new Promise((resolve) => setTimeout(resolve, 500));
 
-  let filteredData = allMockDues;
+  let filteredData = [...allMockDues]; // Create a copy to avoid mutation issues
+  
+  // Apply search filter if provided
   if (search) {
     const searchTerm = search.toLowerCase();
-    filteredData = allMockDues.filter((due) =>
+    filteredData = filteredData.filter((due) =>
       due.studentName.toLowerCase().includes(searchTerm) ||
       due.studentId.toLowerCase().includes(searchTerm) ||
       due.studentPhoneNumber.includes(searchTerm) ||
@@ -66,13 +65,19 @@ export const fetchStudentDuesMock = async ({ queryKey }: QueryFunctionContext) =
     );
   }
 
-  if (sortBy && sortBy.length > 0 && orderBy && orderBy.length > 0) {
+  // Apply sorting if provided
+  if (sortBy?.[0] && orderBy?.[0]) {
     const sortField = sortBy[0] as keyof StudentDue;
     const sortOrder = orderBy[0];
 
     filteredData.sort((a, b) => {
       const valA = a[sortField];
       const valB = b[sortField];
+
+      // Handle undefined values during comparison
+      if (valA === undefined && valB === undefined) return 0;
+      if (valA === undefined) return 1;
+      if (valB === undefined) return -1;
 
       let comparison = 0;
       if (valA > valB) {
@@ -85,12 +90,14 @@ export const fetchStudentDuesMock = async ({ queryKey }: QueryFunctionContext) =
     });
   }
 
+  // Apply pagination
   const total = filteredData.length;
   const totalPages = Math.ceil(total / limit);
   const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
+  const endIndex = Math.min(startIndex + limit, total);
   const paginatedData = filteredData.slice(startIndex, endIndex);
 
+  // Add sequential id for display
   const dataWithSno = paginatedData.map((item, index) => ({
     ...item,
     id: startIndex + index + 1,
@@ -105,42 +112,7 @@ export const fetchStudentDuesMock = async ({ queryKey }: QueryFunctionContext) =
   };
 };
 
-const simulateDelay = (ms: number): Promise<void> =>
-  new Promise(resolve => setTimeout(resolve, ms));
-
-export const fetchStudentDetails = async ({ queryKey }: QueryFunctionContext): Promise<StudentDetails> => {
-  const [_key, studentId] = queryKey as [string, string];
-  await simulateDelay(300);
-  return mockStudentDetails; // assume it's always defined
-};
-
-export const fetchSemesterFees = async ({ queryKey }: QueryFunctionContext): Promise<SemesterFeesResponse> => {
-  await simulateDelay(500);
-  return mockSemesterFees;
-};
-
-export const fetchTransactions = async ({ queryKey }: QueryFunctionContext): Promise<TransactionsResponse> => {
-  await simulateDelay(600);
-  return mockTransactions;
-};
-
-export const fetchFeeBreakup = async ({ queryKey }: QueryFunctionContext): Promise<FeeBreakupResponse> => {
-  const [_key, semester] = queryKey as [string, number];
-  await simulateDelay(400);
-  if (semester === 1) {
-    return mockFeeBreakupSemester1;
-  } else if (semester === 2) {
-    return mockFeeBreakupSemester2;
-  }
-  return {
-    semester: semester,
-    breakup: [],
-    totals: { finalFees: 0, feesPaid: 0, totalDues: 0 }
-  };
-};
-
-
-
+// Mock student details
 const mockStudentDetails: StudentDetails = {
   studentName: "Vaibhav Gupta",
   studentId: "TGI2023MBA104",
@@ -150,6 +122,7 @@ const mockStudentDetails: StudentDetails = {
   hod: "Dr Pankaj kumar",
 };
 
+// Mock semester fees
 const mockSemesterFees: SemesterFeesResponse = {
   details: [
     {
@@ -200,6 +173,7 @@ const mockSemesterFees: SemesterFeesResponse = {
   },
 };
 
+// Mock transactions
 const mockTransactions: TransactionsResponse = {
   transactions: [
     {
@@ -246,7 +220,7 @@ const mockTransactions: TransactionsResponse = {
   totalAmount: 18100,
 };
 
-
+// Mock fee breakup for semester 1
 const mockFeeBreakupSemester1: FeeBreakupResponse = {
   semester: 1,
   breakup: [
@@ -321,7 +295,7 @@ const mockFeeBreakupSemester1: FeeBreakupResponse = {
   },
 };
 
-
+// Mock fee breakup for semester 2
 const mockFeeBreakupSemester2: FeeBreakupResponse = {
   semester: 2,
   breakup: [
@@ -388,11 +362,42 @@ const mockFeeBreakupSemester2: FeeBreakupResponse = {
       feesPaid: null,
       totalDues: null,
     },
-
   ],
   totals: {
     finalFees: 0,
     feesPaid: 0,
     totalDues: 0,
   }
-}
+};
+
+export const fetchStudentDetails = async ({ queryKey }: QueryFunctionContext): Promise<StudentDetails> => {
+  const [_key, studentId] = queryKey as [string, string];
+  await new Promise(resolve => setTimeout(resolve, 300));
+  return mockStudentDetails;
+};
+
+export const fetchSemesterFees = async ({ queryKey }: QueryFunctionContext): Promise<SemesterFeesResponse> => {
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return mockSemesterFees;
+};
+
+export const fetchTransactions = async ({ queryKey }: QueryFunctionContext): Promise<TransactionsResponse> => {
+  await new Promise(resolve => setTimeout(resolve, 600));
+  return mockTransactions;
+};
+
+export const fetchFeeBreakup = async ({ queryKey }: QueryFunctionContext): Promise<FeeBreakupResponse> => {
+  const [_key, semester] = queryKey as [string, number];
+  await new Promise(resolve => setTimeout(resolve, 400));
+  if (semester === 1) {
+    return mockFeeBreakupSemester1;
+  } else if (semester === 2) {
+    return mockFeeBreakupSemester2;
+  }
+  return {
+    semester: semester,
+    breakup: [],
+    totals: { finalFees: 0, feesPaid: 0, totalDues: 0 }
+  };
+};
+

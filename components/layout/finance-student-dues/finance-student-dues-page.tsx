@@ -4,7 +4,9 @@ import TechnoDataTable from "@/components/custom-ui/data-table/techno-data-table
 import TechnoPageHeading from "@/components/custom-ui/page-heading/techno-page-heading";
 import FeesPaidTag from "./fees-paid-status-tag";
 import { Button } from "@/components/ui/button";
-import { LuDownload } from "react-icons/lu"; import { StudentDue, StudentDuesApiResponse } from "@/types/finance"; import { useEffect, useRef, useState } from "react";
+import { LuDownload } from "react-icons/lu"; 
+import { StudentDue, StudentDuesApiResponse } from "@/types/finance"; 
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchStudentDuesMock } from "./helpers/mock-api";
 import { FeesPaidStatus } from "@/types/enum";
@@ -25,9 +27,7 @@ export default function StudentDuesPage() {
     sortBy: ['studentName'],
     orderBy: ['asc'],
   });
-  const [refreshKey, setRefreshKey] = useState(0);
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-
 
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -69,25 +69,20 @@ export default function StudentDuesPage() {
   }, []);
 
   const getQueryParams = () => {
-    const params: { [key: string]: any } = {
+    return {
       page,
       limit,
       search: debouncedSearch,
+      sortBy: sortState.sortBy,
+      orderBy: sortState.orderBy
     };
-
-    if (sortState.sortBy && sortState.sortBy.length > 0) {
-      params.sortBy = sortState.sortBy;
-      params.orderBy = sortState.orderBy;
-    }
-
-    return params;
   };
 
   const queryParams = getQueryParams();
 
   const duesQuery = useQuery<StudentDuesApiResponse, Error>({
     queryKey: ['studentDues', queryParams],
-    queryFn: fetchStudentDuesMock,
+    queryFn: () => fetchStudentDuesMock({ queryKey: ['studentDues', queryParams] } as any),
     placeholderData: (previousData) => previousData,
   });
 
@@ -117,7 +112,9 @@ export default function StudentDuesPage() {
     { accessorKey: 'courseYear', header: 'Course Year' },
     { accessorKey: 'semester', header: 'Semester' },
     {
-      accessorKey: 'feeStatus', header: 'Fee Status', cell: ({ row }: any) => {
+      accessorKey: 'feeStatus', 
+      header: 'Fee Status', 
+      cell: ({ row }: any) => {
         const statusValue = row.original.feeStatus;
         return <FeesPaidTag status={statusValue as FeesPaidStatus} />;
       }
@@ -137,29 +134,32 @@ export default function StudentDuesPage() {
       )
     }
   ]
+
+  if (isError) {
+    return <div>Error loading student dues data. Please try again later.</div>;
+  }
+
   return (
     <>
       <TechnoPageHeading title="Student Dues" />
-      {tableData &&
-        <TechnoDataTable
-          selectedRowId={selectedRowId}
-          setSelectedRowId={setSelectedRowId}
-          columns={columns}
-          data={tableData}
-          tableName="Student Dues"
-          tableActionButton={<TableActionButton />}
-          currentPage={page}
-          totalPages={totalPages}
-          pageLimit={limit}
-          totalEntries={totalEntries}
-          onPageChange={handlePageChange}
-          onLimitChange={handleLimitChange}
-          onSearch={handleSearch}
-          searchTerm={search}
-          isLoading={isLoading}
-          handleViewMore={handleViewMore}
-        />
-      }
+      <TechnoDataTable
+        selectedRowId={selectedRowId}
+        setSelectedRowId={setSelectedRowId}
+        columns={columns}
+        data={tableData}
+        tableName="Student Dues"
+        tableActionButton={<TableActionButton />}
+        currentPage={page}
+        totalPages={totalPages}
+        pageLimit={limit}
+        totalEntries={totalEntries}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSearch={handleSearch}
+        searchTerm={search}
+        isLoading={isLoading}
+        handleViewMore={handleViewMore}
+      />
     </>
   )
 }
@@ -167,7 +167,6 @@ export default function StudentDuesPage() {
 function TableActionButton() {
   return (
     <>
-
       <TechnoFilterProvider key="bul-update">
         <BulkFeeUpdateDialogue />
       </TechnoFilterProvider>

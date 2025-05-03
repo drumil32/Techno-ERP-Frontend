@@ -1,7 +1,7 @@
 import { FeesPaidStatus } from "./enum";
 
 export interface StudentDue {
-    _id: string; 
+    _id: string;
     studentName: string;
     studentId: string;
     studentPhoneNumber: string;
@@ -11,7 +11,7 @@ export interface StudentDue {
     courseYear: number;
     semester: number;
     feeStatus: FeesPaidStatus;
-    lastUpdated: Date; 
+    lastUpdated: Date;
   }
 
   export interface StudentDuesApiResponse {
@@ -45,7 +45,7 @@ export interface SemesterFeeDetail {
   finalFeesDue: number | null;
   feesPaid: number | null;
   dueFees: number | null;
-  dueDate: string | null; 
+  dueDate: string | null;
 }
 
 // For the response of the Semester-wise Fees API
@@ -95,4 +95,27 @@ export interface FeeBreakupResponse {
     feesPaid: number;
     totalDues: number;
   };
+}
+
+// Course Dues
+
+export interface CourseDue {
+  _id: string;
+  sno?: number;
+  course: string;
+  courseYear: string;
+  numberOfStudents: number;
+  totalDue: number;
+  courseHead: string;
+  courseHeadContact: string;
+  // academicYear: string;
+  // college: string;
+}
+
+export interface CourseDuesApiResponse {
+  courseDues: CourseDue[];
+  total: number;
+  totalPages: number;
+  currentPage: number;
+  limit: number;
 }
