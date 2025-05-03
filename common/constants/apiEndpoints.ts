@@ -66,6 +66,7 @@ export const API_ENDPOINTS = {
 
   // Document Upload
   uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,
+  fetchDocumentsByCourse: `${API_DOMAIN}/course-metadata`,
 
   //Department Meta Data
   createDepartmentMetaData: `${API_DOMAIN}/department-metadata`,

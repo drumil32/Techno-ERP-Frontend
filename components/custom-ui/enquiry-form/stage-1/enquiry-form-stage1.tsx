@@ -192,7 +192,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     }
 
     // Remove confirmation field from values
-    const { confirmation, _id, ...rest } = filteredValues;
+    const { confirmation, ...rest } = filteredValues;
 
     if (!id) {
       const response: any = await createEnquiryDraft(rest);
@@ -236,16 +236,16 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
     const enquiry: any = await createEnquiry(rest);
 
-    const response = await updateEnquiryStatus({
-      id: enquiry?._id,
-      newStatus: ApplicationStatus.STEP_2
-    });
+    // const response = await updateEnquiryStatus({
+    //   id: enquiry?._id,
+    //   newStatus: ApplicationStatus.STEP_2
+    // });
 
-    if (!response) {
-      toast.error('Failed to update enquiry status');
-      return;
-    }
-    toast.success('Enquiry status updated successfully');
+    // if (!response) {
+    //   toast.error('Failed to update enquiry status');
+    //   return;
+    // }
+    // toast.success('Enquiry status updated successfully');
 
     form.setValue('confirmation', false);
     form.reset();

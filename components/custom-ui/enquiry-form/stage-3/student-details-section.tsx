@@ -117,7 +117,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
   const courses = Array.isArray(fixCoursesQuery.data) ? fixCoursesQuery.data : [];
 
   return (
-    <Accordion type="single" collapsible>
+    <Accordion type="single" collapsible defaultValue="student-details">
       <AccordionItem value="student-details">
         <div className="space-y-2">
           <AccordionTrigger className="w-full items-center">

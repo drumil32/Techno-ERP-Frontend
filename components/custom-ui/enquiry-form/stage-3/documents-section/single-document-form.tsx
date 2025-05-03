@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { format, isBefore, parseISO, startOfDay } from 'date-fns';
 import { useCallback, useRef, useState, DragEvent, ChangeEvent, useEffect } from 'react';
@@ -212,17 +212,20 @@ export const SingleEnquiryUploadDocument = ({
         formDataPayload.append('dueBy', formatedDate);
       }
 
-      const response:any = await uploadDocumentAPI(formDataPayload);
+      const response: any = await uploadDocumentAPI(formDataPayload);
 
       const updatedDocuments = response?.documents;
 
       if (onUploadSuccess && Array.isArray(updatedDocuments)) {
-        console.log("Calling onUploadSuccess with updated documents array.");
-        onUploadSuccess(updatedDocuments); 
-        setSelectedFile(null); 
-        resetFileInput(); 
+        console.log('Calling onUploadSuccess with updated documents array.');
+        onUploadSuccess(updatedDocuments);
+        setSelectedFile(null);
+        resetFileInput();
       } else if (onUploadSuccess) {
-        console.error("Upload successful, but response.documents is not an array or missing:", response);
+        console.error(
+          'Upload successful, but response.documents is not an array or missing:',
+          response
+        );
       }
       setStatus({
         type: 'success',
@@ -293,19 +296,19 @@ export const SingleEnquiryUploadDocument = ({
           )}
         </Label>
         {displayExistingDocument && (
-          <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded border border-blue-200 flex items-center gap-2">
-            <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />
+          <div className="text-xs text-gray-600 bg-[#4E2ECC]/5 p-2 rounded border border-[#4E2ECC] flex items-center gap-2">
+            <FileText className="h-4 w-4 text-[#4E2ECC] flex-shrink-0" />
             <div className="overflow-hidden">
               <a
                 href={existingDocument.fileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-blue-700 hover:underline truncate block"
+                className="font-medium text-[#4E2ECC] hover:underline truncate block"
                 title={`View ${existingFilename}`}
               >
                 {existingFilename}
               </a>
-              <span className="text-gray-500 block">Due: {existingDueDateFormatted}</span>
+              <span className="text-black block">Due: {existingDueDateFormatted}</span>
             </div>
             <a
               href={existingDocument.fileUrl}
@@ -314,15 +317,15 @@ export const SingleEnquiryUploadDocument = ({
               title="Open document in new tab"
               className="ml-1 text-blue-500 hover:text-blue-700 flex-shrink-0"
             >
-              <LinkIcon className="h-4 w-4" />
+              <LinkIcon className="h-4 w-4 text-[#4E2ECC]" />
             </a>
           </div>
         )}
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-start gap-3 w-full">
         <div className="">
-          {!isLoading &&
-            <div className='flex gap-2 mt-2'>
+          {!isLoading && (
+            <div className="flex gap-2 mt-2">
               <Label
                 htmlFor={uniqueInputId}
                 className={cn(
@@ -397,7 +400,7 @@ export const SingleEnquiryUploadDocument = ({
                 </div>
               )}
             </div>
-          }
+          )}
 
           {isLoading && (
             <div className="flex items-center justify-center h-20 w-full sm:w-64 md:w-80 lg:w-96 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 text-sm">
@@ -406,7 +409,7 @@ export const SingleEnquiryUploadDocument = ({
           )}
         </div>
 
-        <div className='flex gap-4'>
+        <div className="flex gap-4">
           {/* Due Date Area */}
           <div className="flex-shrink-0 w-full sm:w-auto">
             <Label
@@ -425,8 +428,8 @@ export const SingleEnquiryUploadDocument = ({
                     !dueDate && 'text-muted-foreground',
                     // Add red border if date is selected but invalid
                     dueDate &&
-                    isBefore(dueDate, startOfDay(new Date())) &&
-                    'border-red-500 focus-visible:ring-red-500'
+                      isBefore(dueDate, startOfDay(new Date())) &&
+                      'border-red-500 focus-visible:ring-red-500'
                   )}
                   disabled={isLoading}
                 >
@@ -445,7 +448,7 @@ export const SingleEnquiryUploadDocument = ({
                   onSelect={handleDueDateSelect}
                   initialFocus
                   disabled={isLoading || ((date) => isBefore(date, startOfDay(new Date())))}
-                  captionLayout={"dropdown-buttons"}
+                  captionLayout={'dropdown-buttons'}
                   fromYear={new Date().getFullYear() - 100}
                   toYear={new Date().getFullYear() + 10}
                 />
@@ -456,9 +459,7 @@ export const SingleEnquiryUploadDocument = ({
           {/* Upload Button */}
           <div className="flex-shrink-0 w-full sm:w-auto">
             {/* Spacer for alignment on small screens */}
-            <Label className="text-xs font-medium text-transparent select-none mb-1 block">
-              .
-            </Label>
+            <Label className="text-xs font-medium text-transparent select-none mb-1 block">.</Label>
             <Button
               variant={'outline'}
               onClick={handleUpload}

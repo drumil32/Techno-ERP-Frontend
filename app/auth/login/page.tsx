@@ -31,7 +31,6 @@ import useAuthStore from '@/stores/auth-store';
 import { AuthResponse } from '@/types/auth';
 
 export default function LoginPage() {
-  useAuthRedirect();
   const router = useRouter();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -45,7 +44,6 @@ export default function LoginPage() {
   } = useForm({
     resolver: zodResolver(loginSchema)
   });
-
   const handleLogin = async (data: { email: string; password: string }) => {
     setLoading(true);
     setError('');
@@ -55,7 +53,10 @@ export default function LoginPage() {
         API_ENDPOINTS.login,
         data
       )) as AuthResponse;
+
       if (!response) return;
+
+      document.cookie = `is-authenticated=true; path=/; max-age=${15 * 24 * 60 * 60}; secure; samesite=strict`;
 
       login({
         name: response.userData.name,
@@ -71,7 +72,6 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-gray-50">
       <div className="md:w-full lg:w-1/2 p-4 md:p-8 lg:p-12 bg-gradient-to-br from-indigo-900 to-purple-800 relative overflow-hidden">
@@ -85,10 +85,10 @@ export default function LoginPage() {
           <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-8 lg:mb-12">
             <div className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 relative">
               <Image
-                src="/images/techno-logo.png"
+                src="/images/techno-logo.webp"
                 alt="Techno ERP Logo"
                 fill
-                className="object-contain"
+                className="object-contain bg-white rounded-full"
               />
             </div>
             <span className="text-lg md:text-xl lg:text-2xl font-bold text-white">Techno ERP</span>
@@ -206,7 +206,7 @@ export default function LoginPage() {
             <div className="flex justify-center mb-2 md:mb-3">
               <div className="w-10 h-10 md:w-12 md:h-12 relative">
                 <Image
-                  src="/images/techno-logo.png"
+                  src="/images/techno-logo.webp"
                   alt="Techno ERP Logo"
                   fill
                   className="object-contain"

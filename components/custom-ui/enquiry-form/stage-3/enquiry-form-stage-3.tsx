@@ -40,6 +40,7 @@ import { updateEnquiryDraftStep3, updateEnquiryStep3 } from './helper/apirequest
 import { useRouter } from 'next/navigation';
 import { error } from 'console';
 import { EnquiryDocument } from './documents-section/single-document-form';
+import DocumentVerificationSection from './document-verification';
 
 export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).extend({
   confirmation: z.boolean().refine((value) => value === true, {
@@ -80,11 +81,22 @@ const EnquiryFormStage3 = () => {
 
   async function saveDraft() {
     let values = form.getValues();
-    console.log(values);
 
-    // Remove null values from the entire object
+    // Extract the physicalDocumentNote separately before removing nulls
+    const documentNotes = values.physicalDocumentNote || [];
+
+    // Remove null values from the rest of the form
     values = removeNullValues(values);
 
+    //ignoring null issues from the document
+    values.physicalDocumentNote = documentNotes.map((note) => ({
+      type: note.type,
+      status: note.status,
+      dueBy: note.dueBy
+    }));
+
+    // Rest of your submission logic...because we really need to have somewhere undefined and few values
+    console.log('Submitting values:', values);
     // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep3Schema.shape);
     // Filter out values not in the schema
@@ -110,6 +122,7 @@ const EnquiryFormStage3 = () => {
     console.log('Partial Schema', partialSchema);
 
     const validationResult = partialSchema.safeParse(filteredValues);
+    console.log('Filtered data is', filteredValues);
     // Clear previous errors before setting new ones
     form.clearErrors();
 
@@ -190,16 +203,16 @@ const EnquiryFormStage3 = () => {
 
     const enquiry: any = await updateEnquiryStep3(rest);
 
-    const response = await updateEnquiryStatus({
-      id: enquiry?._id,
-      newStatus: ApplicationStatus.STEP_4
-    });
+    // const response = await updateEnquiryStatus({
+    //   id: enquiry?._id,
+    //   newStatus: ApplicationStatus.STEP_4
+    // });
 
-    if (!response) {
-      toast.error('Failed to update enquiry status');
-      return;
-    }
-    toast.success('Enquiry status updated successfully');
+    // if (!response) {
+    //   toast.error('Failed to update enquiry status');
+    //   return;
+    // }
+    // toast.success('Enquiry status updated successfully');
 
     form.setValue('confirmation', false);
     form.reset();
@@ -313,10 +326,12 @@ const EnquiryFormStage3 = () => {
             commonFormItemClass={commonFormItemClass}
           />
 
-          <AllDocuments
+          <DocumentVerificationSection form={form} />
+
+          {/* <AllDocuments
             enquiryDocuments={currentDocuments}
             setCurrentDocuments={setCurrentDocuments}
-          />
+          /> */}
 
           <ConfirmationSection form={form} />
           <OfficeUseSection

@@ -1,5 +1,8 @@
+'use client';
+
 import { useTopHeaderContext } from './top-header-context';
 import { useRouter } from 'next/navigation';
+import NProgress from 'nprogress';
 
 interface HeaderItem {
   title: string;
@@ -16,7 +19,10 @@ export default function TechnoTopHeaderItem({ item }: TechnoTopHeaderItemProps) 
   const isActive = item.title === headerActiveItem;
 
   const handleClick = () => {
+    NProgress.start();
+
     setHeaderActiveItem(item.title);
+
     router.push(item.route);
   };
 
