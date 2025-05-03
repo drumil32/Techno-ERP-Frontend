@@ -7,6 +7,7 @@ const generateMockStudentDues = (count: number): StudentDue[] => {
   const statuses = Object.values(FeesPaidStatus);
   const firstNames = ['Aarav', 'Vivaan', 'Aditya', 'Vihaan', 'Arjun', 'Sai', 'Reyansh', 'Ayaan', 'Krishna', 'Ishaan'];
   const lastNames = ['Sharma', 'Verma', 'Gupta', 'Singh', 'Kumar', 'Patel', 'Shah', 'Reddy', 'Naidu', 'Malhotra'];
+  const courseYears = ['First', 'Second', 'Third', 'Fourth'];
 
   const dues: StudentDue[] = [];
   for (let i = 1; i <= count; i++) {
@@ -15,8 +16,11 @@ const generateMockStudentDues = (count: number): StudentDue[] => {
     const fatherFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
     const fatherLastName = lastNames[Math.floor(Math.random() * lastNames.length)];
     const course = courses[Math.floor(Math.random() * courses.length)];
-    const courseYear = Math.floor(Math.random() * 4) + 1;
-    const semester = (courseYear - 1) * 2 + (Math.floor(Math.random() * 2) + 1);
+    const yearIndex = Math.floor(Math.random() * 4);
+    const courseYear = courseYears[yearIndex];
+    const semester = (yearIndex) * 2 + (Math.floor(Math.random() * 2) + 1);
+    const totalDue = Math.floor(10000 + Math.random() * 90000);
+
 
     dues.push({
       _id: `stud_${i.toString().padStart(5, '0')}`,
@@ -29,7 +33,8 @@ const generateMockStudentDues = (count: number): StudentDue[] => {
       courseYear: courseYear,
       semester: semester,
       feeStatus: statuses[Math.floor(Math.random() * statuses.length)],
-      lastUpdated: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000) // Random date in last 30 days
+      lastUpdated: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000), // Random date in last 30 days
+      totalDue: totalDue,
     });
   }
   return dues;
@@ -46,11 +51,27 @@ export const fetchStudentDuesMock = async ({ queryKey }: any) => {
   const search = params?.search || '';
   const sortBy = params?.sortBy || ['studentName'];
   const orderBy = params?.orderBy || ['asc'];
+  const courseName = params?.courseName || ''; // Added courseName parameter
+  const courseYear = params?.courseYear || ''; // Added courseYear parameter (as string now)
 
   // Add a small delay to simulate network latency
   await new Promise((resolve) => setTimeout(resolve, 500));
 
   let filteredData = [...allMockDues]; // Create a copy to avoid mutation issues
+  
+  // Apply course filter if provided
+  if (courseName) {
+    filteredData = filteredData.filter((due) => 
+      due.course.toLowerCase() === courseName.toLowerCase()
+    );
+  }
+  
+  // Apply courseYear filter if provided
+  if (courseYear) {
+    filteredData = filteredData.filter((due) => 
+      due.courseYear.toLowerCase() === courseYear.toLowerCase()
+    );
+  }
   
   // Apply search filter if provided
   if (search) {

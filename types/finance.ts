@@ -8,10 +8,11 @@ export interface StudentDue {
     fatherName: string;
     fatherPhoneNumber: string;
     course: string;
-    courseYear: number;
+    courseYear: string;
     semester: number;
     feeStatus: FeesPaidStatus;
     lastUpdated: Date;
+    totalDue: number;
   }
 
   export interface StudentDuesApiResponse {

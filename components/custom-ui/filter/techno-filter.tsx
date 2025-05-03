@@ -101,7 +101,11 @@ export default function TechnoFilter({
         : [...current, value];
       updateFilter(filterKey, newFilters);
     } else {
-      updateFilter(filterKey, value);
+      if (filters[filterKey] === value) {
+        updateFilter(filterKey, undefined);
+      } else {
+        updateFilter(filterKey, value);
+      }
     }
   };
 
@@ -274,8 +278,8 @@ export default function TechnoFilter({
                     checked={
                       multiSelect
                         ? filters[filterKey]?.includes(
-                            typeof option === 'string' ? option : option.id
-                          )
+                          typeof option === 'string' ? option : option.id
+                        )
                         : filters[filterKey] === (typeof option === 'string' ? option : option.id)
                     }
                   />

@@ -25,7 +25,7 @@ export const SITE_MAP = {
     STUDENT_DUES: '/c/finance/student-dues',
     STUDENT_DUES_ID: (id:string) => `/c/finance/student-dues/${id}`,
     COURSE_DUES: '/c/finance/course-dues',
-    COURSE_DUES_KEY: (key:string) => `/c/finance/student-dues/${key}`,
+    SELECTED_COURSE_DUES: (course: string, year:string) => `/c/finance/course-dues/${course}/${year}`,
     OVERALL_DUES: '/c/finance/overall-dues',
   },
   STUDENT_REPOSITORY: {
