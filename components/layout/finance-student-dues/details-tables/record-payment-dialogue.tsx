@@ -4,7 +4,7 @@ import { BookOpen } from "lucide-react";
 import * as Dialog from '@radix-ui/react-dialog';
 import { Label } from "@/components/ui/label";
 import { z } from "zod";
-import { FeesAction, TransactionType } from "@/types/enum";
+import { FeeActions, TransactionTypes } from "@/types/enum";
 import { useState } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -13,20 +13,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 
 const feesActionMapping = {
-  [FeesAction.DEPOSIT]: "DEPOSIT",
-  [FeesAction.REFUND]: "REFUND"
+  [FeeActions.DEPOSIT]: "DEPOSIT",
+  [FeeActions.REFUND]: "REFUND"
 };
 
 const transactionTypeMapping = {
-  [TransactionType.CASH]: "CASH",
-  [TransactionType.ONLINE]: "ONLINE"
+  [TransactionTypes.CASH]: "CASH",
+  [TransactionTypes.NEFT_IMPS_RTGS]: "NEFT/RTGS/IMPS",
+  [TransactionTypes.UPI]: "CASH",
+  [TransactionTypes.CHEQUE]: "NEFT/RTGS/IMPS",
+  [TransactionTypes.OTHERS]: "NEFT/RTGS/IMPS",
 };
 
 const formSchema = z.object({
-  feesAction: z.nativeEnum(FeesAction, {
+  feesAction: z.nativeEnum(FeeActions, {
     required_error: "Please select a fees action"
   }),
-  transactionType: z.nativeEnum(TransactionType, {
+  transactionType: z.nativeEnum(TransactionTypes, {
     required_error: "Please select a transaction type"
   }),
   amount: z.coerce.number()
@@ -46,8 +49,8 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      feesAction: FeesAction.DEPOSIT,
-      transactionType: TransactionType.CASH,
+      feesAction: FeeActions.DEPOSIT,
+      transactionType: TransactionTypes.CASH,
       amount: 0,
       remarks: ""
     }
@@ -129,8 +132,8 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="text-md">
-                            <SelectItem value={FeesAction.DEPOSIT}>{FeesAction.DEPOSIT}</SelectItem>
-                            <SelectItem value={FeesAction.REFUND}>{FeesAction.REFUND}</SelectItem>
+                            <SelectItem value={FeeActions.DEPOSIT}>{FeeActions.DEPOSIT}</SelectItem>
+                            <SelectItem value={FeeActions.REFUND}>{FeeActions.REFUND}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -151,8 +154,11 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="text-md">
-                            <SelectItem value={TransactionType.CASH}>{TransactionType.CASH}</SelectItem>
-                            <SelectItem value={TransactionType.ONLINE}>{TransactionType.ONLINE}</SelectItem>
+                            <SelectItem value={TransactionTypes.CASH}>{TransactionTypes.CASH}</SelectItem>
+                            <SelectItem value={TransactionTypes.NEFT_IMPS_RTGS}>{TransactionTypes.NEFT_IMPS_RTGS}</SelectItem>
+                            <SelectItem value={TransactionTypes.UPI}>{TransactionTypes.UPI}</SelectItem>
+                            <SelectItem value={TransactionTypes.CHEQUE}>{TransactionTypes.CHEQUE}</SelectItem>
+                            <SelectItem value={TransactionTypes.OTHERS}>{TransactionTypes.OTHERS}</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />

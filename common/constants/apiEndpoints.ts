@@ -90,5 +90,8 @@ export const API_ENDPOINTS = {
   getScheduleDetails: `${API_DOMAIN}/course/subject/schedule/schedule-details`,
   batchUpdatePlan: `${API_DOMAIN}/course/subject/schedule/plan`,
   deletePlan: `${API_DOMAIN}/course/subject/schedule/plan`,
-  deleteFileUsingURL: `${API_DOMAIN}/course/subject/schedule/delete-file`
+  deleteFileUsingURL: `${API_DOMAIN}/course/subject/schedule/delete-file`,
+
+  //Finance
+  getStudentActiveDues: `${API_DOMAIN}/student/fees/active-dues`
 };

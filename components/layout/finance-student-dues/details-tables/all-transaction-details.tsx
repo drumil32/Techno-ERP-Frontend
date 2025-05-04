@@ -3,6 +3,9 @@ import { useQuery } from "@tanstack/react-query"
 import { fetchSemesterFees, fetchTransactions } from "../helpers/mock-api"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { use } from "react"
+import FeeActionTag from "../fees-action-tag"
+import { FeeActions, TransactionTypes } from "@/types/enum"
+import TxnTypaTag from "../txn-type-tag"
 
 export default function AllTransactionsDetails({ studentDuesId }: { studentDuesId: string }) {
   const allTransactions = useQuery<TransactionsResponse, Error>({
@@ -46,9 +49,9 @@ export default function AllTransactionsDetails({ studentDuesId }: { studentDuesI
               <TableCell className="w-[100px]">{transaction.date}</TableCell>
               <TableCell className="w-[80px]">{transaction.time}</TableCell>
               <TableCell className="w-[80px]">{transaction.transactionId}</TableCell>
-              <TableCell className="w-[110px]">{transaction.feesAction}</TableCell>
+              <TableCell className="w-[110px]"><FeeActionTag status={transaction.feesAction as FeeActions}/></TableCell>
               <TableCell className="w-[120px] text-right">{transaction.amount != null ? `₹ ${transaction.amount}` : '__'}</TableCell>
-              <TableCell className="w-[110px]">{transaction.transactionType}</TableCell>
+              <TableCell className="w-[110px]"><TxnTypaTag status={transaction.transactionType as TransactionTypes}/></TableCell>
               <TableCell className="w-auto">{transaction.remarks ?? '--'}</TableCell>
             </TableRow>
           ))}

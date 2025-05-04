@@ -4,22 +4,28 @@ import TechnoDataTable from "@/components/custom-ui/data-table/techno-data-table
 import TechnoPageHeading from "@/components/custom-ui/page-heading/techno-page-heading";
 import FeesPaidTag from "./fees-paid-status-tag";
 import { Button } from "@/components/ui/button";
-import { LuDownload } from "react-icons/lu"; 
-import { StudentDue, StudentDuesApiResponse } from "@/types/finance"; 
+import { LuDownload } from "react-icons/lu";
+import { StudentDue, StudentDuesApiResponse } from "@/types/finance";
 import { useEffect, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { fetchStudentDuesMock } from "./helpers/mock-api";
+import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
 import { FeesPaidStatus } from "@/types/enum";
 import { useRouter } from "next/navigation";
 import { SITE_MAP } from "@/common/constants/frontendRouting";
 import BulkFeeUpdateDialogue from "./bulk-fees-update-dialogue";
-import { TechnoFilterProvider } from "@/components/custom-ui/filter/filter-context";
+import { TechnoFilterProvider, useTechnoFilterContext } from "@/components/custom-ui/filter/filter-context";
+import { fetchActiveDues } from "./helpers/fetch-data";
+import { generateAcademicYearDropdown } from "@/lib/generateAcademicYearDropdown";
+import { getCurrentAcademicYear } from "@/lib/getCurrentAcademicYear";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface RefinedStudentDue extends StudentDue {
   id: number
 }
 
 export default function StudentDuesPage() {
+  const [academicYear, setAcademicYear] = useState(getCurrentAcademicYear())
+  console.log(academicYear)
+  const academicYearDropdownData = generateAcademicYearDropdown()
   const router = useRouter()
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -73,8 +79,7 @@ export default function StudentDuesPage() {
       page,
       limit,
       search: debouncedSearch,
-      sortBy: sortState.sortBy,
-      orderBy: sortState.orderBy
+      academicYear
     };
   };
 
@@ -82,38 +87,42 @@ export default function StudentDuesPage() {
 
   const duesQuery = useQuery<StudentDuesApiResponse, Error>({
     queryKey: ['studentDues', queryParams],
-    queryFn: () => fetchStudentDuesMock({ queryKey: ['studentDues', queryParams] } as any),
+    queryFn: (context) => fetchActiveDues(context as QueryFunctionContext<readonly [string, any]>),
     placeholderData: (previousData) => previousData,
   });
 
+
   useEffect(() => {
     if (duesQuery.data) {
-      setTotalPages(duesQuery.data.totalPages);
-      setTotalEntries(duesQuery.data.total);
+      setTotalPages(duesQuery.data.pagination.totalPages);
+      setTotalEntries(duesQuery.data.pagination.totalCount);
     }
   }, [duesQuery.data]);
 
   const isLoading = duesQuery.isLoading || duesQuery.isFetching;
   const isError = duesQuery.isError;
-  const tableData = duesQuery.data?.dues ?? [];
+  const tableData = duesQuery.data?.data.map((due, index) => ({
+    ...due,
+    serialNo: (page - 1) * limit + index + 1
+  })) ?? [];
 
   const handleViewMore = (studentData: StudentDue) => {
     router.push(SITE_MAP.FINANCE.STUDENT_DUES_ID(studentData._id));
   }
 
   const columns = [
-    { accessorKey: 'id', header: 'S. No' },
+    { accessorKey: 'serialNo', header: 'S. No' },
     { accessorKey: 'studentName', header: 'Student Name' },
-    { accessorKey: 'studentId', header: 'Student Id' },
+    { accessorKey: 'universityId', header: 'Student Id' },
     { accessorKey: 'studentPhoneNumber', header: "Student's Phone Number" },
     { accessorKey: 'fatherName', header: 'Father Name' },
     { accessorKey: 'fatherPhoneNumber', header: "Father's Phone Number" },
-    { accessorKey: 'course', header: 'Course' },
+    { accessorKey: 'courseName', header: 'Course' },
     { accessorKey: 'courseYear', header: 'Course Year' },
-    { accessorKey: 'semester', header: 'Semester' },
+    { accessorKey: 'currentSemester', header: 'Semester' },
     {
-      accessorKey: 'feeStatus', 
-      header: 'Fee Status', 
+      accessorKey: 'feeStatus',
+      header: 'Fee Status',
       cell: ({ row }: any) => {
         const statusValue = row.original.feeStatus;
         return <FeesPaidTag status={statusValue as FeesPaidStatus} />;
@@ -139,9 +148,31 @@ export default function StudentDuesPage() {
     return <div>Error loading student dues data. Please try again later.</div>;
   }
 
+  const handleAcademicYearChange = (value: string) => {
+    setAcademicYear(value)
+  }
+
   return (
     <>
       <TechnoPageHeading title="Student Dues" />
+      <span>
+        <div className='flex items-center gap-4'>
+          <span>Academic Year</span>
+          <Select value={academicYear.toString()} onValueChange={handleAcademicYearChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select Academic Year" />
+            </SelectTrigger>
+            <SelectContent>
+              {academicYearDropdownData.map((item:string)=> (
+                <SelectItem key={item} value={item.toString()}>
+                  {item}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </span>
+
       <TechnoDataTable
         selectedRowId={selectedRowId}
         setSelectedRowId={setSelectedRowId}
@@ -167,7 +198,7 @@ export default function StudentDuesPage() {
 function TableActionButton() {
   return (
     <>
-      <TechnoFilterProvider key="bul-update">
+      <TechnoFilterProvider key="bulk-update">
         <BulkFeeUpdateDialogue />
       </TechnoFilterProvider>
       <Button disabled className="h-8 rounded-[10px] border" icon={LuDownload}>

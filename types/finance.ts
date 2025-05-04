@@ -1,27 +1,28 @@
 import { FeesPaidStatus } from "./enum";
 
 export interface StudentDue {
-    _id: string;
-    studentName: string;
-    studentId: string;
-    studentPhoneNumber: string;
-    fatherName: string;
-    fatherPhoneNumber: string;
-    course: string;
-    courseYear: string;
-    semester: number;
-    feeStatus: FeesPaidStatus;
-    lastUpdated: Date;
-    totalDue: number;
-  }
-
-  export interface StudentDuesApiResponse {
-    dues: (StudentDue & { id: number })[]; // Add the 'id' field here
-    total: number;
-    totalPages: number;
-    currentPage: number;
-    limit: number;
+  _id: string;
+  courseName: string;
+  currentSemester: number;
+  feeStatus: FeesPaidStatus;
+  universityId: string;
+  studentName: string;
+  studentPhoneNumber: string;
+  fatherName: string;
+  fatherPhoneNumber: string;
+  courseYear: number;
 }
+
+export interface StudentDuesApiResponse {
+  data: StudentDue[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalPages: number;
+    totalCount: number;
+  }
+}
+
 
 // ------------------------------------------------------------
 // TEMP
