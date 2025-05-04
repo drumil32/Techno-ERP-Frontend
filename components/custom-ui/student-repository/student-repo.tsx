@@ -1,9 +1,7 @@
 'use client';
 
-// Import statements categorized by type
-
 // React and Next.js imports
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 // Third-party library imports
@@ -18,11 +16,14 @@ import FilterBadges from '@/components/layout/allLeads/components/filter-badges'
 import { useTechnoFilterContext } from '../filter/filter-context';
 import { courseDropdown } from '@/components/layout/admin-tracker/helpers/fetch-data';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
-import { FilterData, StudentRepoRow } from './helpers/interface';
+import { FilterData, StudentListData, StudentListItem } from './helpers/interface';
 import { columns } from './helpers/columns';
 
 // Enum imports
 import { CourseYear } from '@/types/enum';
+import { fetchStudents } from './helpers/api';
+import { refineStudents } from './helpers/refine-data';
+import { Response } from '@/lib/apiClient';
 
 export default function StudentRepositoryPage() {
 
@@ -33,6 +34,10 @@ export default function StudentRepositoryPage() {
   const [page, setPage] = useState(1);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
+  const [limit, setLimit] = useState(20);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalEntries, setTotalEntries] = useState(0);
+
 
   // Refs
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -51,10 +56,22 @@ export default function StudentRepositoryPage() {
   const courses = Array.isArray(courseQuery.data) ? courseQuery.data : [];
 
   // Handle Navigation to Single Student Page
-  const handleViewMore = (row: StudentRepoRow) => {
-    if (row && row.id) {
-      router.push(SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(row.studentID, 'student-details'));
+  const handleViewMore = (row: StudentListItem) => {
+    if (row && row._id) {
+      router.push(SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(row._id, 'student-details'));
     }
+  };
+
+  // Handle Pagination
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setPage(newPage);
+    }
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1);
   };
 
   // Handle Search with Debounce
@@ -154,210 +171,25 @@ export default function StudentRepositoryPage() {
 
   const filterParams = getQueryParams();
 
-  // const studentsQuery = useQuery({
-  //   queryKey: ['students', filterParams],
-  //   queryFn: fetchStudentsData,
-  //   placeholderData: (previousData) => previousData,
-  //   refetchOnWindowFocus: false,
-  //   enabled: true
-  // });
+  const studentsQuery = useQuery({
+    queryKey: ['students', filterParams],
+    queryFn: fetchStudents,
+    placeholderData: (previousData) => previousData,
+    refetchOnWindowFocus: false,
+    enabled: true
+  });
 
-  // const studentsData = admissionsQuery.data ? refineAdmissions(admissionsQuery.data) : [];
+  const studentsData: StudentListData = studentsQuery.data
+    ? refineStudents(studentsQuery.data)
+    : { students: [], pagination: { total: 0, page: 0, limit: 0, totalPages: 0 } };
 
-  const studentsData = [
-    {
-      id: 1,
-      studentID: 'STU12345',
-      studentName: 'John Doe',
-      studentPhoneNumber: '1234567890',
-      fatherName: 'John Doe Sr.',
-      fatherPhoneNumber: '0987654321',
-      course: 'Computer Science',
-      courseYear: 'First',
-      semester: '01',
-      academicYear: '2023-24'
-    },
-    {
-      id: 2,
-      studentID: 'STU12346',
-      studentName: 'Jane Smith',
-      studentPhoneNumber: '2345678901',
-      fatherName: 'James Smith',
-      fatherPhoneNumber: '9876543210',
-      course: 'Information Technology',
-      courseYear: 'Second',
-      semester: '03',
-      academicYear: '2023-24'
-    },
-    {
-      id: 3,
-      studentID: 'STU12347',
-      studentName: 'Alice Johnson',
-      studentPhoneNumber: '3456789012',
-      fatherName: 'Robert Johnson',
-      fatherPhoneNumber: '8765432109',
-      course: 'Electronics',
-      courseYear: 'Third',
-      semester: '05',
-      academicYear: '2023-24'
-    },
-    {
-      id: 4,
-      studentID: 'STU12348',
-      studentName: 'Bob Brown',
-      studentPhoneNumber: '4567890123',
-      fatherName: 'Michael Brown',
-      fatherPhoneNumber: '7654321098',
-      course: 'Mechanical Engineering',
-      courseYear: 'Fourth',
-      semester: '07',
-      academicYear: '2023-24'
-    },
-    {
-      id: 5,
-      studentID: 'STU12349',
-      studentName: 'Charlie Davis',
-      studentPhoneNumber: '5678901234',
-      fatherName: 'David Davis',
-      fatherPhoneNumber: '6543210987',
-      course: 'Civil Engineering',
-      courseYear: 'Fifth',
-      semester: '09',
-      academicYear: '2023-24'
-    },
-    {
-      id: 6,
-      studentID: 'STU12350',
-      studentName: 'Eve Wilson',
-      studentPhoneNumber: '6789012345',
-      fatherName: 'William Wilson',
-      fatherPhoneNumber: '5432109876',
-      course: 'Biotechnology',
-      courseYear: 'First',
-      semester: '01',
-      academicYear: '2023-24'
-    },
-    {
-      id: 7,
-      studentID: 'STU12351',
-      studentName: 'Frank Miller',
-      studentPhoneNumber: '7890123456',
-      fatherName: 'George Miller',
-      fatherPhoneNumber: '4321098765',
-      course: 'Physics',
-      courseYear: 'Second',
-      semester: '03',
-      academicYear: '2023-24'
-    },
-    {
-      id: 8,
-      studentID: 'STU12352',
-      studentName: 'Grace Lee',
-      studentPhoneNumber: '8901234567',
-      fatherName: 'Henry Lee',
-      fatherPhoneNumber: '3210987654',
-      course: 'Chemistry',
-      courseYear: 'Third',
-      semester: '05',
-      academicYear: '2023-24'
-    },
-    {
-      id: 9,
-      studentID: 'STU12353',
-      studentName: 'Hannah Taylor',
-      studentPhoneNumber: '9012345678',
-      fatherName: 'Charles Taylor',
-      fatherPhoneNumber: '2109876543',
-      course: 'Mathematics',
-      courseYear: 'Fourth',
-      semester: '07',
-      academicYear: '2023-24'
-    },
-    {
-      id: 10,
-      studentID: 'STU12354',
-      studentName: 'Isaac Anderson',
-      studentPhoneNumber: '0123456789',
-      fatherName: 'Paul Anderson',
-      fatherPhoneNumber: '1098765432',
-      course: 'Statistics',
-      courseYear: 'Fifth',
-      semester: '09',
-      academicYear: '2023-24'
-    },
-    {
-      id: 11,
-      studentID: 'STU12355',
-      studentName: 'Jack Thomas',
-      studentPhoneNumber: '1234567890',
-      fatherName: 'Daniel Thomas',
-      fatherPhoneNumber: '0987654321',
-      course: 'Economics',
-      courseYear: 'First',
-      semester: '01',
-      academicYear: '2023-24'
-    },
-    {
-      id: 12,
-      studentID: 'STU12356',
-      studentName: 'Kathy Jackson',
-      studentPhoneNumber: '2345678901',
-      fatherName: 'Matthew Jackson',
-      fatherPhoneNumber: '9876543210',
-      course: 'History',
-      courseYear: 'Second',
-      semester: '03',
-      academicYear: '2023-24'
-    },
-    {
-      id: 13,
-      studentID: 'STU12357',
-      studentName: 'Liam White',
-      studentPhoneNumber: '3456789012',
-      fatherName: 'Christopher White',
-      fatherPhoneNumber: '8765432109',
-      course: 'Geography',
-      courseYear: 'Third',
-      semester: '05',
-      academicYear: '2023-24'
-    },
-    {
-      id: 14,
-      studentID: 'STU12358',
-      studentName: 'Mia Harris',
-      studentPhoneNumber: '4567890123',
-      fatherName: 'Andrew Harris',
-      fatherPhoneNumber: '7654321098',
-      course: 'Political Science',
-      courseYear: 'Fourth',
-      semester: '07',
-      academicYear: '2023-24'
-    },
-    {
-      id: 15,
-      studentID: 'STU12359',
-      studentName: 'Noah Martin',
-      studentPhoneNumber: '5678901234',
-      fatherName: 'Joshua Martin',
-      fatherPhoneNumber: '6543210987',
-      course: '',
-      courseYear: 'Fifth',
-      semester: '09',
-      academicYear: '2023-24'
-    },
-    {
-      id: 16,
-      studentID: 'STU12360',
-      studentName: 'Olivia Thompson',
-      studentPhoneNumber: '6789012345',
-      fatherName: 'David Thompson',
-      fatherPhoneNumber: '5432109876',
-      course: 'Philosophy',
-      courseYear: 'First',
-      semester: '01',
-      academicYear: '2023-24'
-    }
-  ];
+  useEffect(() => {
+    console.log('Students data:', studentsData);
+      if (studentsData) {
+        setTotalPages(studentsData.pagination.totalPages);
+        setTotalEntries(studentsData.pagination.total);
+      }
+    }, [studentsData]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -378,14 +210,14 @@ export default function StudentRepositoryPage() {
           selectedRowId={selectedRowId}
           setSelectedRowId={setSelectedRowId}
           columns={columns}
-          data={studentsData}
+          data={studentsData.students}
           tableName="Student Records"
-          currentPage={1}
-          totalPages={1}
-          pageLimit={10}
+          currentPage={page}
+          totalPages={totalPages}
+          pageLimit={limit}
           onSearch={handleSearch}
           searchTerm={search}
-          showPagination={false}
+          showPagination={true}
           handleViewMore={handleViewMore}
         >
           <FilterBadges onFilterRemove={handleFilterRemove} appliedFilters={appliedFilters} />

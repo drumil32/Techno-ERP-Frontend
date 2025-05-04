@@ -1,4 +1,6 @@
+import { updateStudent, updateStudentDocuments } from '@/components/custom-ui/student-repository/helpers/api';
 import { DropDownType } from '@/types/enum';
+import { get } from 'http';
 
 export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
 
@@ -92,5 +94,13 @@ export const API_ENDPOINTS = {
   getScheduleDetails: `${API_DOMAIN}/course/subject/schedule/schedule-details`,
   batchUpdatePlan: `${API_DOMAIN}/course/subject/schedule/plan`,
   deletePlan: `${API_DOMAIN}/course/subject/schedule/plan`,
-  deleteFileUsingURL: `${API_DOMAIN}/course/subject/schedule/delete-file`
+  deleteFileUsingURL: `${API_DOMAIN}/course/subject/schedule/delete-file`,
+
+
+  //Student Repository
+
+  getStudentRepository: `${API_DOMAIN}/student/repo/search`,
+  getSingleStudent: (id: string) => `${API_DOMAIN}/student/repo/${id}`,
+  updateStudentRepository: `${API_DOMAIN}/student/repo/student-details`,
+  updateStudentDocuments: `${API_DOMAIN}/student/repo/student-physical-document`,
 };

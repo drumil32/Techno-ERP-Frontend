@@ -455,3 +455,9 @@ export enum CourseYear {
   THIRD = 'Third',
   FOURTH = 'Fourth'
 }
+
+export enum FeeSchedule {
+  ONETIME = "ONETIME",
+  HALF_YEARLY = "HALF_YEARLY",
+  YEARLY = "YEARLY"
+}

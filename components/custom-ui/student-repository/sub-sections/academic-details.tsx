@@ -5,37 +5,33 @@ import { z } from 'zod';
 
 // UI components
 import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger
 } from '@/components/ui/accordion';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Check, Pencil } from 'lucide-react';
 
 // Utility functions and schemas
 import { handleNumericInputChange, toPascal } from '@/lib/utils';
-import { enquirySchema } from '../enquiry-form/schema/schema';
+import { updateStudentDetailsRequestSchema } from '../helpers/schema';
+import TagInput from '../../enquiry-form/stage-1/tag-input';
 
-// Custom components
-import TagInput from '../enquiry-form/stage-1/tag-input';
-
-// ---
-const formschema = enquirySchema;
 interface AcademicDetailsFormPropInterface<T extends FieldValues = FieldValues> {
-  form: UseFormReturn<z.infer<typeof formschema>>;
+  form: UseFormReturn<z.infer<typeof updateStudentDetailsRequestSchema>>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  handleSave: () => void;
 }
-
 
 const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
   form,
   commonFormItemClass,
-  commonFieldClass
+  commonFieldClass,
+  handleSave
 }) => {
   // State to track edit mode
   const [isEditing, setIsEditing] = useState(false);
@@ -60,27 +56,39 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
         <div className="space-y-2">
           {/* Section Title */}
           <AccordionTrigger className="w-full items-center">
-            <h3 className="font-inter text-[16px] font-semibold">Academic  Details</h3>
-            <Button
-              variant="outline"
-              className={`rounded-[10px] border font-inter font-medium text-[12px] px-2 py-1 h-fit bg-transparent ${isEditing ? 'text-green-600 border-green-600 hover:text-green-600' : 'text-[#5B31D1] border-[#5B31D1] hover:text-[#5B31D1]'}`}
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent accordion from toggling
-                toggleEdit();
-              }}
+            <h3 className="font-inter text-[16px] font-semibold">Academic Details</h3>
+            <span
+              className={`cursor-pointer rounded-[10px] border font-inter font-medium text-[12px] px-3 py-1 gap-2 h-fit bg-transparent inline-flex items-center ${
+                isEditing
+                  ? 'text-green-600 border-green-600 hover:text-green-600'
+                  : 'text-[#5B31D1] border-[#5B31D1] hover:text-[#5B31D1]'
+              }`}
             >
               {isEditing ? (
-                <>
-                  <Check className="h-3 w-3 mr-1" />
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSave();
+                    toggleEdit();
+                  }}
+                  className="flex items-center"
+                >
+                  <Check className="h-4 w-4 mr-1" />
                   Save
-                </>
+                </span>
               ) : (
-                <>
-                  <Pencil className="h-3 w-3 mr-1" />
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleEdit();
+                  }}
+                  className="flex items-center"
+                >
+                  <Pencil className="h-4 w-4 mr-1" />
                   Edit
-                </>
+                </span>
               )}
-            </Button>
+            </span>
             <hr className="flex-1 border-t border-[#DADADA] ml-2" />
           </AccordionTrigger>
 
@@ -739,6 +747,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                                 value={field.value ?? ''}
                                 className={commonFieldClass}
                                 placeholder="Enter rank"
+                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
                               />
                             </FormControl>
                             <div className="h-[20px]">

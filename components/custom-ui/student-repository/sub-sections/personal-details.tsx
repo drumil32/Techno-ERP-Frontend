@@ -1,5 +1,5 @@
 // React and React Hook Form imports
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
 
 // UI components imports
@@ -19,70 +19,46 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { DatePicker } from '@/components/ui/date-picker';
-import { Button } from '@/components/ui/button';
 
 // Icon imports
 import { Check, Pencil } from 'lucide-react';
 
 // Utility and helper imports
 import { AreaType, BloodGroup, Category, Gender, Religion, StatesOfIndia } from '@/types/enum';
-import { toPascal } from '@/lib/utils';
-import { Nationality } from '../enquiry-form/schema/schema';
+import { filterBySchema, toPascal } from '@/lib/utils';
+import { Nationality } from '../../enquiry-form/schema/schema';
+import { updateStudent } from '../helpers/api';
+import { formatDisplayDate } from '../../enquiry-form/stage-2/student-fees-form';
+import { updateStudentDetailsRequestSchema } from '../helpers/schema';
+import { DisplayField } from '../display-field';
+import { z } from 'zod';
+import { toast } from 'sonner';
+import { getDisplayFields } from '../helpers/helper';
 
-interface PersonalDetailsFormPropInterface<T extends FieldValues = FieldValues> {
-  form: UseFormReturn<any>;
+const formSchema = updateStudentDetailsRequestSchema.extend({
+  studentID: z.string().optional(),
+  formNo: z.string().optional()
+});
+interface PersonalDetailsFormProps<T extends FieldValues = FieldValues> {
+  form: UseFormReturn<z.infer<typeof formSchema>>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  handleSave: () => void;
 }
 
-const PersonalDetailsSection: React.FC<PersonalDetailsFormPropInterface> = ({
+const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
   form,
   commonFormItemClass,
-  commonFieldClass
+  commonFieldClass,
+  handleSave
 }) => {
-  // State to track edit mode
   const [isEditing, setIsEditing] = useState(false);
 
-  // Toggle edit mode
-  const toggleEdit = () => {
-    setIsEditing((prev) => !prev);
-  };
-
-  // Display field component
-  const DisplayField: React.FC<{ label: string; value: string | null }> = ({ label, value }) => (
-    <div className={commonFormItemClass}>
-      <div className="font-inter font-normal text-xs text-gray-500">{label}</div>
-      <div className="text-sm font-medium py-2">{value || '-'}</div>
-      <div className="h-5"></div>
-    </div>
-  );
-
+  const toggleEdit = () => setIsEditing((prev) => !prev);
 
   const formData = form.getValues();
 
-  // Fields to display when not in edit mode
-  const displayFields = [
-    { label: 'Student Name', value: formData.studentName },
-    { label: 'Student Phone Number', value: formData.studentPhoneNumber },
-    { label: 'Email ID', value: formData.emailId },
-    { label: 'Student ID', value: formData.studentID },
-    { label: 'Form No.', value: formData.formNo },
-    { label: "Father's Name", value: formData.fatherName },
-    { label: "Father's Phone Number", value: formData.fatherPhoneNumber },
-    { label: "Father's Occupation", value: formData.fatherOccupation },
-    { label: "Mother's Name", value: formData.motherName },
-    { label: "Mother's Phone Number", value: formData.motherPhoneNumber },
-    { label: "Mother's Occupation", value: formData.motherOccupation },
-    { label: 'Gender', value: formData.gender },
-    { label: 'Date of Birth', value: formData.dateOfBirth },
-    { label: 'Religion', value: formData.religion },
-    { label: 'Category', value: formData.category },
-    { label: 'Blood Group', value: formData.bloodGroup },
-    { label: 'Aadhaar Number', value: formData.aadharNumber },
-    { label: 'State Of Domicile', value: formData.stateOfDomicile },
-    { label: 'Area Type', value: formData.areaType },
-    { label: 'Nationality', value: formData.nationality }
-  ];
+  const displayFields = useMemo(() => getDisplayFields(formData), [formData]);
 
   return (
     <Accordion type="single" collapsible defaultValue="personal-details">
@@ -91,26 +67,38 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormPropInterface> = ({
           {/* Section Title */}
           <AccordionTrigger className="w-full items-center">
             <h3 className="font-inter text-[16px] font-semibold">Personal Details</h3>
-            <Button
-              variant="outline"
-              className={`rounded-[10px] border font-inter font-medium text-[12px] px-2 py-1 h-fit bg-transparent ${isEditing ? 'text-green-600 border-green-600 hover:text-green-600' : 'text-[#5B31D1] border-[#5B31D1] hover:text-[#5B31D1]'}`}
-              onClick={(e) => {
-                e.stopPropagation(); // Prevent accordion from toggling
-                toggleEdit();
-              }}
+            <span
+              className={`cursor-pointer rounded-[10px] border font-inter font-medium text-[12px] px-3 py-1 gap-2 h-fit bg-transparent inline-flex items-center ${
+                isEditing
+                  ? 'text-green-600 border-green-600 hover:text-green-600'
+                  : 'text-[#5B31D1] border-[#5B31D1] hover:text-[#5B31D1]'
+              }`}
             >
               {isEditing ? (
-                <>
-                  <Check className="h-3 w-3 mr-1" />
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSave();
+                    toggleEdit();
+                  }}
+                  className="flex items-center"
+                >
+                  <Check className="h-4 w-4 mr-1" />
                   Save
-                </>
+                </span>
               ) : (
-                <>
-                  <Pencil className="h-3 w-3 mr-1" />
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleEdit();
+                  }}
+                  className="flex items-center"
+                >
+                  <Pencil className="h-4 w-4 mr-1" />
                   Edit
-                </>
+                </span>
               )}
-            </Button>
+            </span>
             <hr className="flex-1 border-t border-[#DADADA] ml-2" />
           </AccordionTrigger>
 
@@ -200,6 +188,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormPropInterface> = ({
                   <FormField
                     key="studentID"
                     control={form.control}
+                    disabled={true}
                     name="studentID"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
@@ -224,6 +213,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormPropInterface> = ({
                   />
                   {/* Form No. */}
                   <FormField
+                    disabled={true}
                     key="formNo"
                     control={form.control}
                     name="formNo"
@@ -452,6 +442,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormPropInterface> = ({
                     defaultMonth={new Date(new Date().getFullYear() - 10, 0, 1)}
                     isRequired={true}
                   />
+
                   {/* Religion */}
                   <FormField
                     key="religion"
@@ -663,7 +654,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormPropInterface> = ({
                 </>
               ) : (
                 displayFields.map(({ label, value }) => (
-                  <DisplayField key={label} label={label} value={value} />
+                  <DisplayField key={label} label={label} value={value ?? null} />
                 ))
               )}
             </div>
