@@ -1,4 +1,4 @@
-import { FeesPaidStatus } from "./enum";
+import { Course, FeeActions, FeesPaidStatus, FinanceFeeSchedule, FinanceFeeType, TransactionTypes } from "./enum";
 
 export interface StudentDue {
   _id: string;
@@ -23,6 +23,50 @@ export interface StudentDuesApiResponse {
   }
 }
 
+export interface StudentFeeInformationResponse {
+  _id: string;
+  studentName: string;
+  studentID: string;
+  fatherName: string;
+  HOD: string;
+  course: Course;
+  feeStatus: FeesPaidStatus;
+  semesterWiseFeeInformation: SemesterWiseFeeInformation[];
+  semesterBreakUp: SemesterBreakUp[];
+  transactionHistory: Transaction[];
+}
+
+export interface SemesterWiseFeeInformation {
+  semesterNumber: number;
+  academicYear: string;
+  finalFee: number;
+  paidAmount: number;
+}
+
+export interface SemesterBreakUp {
+  semesterNumber: number;
+  details: {
+    feeCategory: FinanceFeeType;
+    feeDetailId: string;
+    feeSchedule: FinanceFeeSchedule;
+    finalFee: number;
+    paidAmount: number;
+    totalDues?: number;
+  }[]
+}
+
+export interface Transaction {
+  _id: string;
+  studentId: string;
+  dateTime: string;
+  feeAction: FeeActions;
+  amount: number;
+  txnType: TransactionTypes;
+  remark: string;
+  transactionID: number;
+  actionedBy: string;
+}
+
 
 // ------------------------------------------------------------
 // TEMP
@@ -31,11 +75,11 @@ export interface StudentDuesApiResponse {
 // For the top student/course details section
 export interface StudentDetails {
   studentName: string;
-  studentId: string;
+  studentID: string;
   fatherName: string;
-  feeStatus: 'No Dues' | 'Dues Pending' | string; // Use specific strings or a general string
+  feeStatus: FeesPaidStatus;
   course: string;
-  hod: string;
+  HOD: string;
 }
 
 // For a single row in the Semester-wise Fees table

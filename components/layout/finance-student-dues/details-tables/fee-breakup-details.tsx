@@ -1,36 +1,36 @@
-import { FeeBreakupResponse, SemesterFeesResponse } from "@/types/finance"
-import { useQuery } from "@tanstack/react-query"
-import { fetchFeeBreakup, fetchSemesterFees } from "../helpers/mock-api"
+import { SemesterBreakUp } from "@/types/finance"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { Pencil } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import EditFeeBreakupDialogue from "./edit-fee-breakup-dialogue"
+import { getFinanceFeeTypeLabel, getScheduleLabel } from "@/lib/enumDisplayMapper"
 
-export default function FeesBreakupDetails({ studentDuesId, studentName }: { studentDuesId: string, studentName: string | undefined }) {
+export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { semFeesBreakUp: SemesterBreakUp[], studentName: string | undefined }) {
   const [selectedSemester, setSelectedSemester] = useState(1)
+  const [semWiseFeesBreakUpDetails, setSemWiseFeesBreakUpDetails] = useState<SemesterBreakUp["details"]>([])
 
-  const semWiseFeesBreakUpDetails = useQuery<FeeBreakupResponse, Error>({
-    queryKey: ['semwiseFeesBreakupDetails', selectedSemester, studentDuesId],
-    queryFn: fetchFeeBreakup,
-    placeholderData: (previousData) => previousData,
-  })
+  useEffect(() => {
+  if (semFeesBreakUp) {
+    const selectedSemData = semFeesBreakUp.find(
+      (item) => item.semesterNumber === selectedSemester
+    )
+    setSemWiseFeesBreakUpDetails(
+      selectedSemData?.details.map((item) => ({
+        ...item,
+        totalDues: item.finalFee - item.paidAmount,
+      })) ?? []
+    )
+  }
+}, [selectedSemester, semFeesBreakUp])
 
-  const semesterWise = useQuery<SemesterFeesResponse, Error>({
-    queryKey: ['semesterFeeDetail', studentDuesId],
-    queryFn: fetchSemesterFees,
-    placeholderData: (previousData) => previousData,
-  })
-
-  const feeTotals = semWiseFeesBreakUpDetails.data?.breakup.reduce(
+  const feeTotals = semWiseFeesBreakUpDetails.reduce(
     (totals, item) => {
-      totals.finalFees += item.finalFees ?? 0
-      totals.feesPaid += item.feesPaid ?? 0
-      totals.totalDues += item.totalDues ?? 0
+      totals.finalFee += item.finalFee ?? 0
+      totals.paidAmount += item.paidAmount ?? 0
+      totals.totalDues += item.finalFee - item.paidAmount
       return totals
     },
-    { finalFees: 0, feesPaid: 0, totalDues: 0 }
+    { finalFee: 0, paidAmount: 0, totalDues: 0 }
   )
 
   const handleSemesterChange = (value: string) => {
@@ -41,7 +41,7 @@ export default function FeesBreakupDetails({ studentDuesId, studentName }: { stu
     <div className="w-full p-3 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="w-full flex p-2 items-center">
         <div className="font-semibold text-[16px]">Fee Breakup</div>
-        <EditFeeBreakupDialogue studentName={studentName} feesBreakup={semWiseFeesBreakUpDetails.data}/>
+        <EditFeeBreakupDialogue studentName={studentName} semesterNumber={selectedSemester} feesBreakup={semWiseFeesBreakUpDetails} />
       </div>
       <div className="flex gap-2 mb-4 p-2 items-center">
         <div className="text-[#5F5F5F]">Select Semester</div>
@@ -53,53 +53,45 @@ export default function FeesBreakupDetails({ studentDuesId, studentName }: { stu
             <SelectValue placeholder="Select semester" />
           </SelectTrigger>
           <SelectContent>
-            {semesterWise.data?.details.map((item) => (
-              <SelectItem key={item.semester} value={item.semester.toString()}>
-                {`Semester ${item.semester.toString().padStart(2, '0')}`}
+            {semFeesBreakUp && semFeesBreakUp.map((item) => (
+              <SelectItem key={item.semesterNumber} value={item.semesterNumber.toString()}>
+                {`Semester ${item.semesterNumber.toString().padStart(2, '0')}`}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      {semWiseFeesBreakUpDetails.isLoading ? (
-        <div className="flex justify-center items-center h-40">Loading...</div>
-      ) : semWiseFeesBreakUpDetails.isError ? (
-        <div className="flex justify-center items-center h-40 text-red-500">
-          Error loading fee breakup: {semWiseFeesBreakUpDetails.error.message}
-        </div>
-      ) : (
-        <Table className="w-auto">
-          <TableHeader className="bg-[#F7F7F7]">
-            <TableRow>
-              <TableHead className="w-[150px] rounded-l-[5px]">Fees Category</TableHead>
-              <TableHead className="w-[110px]">Schedule</TableHead>
-              <TableHead className="w-[100px] text-right">Final Fees</TableHead>
-              <TableHead className="w-[100px] text-right">Fees paid</TableHead>
-              <TableHead className="w-[100px] rounded-r-[5px] text-right">Total Dues</TableHead>
+      <Table className="w-auto">
+        <TableHeader className="bg-[#F7F7F7]">
+          <TableRow>
+            <TableHead className="w-[150px] rounded-l-[5px]">Fees Category</TableHead>
+            <TableHead className="w-[110px]">Schedule</TableHead>
+            <TableHead className="w-[100px] text-right">Final Fees</TableHead>
+            <TableHead className="w-[100px] text-right">Fees paid</TableHead>
+            <TableHead className="w-[100px] rounded-r-[5px] text-right">Total Dues</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {semWiseFeesBreakUpDetails.map((item) => (
+            <TableRow key={item.feeCategory}>
+              <TableCell className="w-[150px]">{getFinanceFeeTypeLabel(item.feeCategory)}</TableCell>
+              <TableCell className="w-[110px]">{getScheduleLabel(item.feeSchedule)}</TableCell>
+              <TableCell className="w-[100px] text-right">{item.finalFee != null ? `₹ ${item.finalFee}` : '__'}</TableCell>
+              <TableCell className="w-[100px] text-right">{item.paidAmount != null ? `₹ ${item.paidAmount}` : '__'}</TableCell>
+              <TableCell className="w-[100px] text-right">{item.totalDues != null ? `₹ ${item.totalDues}` : '__'}</TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {semWiseFeesBreakUpDetails.data?.breakup.map((item) => (
-              <TableRow key={item.feesCategory}>
-                <TableCell className="w-[150px]">{item.feesCategory}</TableCell>
-                <TableCell className="w-[110px]">{item.schedule}</TableCell>
-                <TableCell className="w-[100px] text-right">{item.finalFees != null ? `₹ ${item.finalFees}` : '__'}</TableCell>
-                <TableCell className="w-[100px] text-right">{item.feesPaid != null ? `₹ ${item.feesPaid}` : '__'}</TableCell>
-                <TableCell className="w-[100px] text-right">{item.totalDues != null ? `₹ ${item.totalDues}` : '__'}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell className="rounded-l-[5px]" colSpan={2}>Total</TableCell>
-              <TableCell className="text-right">₹{feeTotals?.finalFees}</TableCell>
-              <TableCell className="text-right">₹{feeTotals?.feesPaid}</TableCell>
-              <TableCell className="text-right rounded-r-[5px]">₹{feeTotals?.totalDues}</TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
-      )}
+          ))}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell className="rounded-l-[5px]" colSpan={2}>Total</TableCell>
+            <TableCell className="text-right">₹{feeTotals?.finalFee}</TableCell>
+            <TableCell className="text-right">₹{feeTotals?.paidAmount}</TableCell>
+            <TableCell className="text-right rounded-r-[5px]">₹{feeTotals?.totalDues}</TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>
     </div>
   )
 }

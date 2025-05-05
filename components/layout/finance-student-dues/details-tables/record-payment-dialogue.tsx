@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
+import { format } from "date-fns";
 
 const feesActionMapping = {
   [FeeActions.DEPOSIT]: "DEPOSIT",
@@ -58,7 +59,7 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
 
   const handleSave = (values: FormValues) => {
     const payload = {
-      studentId: studentDetails?.studentId,
+      studentID: studentDetails?.studentID,
       feesAction: feesActionMapping[values.feesAction],
       transactionType: transactionTypeMapping[values.transactionType],
       amount: values.amount,
@@ -98,7 +99,7 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
               </div>
               <div className="flex flex-col gap-3">
                 <Label className="text-gray-500 text-md">Student ID</Label>
-                <Label className="text-gray-800 text-md">{studentDetails?.studentId}</Label>
+                <Label className="text-gray-800 text-md">{studentDetails?.studentID}</Label>
               </div>
             </div>
             <div className="flex flex-col w-1/2 gap-6">
@@ -108,7 +109,7 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
               </div>
               <div className="flex flex-col gap-3">
                 <Label className="text-gray-500 text-md">Date</Label>
-                <Label className="text-gray-800 text-md">{studentDetails?.course}</Label>
+                <Label className="text-gray-800 text-md">{format(new Date(), 'dd/MM/yyyy')}</Label>
               </div>
             </div>
           </div>
@@ -178,7 +179,7 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
                           placeholder="Enter the amount"
                           {...field}
                           type="number"
-                          
+
                         />
                       </FormControl>
                       <FormMessage />
@@ -204,7 +205,7 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
                   <Dialog.Close asChild>
                     <Button type="button" variant="outline">Cancel</Button>
                   </Dialog.Close>
-                  <Button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white">Record</Button>
+                  <Button type="submit" className="bg-[#5B31D1] text-white">Record</Button>
                 </div>
               </form>
             </Form>

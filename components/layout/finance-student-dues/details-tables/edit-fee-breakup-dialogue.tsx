@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { FeeBreakupResponse } from "@/types/finance";
+import { FeeBreakupResponse, SemesterBreakUp } from "@/types/finance";
 import { Pencil } from "lucide-react";
 import * as Dialog from '@radix-ui/react-dialog';
 import { Label } from "@/components/ui/label";
@@ -14,9 +14,10 @@ const feeSchema = z.object({
   finalFees: z.number().positive("Fee must be greater than 0").optional()
 });
 
-export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave}: {
+export default function EditFeeBreakupDialogue({ studentName, feesBreakup, semesterNumber, onSave }: {
   studentName: string | undefined,
-  feesBreakup: FeeBreakupResponse | undefined,
+  feesBreakup: SemesterBreakUp["details"] | undefined,
+  semesterNumber: number,
   onSave?: (updatedBreakup: any) => void
 }) {
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -29,9 +30,9 @@ export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave
   // Calculate the total of all final fees
   const calculateTotal = () => {
     let total = 0;
-    feesBreakup?.breakup.forEach((item) => {
-      const editedValue = editedFees[item.feesCategory];
-      const finalFee = editedValue !== undefined ? editedValue : item.finalFees;
+    feesBreakup?.forEach((item) => {
+      const editedValue = editedFees[item.feeCategory];
+      const finalFee = editedValue !== undefined ? editedValue : item.finalFee;
       if (finalFee && typeof finalFee === 'number') {
         total += finalFee;
       }
@@ -82,9 +83,9 @@ export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave
 
     // Prepare payload with only the edited values
     const updatedBreakup = {
-      semester: feesBreakup?.semester,
-      breakup: feesBreakup?.breakup.map(item => {
-        const editedFee = editedFees[item.feesCategory];
+      semester: semesterNumber,
+      breakup: feesBreakup?.map(item => {
+        const editedFee = editedFees[item.feeCategory];
         if (editedFee !== undefined) {
           return {
             ...item,
@@ -137,7 +138,7 @@ export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave
             </Dialog.Close>
           </div>
 
-          <div className="mb-3">Semester {feesBreakup?.semester}</div>
+          <div className="mb-3">Semester {semesterNumber}</div>
 
           <Table className="w-full mb-4">
             <TableHeader className="bg-[#F7F7F7]">
@@ -148,24 +149,24 @@ export default function EditFeeBreakupDialogue({studentName, feesBreakup, onSave
               </TableRow>
             </TableHeader>
             <TableBody>
-              {feesBreakup?.breakup.map((item) => (
-                <TableRow key={item.feesCategory}>
-                  <TableCell>{item.feesCategory}</TableCell>
-                  <TableCell>{item.schedule}</TableCell>
+              {feesBreakup?.map((item) => (
+                <TableRow key={item.feeCategory}>
+                  <TableCell>{item.feeCategory}</TableCell>
+                  <TableCell>{item.feeSchedule}</TableCell>
                   <TableCell className="text-right">
-                      <div className="flex flex-col items-end">
-                        <Input
-                          className="w-24 text-right"
-                          type="number"
-                          defaultValue={item.finalFees !== null ? item.finalFees : ""}
-                          onChange={(e) => handleInputChange(item.feesCategory, e.target.value)}
-                          placeholder="—"
-                          prefix="₹"
-                        />
-                        {errors[item.feesCategory] && (
-                          <span className="text-red-500 text-xs mt-1">{errors[item.feesCategory]}</span>
-                        )}
-                      </div>
+                    <div className="flex flex-col items-end">
+                      <Input
+                        className="w-24 text-right"
+                        type="number"
+                        defaultValue={item.finalFee !== null ? item.finalFee : ""}
+                        onChange={(e) => handleInputChange(item.feeCategory, e.target.value)}
+                        placeholder="—"
+                        prefix="₹"
+                      />
+                      {errors[item.feeCategory] && (
+                        <span className="text-red-500 text-xs mt-1">{errors[item.feeCategory]}</span>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

@@ -17,6 +17,8 @@ import { fetchActiveDues } from "./helpers/fetch-data";
 import { generateAcademicYearDropdown } from "@/lib/generateAcademicYearDropdown";
 import { getCurrentAcademicYear } from "@/lib/getCurrentAcademicYear";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toWordsOrdinal } from 'number-to-words';
+import { capitalize } from "@/lib/capitalize";
 
 interface RefinedStudentDue extends StudentDue {
   id: number
@@ -118,8 +120,19 @@ export default function StudentDuesPage() {
     { accessorKey: 'fatherName', header: 'Father Name' },
     { accessorKey: 'fatherPhoneNumber', header: "Father's Phone Number" },
     { accessorKey: 'courseName', header: 'Course' },
-    { accessorKey: 'courseYear', header: 'Course Year' },
-    { accessorKey: 'currentSemester', header: 'Semester' },
+    {
+      accessorKey: 'courseYear', header: 'Course Year',
+      cell: ({ row }: any) => {
+        const year = Number(row.original.courseYear);
+        return <span>{!isNaN(year) ? capitalize(toWordsOrdinal(year)) : '--'}</span>;
+      }
+    },
+    {
+      accessorKey: 'currentSemester', header: 'Semester',
+      cell: ({ row }: any) => {
+        return <span>{`0${row.original.currentSemester}`}</span>
+      }
+    },
     {
       accessorKey: 'feeStatus',
       header: 'Fee Status',
@@ -163,7 +176,7 @@ export default function StudentDuesPage() {
               <SelectValue placeholder="Select Academic Year" />
             </SelectTrigger>
             <SelectContent>
-              {academicYearDropdownData.map((item:string)=> (
+              {academicYearDropdownData.map((item: string) => (
                 <SelectItem key={item} value={item.toString()}>
                   {item}
                 </SelectItem>

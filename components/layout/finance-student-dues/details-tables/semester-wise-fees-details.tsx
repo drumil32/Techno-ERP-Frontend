@@ -1,32 +1,37 @@
-import { SemesterFeesResponse, StudentDetails } from "@/types/finance"
-import { useQuery } from "@tanstack/react-query"
-import { fetchSemesterFees } from "../helpers/mock-api"
+import { SemesterWiseFeeInformation, StudentDetails } from "@/types/finance"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
 import RecordPaymentDialogue from "./record-payment-dialogue"
 
-export default function SemesterWiseFeesDetails({ studentDuesId, studentDetails }: { studentDuesId: string, studentDetails: StudentDetails | undefined }) {
-  const semesterWise = useQuery<SemesterFeesResponse, Error>({
-    queryKey: ['semesterFeeDetail', studentDuesId],
-    queryFn: fetchSemesterFees,
-    placeholderData: (previousData) => previousData,
-  })
+type ExtendedSemesterWiseFeeInformation = SemesterWiseFeeInformation & {
+  sno: number;
+  dueFees: number;
+};
 
-  const feeTotals = semesterWise.data?.details.reduce(
+export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFeesInformation }: { studentDetails: StudentDetails, semesterWiseFeesInformation: SemesterWiseFeeInformation[] }) {
+
+  const extendedSemesterWiseFeesInformation: ExtendedSemesterWiseFeeInformation[] =
+    semesterWiseFeesInformation.map((item, index) => ({
+      ...item,
+      sno: index + 1,
+      dueFees: (item.finalFee ?? 0) - (item.paidAmount ?? 0),
+    }));
+
+
+  const feeTotals = semesterWiseFeesInformation.reduce(
     (totals, item) => {
-      totals.finalFeesDue += item.finalFeesDue ?? 0
-      totals.feesPaid += item.feesPaid ?? 0
-      totals.dueFees += item.dueFees ?? 0
+      totals.finalFee += item.finalFee ?? 0
+      totals.paidAmount += item.paidAmount ?? 0
+      totals.dueFees += (item.finalFee - item.paidAmount)
       return totals
     },
-    { finalFeesDue: 0, feesPaid: 0, dueFees: 0 }
+    { finalFee: 0, paidAmount: 0, dueFees: 0 }
   )
 
   return (
     <div className="w-full p-3 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="w-full flex p-2 items-center">
         <div className="font-semibold text-[16px]">Semester-wise Fees Details</div>
-        <RecordPaymentDialogue studentDetails={studentDetails}/>
+        <RecordPaymentDialogue studentDetails={studentDetails} />
       </div>
       <Table className="w-3/5">
         <TableHeader className="bg-[#F7F7F7] ">
@@ -42,24 +47,24 @@ export default function SemesterWiseFeesDetails({ studentDuesId, studentDetails 
           </TableRow>
         </TableHeader>
         <TableBody>
-          {semesterWise.data?.details.map((semFee) => (
-            <TableRow key={semFee.semester}>
+          {extendedSemesterWiseFeesInformation.map((semFee) => (
+            <TableRow key={semFee.sno}>
               <TableCell>{semFee.sno}</TableCell>
               <TableCell>{semFee.academicYear}</TableCell>
-              <TableCell>{semFee.semester}</TableCell>
-              <TableCell>{semFee.course}</TableCell>
-              <TableCell className="text-right">{semFee.finalFeesDue != null ? `₹ ${semFee.finalFeesDue}` : '__'}</TableCell>
-              <TableCell className="text-right">{semFee.feesPaid != null ? `₹ ${semFee.feesPaid}` : '__'}</TableCell>
+              <TableCell>{semFee.semesterNumber}</TableCell>
+              <TableCell>{studentDetails.course}</TableCell>
+              <TableCell className="text-right">{semFee.finalFee != null ? `₹ ${semFee.finalFee}` : '__'}</TableCell>
+              <TableCell className="text-right">{semFee.paidAmount != null ? `₹ ${semFee.paidAmount}` : '__'}</TableCell>
               <TableCell className="text-right">{semFee.dueFees != null ? `₹ ${semFee.dueFees}` : '__'}</TableCell>
-              <TableCell className=" pl-8">{semFee.dueDate ?? '--'}</TableCell>
+              {/* <TableCell className=" pl-8">{semFee.dueDate ?? '--'}</TableCell> */}
             </TableRow>
           ))}
         </TableBody>
         <TableFooter>
           <TableRow>
             <TableCell className="rounded-l-[5px]" colSpan={4}>Total</TableCell>
-            <TableCell className="text-right">₹{feeTotals?.finalFeesDue}</TableCell>
-            <TableCell className="text-right">₹{feeTotals?.feesPaid}</TableCell>
+            <TableCell className="text-right">₹{feeTotals?.finalFee}</TableCell>
+            <TableCell className="text-right">₹{feeTotals?.paidAmount}</TableCell>
             <TableCell className="text-right">₹{feeTotals?.dueFees}</TableCell>
             <TableCell className="rounded-r-[5px]">{""}</TableCell>
           </TableRow>

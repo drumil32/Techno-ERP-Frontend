@@ -1,28 +1,31 @@
-import { SemesterFeesResponse, TransactionsResponse } from "@/types/finance"
+import { Transaction, TransactionsResponse } from "@/types/finance"
 import { useQuery } from "@tanstack/react-query"
-import { fetchSemesterFees, fetchTransactions } from "../helpers/mock-api"
+import { fetchTransactions } from "../helpers/mock-api"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { use } from "react"
 import FeeActionTag from "../fees-action-tag"
 import { FeeActions, TransactionTypes } from "@/types/enum"
 import TxnTypaTag from "../txn-type-tag"
+import { format } from "date-fns"
 
-export default function AllTransactionsDetails({ studentDuesId }: { studentDuesId: string }) {
-  const allTransactions = useQuery<TransactionsResponse, Error>({
-    queryKey: ['allTransactions', studentDuesId],
-    queryFn: fetchTransactions,
-    placeholderData: (previousData) => previousData,
+type ExtendedTransaction = Transaction & {
+  sno: number
+}
+
+export default function AllTransactionsDetails({ transactionHistory, studentDuesId }: { transactionHistory: Transaction[], studentDuesId: string }) {
+  const extendedTransactionHistory: ExtendedTransaction[] = transactionHistory.map((item, index) => {
+    return {
+      ...item,
+      sno: index + 1
+    }
   })
 
-  const amountTotal = allTransactions.data?.transactions.reduce(
+  const amountTotal = transactionHistory.reduce(
     (totals, item) => {
       totals.amount += item.amount ?? 0
       return totals
     },
-    { amount: 0}
+    { amount: 0 }
   )
-
-
 
   return (
     <div className="w-full p-3 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -43,16 +46,16 @@ export default function AllTransactionsDetails({ studentDuesId }: { studentDuesI
           </TableRow>
         </TableHeader>
         <TableBody>
-          {allTransactions.data?.transactions.map((transaction) => (
-            <TableRow key={transaction.transactionId}>
+          {extendedTransactionHistory.map((transaction) => (
+            <TableRow key={transaction._id}>
               <TableCell className="w-[31px]">{transaction.sno}</TableCell>
-              <TableCell className="w-[100px]">{transaction.date}</TableCell>
-              <TableCell className="w-[80px]">{transaction.time}</TableCell>
-              <TableCell className="w-[80px]">{transaction.transactionId}</TableCell>
-              <TableCell className="w-[110px]"><FeeActionTag status={transaction.feesAction as FeeActions}/></TableCell>
+              <TableCell className="w-[100px]">{format(transaction.dateTime, 'HH:mm')}</TableCell>
+              <TableCell className="w-[80px]">{format(transaction.dateTime, 'dd/MM/yyyy')}</TableCell>
+              <TableCell className="w-[80px]">{transaction.transactionID}</TableCell>
+              <TableCell className="w-[110px]"><FeeActionTag status={transaction.feeAction as FeeActions} /></TableCell>
               <TableCell className="w-[120px] text-right">{transaction.amount != null ? `₹ ${transaction.amount}` : '__'}</TableCell>
-              <TableCell className="w-[110px]"><TxnTypaTag status={transaction.transactionType as TransactionTypes}/></TableCell>
-              <TableCell className="w-auto">{transaction.remarks ?? '--'}</TableCell>
+              <TableCell className="w-[110px]"><TxnTypaTag status={transaction.txnType as TransactionTypes} /></TableCell>
+              <TableCell className="w-auto">{transaction.remark == "" ? '--' : transaction.remark}</TableCell>
             </TableRow>
           ))}
         </TableBody>
