@@ -1,3 +1,4 @@
+import { formatYearRange } from "@/lib/utils";
 import { StudentListData } from "./interface";
 
 export const refineStudents = (data: StudentListData): StudentListData => {
@@ -12,7 +13,7 @@ export const refineStudents = (data: StudentListData): StudentListData => {
         fatherPhoneNumber: student.fatherPhoneNumber,
         courseName: student.courseName,
         currentSemester: student.currentSemester,
-        currentAcademicYear: student.currentAcademicYear,
+        currentAcademicYear: formatYearRange(student.currentAcademicYear),
         currentYear: Math.ceil(student.currentSemester / 2),
     }));
     

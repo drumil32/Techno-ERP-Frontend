@@ -113,3 +113,9 @@ export const getOrdinalSuffix = (num: number): string => {
   const value = num % 100;
   return num + (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0]);
 }
+
+export function formatYearRange(yearRange: string): string {
+  const [startYear, endYear] = yearRange.split('-');
+  if (!startYear || !endYear) return yearRange;
+  return `${startYear}-${endYear.slice(-2)}`;
+}

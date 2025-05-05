@@ -11,6 +11,8 @@ import { formatDisplayDate } from '../../enquiry-form/stage-2/student-fees-form'
 import { filterBySchema } from '@/lib/utils';
 import { updateStudent } from '../helpers/api';
 import { toast } from 'sonner';
+import { StudentData } from '../helpers/interface';
+import { getPersonalDetailsFormData } from '../helpers/helper';
 
 interface StudentDetailsTabProps {
   personalDetailsForm: UseFormReturn<z.infer<typeof updateStudentDetailsRequestSchema>>; 
@@ -35,7 +37,8 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
     const filteredData = filterBySchema(updateStudentDetailsRequestSchema, data);
 
     // if form contains errors, then show toast error
-    if (personalDetailsForm.formState.errors) {
+    if (personalDetailsForm.formState.errors && Object.keys(personalDetailsForm.formState.errors).length > 0) {
+      console.log('Form errors:', personalDetailsForm.formState);
       const errorMessages = Object.values(personalDetailsForm.formState.errors).map(
         (error) => error.message
       );
@@ -43,14 +46,16 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
 
       // reset form to original values
       personalDetailsForm.reset();
-      
+
       return;
     }
 
-    const response = await updateStudent(filteredData);
+    const response: StudentData = await updateStudent(filteredData);
 
     if (response) {
       setStudentData(response);
+      const filteredResponse = getPersonalDetailsFormData(response);
+      personalDetailsForm.reset(filteredResponse);
       toast.success('Student data updated successfully');
     } else {
       toast.error('Failed to update student data');

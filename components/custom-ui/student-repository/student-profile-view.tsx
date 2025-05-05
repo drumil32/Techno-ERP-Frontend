@@ -2,6 +2,7 @@ import Image from 'next/image';
 import React from 'react';
 import { FieldDefinition, StudentData } from './helpers/interface';
 import { Label } from '@/components/ui/label';
+import { formatYearRange } from '@/lib/utils';
 
 interface StudentProfileViewProps {
   studentData: StudentData;
@@ -9,7 +10,7 @@ interface StudentProfileViewProps {
 
 const StudentProfileView: React.FC<StudentProfileViewProps> = ({ studentData }) => {
   const ProfilePicSection: React.FC<{ name: string; id: string }> = ({ name, id }) => (
-    <div className="bg-white rounded-[10px] p-4 flex items-center flex-col gap-2">
+    <div className="bg-white rounded-[10px] p-4 flex items-center justify-center flex-col gap-2">
       <div className="relative w-24 h-24 overflow-hidden">
         <Image
           src="/images/techno-logo.png"
@@ -63,7 +64,7 @@ const StudentProfileView: React.FC<StudentProfileViewProps> = ({ studentData }) 
     {
       label: 'Course Year',
       key: 'courseYear',
-      value: studentData?.currentAcademicYear
+      value: formatYearRange(studentData?.currentAcademicYear)
     },
     {
       label: 'Semester',
@@ -109,7 +110,7 @@ const StudentProfileView: React.FC<StudentProfileViewProps> = ({ studentData }) 
         id={studentData?.studentInfo?.universityId || ''}
       />
 
-      <div className="bg-white p-6 grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow rounded-lg shadow-sm">
+      <div className="bg-white p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow rounded-lg shadow-sm">
         <StudentFields fields={displayFields} />
       </div>
     </div>

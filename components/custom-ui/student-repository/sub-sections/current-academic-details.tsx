@@ -13,6 +13,7 @@ import {
 // Utility and type imports
 import { StudentData } from '../helpers/interface';
 import { DisplayField } from '../display-field';
+import { formatYearRange } from '@/lib/utils';
 
 // ---
 
@@ -31,7 +32,7 @@ const CurrentAcademicDetailsSection: React.FC<CurrentAcademicDetailsFormPropInte
     { label: 'Department Name', value: studentData.departmentName },
     { label: 'Current Year', value: studentData?.currentSemester ? Math.ceil(studentData.currentSemester / 2).toString() : null },
     { label: 'Current Semester', value: studentData?.currentSemester },
-    { label: 'Academic Year', value: studentData.currentAcademicYear },
+    { label: 'Academic Year', value: formatYearRange(studentData.currentAcademicYear) },
     { label: 'Cumulative CGPA', value: studentData?.cumulativeCGPA },
     { label: 'Cumulative CPGA', value: studentData?.cumulativeCPGA },
     { label: "Father's Occupation", value: studentData?.studentInfo?.fatherOccupation }

@@ -24,7 +24,6 @@ import { Document, StudentData } from '../helpers/interface';
 import { PhysicalDocumentNoteStatus } from '../helpers/enum';
 import { updateStudentDocuments } from '../helpers/api';
 import { toast } from 'sonner';
-import Document from 'next/document';
 
 interface DocumentVerificationProps {
   studentData: StudentData;
