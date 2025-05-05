@@ -240,7 +240,7 @@ export default function TechnoDataTable({
       <div className="relative">
         <div
           ref={tableContainerRef}
-          className="min-h-[580px] overflow-auto custom-scrollbar relative"
+          className="min-h-[580px] h-[240px] overflow-auto custom-scrollbar relative"
         >
           <Table ref={tableRef} className="w-full">
             <TableHeader className="bg-[#5B31D1]/10 font-bolds sticky top-0 z-10">

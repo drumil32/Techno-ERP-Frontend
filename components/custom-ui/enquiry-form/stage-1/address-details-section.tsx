@@ -29,12 +29,14 @@ interface AddressDetailsSectionInterface {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  isViewable?: boolean;
 }
 
 const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
   form,
   commonFieldClass,
-  commonFormItemClass
+  commonFormItemClass,
+  isViewable
 }) => {
   const hasAddressErrors =
     !!form.formState.errors.address && Object.keys(form.formState.errors.address).length > 0;
@@ -143,6 +145,7 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                     </FormLabel>
                     <FormControl>
                       <MultiSelectCustomDropdown
+                        disabled={isViewable}
                         form={form}
                         name="address.district"
                         options={Object.values(districts).map((district) => ({
@@ -178,6 +181,7 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                         onValueChange={field.onChange}
                         defaultValue={StatesOfIndia.UttarPradesh}
                         value={field.value}
+                        disabled={isViewable}
                       >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the state" />
@@ -209,7 +213,11 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isViewable}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the country" />
                         </SelectTrigger>

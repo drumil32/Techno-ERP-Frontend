@@ -49,7 +49,11 @@ export const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
 const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   const router = useRouter();
 
-  const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
+  const {
+    isChecking: isRedirectChecking,
+    isCheckError: isRedirectError,
+    isViewable
+  } = useAdmissionRedirect({
     id,
     currentStage: ApplicationStatus.STEP_1
   });
@@ -60,7 +64,8 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       studentName: '',
       studentPhoneNumber: '',
       confirmation: false
-    }
+    },
+    disabled: isViewable
   });
 
   // Fetch enquiry data if id is provided
@@ -192,7 +197,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     }
 
     // Remove confirmation field from values
-    const { confirmation, ...rest } = filteredValues;
+    const { confirmation, id, _id, ...rest } = filteredValues;
 
     if (!id) {
       const response: any = await createEnquiryDraft(rest);
@@ -262,6 +267,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         {/* Student Details */}
         <StudentDetailsForm
           form={form}
+          isViewable={isViewable}
           commonFieldClass={commonFieldClass}
           commonFormItemClass={commonFormItemClass}
         />
@@ -269,6 +275,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         {/* Address details */}
         <AddressDetailsSection
           form={form}
+          isViewable={isViewable}
           commonFieldClass={commonFieldClass}
           commonFormItemClass={commonFormItemClass}
         />
@@ -276,6 +283,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         {/* Academic Details */}
         <AcademicDetailsSection
           form={form}
+          isViewable={isViewable}
           commonFieldClass={commonFieldClass}
           commonFormItemClass={commonFormItemClass}
         />
@@ -283,26 +291,32 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         {/* To be filled by College */}
         <FilledByCollegeSection
           form={form}
+          isViewable={isViewable}
           commonFieldClass={commonFieldClass}
           commonFormItemClass={commonFormItemClass}
         />
 
         {/* Confirmation Check box */}
-        <ConfirmationCheckBox
-          form={form}
-          name="confirmation"
-          label="All the above information has been verified by the applicant and thoroughly checked by the Admissions team."
-          id="checkbox-for-step3"
-          className="cols-span-3"
-        />
+        {!isViewable && (
+          <ConfirmationCheckBox
+            form={form}
+            name="confirmation"
+            isViewable={isViewable}
+            label="All the above information has been verified by the applicant and thoroughly checked by the Admissions team."
+            id="checkbox-for-step3"
+            className="cols-span-3"
+          />
+        )}
 
         {/* Sticky Footer */}
-        <EnquiryFormFooter
-          saveDraft={saveDraft}
-          form={form}
-          onSubmit={onSubmit}
-          confirmationChecked={confirmationChecked}
-        />
+        {!isViewable && (
+          <EnquiryFormFooter
+            saveDraft={saveDraft}
+            form={form}
+            onSubmit={onSubmit}
+            confirmationChecked={confirmationChecked}
+          />
+        )}
       </form>
     </Form>
   );

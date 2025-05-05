@@ -12,6 +12,7 @@ interface ConfirmationCheckBoxInterface {
   label: string;
   id?: string; // optional HTML id
   className?: string;
+  isViewable?: boolean;
 }
 
 const ConfirmationCheckBox: React.FC<ConfirmationCheckBoxInterface> = ({
@@ -19,7 +20,8 @@ const ConfirmationCheckBox: React.FC<ConfirmationCheckBoxInterface> = ({
   name,
   label,
   id = 'confirmation-checkbox',
-  className = ''
+  className = '',
+  isViewable
 }) => {
   return (
     <FormField
@@ -30,6 +32,7 @@ const ConfirmationCheckBox: React.FC<ConfirmationCheckBoxInterface> = ({
           <FormControl>
             <div className="flex items-center bg-white rounded-[5px] p-[10px]">
               <Checkbox
+                disabled={isViewable}
                 id={id}
                 checked={field.value}
                 onCheckedChange={field.onChange}

@@ -112,7 +112,7 @@ export const LeadConversionDashboard = ({
   const renderChart = (title: string, chart: ReactElement) => (
     <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
       <h3 className="text-sm font-medium text-gray-700 mb-3">{title}</h3>
-      <div className="h-[240px]">
+      <div className="h-[300px] w-full">
         <ChartContainer config={chartConfig}>{chart}</ChartContainer>
       </div>
     </div>
@@ -125,7 +125,6 @@ export const LeadConversionDashboard = ({
         <CardDescription className="text-purple-100">{description}</CardDescription>
       </CardHeader>
       <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-6 p-6">
-        {/* <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-white"> */}
         <Table className="max-h-max max-w-max">
           <TableHeader className="bg-gradient-to-r from-purple-50 to-indigo-50">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -155,12 +154,11 @@ export const LeadConversionDashboard = ({
             </TableRow>
           </TableBody>
         </Table>
-        {/* </div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {renderChart(
             'Lead Distribution',
-            <ResponsiveContainer>
+            <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Pie
@@ -183,7 +181,7 @@ export const LeadConversionDashboard = ({
 
           {renderChart(
             'Leads by Type',
-            <ResponsiveContainer>
+            <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
                 <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
@@ -199,7 +197,7 @@ export const LeadConversionDashboard = ({
 
           {renderChart(
             'Lead Trend',
-            <ResponsiveContainer>
+            <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
@@ -218,7 +216,7 @@ export const LeadConversionDashboard = ({
 
           {renderChart(
             'Conversion Rate',
-            <ResponsiveContainer>
+            <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                 <YAxis tick={{ fontSize: 11 }} />
@@ -236,9 +234,9 @@ export const LeadConversionDashboard = ({
 
           <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow md:col-span-2">
             <h3 className="text-sm font-medium text-gray-700 mb-3">Lead Performance</h3>
-            <div className="h-full">
+            <div className="h-[400px] w-full">
               <ChartContainer config={chartConfig}>
-                <ResponsiveContainer>
+                <ResponsiveContainer width="100%" height="100%">
                   <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
                     <PolarGrid gridType="circle" />
                     <PolarAngleAxis dataKey="name" tick={{ fontSize: 11 }} />

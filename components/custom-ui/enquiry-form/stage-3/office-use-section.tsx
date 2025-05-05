@@ -35,11 +35,13 @@ interface OfficeUseSectionInterface {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  isViewable?: boolean;
 }
 const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
   form,
   commonFieldClass,
-  commonFormItemClass
+  commonFormItemClass,
+  isViewable
 }) => {
   const results = useQueries({
     queries: [
@@ -59,8 +61,13 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
 
   return (
     <>
-      <Accordion type="single" collapsible className="w-full space-y-4">
-        <AccordionItem value="college-details" className="border-b-0">
+      <Accordion
+        type="single"
+        collapsible
+        className="w-full space-y-4"
+        defaultValue="office-use-section"
+      >
+        <AccordionItem value="office-use-section" className="border-b-0">
           <AccordionTrigger className="w-full items-center">
             <h3 className="font-inter text-[16px] font-semibold"> For Office purpose only </h3>
             <hr className="flex-1 border-t border-[#DADADA] ml-2" />
@@ -98,7 +105,11 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        disabled={isViewable}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Reference" />
                         </SelectTrigger>

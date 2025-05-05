@@ -26,12 +26,14 @@ interface AddressDetailsSectionInterface {
   form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  isViewable?: boolean;
 }
 
 const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
   form,
   commonFieldClass,
-  commonFormItemClass
+  commonFormItemClass,
+  isViewable
 }) => {
   const [isValid, setIsValid] = useState(false);
 
@@ -72,7 +74,7 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
   const districts = Array.isArray(districtsQuery.data) ? districtsQuery.data : [];
 
   return (
-    <Accordion type="single" collapsible>
+    <Accordion type="single" collapsible defaultValue="address-details">
       <AccordionItem value="address-details">
         <div className="space-y-2">
           <AccordionTrigger
@@ -184,7 +186,11 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        disabled={isViewable}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select district" />
                         </SelectTrigger>
@@ -215,6 +221,7 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                     </FormLabel>
                     <FormControl>
                       <Select
+                        disabled={isViewable}
                         onValueChange={field.onChange}
                         defaultValue={StatesOfIndia.UttarPradesh}
                         value={field.value}
@@ -248,7 +255,11 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        disabled={isViewable}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select country" />
                         </SelectTrigger>

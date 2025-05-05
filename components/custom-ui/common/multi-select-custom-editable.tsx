@@ -13,6 +13,7 @@ interface MultiSelectCustomDropdownProps {
   allowCustomInput?: boolean;
   onChange?: (value: string) => void;
   onAddOption?: (value: string) => void;
+  disabled?: boolean;
 }
 
 export const MultiSelectCustomDropdown = ({
@@ -23,7 +24,8 @@ export const MultiSelectCustomDropdown = ({
   placeholder = 'Select option',
   allowCustomInput = false,
   onChange,
-  onAddOption
+  onAddOption,
+  disabled = false
 }: MultiSelectCustomDropdownProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -45,12 +47,14 @@ export const MultiSelectCustomDropdown = ({
   const exactMatch = allOptions.find((opt) => opt.name.toLowerCase() === searchTerm.toLowerCase());
 
   const handleSelect = (value: string) => {
+    if (disabled) return;
     onChange?.(value);
     setIsPopoverOpen(false);
     setSearchTerm('');
   };
 
   const handleAddFromSearch = () => {
+    if (disabled) return;
     if (exactMatch) {
       handleSelect(exactMatch._id);
       return;
@@ -69,11 +73,15 @@ export const MultiSelectCustomDropdown = ({
   return (
     <div className="space-y-2 w-full">
       {label && <label className="font-normal text-[#666666] text-sm">{label}</label>}
-      <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+      <Popover
+        open={isPopoverOpen && !disabled}
+        onOpenChange={(open) => !disabled && setIsPopoverOpen(open)}
+      >
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             className="text-left rounded-sm bg-inherit w-full font-normal h-full justify-between"
+            disabled={disabled}
           >
             <span>
               {currentValue
@@ -89,15 +97,17 @@ export const MultiSelectCustomDropdown = ({
               <Input
                 placeholder="Search..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => !disabled && setSearchTerm(e.target.value)}
                 className="h-8 pr-10"
-                onKeyDown={(e) => e.key === 'Enter' && handleAddFromSearch()}
+                onKeyDown={(e) => !disabled && e.key === 'Enter' && handleAddFromSearch()}
+                disabled={disabled}
               />
               {showAddButton && (
                 <Button
                   size="sm"
                   className="absolute right-1 top-1 h-6 px-2 text-xs"
                   onClick={handleAddFromSearch}
+                  disabled={disabled}
                 >
                   Add
                 </Button>

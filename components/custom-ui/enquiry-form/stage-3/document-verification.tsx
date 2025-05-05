@@ -37,9 +37,10 @@ type Document = {
 
 type DocumentVerificationProps = {
   form: UseFormReturn<any>;
+  isViewable?: boolean;
 };
 
-const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ form }) => {
+const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ form, isViewable }) => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -168,6 +169,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ form
               <div className="flex flex-row items-center">
                 <div className="flex items-center">
                   <Select
+                    disabled={isViewable}
                     value={doc.status}
                     onValueChange={(value) =>
                       handleStatusChange(doc.id, value as PhysicalDocumentNoteStatus)
@@ -197,7 +199,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ form
                           doc.status !== PhysicalDocumentNoteStatus.PENDING &&
                             'cursor-not-allowed opacity-60'
                         )}
-                        disabled={doc.status !== PhysicalDocumentNoteStatus.PENDING}
+                        disabled={isViewable || doc.status !== PhysicalDocumentNoteStatus.PENDING}
                       >
                         {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : 'Pick a due date'}
                       </Button>
@@ -208,7 +210,9 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ form
                           mode="single"
                           selected={doc.dueBy}
                           onSelect={(date) => handleDueDateChange(doc.id, date)}
-                          disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                          disabled={(date) =>
+                            isViewable || date < new Date(new Date().setHours(0, 0, 0, 0))
+                          }
                           initialFocus
                         />
                       </PopoverContent>

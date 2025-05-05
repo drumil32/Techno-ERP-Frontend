@@ -46,6 +46,8 @@ export const API_ENDPOINTS = {
   fetchFixCityDropdown: `${API_DOMAIN}/dropdown/${DropDownType.FIX_MARKETING_CITY}`,
   fetchCourseDropdown: `${API_DOMAIN}/dropdown/${DropDownType.MARKETING_COURSE_CODE}`,
   fetchFixCourseDropdown: `${API_DOMAIN}/dropdown/${DropDownType.FIX_MARKETING_COURSE_CODE}`,
+  fetchFixCourseCodesDropdown: `${API_DOMAIN}/course-metadata/course-code`,
+
   fetchDistricts: `${API_DOMAIN}/dropdown/${DropDownType.DISTRICT}`,
 
   // Fees Details
@@ -60,6 +62,7 @@ export const API_ENDPOINTS = {
 
   createEnquiryStep4: `${API_DOMAIN}/admission/enquiry/step-4`,
   updateEnquiryStep4: `${API_DOMAIN}/admission/enquiry/step-4`,
+  approveEnquiry: `${API_DOMAIN}/admission/enquiry/approve-enquiry`,
 
   updateEnquiryDraftStep3: `${API_DOMAIN}/admission/enquiry/save-draft-step-3`,
   updateEnquiryStep3: `${API_DOMAIN}/admission/enquiry/step-3`,

@@ -29,12 +29,14 @@ interface AcademicDetailsSectionInterface {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  isViewable?: boolean;
 }
 
 const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
   form,
   commonFieldClass,
-  commonFormItemClass
+  commonFormItemClass,
+  isViewable
 }) => {
   const prevValuesRef = useRef<z.infer<typeof academicDetailsArraySchema>>([]);
 
@@ -219,7 +221,11 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <TagInput value={field.value || []} onChange={field.onChange} />
+                          <TagInput
+                            disabled={isViewable}
+                            value={field.value || []}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <div className="h-[20px]">
                           <FormMessage className="text-[11px]" />
@@ -362,7 +368,11 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <TagInput value={field.value || []} onChange={field.onChange} />
+                          <TagInput
+                            disabled={isViewable}
+                            value={field.value || []}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <div className="h-[20px]">
                           <FormMessage className="text-[11px]" />
@@ -505,7 +515,11 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <TagInput value={field.value || []} onChange={field.onChange} />
+                          <TagInput
+                            disabled={isViewable}
+                            value={field.value || []}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <div className="h-[20px]">
                           <FormMessage className="text-[11px]" />

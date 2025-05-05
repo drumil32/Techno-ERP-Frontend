@@ -104,7 +104,11 @@ export const StudentFeesForm = () => {
   const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
   const router = useRouter();
 
-  const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
+  const {
+    isChecking: isRedirectChecking,
+    isCheckError: isRedirectError,
+    isViewable
+  } = useAdmissionRedirect({
     id: enquiry_id,
     currentStage: ApplicationStatus.STEP_2
   });
@@ -191,7 +195,8 @@ export const StudentFeesForm = () => {
       confirmationCheck: false,
       otpTarget: undefined,
       otpVerificationEmail: null
-    }
+    },
+    disabled: isViewable
   });
 
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmationCheck' });
@@ -782,6 +787,7 @@ export const StudentFeesForm = () => {
                     control={form.control}
                     name="feesClearanceDate"
                     label="Fees Clearance Date"
+                    disabled={isViewable}
                     placeholder="Pick a Date"
                     showYearMonthDropdowns={true}
                     formItemClassName="w-[300px]"
@@ -887,6 +893,7 @@ export const StudentFeesForm = () => {
                 <MultiSelectPopoverCheckbox
                   form={form}
                   name="counsellor"
+                  disabled={isViewable}
                   label="Counsellor’s Name"
                   options={counsellors}
                   placeholder="Select Counsellor's Name"
@@ -895,6 +902,7 @@ export const StudentFeesForm = () => {
                 <MultiSelectPopoverCheckbox
                   form={form}
                   name="telecaller"
+                  disabled={isViewable}
                   label="Telecaller’s Name"
                   options={telecallers}
                   placeholder="Select Telecaller's Name"
@@ -1009,22 +1017,26 @@ export const StudentFeesForm = () => {
           </AccordionItem>
         </Accordion>
 
-        <ConfirmationCheckBox
-          form={form}
-          name="confirmationCheck"
-          label="All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will be charged extra based on LU/AKTU norms."
-          id="checkbox-for-step2"
-          className="flex flex-row items-start bg-white rounded-md p-4"
-        />
+        {!isViewable && (
+          <ConfirmationCheckBox
+            form={form}
+            name="confirmationCheck"
+            label="All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will be charged extra based on LU/AKTU norms."
+            id="checkbox-for-step2"
+            className="flex flex-row items-start bg-white rounded-md p-4"
+          />
+        )}
 
-        <EnquiryFormFooter
-          form={form}
-          saveDraft={handleSaveDraft}
-          onSubmit={onSubmit}
-          isSavingDraft={isSavingDraft}
-          confirmationChecked={!!confirmationChecked}
-          draftExists={draftExists}
-        />
+        {!isViewable && (
+          <EnquiryFormFooter
+            form={form}
+            saveDraft={handleSaveDraft}
+            onSubmit={onSubmit}
+            isSavingDraft={isSavingDraft}
+            confirmationChecked={!!confirmationChecked}
+            draftExists={draftExists}
+          />
+        )}
       </form>
     </Form>
   );
