@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,6 +33,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
 }) => {
   const [isSubmitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [isDraftDialogOpen, setDraftDialogOpen] = useState(false);
+  const [draftSaved, setDraftSaved] = useState(false);
 
   function onError() {
     console.log('Error in submission');
@@ -47,39 +48,52 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
       const filteredAcademicDetails: IAcademicDetailArraySchema =
         currentValues.academicDetails.filter((entry: IAcademicDetailSchema) => {
           if (!entry) return false;
-
-          // Keep entry if at least one field is defined (i.e. not all undefined)
           return Object.values(entry).some((value) => value !== undefined);
         });
 
       form.setValue('academicDetails', filteredAcademicDetails);
     }
 
-    // Trigger form submission after filtering
     setTimeout(() => {
       form.handleSubmit(onSubmit, onError)();
     }, 0);
   }
 
-  function handleDialogSaveDraft() {
-    saveDraft();
-    setDraftDialogOpen(false);
+  async function handleDialogSaveDraft() {
+    try {
+      await saveDraft();
+      setDraftSaved(true);
+      toast.success(draftExists ? 'Draft updated successfully!' : 'Draft saved successfully!');
+    } finally {
+      setDraftDialogOpen(false);
+    }
   }
+
   return (
     <>
       <div className="sticky bottom-0 left-0 z-10 flex items-center justify-between space-x-4 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] overflow-hidden">
         <div className="absolute bottom-0 left-0 -z-100 w-screen bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] overflow-hidden"></div>
+
+        {/* Draft Button and Dialog */}
         <Dialog open={isDraftDialogOpen} onOpenChange={setDraftDialogOpen}>
           <DialogTrigger asChild>
             <Button type="button" variant="outline" disabled={isSavingDraft}>
               <span className="font-inter font-semibold text-[12px]">
-                {isSavingDraft ? 'Saving...' : draftExists ? 'Update Draft' : 'Save Draft'}
+                {isSavingDraft
+                  ? 'Saving...'
+                  : draftSaved
+                    ? 'Draft Saved!'
+                    : draftExists
+                      ? 'Update Draft'
+                      : 'Save Draft'}
               </span>
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-[444px]">
             <DialogHeader>
-              <DialogTitle>{draftExists ? 'Update Draft' : 'Save Draft'}</DialogTitle>
+              <DialogTitle>
+                {isSavingDraft ? 'Saving Draft...' : draftExists ? 'Update Draft' : 'Save Draft'}
+              </DialogTitle>
             </DialogHeader>
             <div className="flex gap-2 items-center text-left">
               <FaCircleExclamation className="text-yellow-500 w-8 h-8" />
@@ -90,15 +104,13 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button type="button" variant="secondary" onClick={() => setDraftDialogOpen(false)}>
+                <Button type="button" variant="secondary" disabled={isSavingDraft}>
                   Cancel
                 </Button>
               </DialogClose>
-              <DialogClose asChild>
-                <Button type="button" onClick={handleDialogSaveDraft}>
-                  Ok
-                </Button>
-              </DialogClose>
+              <Button type="button" onClick={handleDialogSaveDraft} disabled={isSavingDraft}>
+                {isSavingDraft ? 'Saving...' : 'Confirm'}
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
@@ -107,7 +119,9 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           <DialogTrigger asChild>
             <Button
               type="button"
-              disabled={!confirmationChecked || form.formState.isSubmitting || isSavingDraft}
+              disabled={
+                !confirmationChecked || !draftSaved || form.formState.isSubmitting || isSavingDraft
+              }
             >
               <span className="font-inter font-semibold text-[12px]">
                 {form.formState.isSubmitting ? 'Submitting...' : 'Submit & Continue'}
@@ -116,7 +130,9 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           </DialogTrigger>
           <DialogContent className="max-w-[444px]">
             <DialogHeader>
-              <DialogTitle>Submit & Continue</DialogTitle>
+              <DialogTitle>
+                {form.formState.isSubmitting ? 'Submitting Enquiry...' : 'Submit & Continue'}
+              </DialogTitle>
             </DialogHeader>
             <div className="flex gap-2 items-center text-left">
               <FaCircleExclamation className="text-yellow-500 w-8 h-8" />
@@ -124,19 +140,17 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => setSubmitDialogOpen(false)}
-                >
+                <Button type="button" variant="secondary" disabled={form.formState.isSubmitting}>
                   Cancel
                 </Button>
               </DialogClose>
-              <DialogClose asChild>
-                <Button type="button" onClick={handleSubmitClick}>
-                  Ok
-                </Button>
-              </DialogClose>
+              <Button
+                type="button"
+                onClick={handleSubmitClick}
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? 'Submitting...' : 'Confirm'}
+              </Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>

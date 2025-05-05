@@ -16,8 +16,8 @@ interface ConfirmationCheckBoxInterface {
 
 const AcknowledgementSection: React.FC<ConfirmationCheckBoxInterface> = ({ form }) => {
   return (
-    <Accordion type="single" collapsible defaultValue='student-details'>
-      <AccordionItem value="student-details">
+    <Accordion type="single" collapsible defaultValue="acknowledgement-section">
+      <AccordionItem value="acknowledgement-section">
         <div className="space-y-2">
           <AccordionTrigger className="w-full items-center">
             {/* Section Title */}

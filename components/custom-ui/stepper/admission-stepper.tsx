@@ -1,65 +1,126 @@
 'use client';
 
 import * as React from 'react';
-import { Check } from 'lucide-react';
-import { cn } from "@/lib/utils";
-import { AdmissionStep } from '@/common/constants/admissionSteps'; 
+import { Check, Circle, ChevronRight, Lock } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { AdmissionStep } from '@/common/constants/admissionSteps';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 interface AdmissionStepperProps {
   steps: AdmissionStep[];
-  currentStepPath?: string; 
+  currentStepPath?: string;
+  applicationCurrentStatus: number;
   className?: string;
+  applicationId: string;
 }
 
-export function AdmissionStepper({ steps, currentStepPath, className }: AdmissionStepperProps) {
-  const currentStepIndex = React.useMemo(() => {
-    const index = steps.findIndex(step => step.path === currentStepPath);
-    return index >= 0 ? index : 0;
-  }, [steps, currentStepPath]);
+export function AdmissionStepper({
+  steps,
+  currentStepPath,
+  applicationCurrentStatus,
+  className,
+  applicationId
+}: AdmissionStepperProps) {
+  const router = useRouter();
+  const currentStepIndex = steps.findIndex((step) => step.path === currentStepPath) || 0;
+  const maxAccessibleStep = Math.max(applicationCurrentStatus - 1, 0);
+
+  const handleStepClick = (stepPath: string, index: number) => {
+    if (index <= maxAccessibleStep) {
+      router.push(`/c/admissions/application-process/${applicationId}/${stepPath}`);
+    }
+  };
 
   return (
-    <nav aria-label="Admission Process Steps" className={cn("w-full", className)}>
+    <nav aria-label="Admission Process Steps" className={cn('w-full', className)}>
       <ol className="flex items-center">
         {steps.map((step, index) => {
-          const isCompleted = index < currentStepIndex;
+          const isCompleted = index < applicationCurrentStatus;
           const isCurrent = index === currentStepIndex;
-          const isUpcoming = index > currentStepIndex;
+          const isAccessible = index <= maxAccessibleStep;
+          const isUpcoming = index > maxAccessibleStep;
+          const isApplicationCurrent = index === applicationCurrentStatus - 1;
 
           return (
-            <li key={step.id} className={cn("relative w-full")}>
+            <motion.li
+              key={step.id}
+              className="relative w-full"
+              initial={false}
+              whileHover={isAccessible ? { scale: 1.03 } : {}}
+              transition={{ type: 'spring', stiffness: 300, damping: 50 }}
+            >
               {index > 0 && (
-                <div
-                  className={cn(
-                    "absolute left-0 top-[70%] -translate-x-1/2 -translate-y-1/2 h-[3px] w-full",
-                    isCompleted || isCurrent ? "bg-primary" : "bg-gray-300 dark:bg-gray-700"
-                  )}
-                  aria-hidden="true"
-                />
+                <div className="absolute left-0 top-[70%] -translate-x-1/2 -translate-y-1/2 h-[2px] w-full pointer-events-none">
+                  <div
+                    className={cn(
+                      'absolute h-full w-full',
+                      isCompleted ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-700'
+                    )}
+                  />
+                </div>
               )}
 
               <div className="relative z-10 flex flex-col items-center gap-1">
-              <span
+                <motion.span
                   className={cn(
-                    "text-xs text-center mt-1",
-                     isCurrent ? "font-semibold text-primary" : "text-muted-foreground"
+                    'text-xs font-medium text-center mt-1',
+                    isCurrent
+                      ? 'text-primary font-bold'
+                      : isCompleted
+                        ? 'text-primary'
+                        : 'text-muted-foreground',
+                    isAccessible && 'cursor-pointer hover:text-primary'
                   )}
-                  style={{ minWidth: '80px' }} 
+                  style={{ minWidth: '80px' }}
+                  whileHover={isAccessible ? { y: -1 } : {}}
+                  transition={{ type: 'spring', stiffness: 500 }}
                 >
                   {step.name}
-                </span>
-                <span
-                  className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full text-xs font-medium",
-                    isCompleted && "bg-primary text-primary-foreground",
-                    isCurrent && "bg-primary text-primary-foreground border-4 border-primary h-10 w-10 text-lg",
-                    isUpcoming && "border border-gray-300 bg-background text-gray-500 dark:border-gray-700 dark:text-gray-400"
-                  )}
+                </motion.span>
+
+                <motion.div
+                  className="relative"
+                  whileTap={isAccessible ? { scale: 0.95 } : {}}
+                  transition={{ type: 'spring', stiffness: 500 }}
+                  onClick={() => handleStepClick(step.path, index)}
+                  style={{ cursor: isAccessible ? 'pointer' : 'default' }}
                 >
-                  {isCompleted ? <Check className="h-4 w-4" /> : step.id}
-                </span>
-                
+                  <motion.span
+                    className={cn(
+                      'flex items-center justify-center rounded-full text-xs font-medium relative',
+                      isCompleted && 'bg-primary text-white',
+                      isCurrent &&
+                        'bg-primary text-white border-4 border-white dark:border-gray-900 shadow-lg',
+                      isApplicationCurrent &&
+                        'bg-white text-primary border-4 border-primary shadow-lg',
+                      isUpcoming &&
+                        'bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600',
+                      'h-10 w-10'
+                    )}
+                    animate={{
+                      scale: isCurrent ? [1, 1.05, 1] : 1,
+                      boxShadow: isCurrent ? '0 4px 20px -5px rgba(0, 100, 255, 0.3)' : 'none',
+                      transition: isCurrent ? { duration: 1.5, repeat: Infinity } : {}
+                    }}
+                  >
+                    {isCompleted ? (
+                      isApplicationCurrent ? (
+                        <Circle className="h-5 w-5 text-primary" strokeWidth={3} />
+                      ) : (
+                        <Check className="h-5 w-5" strokeWidth={3} />
+                      )
+                    ) : isCurrent ? (
+                      <ChevronRight className="h-5 w-5" strokeWidth={3} />
+                    ) : isUpcoming ? (
+                      <Lock className="h-4 w-4 text-gray-400" strokeWidth={2.5} />
+                    ) : (
+                      <span className="text-gray-700 dark:text-gray-300">{step.id}</span>
+                    )}
+                  </motion.span>
+                </motion.div>
               </div>
-            </li>
+            </motion.li>
           );
         })}
       </ol>

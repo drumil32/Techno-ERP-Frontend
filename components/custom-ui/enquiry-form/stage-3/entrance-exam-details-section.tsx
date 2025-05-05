@@ -31,8 +31,8 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
   commonFormItemClass
 }) => {
   return (
-    <Accordion type="single" collapsible>
-      <AccordionItem value="student-details">
+    <Accordion type="single" collapsible defaultValue="exam-details">
+      <AccordionItem value="exam-details">
         <div className="space-y-2">
           <AccordionTrigger className="w-full items-center">
             {/* Section Title */}

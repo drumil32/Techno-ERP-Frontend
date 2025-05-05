@@ -70,13 +70,18 @@ const EnquiryFormStage3 = () => {
     setCurrentDocuments((data?.documents as EnquiryDocument[]) ?? []);
   }, [data]);
 
-  const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
+  const {
+    isChecking: isRedirectChecking,
+    isCheckError: isRedirectError,
+    isViewable
+  } = useAdmissionRedirect({
     id,
     currentStage: ApplicationStatus.STEP_3
   });
 
   const form = useForm<z.infer<typeof formSchemaStep3>>({
-    resolver: zodResolver(formSchemaStep3)
+    resolver: zodResolver(formSchemaStep3),
+    disabled: isViewable
   });
 
   async function saveDraft() {
@@ -295,12 +300,14 @@ const EnquiryFormStage3 = () => {
           {/* Student Details */}
           <StudentDetailsSectionStage3
             form={form}
+            isViewable={isViewable}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
 
           <MoreDetailsSection
             form={form}
+            isViewable={isViewable}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
             enquiryDocuments={currentDocuments}
@@ -310,12 +317,14 @@ const EnquiryFormStage3 = () => {
           {/* Address details */}
           <AddressDetailsSectionStage3
             form={form}
+            isViewable={isViewable}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
 
           {/* Academic Details */}
           <AcademicDetailsSectionStage3
+            isViewable={isViewable}
             form={form}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
@@ -326,7 +335,7 @@ const EnquiryFormStage3 = () => {
             commonFormItemClass={commonFormItemClass}
           />
 
-          <DocumentVerificationSection form={form} />
+          <DocumentVerificationSection form={form} isViewable={isViewable} />
 
           {/* <AllDocuments
             enquiryDocuments={currentDocuments}
@@ -336,18 +345,23 @@ const EnquiryFormStage3 = () => {
           <ConfirmationSection form={form} />
           <OfficeUseSection
             form={form}
+            isViewable={isViewable}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
           <ScholarshipDetailsSection form={form} />
-          <ConfirmationCheckBoxStage3 form={form} />
-
-          <EnquiryFormFooter
-            form={form}
-            onSubmit={onSubmit}
-            saveDraft={saveDraft}
-            confirmationChecked={confirmationChecked}
-          />
+          {!isViewable && (
+            <>
+              {' '}
+              <ConfirmationCheckBoxStage3 form={form} />
+              <EnquiryFormFooter
+                form={form}
+                onSubmit={onSubmit}
+                saveDraft={saveDraft}
+                confirmationChecked={confirmationChecked}
+              />
+            </>
+          )}
         </form>
       </Form>
     </>

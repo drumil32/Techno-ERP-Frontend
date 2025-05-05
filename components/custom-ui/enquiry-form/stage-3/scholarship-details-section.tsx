@@ -16,10 +16,11 @@ const ScholarshipDetailsSection: React.FC<SchoalarshipDetailsInterface> = ({ for
     <>
       <Accordion
         type="single"
+        defaultValue="scholarship-details"
         collapsible
         className="w-full space-y-4"
       >
-        <AccordionItem value="college-details" className="border-b-0">
+        <AccordionItem value="scholarship-details" className="border-b-0">
           <AccordionTrigger className="w-full items-center">
             <h3 className="font-inter text-[16px] font-semibold"> Scholarship Details Section</h3>
             <hr className="flex-1 border-t border-[#DADADA] ml-2" />

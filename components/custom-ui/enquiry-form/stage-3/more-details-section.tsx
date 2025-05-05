@@ -36,6 +36,7 @@ interface MoreDetailsSectionInterface {
   commonFieldClass: string;
   enquiryDocuments: any;
   setCurrentDocuments: any;
+  isViewable?: boolean;
 }
 
 const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
@@ -43,7 +44,8 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
   commonFieldClass,
   commonFormItemClass,
   enquiryDocuments,
-  setCurrentDocuments
+  setCurrentDocuments,
+  isViewable
 }) => {
   const [isValid, setIsValid] = useState(false);
   const params = useParams();
@@ -93,8 +95,8 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
   }, []);
 
   return (
-    <Accordion type="single" collapsible>
-      <AccordionItem value="student-details">
+    <Accordion type="single" collapsible defaultValue="more-details">
+      <AccordionItem value="more-details">
         <div className="space-y-2">
           <AccordionTrigger className="w-full items-center">
             <div className="flex items-center w-full">
@@ -135,7 +137,11 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                       State Of Domicile
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        disabled={isViewable}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the state" />
                         </SelectTrigger>
@@ -165,7 +171,11 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                       Area Type
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        disabled={isViewable}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the area type" />
                         </SelectTrigger>
@@ -195,7 +205,11 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                       Nationality
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        disabled={isViewable}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Enter the nationality" />
                         </SelectTrigger>
@@ -225,7 +239,11 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                       Religion
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        disabled={isViewable}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the religion" />
                         </SelectTrigger>
@@ -256,7 +274,11 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        disabled={isViewable}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the religion" />
                         </SelectTrigger>
@@ -286,7 +308,11 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                       Blood Group
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        disabled={isViewable}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Select the blood group" />
                         </SelectTrigger>
@@ -334,12 +360,14 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
               <div className="flex flex-col">
                 <SingleEnquiryUploadDocument
                   key={DocumentType.PHOTO}
+                  isViewable={isViewable}
                   enquiryId={enquiry_id}
                   documentType={DocumentType.PHOTO}
                   existingDocument={findExistingDocument(DocumentType.PHOTO)}
                   onUploadSuccess={setCurrentDocuments}
                 />
                 <SingleEnquiryUploadDocument
+                  isViewable={isViewable}
                   key={DocumentType.SIGNATURE}
                   enquiryId={enquiry_id}
                   documentType={DocumentType.SIGNATURE}
