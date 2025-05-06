@@ -323,7 +323,7 @@ export const StudentFeesForm = () => {
     let totalDeposited = 0;
 
     if (otherFeesData) {
-      totalOriginal = otherFeesData.reduce((sum: any, fee: any) => sum + (fee.fee ?? 0), 0);
+      totalOriginal = otherFeesData.reduce((sum: any, fee: any) => sum + (fee.amount ?? 0), 0);
     }
 
     (otherFeesWatched ?? []).forEach((fee) => {
@@ -456,7 +456,7 @@ export const StudentFeesForm = () => {
   const updateDraftMutation = useMutation({
     mutationFn: updateStudentFeesDraft,
     onSuccess: (data) => {
-      toast.success('Draft updated successfully!');
+      // toast.success('Draft updated successfully!');
       queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
 
       // Force form to be pristine after save
@@ -775,7 +775,12 @@ export const StudentFeesForm = () => {
                   <div className="text-sm text-right pr-2">
                     {formatCurrency(otherFeesTotals.totalFinal)}
                   </div>
-                  <div>{/* Empty cell for Discount */}</div>
+                  <div className="text-sm text-right pr-2">
+                    {calculateDiscountPercentage(
+                      otherFeesTotals.totalOriginal,
+                      otherFeesTotals.totalFinal
+                    ) + '%'}
+                  </div>
                   <div className="text-sm text-right pr-2">
                     {formatCurrency(otherFeesTotals.totalDeposited)}
                   </div>

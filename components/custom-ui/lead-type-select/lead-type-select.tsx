@@ -16,61 +16,54 @@ const typeStyles: Record<LeadType, string> = {
 interface LeadTypeSelectProps {
   value: LeadType;
   onChange: (value: LeadType) => void;
-  isDisable?: boolean;
+  disabled?: boolean;
 }
 
-export default function LeadTypeSelect({
-  value,
-  onChange,
-  isDisable = false
-}: LeadTypeSelectProps) {
+export default function LeadTypeSelect({ value, onChange, disabled = false }: LeadTypeSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [dropdownStyles, setDropdownStyles] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-    placeAbove: false
-  });
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
 
   useLayoutEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const dropdownHeight = 240;
-      const spaceBelow = window.innerHeight - rect.bottom;
-      const placeAbove = spaceBelow < dropdownHeight;
-      setDropdownStyles({
-        top: placeAbove ? rect.top - dropdownHeight : rect.bottom,
-        left: rect.left,
-        width: rect.width,
-        placeAbove
+      setPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width
       });
     }
   }, [isOpen]);
 
   useEffect(() => {
-    if (isDisable) return;
-    const close = (e: MouseEvent) => {
-      if (!buttonRef.current?.contains(e.target as Node)) setIsOpen(false);
+    if (!isOpen || disabled) return;
+
+    const handleClick = (e: MouseEvent) => {
+      if (
+        !buttonRef.current?.contains(e.target as Node) &&
+        !dropdownRef.current?.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+      }
     };
-    document.addEventListener('mousedown', close);
-    return () => document.removeEventListener('mousedown', close);
-  }, [isDisable]);
+
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [isOpen, disabled]);
 
   return (
-    <>
+    <div className="relative">
       <button
         ref={buttonRef}
-        onClick={() => !isDisable && setIsOpen((o) => !o)}
-        disabled={isDisable}
-        className={`w-[150px] mx-auto flex items-center justify-between gap-2 rounded-[5px] text-sm font-medium px-3 py-1 ${typeStyles[value]} ${
-          isDisable
-            ? 'opacity-70 cursor-not-allowed'
-            : 'hover:opacity-90 hover:border-slate-500 border-1 border-transparent'
+        onClick={() => !disabled && setIsOpen((v) => !v)}
+        disabled={disabled}
+        className={`w-[150px] flex items-center justify-between gap-2 rounded-[5px] px-3 py-1 text-sm font-medium ${typeStyles[value]} ${
+          disabled ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90'
         }`}
       >
         <span className="truncate">{LeadTypeMapper[value]}</span>
-        {!isDisable && (
+        {!disabled && (
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         )}
       </button>
@@ -78,11 +71,12 @@ export default function LeadTypeSelect({
       {isOpen &&
         createPortal(
           <div
-            className="fixed z-50 bg-white rounded-[5px] shadow-lg border border-gray-200 py-1"
+            ref={dropdownRef}
+            className="absolute z-50 mt-1 w-full bg-white rounded-[5px] shadow-lg border border-gray-200 py-1"
             style={{
-              top: dropdownStyles.top,
-              left: dropdownStyles.left,
-              width: dropdownStyles.width
+              top: `${position.top}px`,
+              left: `${position.left}px`,
+              width: `${position.width}px`
             }}
           >
             {Object.values(LeadType).map((type) => (
@@ -92,7 +86,7 @@ export default function LeadTypeSelect({
                   onChange(type);
                   setIsOpen(false);
                 }}
-                className={`flexitems-center justify-between px-3 py-2 mx-1 rounded-[3px] text-sm font-medium cursor-pointer transition-colors hover:opacity-80 ${typeStyles[type]}`}
+                className={`flex items-center justify-between px-3 py-2 mx-1 rounded-[3px] text-sm font-medium cursor-pointer hover:opacity-80 ${typeStyles[type]}`}
               >
                 <span>{LeadTypeMapper[type]}</span>
                 {value === type && <Check className="w-4 h-4" />}
@@ -101,6 +95,6 @@ export default function LeadTypeSelect({
           </div>,
           document.body
         )}
-    </>
+    </div>
   );
 }

@@ -24,6 +24,7 @@ export default function FootFallSelect({ value, onChange, disabled = false }: Fo
     placeAbove: false
   });
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     if (isOpen && buttonRef.current) {
@@ -41,13 +42,20 @@ export default function FootFallSelect({ value, onChange, disabled = false }: Fo
   }, [isOpen]);
 
   useEffect(() => {
-    if (disabled) return;
+    if (disabled || !isOpen) return;
+
     const handleClickOutside = (e: MouseEvent) => {
-      if (!buttonRef.current?.contains(e.target as Node)) setIsOpen(false);
+      if (
+        !buttonRef.current?.contains(e.target as Node) &&
+        !dropdownRef.current?.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+      }
     };
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [disabled]);
+  }, [disabled, isOpen]);
 
   return (
     <>
@@ -68,6 +76,7 @@ export default function FootFallSelect({ value, onChange, disabled = false }: Fo
       {isOpen &&
         createPortal(
           <div
+            ref={dropdownRef}
             className="fixed z-50 bg-white rounded-md shadow-lg border border-gray-200 py-1"
             style={{
               top: dropdownStyles.top,
