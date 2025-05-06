@@ -35,7 +35,7 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
         <RecordPaymentDialog studentDetails={studentDetails} />
       </div>
       <Table className="w-3/5">
-        <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg  [&_th]:!text-[#5B31D1] ">
+        <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg [&_th]:!text-[#5B31D1] ">
           <TableRow>
             <TableHead className="rounded-l-[5px] ">S. No</TableHead>
             <TableHead>Academic Year</TableHead>

@@ -63,7 +63,7 @@ export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { se
       </div>
 
       <Table className="w-auto">
-        <TableHeader className="bg-[#F7F4FF] [&_th]:!text-[#5B31D1] ">
+        <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg [&_th]:!text-[#5B31D1] ">
           <TableRow>
             <TableHead className="w-[150px] rounded-l-[5px]">Fees Category</TableHead>
             <TableHead className="w-[110px]">Schedule</TableHead>

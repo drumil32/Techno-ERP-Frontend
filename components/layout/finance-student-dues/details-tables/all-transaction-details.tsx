@@ -48,7 +48,7 @@ export default function AllTransactionsDetails({
         <div className="font-semibold text-[16px]">All Transactions </div>
       </div>
       <Table className="w-full">
-        <TableHeader className="bg-[#F7F4FF] [&_th]:!text-[#5B31D1]">
+        <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg [&_th]:!text-[#5B31D1]">
           <TableRow>
             <TableHead className="rounded-l-[5px]">S. No</TableHead>
             <TableHead className="w-[100px]">Date</TableHead>
