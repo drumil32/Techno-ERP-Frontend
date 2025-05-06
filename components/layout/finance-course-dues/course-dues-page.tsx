@@ -115,10 +115,10 @@ export default function CourseDuesDetails() {
 
   // Define table columns
   const columns = [
-    { accessorKey: 'sno', header: 'S. No', meta: { align: 'center', width: '80px' } },
+    { accessorKey: 'sno', header: 'S. No' },
     { accessorKey: 'course', header: 'Course' },
     { accessorKey: 'courseYear', header: 'Course Year' },
-    { accessorKey: 'numberOfStudents', header: 'No of Students', meta: { align: 'center' } },
+    { accessorKey: 'numberOfStudents', header: 'No of Students' },
     {
       accessorKey: 'totalDue',
       header: 'Total Due',
@@ -161,7 +161,7 @@ export default function CourseDuesDetails() {
             filterPlaceholder="College"
             multiSelect={true}
             options={collegeOptions}
-            applyFilters={() => {}}
+            applyFilters={() => { }}
           />
         </div>
         <div className="flex w-1/5">
@@ -193,6 +193,7 @@ export default function CourseDuesDetails() {
         searchTerm={search}
         isLoading={isLoading}
         handleViewMore={handleViewMore}
+        headerStyles={"text-[#5B31D1] bg-[#F7F4FF]"}
       />
     </>
   );

@@ -5,20 +5,16 @@ import { useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { courseDropdown } from '../admin-tracker/helpers/fetch-data';
 import { useTechnoFilterContext } from '@/components/custom-ui/filter/filter-context';
-import TechnoFiltersGroup from '@/components/custom-ui/filter/techno-filters-group';
 import TechnoFilter, { FilterOption } from '@/components/custom-ui/filter/techno-filter';
-import FilterBadges from '../allLeads/components/filter-badges';
 import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow
 } from '@/components/ui/table';
 import { z } from 'zod';
-import { get } from 'http';
 import { Input } from '@/components/ui/input';
 
 // Zod schema for validation
@@ -271,7 +267,7 @@ export default function BulkFeeUpdateDialogue() {
     if (editedValue !== undefined) {
       return editedValue === null ? '' : editedValue;
     }
-    
+
     const originalValue = studentData.find(item => item.id === id)?.amount;
     return originalValue === null ? '' : originalValue || '';
   };
@@ -343,7 +339,7 @@ export default function BulkFeeUpdateDialogue() {
                   </TableHeader>
                 </Table>
               </div>
-              
+
               {/* Scrollable body */}
               <div className="max-h-[300px] overflow-y-auto">
                 <Table className="w-full">
@@ -389,9 +385,9 @@ export default function BulkFeeUpdateDialogue() {
           </div>
 
           <div className="flex justify-end gap-3">
-            <Button 
-              variant="outline" 
-              onClick={handleSaveDraft} 
+            <Button
+              variant="outline"
+              onClick={handleSaveDraft}
               className="border-gray-300"
               disabled={!showList || studentData.length === 0 || Object.keys(errors).length > 0}
             >

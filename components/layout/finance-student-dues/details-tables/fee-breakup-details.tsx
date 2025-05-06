@@ -2,7 +2,7 @@ import { SemesterBreakUp } from "@/types/finance"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useEffect, useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import EditFeeBreakupDialogue from "./edit-fee-breakup-dialogue"
+import EditFeeBreakupDialogue from "./edit-fee-breakup-dialog"
 import { getFinanceFeeTypeLabel, getScheduleLabel } from "@/lib/enumDisplayMapper"
 
 export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { semFeesBreakUp: SemesterBreakUp[], studentName: string | undefined }) {
@@ -63,7 +63,7 @@ export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { se
       </div>
 
       <Table className="w-auto">
-        <TableHeader className="bg-[#F7F7F7]">
+        <TableHeader className="bg-[#F7F4FF] [&_th]:!text-[#5B31D1] ">
           <TableRow>
             <TableHead className="w-[150px] rounded-l-[5px]">Fees Category</TableHead>
             <TableHead className="w-[110px]">Schedule</TableHead>
@@ -77,18 +77,18 @@ export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { se
             <TableRow key={item.feeCategory}>
               <TableCell className="w-[150px]">{getFinanceFeeTypeLabel(item.feeCategory)}</TableCell>
               <TableCell className="w-[110px]">{getScheduleLabel(item.feeSchedule)}</TableCell>
-              <TableCell className="w-[100px] text-right">{item.finalFee != null ? `₹ ${item.finalFee}` : '__'}</TableCell>
-              <TableCell className="w-[100px] text-right">{item.paidAmount != null ? `₹ ${item.paidAmount}` : '__'}</TableCell>
-              <TableCell className="w-[100px] text-right">{item.totalDues != null ? `₹ ${item.totalDues}` : '__'}</TableCell>
+              <TableCell className="w-[100px] text-right">{item.finalFee != null ? `₹ ${item.finalFee.toLocaleString()}` : '__'}</TableCell>
+              <TableCell className="w-[100px] text-right">{item.paidAmount != null ? `₹ ${item.paidAmount.toLocaleString()}` : '__'}</TableCell>
+              <TableCell className="w-[100px] text-right">{item.totalDues != null ? `₹ ${item.totalDues.toLocaleString()}` : '__'}</TableCell>
             </TableRow>
           ))}
         </TableBody>
         <TableFooter>
           <TableRow>
             <TableCell className="rounded-l-[5px]" colSpan={2}>Total</TableCell>
-            <TableCell className="text-right">₹{feeTotals?.finalFee}</TableCell>
-            <TableCell className="text-right">₹{feeTotals?.paidAmount}</TableCell>
-            <TableCell className="text-right rounded-r-[5px]">₹{feeTotals?.totalDues}</TableCell>
+            <TableCell className="text-right">₹{feeTotals?.finalFee.toLocaleString()}</TableCell>
+            <TableCell className="text-right">₹{feeTotals?.paidAmount.toLocaleString()}</TableCell>
+            <TableCell className="text-right rounded-r-[5px]">₹{feeTotals?.totalDues.toLocaleString()}</TableCell>
           </TableRow>
         </TableFooter>
       </Table>

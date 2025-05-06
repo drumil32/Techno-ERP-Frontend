@@ -31,3 +31,12 @@ export const fetchStudentFeeInformation = async (
   return res;
 }
 
+
+export const recordPayment = async (data: any) => {
+    return apiRequest(
+        API_METHODS.POST,
+        API_ENDPOINTS.recordPayment,
+        data
+    );
+}
+

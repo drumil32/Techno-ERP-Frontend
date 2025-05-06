@@ -94,4 +94,6 @@ export const API_ENDPOINTS = {
   //Finance
   getStudentActiveDues: `${API_DOMAIN}/student/fees/active-dues`,
   getStudentFeeInformation: (student_id: string) => `${API_DOMAIN}/student/fees/fee-information/${student_id}`,
+
+  recordPayment: `${API_DOMAIN}/student/fees/record-payment`
 };

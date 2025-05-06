@@ -1,6 +1,7 @@
 import { SemesterWiseFeeInformation, StudentDetails } from "@/types/finance"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import RecordPaymentDialogue from "./record-payment-dialogue"
+import RecordPaymentDialog from "./record-payment-dialog"
+import { Course, CourseNameMapper } from "@/types/enum";
 
 type ExtendedSemesterWiseFeeInformation = SemesterWiseFeeInformation & {
   sno: number;
@@ -31,12 +32,12 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
     <div className="w-full p-3 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="w-full flex p-2 items-center">
         <div className="font-semibold text-[16px]">Semester-wise Fees Details</div>
-        <RecordPaymentDialogue studentDetails={studentDetails} />
+        <RecordPaymentDialog studentDetails={studentDetails} />
       </div>
       <Table className="w-3/5">
-        <TableHeader className="bg-[#F7F7F7] ">
+        <TableHeader className="bg-[#F7F4FF] [&_th]:!text-[#5B31D1] ">
           <TableRow>
-            <TableHead className="rounded-l-[5px]">S. No</TableHead>
+            <TableHead className="rounded-l-[5px] ">S. No</TableHead>
             <TableHead>Academic Year</TableHead>
             <TableHead>Semester</TableHead>
             <TableHead>Course</TableHead>
@@ -51,21 +52,21 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
             <TableRow key={semFee.sno}>
               <TableCell>{semFee.sno}</TableCell>
               <TableCell>{semFee.academicYear}</TableCell>
-              <TableCell>{semFee.semesterNumber}</TableCell>
-              <TableCell>{studentDetails.course}</TableCell>
-              <TableCell className="text-right">{semFee.finalFee != null ? `₹ ${semFee.finalFee}` : '__'}</TableCell>
-              <TableCell className="text-right">{semFee.paidAmount != null ? `₹ ${semFee.paidAmount}` : '__'}</TableCell>
-              <TableCell className="text-right">{semFee.dueFees != null ? `₹ ${semFee.dueFees}` : '__'}</TableCell>
-              {/* <TableCell className=" pl-8">{semFee.dueDate ?? '--'}</TableCell> */}
+              <TableCell>0{semFee.semesterNumber}</TableCell>
+              <TableCell>{CourseNameMapper[studentDetails.course as Course]}</TableCell>
+              <TableCell className="text-right">{semFee.finalFee != null ? `₹ ${semFee.finalFee.toLocaleString()}` : '__'}</TableCell>
+              <TableCell className="text-right">{semFee.paidAmount != null ? `₹ ${semFee.paidAmount.toLocaleString()}` : '__'}</TableCell>
+              <TableCell className="text-right">{semFee.dueFees != null ? `₹ ${semFee.dueFees.toLocaleString()}` : '__'}</TableCell>
+              <TableCell className=" pl-8">{semFee.dueDate ?? '--'}</TableCell>
             </TableRow>
           ))}
         </TableBody>
         <TableFooter>
           <TableRow>
             <TableCell className="rounded-l-[5px]" colSpan={4}>Total</TableCell>
-            <TableCell className="text-right">₹{feeTotals?.finalFee}</TableCell>
-            <TableCell className="text-right">₹{feeTotals?.paidAmount}</TableCell>
-            <TableCell className="text-right">₹{feeTotals?.dueFees}</TableCell>
+            <TableCell className="text-right">₹{feeTotals?.finalFee.toLocaleString()}</TableCell>
+            <TableCell className="text-right">₹{feeTotals?.paidAmount.toLocaleString()}</TableCell>
+            <TableCell className="text-right">₹{feeTotals?.dueFees.toLocaleString()}</TableCell>
             <TableCell className="rounded-r-[5px]">{""}</TableCell>
           </TableRow>
         </TableFooter>

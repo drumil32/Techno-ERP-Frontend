@@ -8,11 +8,11 @@ import { LuDownload } from "react-icons/lu";
 import { StudentDue, StudentDuesApiResponse } from "@/types/finance";
 import { useEffect, useRef, useState } from "react";
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
-import { FeesPaidStatus } from "@/types/enum";
+import { Course, CourseNameMapper, FeesPaidStatus } from "@/types/enum";
 import { useRouter } from "next/navigation";
 import { SITE_MAP } from "@/common/constants/frontendRouting";
 import BulkFeeUpdateDialogue from "./bulk-fees-update-dialogue";
-import { TechnoFilterProvider, useTechnoFilterContext } from "@/components/custom-ui/filter/filter-context";
+import { TechnoFilterProvider } from "@/components/custom-ui/filter/filter-context";
 import { fetchActiveDues } from "./helpers/fetch-data";
 import { generateAcademicYearDropdown } from "@/lib/generateAcademicYearDropdown";
 import { getCurrentAcademicYear } from "@/lib/getCurrentAcademicYear";
@@ -26,7 +26,6 @@ interface RefinedStudentDue extends StudentDue {
 
 export default function StudentDuesPage() {
   const [academicYear, setAcademicYear] = useState(getCurrentAcademicYear())
-  console.log(academicYear)
   const academicYearDropdownData = generateAcademicYearDropdown()
   const router = useRouter()
   const [search, setSearch] = useState('');
@@ -119,7 +118,11 @@ export default function StudentDuesPage() {
     { accessorKey: 'studentPhoneNumber', header: "Student's Phone Number" },
     { accessorKey: 'fatherName', header: 'Father Name' },
     { accessorKey: 'fatherPhoneNumber', header: "Father's Phone Number" },
-    { accessorKey: 'courseName', header: 'Course' },
+    { accessorKey: 'courseName', header: 'Course',
+      cell: ({row}:any) => {
+        return <span>{CourseNameMapper[row.original.courseName as Course]}</span>
+      }
+    },
     {
       accessorKey: 'courseYear', header: 'Course Year',
       cell: ({ row }: any) => {
@@ -203,6 +206,7 @@ export default function StudentDuesPage() {
         searchTerm={search}
         isLoading={isLoading}
         handleViewMore={handleViewMore}
+        headerStyles={"text-[#5B31D1] bg-[#F7F4FF]"}
       />
     </>
   )

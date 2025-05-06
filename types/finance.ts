@@ -41,6 +41,7 @@ export interface SemesterWiseFeeInformation {
   academicYear: string;
   finalFee: number;
   paidAmount: number;
+  dueDate?: string;
 }
 
 export interface SemesterBreakUp {

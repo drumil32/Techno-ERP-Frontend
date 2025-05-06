@@ -1,4 +1,4 @@
-import { FinanceFeeSchedule, FinanceFeeType } from "@/types/enum";
+import { FeeActions, FinanceFeeSchedule, FinanceFeeType, TransactionTypes } from "@/types/enum";
 
 export function getFinanceFeeTypeLabel(type: FinanceFeeType): string {
   const labels: Record<FinanceFeeType, string> = {
@@ -25,3 +25,22 @@ export function getScheduleLabel(schedule: FinanceFeeSchedule): string {
   return map[schedule] ?? schedule;
 }
 
+export function getFeeActionLable(feeAction: FeeActions): string {
+  const map: Record<string, string> = {
+    [FeeActions.DEPOSIT]: "Fee Deposit",
+    [FeeActions.REFUND]: "Fee Refund",
+  }
+
+  return map[feeAction] ?? feeAction
+}
+
+export function getTransactionTypeLable(txnType: TransactionTypes): string {
+  const map: Record<string, string> = {
+    [TransactionTypes.UPI]: "UPI",
+    [TransactionTypes.CASH]: "Cash",
+    [TransactionTypes.CHEQUE]: "Cheque",
+    [TransactionTypes.NEFT_IMPS_RTGS]: "NEFT/IMPS/RTGS",
+    [TransactionTypes.OTHERS]: "Other",
+  }
+  return map[txnType] ?? txnType
+}

@@ -61,6 +61,7 @@ export default function TechnoDataTable({
   rowCursor = true,
   showPagination = true,
   tableActionButton,
+  headerStyles,
   children
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -201,8 +202,8 @@ export default function TechnoDataTable({
                         'text-center': !align || align === 'center',
                         'text-right': align === 'right',
                         'rounded-l-[5px]': index === 0,
-                        'rounded-r-[5px]': index === headerGroup.headers.length - 1
-                      })}
+                        'rounded-r-[5px]': index === headerGroup.headers.length - 1,
+                      }, `${headerStyles}`)}
                     >
                       {isSortable && !isNonClickable ? (
                         <div
@@ -228,7 +229,7 @@ export default function TechnoDataTable({
               table.getRowModel().rows.map((row: any) => (
                 <TableRow
                   key={row.id}
-                  className={clsx(`h-[39px] cursor-pointer ${selectedRowId === row.id ? 'bg-gray-100' : ''}`)}
+                  className={clsx(`h-[39px] ${rowCursor && "cursor-pointer"} ${selectedRowId === row.id ? 'bg-gray-100' : ''}`)}
                   onClick={() => {
                     setSelectedRowId(row.id);
                     handleViewMore({ ...row.original, leadType: row.original._leadType });

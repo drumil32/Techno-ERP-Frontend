@@ -3,7 +3,7 @@ import { StudentDetails } from "@/types/finance";
 import { BookOpen } from "lucide-react";
 import * as Dialog from '@radix-ui/react-dialog';
 import { Label } from "@/components/ui/label";
-import { z } from "zod";
+import { record, z } from "zod";
 import { FeeActions, TransactionTypes } from "@/types/enum";
 import { useState } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -12,6 +12,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
+import { useParams } from "next/navigation";
+import { recordPayment } from "../helpers/fetch-data";
+import { getFeeActionLable, getTransactionTypeLable } from "@/lib/enumDisplayMapper";
+import { toast } from "sonner";
 
 const feesActionMapping = {
   [FeeActions.DEPOSIT]: "DEPOSIT",
@@ -33,9 +37,10 @@ const formSchema = z.object({
   transactionType: z.nativeEnum(TransactionTypes, {
     required_error: "Please select a transaction type"
   }),
-  amount: z.coerce.number()
-    .min(0, { message: "Amount must be greater than 0" }),
-
+  amount: z.coerce.number({
+    required_error: "Amount is required",
+    invalid_type_error: "Amount must be a number",
+  }),
   remarks: z.string().optional()
 });
 
@@ -43,7 +48,10 @@ type FormValues = z.infer<typeof formSchema>;
 
 
 
-export default function RecordPaymentDialogue({ studentDetails }: { studentDetails: StudentDetails | undefined }) {
+export default function RecordPaymentDialog({ studentDetails }: { studentDetails: StudentDetails | undefined }) {
+  const param = useParams()
+  const studentDuesId = param.studentDuesId as string
+
 
   const [open, setOpen] = useState(false);
 
@@ -57,30 +65,40 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
     }
   });
 
-  const handleSave = (values: FormValues) => {
+  const handleRecordPayment = async (values: FormValues) => {
     const payload = {
-      studentID: studentDetails?.studentID,
-      feesAction: feesActionMapping[values.feesAction],
-      transactionType: transactionTypeMapping[values.transactionType],
+      studentId: studentDuesId,
+      feeAction: feesActionMapping[values.feesAction],
+      txnType: transactionTypeMapping[values.transactionType],
+      actionedBy: "67c69b45a5632b20905eb7e2",
       amount: values.amount,
       remarks: values.remarks || "",
       date: new Date().toISOString()
     };
 
-    console.log("Payment payload:", payload);
-    setOpen(false);
+    try {
+      const res = await recordPayment(payload);
+
+      toast.success("Payment recorded successfully!");
+
+      setOpen(false);
+      form.reset();
+    } catch (error) {
+      toast.error("Failed to record payment. Please try again.");
+    }
+
     form.reset();
   };
 
 
   return (
-    <Dialog.Root>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger asChild>
         <Button className="ml-auto rounded-[10px]">Record a payment</Button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed z-30 inset-0 bg-black/30" />
-        <Dialog.Content className="bg-white sm:min-w-[600px] z-40 p-6 rounded-xl shadow-xl w-full max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <Dialog.Content className="bg-white h-fit sm:min-w-[600px] z-40 p-6 rounded-xl shadow-xl w-full max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           {/*Dialogue Title Header*/}
           <div className="flex justify-between items-center mb-8">
             <Dialog.Title className="text-xl font-semibold flex items-center gap-2">
@@ -116,9 +134,9 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
 
           {/*Form*/}
 
-          <div className="my-8">
+          <div className="mt-8">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleSave)} className="space-y-6">
+              <form onSubmit={form.handleSubmit(handleRecordPayment)} className="space-y-6">
                 <div className="flex flex-row gap-4 text-md">
                   <FormField
                     control={form.control}
@@ -133,8 +151,11 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="text-md">
-                            <SelectItem value={FeeActions.DEPOSIT}>{FeeActions.DEPOSIT}</SelectItem>
-                            <SelectItem value={FeeActions.REFUND}>{FeeActions.REFUND}</SelectItem>
+                            {Object.values(FeeActions).map((action) => (
+                              <SelectItem key={action} value={action}>
+                                {getFeeActionLable(action)}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -155,11 +176,11 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="text-md">
-                            <SelectItem value={TransactionTypes.CASH}>{TransactionTypes.CASH}</SelectItem>
-                            <SelectItem value={TransactionTypes.NEFT_IMPS_RTGS}>{TransactionTypes.NEFT_IMPS_RTGS}</SelectItem>
-                            <SelectItem value={TransactionTypes.UPI}>{TransactionTypes.UPI}</SelectItem>
-                            <SelectItem value={TransactionTypes.CHEQUE}>{TransactionTypes.CHEQUE}</SelectItem>
-                            <SelectItem value={TransactionTypes.OTHERS}>{TransactionTypes.OTHERS}</SelectItem>
+                            {Object.values(TransactionTypes).map((type) => (
+                              <SelectItem key={type} value={type}>
+                                {getTransactionTypeLable(type)}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -179,7 +200,7 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
                           placeholder="Enter the amount"
                           {...field}
                           type="number"
-
+                          className="!text-md"
                         />
                       </FormControl>
                       <FormMessage />
@@ -194,7 +215,7 @@ export default function RecordPaymentDialogue({ studentDetails }: { studentDetai
                     <FormItem>
                       <FormLabel className="text-gray-500 text-md">Remarks</FormLabel>
                       <FormControl>
-                        <Input placeholder="Write your remarks" {...field} />
+                        <Input placeholder="Write your remarks" {...field} className="!text-md" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

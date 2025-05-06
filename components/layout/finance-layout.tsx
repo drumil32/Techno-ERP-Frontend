@@ -5,7 +5,6 @@ import { useSidebarContext } from "../custom-ui/sidebar/sidebar-context";
 import { useEffect } from "react";
 import { SIDEBAR_ITEMS } from "@/common/constants/sidebarItems";
 import TechnoTopHeader from "../custom-ui/top-header/techno-top-header";
-import CourseBreadCrumb from "../custom-ui/breadcrump/course-breadcrumb";
 import TechnoBreadCrumb from "../custom-ui/breadcrump/techno-breadcrumb";
 
 const HEADER_ITEMS = {

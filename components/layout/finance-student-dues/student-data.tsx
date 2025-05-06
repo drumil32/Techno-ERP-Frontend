@@ -1,5 +1,5 @@
 import { Label } from "@/components/ui/label";
-import { FeesPaidStatus } from "@/types/enum";
+import { Course, CourseNameMapper, FeesPaidStatus } from "@/types/enum";
 import { StudentDetails } from "@/types/finance";
 import FeesPaidTag from "./fees-paid-status-tag";
 
@@ -29,7 +29,7 @@ export default function StudentData({ studentData }: { studentData: StudentDetai
         </div>
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">Course</Label>
-          <Label>{studentData.course}</Label>
+          <Label>{CourseNameMapper[studentData.course as Course]}</Label>
         </div>
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">HOD</Label>
