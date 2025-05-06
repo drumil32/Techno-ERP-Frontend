@@ -47,7 +47,6 @@ export default function CourseBreadCrumb() {
     // Start from the third segment
     for (let i = 2; i < pathSegments.length; i++) {
       const segment = pathSegments[i];
-      console.log('Segment is : ', segment);
       const formattedSegment = segment
         .replace(/-/g, ' ')
         .replace(/\b\w/g, (char) => char.toUpperCase());

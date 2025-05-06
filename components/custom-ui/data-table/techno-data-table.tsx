@@ -52,7 +52,7 @@ declare module '@tanstack/react-table' {
   }
 }
 
-const TruncatedCell = ({ value, maxWidth }: { value: string; maxWidth?: number }) => {
+export const TruncatedCell = ({ value, maxWidth }: { value: string; maxWidth?: number }) => {
   const cellRef = useRef<HTMLSpanElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
 
@@ -106,6 +106,9 @@ export default function TechnoDataTable({
   setSelectedRowId,
   rowCursor = true,
   showPagination = true,
+  tableActionButton,
+  tableStyles,
+  headerStyles,
   children
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -218,22 +221,29 @@ export default function TechnoDataTable({
               <Search className="h-4 w-4 text-gray-500" />
             </span>
           </div>
-          <Button
-            disabled={
+          {
+            tableActionButton ?
+              tableActionButton
+              :
+              <>
+                <Button
+                  disabled={
               !hasRole(UserRoles.EMPLOYEE_MARKETING) ||
               !hasRole(UserRoles.LEAD_MARKETING) ||
               tableName != 'All Leads'
             }
             onClick={uploadAction}
-            variant="outline"
-            className="h-8 w-[85px] rounded-[10px] border"
-            icon={LuUpload}
-          >
-            <span className="font-inter font-medium text-[12px]">Upload</span>
-          </Button>
-          <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
-            <span className="font-inter font-semibold text-[12px]">Download</span>
-          </Button>
+                  variant="outline"
+                  className="h-8 w-[85px] rounded-[10px] border"
+                  icon={LuUpload}
+                >
+                  <span className="font-inter font-medium text-[12px]">Upload</span>
+                </Button>
+                <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
+                  <span className="font-inter font-semibold text-[12px]">Download</span>
+                </Button>
+              </>
+          }
         </div>
       </div>
 

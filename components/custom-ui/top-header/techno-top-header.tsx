@@ -22,7 +22,9 @@ export default function TechnoTopHeader({ headerItems }: TechnoTopHeaderProps) {
 
   useEffect(() => {
     setIsMounted(true);
-    const matchingItem = Object.values(headerItems).find((item) => item.route === pathname);
+    const matchingItem = Object.values(headerItems)
+      .filter((item) => pathname.startsWith(item.route))
+      .sort((a, b) => b.route.length - a.route.length)[0];
     if (matchingItem) setHeaderActiveItem(matchingItem.title);
   }, [pathname, headerItems, setHeaderActiveItem]);
 

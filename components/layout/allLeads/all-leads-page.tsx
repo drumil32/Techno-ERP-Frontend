@@ -378,7 +378,7 @@ export default function AllLeadsPage() {
 
         return (
           <LeadTypeSelect
-            isDisable={row.original.leadType == LeadType.INTERESTED}
+            disabled={row.original.leadType == LeadType.INTERESTED}
             value={selectedType}
             onChange={handleDropdownChange}
           />

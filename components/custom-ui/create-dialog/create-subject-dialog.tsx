@@ -68,7 +68,6 @@ type FormData = z.infer<typeof createSubjectSchema>;
 
 export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSubjectDialogProps) => {
   const open = openDialog;
-  console.log(data);
   const { control, handleSubmit, register, reset, formState: { errors }, } = useForm<FormData>({
     resolver: zodResolver(createSubjectSchema),
     defaultValues: {
@@ -83,13 +82,11 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
     },
   });
 
-  console.log("Department Name : ", data.departmentName);
 
   const filterParams = useMemo(() => ({
     departmentName: data.departmentName
   }), [data.departmentName]);
   
-  console.log("FIlter params : ", filterParams);
 
   const instructorsQuery = useQuery({
     queryKey: ['instructorsmetadata', filterParams],
