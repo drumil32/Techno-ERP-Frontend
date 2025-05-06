@@ -16,6 +16,7 @@ import { useParams } from "next/navigation";
 import { recordPayment } from "../helpers/fetch-data";
 import { getFeeActionLable, getTransactionTypeLable } from "@/lib/enumDisplayMapper";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 const feesActionMapping = {
   [FeeActions.DEPOSIT]: "DEPOSIT",
@@ -52,6 +53,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
   const param = useParams()
   const studentDuesId = param.studentDuesId as string
 
+  const queryClient = useQueryClient()
 
   const [open, setOpen] = useState(false);
 
@@ -77,12 +79,15 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
     };
 
     try {
-      const res = await recordPayment(payload);
+      await recordPayment(payload);
 
       toast.success("Payment recorded successfully!");
 
       setOpen(false);
       form.reset();
+      queryClient.invalidateQueries({
+        queryKey: ['studentFeesInfomation', studentDuesId]
+      });
     } catch (error) {
       toast.error("Failed to record payment. Please try again.");
     }

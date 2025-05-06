@@ -61,6 +61,7 @@ export default function TechnoDataTable({
   rowCursor = true,
   showPagination = true,
   tableActionButton,
+  tableStyles,
   headerStyles,
   children
 }: any) {
@@ -184,7 +185,7 @@ export default function TechnoDataTable({
       </div>
 
       <div className="relative min-h-[580px] overflow-auto">
-        <Table className="w-full">
+        <Table className={`w-full ${tableStyles}`}>
           <TableHeader className="bg-[#F7F7F7] sticky top-0 ">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="h-10">

@@ -12,19 +12,24 @@ import { Label } from '@/components/ui/label';
 import { CollegeNames } from '@/types/enum';
 import TechnoFilter from '@/components/custom-ui/filter/techno-filter';
 import {
-  TechnoFilterProvider,
   useTechnoFilterContext
 } from '@/components/custom-ui/filter/filter-context';
 import { useRouter } from 'next/navigation';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-const collegeOptions = Object.values(CollegeNames).map((college) => ({
-  id: college,
-  label: college
-}));
-
+const collegeOptions = [
+  { id: "ALL", label: "All" },
+  ...Object.values(CollegeNames).map((college) => ({
+    id: college,
+    label: college
+  }))
+]
+  ;
 export default function CourseDuesDetails() {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [college, setSelectedCollege] = useState("ALL")
+  const collegeDropdownData = collegeOptions
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -122,7 +127,6 @@ export default function CourseDuesDetails() {
     {
       accessorKey: 'totalDue',
       header: 'Total Due',
-      meta: { align: 'right' },
       cell: ({ row }: any) => {
         const amount = parseFloat(row.original.totalDue);
         return new Intl.NumberFormat('en-IN', {
@@ -144,6 +148,11 @@ export default function CourseDuesDetails() {
     );
   };
 
+
+  const handleCollegeChange = (value: string) => {
+    setSelectedCollege(value)
+  }
+
   return (
     <>
       <TechnoPageHeading title="All Course Dues" />
@@ -155,14 +164,23 @@ export default function CourseDuesDetails() {
         </div>
         <div className="flex w-1/5">
           <Label className="text-[#666666] w-1/3">College</Label>
-          <TechnoFilter
-            filterKey="college"
-            filterLabel="College"
-            filterPlaceholder="College"
-            multiSelect={true}
-            options={collegeOptions}
-            applyFilters={() => { }}
-          />
+
+          <span>
+            <div className='flex items-center gap-4'>
+              <Select value={college.toString()} onValueChange={handleCollegeChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Academic Year" />
+                </SelectTrigger>
+                <SelectContent>
+                  {collegeOptions.map((item) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.label.toString()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </span>
         </div>
         <div className="flex w-1/5">
           <Label className="text-[#666666] w-1/3">Academic Year</Label>
@@ -194,6 +212,7 @@ export default function CourseDuesDetails() {
         isLoading={isLoading}
         handleViewMore={handleViewMore}
         headerStyles={"text-[#5B31D1] bg-[#F7F4FF]"}
+        tableStyles={"w-3/5"}
       />
     </>
   );

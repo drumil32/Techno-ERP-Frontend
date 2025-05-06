@@ -107,7 +107,7 @@ import { QueryFunctionContext } from "@tanstack/react-query";
 
 //       // List of valid sort fields
 //       const validSortFields: (keyof CourseDue)[] = ['course', 'courseYear', 'numberOfStudents', 'totalDue', 'courseHead', 'courseHeadContact'];
-      
+
 //       if (validSortFields.includes(sortField)) {
 //         filteredData.sort((a, b) => {
 //           let valA = a[sortField];
@@ -184,7 +184,7 @@ export const fetchCourseDuesMock = async () => {
     },
     {
       _id: "crs_0002",
-      course: "B.Tech CSE",
+      course: "BED",
       courseYear: "Second",
       numberOfStudents: 40,
       totalDue: 60000,

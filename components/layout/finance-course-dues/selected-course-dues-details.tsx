@@ -126,6 +126,7 @@ export default function SelectedCourseDuesDetails() {
         searchTerm={search}
         isLoading={isLoading}
         headerStyles={"text-[#5B31D1] bg-[#F7F4FF]"}
+        tableStyles={"w-3/4"}
       />
     </>
   );

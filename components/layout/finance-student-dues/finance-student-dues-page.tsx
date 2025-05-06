@@ -30,10 +30,6 @@ export default function StudentDuesPage() {
   const router = useRouter()
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [sortState, setSortState] = useState<any>({
-    sortBy: ['studentName'],
-    orderBy: ['asc'],
-  });
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
