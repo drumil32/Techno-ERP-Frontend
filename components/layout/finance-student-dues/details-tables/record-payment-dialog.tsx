@@ -41,8 +41,8 @@ const formSchema = z.object({
   amount: z.coerce.number({
     required_error: "Amount is required",
     invalid_type_error: "Amount must be a number",
-  }),
-  remarks: z.string().optional()
+  }).gt(0, { message: "Amount must be greater than 0" }),
+  remark: z.string().optional()
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -63,7 +63,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
       feesAction: FeeActions.DEPOSIT,
       transactionType: TransactionTypes.CASH,
       amount: 0,
-      remarks: ""
+      remark: ""
     }
   });
 
@@ -74,7 +74,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
       txnType: transactionTypeMapping[values.transactionType],
       actionedBy: "67c69b45a5632b20905eb7e2",
       amount: values.amount,
-      remarks: values.remarks || "",
+      remark: values.remark || "",
       date: new Date().toISOString()
     };
 
@@ -215,7 +215,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
 
                 <FormField
                   control={form.control}
-                  name="remarks"
+                  name="remark"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-gray-500 text-md">Remarks</FormLabel>
