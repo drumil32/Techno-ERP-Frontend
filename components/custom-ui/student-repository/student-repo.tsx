@@ -16,17 +16,19 @@ import FilterBadges from '@/components/layout/allLeads/components/filter-badges'
 import { useTechnoFilterContext } from '../filter/filter-context';
 import { courseDropdown } from '@/components/layout/admin-tracker/helpers/fetch-data';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
-import { FilterData, StudentListData, StudentListItem } from './helpers/interface';
-import { columns } from './helpers/columns';
+import { FilterData, FilterOption, StudentListData, StudentListItem } from './helpers/interface';
 
 // Enum imports
 import { CourseYear } from '@/types/enum';
 import { fetchStudents } from './helpers/api';
 import { refineStudents } from './helpers/refine-data';
 import { Response } from '@/lib/apiClient';
+import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
+import { getCurrentAcademicYear } from '@/lib/getCurrentAcademicYear';
+import { toast } from 'sonner';
+import { columns } from './helpers/constants';
 
 export default function StudentRepositoryPage() {
-
   // State Management
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -37,7 +39,6 @@ export default function StudentRepositoryPage() {
   const [limit, setLimit] = useState(20);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
-
 
   // Refs
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -50,7 +51,9 @@ export default function StudentRepositoryPage() {
   // Course data query
   const courseQuery = useQuery({
     queryKey: ['courses'],
-    queryFn: courseDropdown
+    queryFn: courseDropdown,
+    placeholderData: (previousData) => previousData,
+    enabled: true,
   });
 
   const courses = Array.isArray(courseQuery.data) ? courseQuery.data : [];
@@ -89,13 +92,27 @@ export default function StudentRepositoryPage() {
 
   // Get Query Parameters for API Call
   const getQueryParams = () => {
-    return {
-      search: debouncedSearch
+    const params: { [key: string]: any } = {
+      page,
+      limit,
+      academicYear: getCurrentAcademicYear(),
+      search: debouncedSearch,
+      ...appliedFilters,
+      refreshKey
     };
+
+    return params;
   };
 
   // Filter Configuration
   const getFiltersData = (): FilterData[] => {
+    const academicYearOptions: FilterOption[] = generateAcademicYearDropdown().map(
+      (year: string) => ({
+        label: year,
+        id: year
+      })
+    );
+
     return [
       {
         filterKey: 'course',
@@ -113,12 +130,14 @@ export default function StudentRepositoryPage() {
         filterKey: 'courseYear',
         label: 'Course Year',
         options: Object.values(CourseYear),
+        hasSearch: true,
         multiSelect: true
       },
       {
         filterKey: 'academicYear',
         label: 'Academic Year',
-        options: [],
+        options: academicYearOptions,
+        hasSearch: true,
         multiSelect: true
       }
     ];
@@ -152,13 +171,10 @@ export default function StudentRepositoryPage() {
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
 
-    if (filterKey === 'date' || filterKey.includes('Date')) {
-      const dateKeys: string[] = []; // Add date keys here
-
-      dateKeys.forEach((key) => {
-        delete updatedFilters[key];
-        updateFilter(key, undefined);
-      });
+    if (filterKey == 'academicYear') {
+      const academicYearList = generateAcademicYearDropdown();
+      const currentAcademicYear = academicYearList[5];
+      updateFilter('academicYear', currentAcademicYear);
     } else {
       delete updatedFilters[filterKey];
       updateFilter(filterKey, undefined);
@@ -171,9 +187,11 @@ export default function StudentRepositoryPage() {
 
   const filterParams = getQueryParams();
 
+  // ---
+
   const studentsQuery = useQuery({
-    queryKey: ['students', filterParams],
-    queryFn: fetchStudents,
+    queryKey: ['students', appliedFilters, debouncedSearch],
+    queryFn: () => fetchStudents(filterParams),
     placeholderData: (previousData) => previousData,
     refetchOnWindowFocus: false,
     enabled: true
@@ -185,11 +203,74 @@ export default function StudentRepositoryPage() {
 
   useEffect(() => {
     console.log('Students data:', studentsData);
-      if (studentsData) {
-        setTotalPages(studentsData.pagination.totalPages);
-        setTotalEntries(studentsData.pagination.total);
+    if (studentsData) {
+      setTotalPages(studentsData.pagination.totalPages);
+      setTotalEntries(studentsData.pagination.total);
+    }
+  }, [studentsData]);
+
+  useEffect(() => {
+    const academicYearList = generateAcademicYearDropdown();
+    const currentAcademicYear = academicYearList[5];
+    updateFilter('academicYear', currentAcademicYear);
+  }, []);
+
+  const toastIdRef = useRef<string | number | null>(null);
+
+  useEffect(() => {
+    const isLoading = courseQuery.isLoading || studentsQuery.isLoading;
+    const hasError = courseQuery.isError || studentsQuery.isError;
+    const isSuccess = courseQuery.isSuccess && studentsQuery.isSuccess;
+    const isFetching = courseQuery.isFetching || studentsQuery.isFetching;
+
+    if (toastIdRef.current) {
+      if (isLoading || isFetching) {
+        toast.loading('Loading Students data...', {
+          id: toastIdRef.current,
+          duration: Infinity
+        });
       }
-    }, [studentsData]);
+
+      if (hasError) {
+        toast.error('Failed to load students data', {
+          id: toastIdRef.current,
+          duration: 3000
+        });
+        setTimeout(() => {
+          toastIdRef.current = null;
+        }, 3000);
+        toastIdRef.current = null;
+      }
+
+      if (isSuccess) {
+        toast.success('Students data loaded successfully', {
+          id: toastIdRef.current!,
+          duration: 2000
+        });
+        toastIdRef.current = null;
+      }
+    } else if (hasError) {
+      toastIdRef.current = toast.error('Failed to load students data', {
+        duration: 3000
+      });
+    } else if (isLoading || isFetching) {
+      toastIdRef.current = toast.loading('Loading students data...', {
+        duration: Infinity
+      });
+    }
+
+    return () => {
+      if (toastIdRef.current) {
+        toast.dismiss(toastIdRef.current);
+      }
+    };
+  }, [
+    refreshKey,
+    studentsQuery.isLoading,
+    studentsQuery.isError,
+    studentsQuery.isSuccess,
+    studentsQuery.isFetching
+  ]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -197,13 +278,11 @@ export default function StudentRepositoryPage() {
         <h1 className="text-xl font-bold">All Students</h1>
       </div>
 
-      <div>
-        <TechnoFiltersGroup
-          filters={getFiltersData()}
-          handleFilters={applyFilter}
-          clearFilters={clearFilters}
-        />
-      </div>
+      <TechnoFiltersGroup
+        filters={getFiltersData()}
+        handleFilters={applyFilter}
+        clearFilters={clearFilters}
+      />
 
       {studentsData && (
         <TechnoDataTable
@@ -214,11 +293,14 @@ export default function StudentRepositoryPage() {
           tableName="Student Records"
           currentPage={page}
           totalPages={totalPages}
+          onPageChange={handlePageChange}
+          onLimitChange={handleLimitChange}
           pageLimit={limit}
           onSearch={handleSearch}
           searchTerm={search}
           showPagination={true}
           handleViewMore={handleViewMore}
+          totalEntries={totalEntries}
         >
           <FilterBadges onFilterRemove={handleFilterRemove} appliedFilters={appliedFilters} />
         </TechnoDataTable>

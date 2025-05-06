@@ -1,5 +1,3 @@
-import { StudentData } from "./interface";
-
 export enum StudentRepositoryTabs {
   STUDENT_DETAILS = 'student-details',
   ACADEMIC_DETAILS = 'academic-details',

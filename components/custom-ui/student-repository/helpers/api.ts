@@ -3,8 +3,8 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { apiRequest } from '@/lib/apiClient';
 import { StudentData, StudentListData } from './interface';
 
-export const fetchStudents = async ({ queryKey }: any) => {
-  const res = await apiRequest<StudentListData>(API_METHODS.POST, API_ENDPOINTS.getStudentRepository);
+export const fetchStudents = async (params: any) => {
+  const res = await apiRequest<StudentListData>(API_METHODS.POST, API_ENDPOINTS.getStudentRepository, params);
 
   console.log('Response from fetchStudents:', res);
 
