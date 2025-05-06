@@ -27,9 +27,9 @@ export const displayFeeMapper = (feeType: FeeType | string | undefined): string 
 export const scheduleFeeMapper = (feeType: FeeType | string | undefined): string => {
   switch (feeType) {
     case FeeType.HOSTEL:
-      return 'One-time';
+      return 'Yearly';
     case FeeType.TRANSPORT:
-      return 'One-time';
+      return 'Yearly';
     case FeeType.PROSPECTUS:
       return 'One-time';
     case FeeType.STUDENTID:

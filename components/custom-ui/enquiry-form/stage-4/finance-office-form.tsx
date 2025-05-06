@@ -218,7 +218,7 @@ const FinanceOfficeForm = () => {
     let totalDeposited = 0;
 
     if (otherFeesData) {
-      totalOriginal = otherFeesData.reduce((sum: any, fee: any) => sum + (fee.fee ?? 0), 0);
+      totalOriginal = otherFeesData.reduce((sum: any, fee: any) => sum + (fee.amount ?? 0), 0);
     }
 
     (otherFeesWatched ?? []).forEach((fee) => {
@@ -454,7 +454,12 @@ const FinanceOfficeForm = () => {
                   <div className="text-sm text-right pr-2">
                     {formatCurrency(otherFeesTotals.totalFinal)}
                   </div>
-                  <div>{/* Empty cell for Discount */}</div>
+                  <div className="text-right">
+                    {calculateDiscountPercentage(
+                      otherFeesTotals.totalOriginal,
+                      otherFeesTotals.totalFinal
+                    ) + '%'}
+                  </div>
                   <div className="text-sm text-right pr-2">
                     {formatCurrency(otherFeesTotals.totalDeposited)}
                   </div>
