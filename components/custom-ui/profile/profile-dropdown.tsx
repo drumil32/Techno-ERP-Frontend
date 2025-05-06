@@ -84,6 +84,11 @@ export const ProfileDropdown = () => {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
       });
+
+      // Clear auth cookie
+      document.cookie =
+        'is-authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=strict';
+
       const data = await res.json();
       if (data && data.SUCCESS === true) {
         useAuthStore.getState().logout();
@@ -91,6 +96,9 @@ export const ProfileDropdown = () => {
       }
     } catch (error) {
       console.error('Logout failed:', error);
+      // Still clear cookie even if logout failed
+      document.cookie =
+        'is-authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=strict';
       useAuthStore.getState().logout();
       router.replace('/auth/login');
     }
@@ -113,7 +121,7 @@ export const ProfileDropdown = () => {
       <motion.div
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 px-3 py-2 rounded-lg transition-colors duration-200"
+        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800  px-3 py-2 rounded-lg transition-colors duration-200"
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="relative">
@@ -143,7 +151,7 @@ export const ProfileDropdown = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 mt-2 w-64 origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-xl ring-1 ring-gray-200 dark:ring-gray-700 z-30 overflow-hidden"
+            className="absolute right-0 mt-2 w-64 origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-xl ring-1 ring-gray-200 dark:ring-gray-700 z-50 overflow-hidden"
           >
             <div className="py-1">
               <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
@@ -177,7 +185,7 @@ export const ProfileDropdown = () => {
                 </motion.button> */}
                 <motion.button
                   whileHover={{ x: 2 }}
-                  className="w-full flex items-center gap-3 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 px-3 py-2 rounded-lg transition-colors"
+                  className="w-full  cursor-pointer flex items-center gap-3 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 px-3 py-2 rounded-lg transition-colors"
                   onClick={logout}
                 >
                   <LogOut className="h-4 w-4" />

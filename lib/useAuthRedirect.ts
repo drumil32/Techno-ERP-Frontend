@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { API_ENDPOINTS } from "@/common/constants/apiEndpoints";
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 
 const useAuthRedirect = () => {
   const router = useRouter();
@@ -20,18 +20,15 @@ const useAuthRedirect = () => {
 
         const data = await response.json();
 
-        if (data &&
-          data.MESSAGE === "User is authenticated" &&
-          data.SUCCESS === true) {
-          router.replace("/");
+        if (data && data.MESSAGE === 'User is authenticated' && data.SUCCESS === true) {
+          router.replace('/');
         }
       } catch (error) {
-        console.error("Auth check failed:", error);
+        console.error('Auth check failed:', error);
       }
     };
 
     checkAuthStatus();
-
   }, [router]);
 };
 

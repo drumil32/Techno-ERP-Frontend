@@ -1,51 +1,21 @@
 'use client';
-// React and React Hook Form imports
 import { useEffect, useMemo, useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-// React Query imports
-import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
-
-// Next.js navigation imports
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
-
-// UI components imports
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage
-} from '@/components/ui/form';
+import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon } from 'lucide-react';
-
-// Utility imports
-import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import { queryClient } from '@/lib/queryClient';
-
-// API and data-fetching imports
-import {
-  createStudentFees,
-  getFeesByCourseName,
-  getOtherFees,
-  updateStudentFees
-} from '../stage-2/helpers/apirequests';
-
-// Schema and validation imports
+import { getFeesByCourseName, getOtherFees } from '../stage-2/helpers/apirequests';
 import {
   feesRequestSchema,
   finalFeesUpdateSchema,
@@ -53,24 +23,15 @@ import {
 } from '../stage-2/studentFeesSchema';
 import { validateCustomFeeLogic } from '../stage-2/helpers/validateFees';
 import { cleanDataForDraft } from '../stage-2/helpers/refine-data';
-
-// Helper functions and constants imports
-import {
-  calculateDiscountPercentage,
-  formatCurrency,
-  formatDisplayDate,
-  parseDisplayDate
-} from '../stage-2/student-fees-form';
+import { calculateDiscountPercentage, formatCurrency } from '../stage-2/student-fees-form';
 import { displayFeeMapper, scheduleFeeMapper } from '../stage-2/helpers/mappers';
 import { ApplicationStatus, FeeType } from '@/types/enum';
-
-// Component imports
 import ShowStudentData from '../stage-2/data-show';
 import FilledByCollegeSection from '../stage-1/filled-by-college-section';
 import ConfirmationOTPSection from './confirmation-otp-section';
 import EnquiryFormFooter from './enquiry-form-footer';
 import { getEnquiry } from '../stage-1/enquiry-form-api';
-import { createEnquiryStep4, updateEnquiryStep4 } from './helpers/apirequests';
+import { approveEnquiry, createEnquiryStep4, updateEnquiryStep4 } from './helpers/apirequests';
 import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
@@ -83,18 +44,15 @@ const FinanceOfficeForm = () => {
   const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
   const router = useRouter();
 
-  const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
+  const {
+    isChecking: isRedirectChecking,
+    isCheckError: isRedirectError,
+    isViewable
+  } = useAdmissionRedirect({
     id: enquiry_id,
     currentStage: ApplicationStatus.STEP_4
   });
-
   // Queries
-  const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
-    queryKey: ['otherFeesData'],
-    queryFn: getOtherFees,
-    staleTime: 1000 * 60 * 5,
-    refetchOnWindowFocus: false, 
-  });
 
   const {
     data: enquiryData,
@@ -104,11 +62,20 @@ const FinanceOfficeForm = () => {
     queryKey: ['enquireFormData', enquiry_id, dataUpdated],
     queryFn: () => (enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null')),
     enabled: !!enquiry_id,
-    refetchOnWindowFocus: false, 
+    refetchOnWindowFocus: false
   });
 
   const existingFinalFee = enquiryData?.studentFee;
   const existingFeeDraft = enquiryData?.studentFeeDraft;
+  const courseName = enquiryData?.course;
+
+  const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
+    queryKey: ['otherFeesData'],
+    queryFn: () => getOtherFees(courseName),
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    enabled: !!courseName
+  });
 
   // Determine the current status
   const feeStatus: 'none' | 'draft' | 'final' = useMemo(() => {
@@ -121,7 +88,6 @@ const FinanceOfficeForm = () => {
   const finalFeeId = existingFinalFee?._id;
   const studentEmail = enquiryData?.emailId;
   const studentPhone = enquiryData?.studentPhoneNumber;
-  const courseName = enquiryData?.course;
 
   const {
     data: semWiseFeesData,
@@ -129,8 +95,7 @@ const FinanceOfficeForm = () => {
     isLoading: isLoadingSemFees
   } = useQuery<any>({
     queryKey: ['courseFees', courseName],
-    queryFn: () =>
-      courseName ? getFeesByCourseName(courseName) : Promise.reject('Course name not available'),
+    queryFn: () => getFeesByCourseName(courseName),
     enabled: !!courseName
   });
 
@@ -148,7 +113,8 @@ const FinanceOfficeForm = () => {
       confirmationCheck: false,
       otpTarget: undefined,
       otpVerificationEmail: null
-    }
+    },
+    disabled: isViewable
   });
 
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmationCheck' });
@@ -173,7 +139,7 @@ const FinanceOfficeForm = () => {
       let initialSemFees: any[] = [];
       let initialOtherFees: any[] = [];
 
-      const baseSem1Fee = semWiseFeesData.fee?.[0];
+      const baseSem1Fee = semWiseFeesData[0];
 
       const existingSem1FeeDataInOther = feeDataSource?.otherFees?.find(
         (fee: any) => fee.type === FeeType.SEM1FEE
@@ -187,7 +153,7 @@ const FinanceOfficeForm = () => {
           existingSem1FeeDataInSemWise?.finalFee ??
           baseSem1Fee ??
           undefined,
-        fee: baseSem1Fee,
+        amount: baseSem1Fee,
         feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined
       };
 
@@ -213,7 +179,7 @@ const FinanceOfficeForm = () => {
       initialOtherFees.unshift(sem1FeeObject);
       otherFeesData.unshift(sem1FeeObject);
 
-      const courseSemFeeStructure = semWiseFeesData.fee || [];
+      const courseSemFeeStructure = semWiseFeesData || [];
       const existingSemFees = feeDataSource?.semWiseFees || [];
 
       initialSemFees = courseSemFeeStructure.map((baseFeeAmount: number, index: number) => {
@@ -278,8 +244,7 @@ const FinanceOfficeForm = () => {
     }
   });
 
-  async function onSubmit() {
-    setIsSubmittingFinal(true);
+  async function saveDraft() {
     const values = form.getValues();
 
     const isCustomValid = validateCustomFeeLogic(
@@ -353,8 +318,15 @@ const FinanceOfficeForm = () => {
 
       setDataUpdated((prev) => !prev);
     }
+  }
+  async function onSubmit() {
+    setIsSubmittingFinal(true);
 
-    router.push(SITE_MAP.ADMISSIONS.DEFAULT);
+    const response = await approveEnquiry({ id: enquiry_id });
+    if (response) {
+      toast.success('Enquiry submitted for final approval');
+      router.push(SITE_MAP.ADMISSIONS.DEFAULT);
+    }
   }
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
@@ -388,8 +360,12 @@ const FinanceOfficeForm = () => {
 
                 {otherFeesFields.map((field, index) => {
                   const feeType = form.getValues(`otherFees.${index}.type`);
-                  const originalFeeData = otherFeesData?.find((fee: any) => fee.type === feeType);
-                  const totalFee = originalFeeData?.fee;
+                  const originalFeeData = otherFeesData?.find((fee: any) =>
+                    fee.type === FeeType.SEM1FEE
+                      ? fee.type === feeType
+                      : fee.type === displayFeeMapper(feeType)
+                  );
+                  const totalFee = originalFeeData?.amount;
                   const finalFee = otherFeesWatched?.[index]?.finalFee;
                   const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
                   const discountValue = calculateDiscountPercentage(totalFee, finalFee);
@@ -509,7 +485,7 @@ const FinanceOfficeForm = () => {
                       disabled: (date) => {
                         const today = new Date();
                         return date <= new Date(today.setHours(0, 0, 0, 0));
-                      },
+                      }
                     }}
                   />
                 </div>
@@ -537,7 +513,7 @@ const FinanceOfficeForm = () => {
                   </div>
 
                   {semFields.map((field, index) => {
-                    const originalFeeAmount = semWiseFeesData?.fee?.[index];
+                    const originalFeeAmount = semWiseFeesData[index];
                     const finalFee = semWiseFeesWatched?.[index]?.finalFee;
                     const discountValue = calculateDiscountPercentage(originalFeeAmount, finalFee);
                     const discountDisplay =
@@ -608,6 +584,7 @@ const FinanceOfficeForm = () => {
 
         {/* Submit */}
         <EnquiryFormFooter
+          saveDraft={saveDraft}
           form={form}
           onSubmit={onSubmit}
           confirmationChecked={!!confirmationChecked}

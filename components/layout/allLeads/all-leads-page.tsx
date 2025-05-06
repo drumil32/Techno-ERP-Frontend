@@ -6,14 +6,14 @@ import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
-
 import LeadViewEdit, { LeadData } from './leads-view-edit';
 import { Course, LeadType, Locations } from '@/types/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
+1;
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { toast } from 'sonner';
 import { API_METHODS } from '@/common/constants/apiMethods';
@@ -25,7 +25,9 @@ import {
   courseDropdown,
   marketingSourcesDropdown
 } from '../admin-tracker/helpers/fetch-data';
-
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import { SelectValue } from '@radix-ui/react-select';
+import Loading from '@/app/loading';
 export default function AllLeadsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -34,10 +36,35 @@ export default function AllLeadsPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editRow, setEditRow] = useState<any>(null);
   const [sortState, setSortState] = useState<any>({
-    sortBy: ['date', 'nextDueDate'],
-    orderBy: ['desc', 'desc']
+    sortBy: ['date'],
+    orderBy: ['desc']
   });
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+
+  // const handleSortChange = (column: string, order: string) => {
+  //   if (column === 'nextDueDateView') {
+  //     column = 'nextDueDate';
+  //   }
+  //   if (column === 'dateView') {
+  //     column = 'date';
+  //   }
+
+  //   setSortState((prevState: any) => {
+  //     const currentIndex = prevState.sortBy.indexOf(column);
+  //     let newOrderBy = [...prevState.orderBy];
+  //     if (currentIndex != -1) {
+  //       newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == 'asc' ? 'desc' : 'asc';
+  //     }
+
+  //     return {
+  //       ...prevState,
+  //       orderBy: newOrderBy
+  //     };
+  //   });
+
+  //   setPage(1);
+  //   setRefreshKey((prevKey) => prevKey + 1);
+  // };
 
   const handleSortChange = (column: string, order: string) => {
     if (column === 'nextDueDateView') {
@@ -47,17 +74,10 @@ export default function AllLeadsPage() {
       column = 'date';
     }
 
-    setSortState((prevState: any) => {
-      const currentIndex = prevState.sortBy.indexOf(column);
-      let newOrderBy = [...prevState.orderBy];
-      if (currentIndex != -1) {
-        newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == 'asc' ? 'desc' : 'asc';
-      }
-
-      return {
-        ...prevState,
-        orderBy: newOrderBy
-      };
+    setSortState({
+      ...sortState,
+      sortBy: [column],
+      orderBy: [order]
     });
 
     setPage(1);
@@ -264,7 +284,11 @@ export default function AllLeadsPage() {
   const columns = [
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'dateView', header: 'Date' },
-    { accessorKey: 'name', header: 'Name', meta: { align: 'left' } },
+    {
+      accessorKey: 'name',
+      header: 'Name',
+      meta: { align: 'left', maxWidth: 120 }
+    },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'areaView', header: 'Area', meta: { align: 'left' } },
     { accessorKey: 'cityView', header: 'City', meta: { align: 'left' } },
@@ -275,6 +299,7 @@ export default function AllLeadsPage() {
       header: 'Lead Type',
       cell: ({ row }: any) => {
         const [selectedType, setSelectedType] = useState<LeadType>(row.original.leadType);
+        const toastIdRef = useRef<string | number | null>(null);
 
         const handleDropdownChange = async (value: LeadType) => {
           if (row.original.leadType == LeadType.INTERESTED) {
@@ -283,6 +308,10 @@ export default function AllLeadsPage() {
           }
 
           setSelectedType(value);
+
+          toastIdRef.current = toast.loading('Updating lead type...', {
+            duration: Infinity
+          });
 
           const {
             id,
@@ -315,18 +344,35 @@ export default function AllLeadsPage() {
             leadType: value
           };
 
-          const response: LeadData | null = await apiRequest(
-            API_METHODS.PUT,
-            API_ENDPOINTS.updateLead,
-            updatedData
-          );
+          try {
+            const response: LeadData | null = await apiRequest(
+              API_METHODS.PUT,
+              API_ENDPOINTS.updateLead,
+              updatedData
+            );
+            toast.dismiss(toastIdRef.current);
 
-          if (response) {
-            toast.success('Lead type updated successfully');
-            setRefreshKey((prevKey) => prevKey + 1);
-          } else {
-            toast.error('Failed to update lead type');
+            if (response) {
+              toast.success('Lead type updated successfully', {
+                id: toastIdRef.current,
+                duration: 1500
+              });
+              setRefreshKey((prevKey) => prevKey + 1);
+            } else {
+              toast.error('Failed to update lead type', {
+                id: toastIdRef.current,
+                duration: 1500
+              });
+              setSelectedType(row.original.leadType);
+            }
+          } catch (error) {
+            toast.error('Failed to update lead type', {
+              id: toastIdRef.current,
+              duration: 1500
+            });
             setSelectedType(row.original.leadType);
+          } finally {
+            toastIdRef.current = null;
           }
         };
 
@@ -348,10 +394,15 @@ export default function AllLeadsPage() {
       meta: { align: 'center' },
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.leadsFollowUpCount);
+        const toastIdRef = useRef<string | number | null>(null);
 
         const handleDropdownChange = async (newValue: number) => {
           const previousValue = selectedValue;
           setSelectedValue(newValue);
+
+          toastIdRef.current = toast.loading('Updating follow-up count...', {
+            duration: Infinity
+          });
 
           const filteredData = {
             ...row.original,
@@ -384,54 +435,75 @@ export default function AllLeadsPage() {
             ...cleanedRow
           } = filteredData;
 
-          const response: LeadData | null = await apiRequest(
-            API_METHODS.PUT,
-            API_ENDPOINTS.updateLead,
-            cleanedRow
-          );
-
-          if (response) {
-            toast.success('Follow-up count updated successfully');
-            setRefreshKey((prevKey) => prevKey + 1);
-          } else {
-            toast.error('Failed to update follow-up count');
+          try {
+            const response: LeadData | null = await apiRequest(
+              API_METHODS.PUT,
+              API_ENDPOINTS.updateLead,
+              cleanedRow
+            );
+            toast.dismiss(toastIdRef.current);
+            if (response) {
+              toast.success('Follow-up count updated successfully', {
+                id: toastIdRef.current,
+                duration: 3000
+              });
+              setRefreshKey((prevKey) => prevKey + 1);
+            } else {
+              toast.error('Failed to update follow-up count', {
+                id: toastIdRef.current,
+                duration: 1500
+              });
+              setSelectedValue(previousValue);
+            }
+          } catch (error) {
+            toast.error('Failed to update follow-up count', {
+              id: toastIdRef.current,
+              duration: 1500
+            });
             setSelectedValue(previousValue);
+          } finally {
+            toastIdRef.current = null;
           }
         };
+
         return (
-          <select
-            value={selectedValue}
-            onChange={(e) => handleDropdownChange(Number(e.target.value))}
-            className="border bg-white rounded pl-1 pr-3 py-1 cursor-pointer"
-            aria-label="Follow-up count"
+          <Select
+            value={selectedValue.toString()}
+            onValueChange={(value) => handleDropdownChange(Number(value))}
           >
-            {Array.from({ length: selectedValue + 2 }, (_, i) => (
-              <option key={i} value={i}>
-                {i.toString().padStart(2, '0')}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-[60px] mx-auto min-h-[unset] h-8 text-sm">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent className="w-[60px] min-w-[unset]">
+              {Array.from({ length: selectedValue + 2 }, (_, i) => (
+                <SelectItem key={i} value={i.toString()} className="text-sm h-8 justify-center">
+                  {i.toString().padStart(2, '0')}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         );
       }
     },
-    { accessorKey: 'leadTypeModifiedDateView', header: 'Timestamp', meta: { align: 'center' } },
-    {
-      id: 'actions',
-      header: 'Actions',
-      meta: { align: 'center' },
-      cell: ({ row }: any) => (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => {
-            setSelectedRowId(row.id);
-            handleViewMore({ ...row.original, leadType: row.original._leadType });
-          }}
-        >
-          <span className="font-inter font-semibold text-[12px] text-primary">View More</span>
-        </Button>
-      )
-    }
+    // { accessorKey: 'leadTypeModifiedDateView', header: 'Timestamp', meta: { align: 'center' } },
+    // {
+    //   id: 'actions',
+    //   header: 'Actions',
+    //   meta: { align: 'center' },
+    //   cell: ({ row }: any) => (
+    //     <Button
+    //       variant="ghost"
+    //       className="cursor-pointer"
+    //       onClick={() => {
+    //         setSelectedRowId(row.id);
+    //         handleViewMore({ ...row.original, leadType: row.original._leadType });
+    //       }}
+    //     >
+    //       <span className="font-inter font-semibold text-[12px] text-primary">View More</span>
+    //     </Button>
+    //   )
+    // },
+    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } }
   ];
 
   const marketingSourceQuery = useQuery({
@@ -517,60 +589,67 @@ export default function AllLeadsPage() {
     }
   }, [leads]);
 
+  if (!leads?.leads || !analytics) {
+    return <Loading />;
+  }
+
   return (
-    <>
-      <TechnoFiltersGroup
-        filters={getFiltersData()}
-        handleFilters={applyFilter}
-        clearFilters={clearFilters}
-      />
+    leads?.leads &&
+    analytics && (
+      <>
+        <TechnoFiltersGroup
+          filters={getFiltersData()}
+          handleFilters={applyFilter}
+          clearFilters={clearFilters}
+        />
 
-      {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
+        {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
 
-      {leads?.leads && (
-        <TechnoDataTable
-          columns={columns}
-          data={leads.leads}
-          tableName="All Leads"
-          currentPage={page}
-          totalPages={totalPages}
-          pageLimit={limit}
-          onPageChange={handlePageChange}
-          onLimitChange={handleLimitChange}
-          onSearch={handleSearch}
-          searchTerm={search}
-          onSort={handleSortChange}
-          totalEntries={totalEntries}
-          handleViewMore={handleViewMore}
-          selectedRowId={selectedRowId}
-          setSelectedRowId={setSelectedRowId}
-        >
-          <FilterBadges
-            onFilterRemove={handleFilterRemove}
-            assignedToData={assignedToDropdownData}
-            appliedFilters={appliedFilters}
-          />
-        </TechnoDataTable>
-      )}
-      <TechnoRightDrawer
-        title={'Edit Lead Details'}
-        isOpen={isDrawerOpen}
-        onClose={() => {
-          setSelectedRowId(null);
-          setIsDrawerOpen(false);
-          setRefreshKey((prev) => prev + 1);
-        }}
-      >
-        {isDrawerOpen && editRow && (
-          <LeadViewEdit
-            setIsDrawerOpen={setIsDrawerOpen}
+        {leads?.leads && (
+          <TechnoDataTable
+            columns={columns}
+            data={leads.leads}
+            tableName="All Leads"
+            currentPage={page}
+            totalPages={totalPages}
+            pageLimit={limit}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            onSearch={handleSearch}
+            searchTerm={search}
+            onSort={handleSortChange}
+            totalEntries={totalEntries}
+            handleViewMore={handleViewMore}
+            selectedRowId={selectedRowId}
             setSelectedRowId={setSelectedRowId}
-            setRefreshKey={setRefreshKey}
-            key={editRow._id}
-            data={editRow}
-          />
+          >
+            <FilterBadges
+              onFilterRemove={handleFilterRemove}
+              assignedToData={assignedToDropdownData}
+              appliedFilters={appliedFilters}
+            />
+          </TechnoDataTable>
         )}
-      </TechnoRightDrawer>
-    </>
+        <TechnoRightDrawer
+          title={'Edit Lead Details'}
+          isOpen={isDrawerOpen}
+          onClose={() => {
+            setSelectedRowId(null);
+            setIsDrawerOpen(false);
+            setRefreshKey((prev) => prev + 1);
+          }}
+        >
+          {isDrawerOpen && editRow && (
+            <LeadViewEdit
+              setIsDrawerOpen={setIsDrawerOpen}
+              setSelectedRowId={setSelectedRowId}
+              setRefreshKey={setRefreshKey}
+              key={editRow._id}
+              data={editRow}
+            />
+          )}
+        </TechnoRightDrawer>
+      </>
+    )
   );
 }

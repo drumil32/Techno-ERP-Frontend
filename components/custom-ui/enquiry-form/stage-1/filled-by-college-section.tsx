@@ -42,12 +42,14 @@ interface FilledByCollegeSectionInterface {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  isViewable?: boolean;
 }
 
 const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   form,
   commonFieldClass,
-  commonFormItemClass
+  commonFormItemClass,
+  isViewable
 }) => {
   const results = useQueries({
     queries: [
@@ -88,7 +90,11 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isViewable}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select reference" />
                         </SelectTrigger>
@@ -111,6 +117,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
               <MultiSelectPopoverCheckbox
                 form={form}
                 className={commonFormItemClass}
+                disabled={isViewable}
                 name="telecaller"
                 label="Telecaller’s Name"
                 options={telecallers}
@@ -119,6 +126,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
               <MultiSelectPopoverCheckbox
                 form={form}
                 name="counsellor"
+                disabled={isViewable}
                 label="Counsellor’s Name"
                 options={counsellors}
                 placeholder="Select Counsellor's Name"

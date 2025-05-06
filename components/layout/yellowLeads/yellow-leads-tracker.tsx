@@ -33,7 +33,9 @@ import {
   marketingSourcesDropdown
 } from '../admin-tracker/helpers/fetch-data';
 import FootFallSelect from './foot-fall-select';
-
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
+import { SelectValue } from '@radix-ui/react-select';
+import Loading from '@/app/loading';
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -43,8 +45,8 @@ export default function YellowLeadsTracker() {
   const [editRow, setEditRow] = useState<any>(null);
 
   const [sortState, setSortState] = useState<any>({
-    sortBy: ['leadTypeModifiedDate', 'nextDueDate'],
-    orderBy: ['desc', 'desc']
+    sortBy: ['leadTypeModifiedDate'],
+    orderBy: ['desc']
   });
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
@@ -52,18 +54,14 @@ export default function YellowLeadsTracker() {
     if (column === 'nextDueDateView') {
       column = 'nextDueDate';
     }
+    if (column === 'dateView') {
+      column = 'date';
+    }
 
-    setSortState((prevState: any) => {
-      const currentIndex = prevState.sortBy.indexOf(column);
-      let newOrderBy = [...prevState.orderBy];
-      if (currentIndex != -1) {
-        newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == 'asc' ? 'desc' : 'asc';
-      }
-
-      return {
-        ...prevState,
-        orderBy: newOrderBy
-      };
+    setSortState({
+      ...sortState,
+      sortBy: [column],
+      orderBy: [order]
     });
 
     setPage(1);
@@ -242,7 +240,7 @@ export default function YellowLeadsTracker() {
   const columns = [
     { accessorKey: 'id', header: 'S. No.', meta: { align: 'center' } },
     { accessorKey: 'leadTypeModifiedDate', header: 'LTC Date', meta: { align: 'center' } },
-    { accessorKey: 'name', header: 'Name', meta: { align: 'left' } },
+    { accessorKey: 'name', header: 'Name', meta: { align: 'left', maxWidth: 120 } },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'areaView', header: 'Area', meta: { align: 'left' } },
     { accessorKey: 'cityView', header: 'City' },
@@ -260,22 +258,34 @@ export default function YellowLeadsTracker() {
           const previousValue = selectedStatus;
           setSelectedStatus(newValue);
 
+          const toastId = toast.loading('Updating footfall...', {
+            duration: Infinity
+          });
+
           const updatedData = {
             _id: row.original._id,
             footFall: newValue === FootFallStatus.true
           };
 
-          const response: LeadData | null = await apiRequest(
-            API_METHODS.PUT,
-            API_ENDPOINTS.updateYellowLead,
-            updatedData
-          );
+          try {
+            const response = await apiRequest(
+              API_METHODS.PUT,
+              API_ENDPOINTS.updateYellowLead,
+              updatedData
+            );
 
-          if (response) {
-            toast.success('Footfall status updated successfully');
-            setRefreshKey((prevKey) => prevKey + 1);
-          } else {
-            toast.error('Failed to update footfall status');
+            toast.dismiss(toastId);
+
+            if (response) {
+              toast.success('Footfall updated!', { duration: 1500 });
+              setRefreshKey((prevKey) => prevKey + 1);
+            } else {
+              toast.error('Update failed!', { duration: 1500 });
+              setSelectedStatus(previousValue);
+            }
+          } catch (error) {
+            toast.dismiss(toastId);
+            toast.error('Update failed!', { duration: 1500 });
             setSelectedStatus(previousValue);
           }
         };
@@ -291,44 +301,68 @@ export default function YellowLeadsTracker() {
       header: 'Follow Ups',
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.yellowLeadsFollowUpCount);
+        const toastIdRef = useRef<string | number | null>(null);
 
         const handleDropdownChange = async (newValue: number) => {
           const previousValue = selectedValue;
           setSelectedValue(newValue);
+
+          toastIdRef.current = toast.loading('Updating follow-up count...', {
+            duration: Infinity
+          });
 
           const filteredData = {
             _id: row.original._id,
             yellowLeadsFollowUpCount: newValue
           };
 
-          const response: LeadData | null = await apiRequest(
-            API_METHODS.PUT,
-            API_ENDPOINTS.updateYellowLead,
-            filteredData
-          );
-
-          if (response) {
-            toast.success('Follow-up count updated successfully');
-            setRefreshKey((prevKey) => prevKey + 1);
-          } else {
-            toast.error('Failed to update follow-up count');
+          try {
+            const response: LeadData | null = await apiRequest(
+              API_METHODS.PUT,
+              API_ENDPOINTS.updateYellowLead,
+              filteredData
+            );
+            toast.dismiss(toastIdRef.current);
+            if (response) {
+              toast.success('Follow-up count updated successfully', {
+                id: toastIdRef.current,
+                duration: 1500
+              });
+              setRefreshKey((prevKey) => prevKey + 1);
+            } else {
+              toast.error('Failed to update follow-up count', {
+                id: toastIdRef.current,
+                duration: 1500
+              });
+              setSelectedValue(previousValue);
+            }
+          } catch (error) {
+            toast.error('Failed to update follow-up count', {
+              id: toastIdRef.current,
+              duration: 1500
+            });
             setSelectedValue(previousValue);
+          } finally {
+            toastIdRef.current = null;
           }
         };
 
         return (
-          <select
-            value={selectedValue}
-            onChange={(e) => handleDropdownChange(Number(e.target.value))}
-            className="border bg-white rounded pl-1 pr-3 py-1 cursor-pointer"
-            aria-label="Follow-up count"
+          <Select
+            value={selectedValue.toString()}
+            onValueChange={(value) => handleDropdownChange(Number(value))}
           >
-            {Array.from({ length: selectedValue + 2 }, (_, i) => (
-              <option key={i} value={i}>
-                {i.toString().padStart(2, '0')}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-[60px] mx-auto min-h-[unset] h-8 text-sm">
+              <SelectValue placeholder="Select" />
+            </SelectTrigger>
+            <SelectContent className="w-[60px] min-w-[unset]">
+              {Array.from({ length: selectedValue + 2 }, (_, i) => (
+                <SelectItem key={i} value={i.toString()} className="text-sm h-8 justify-center">
+                  {i.toString().padStart(2, '0')}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         );
       }
     },
@@ -374,20 +408,22 @@ export default function YellowLeadsTracker() {
       }
     },
     { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } },
-    {
-      id: 'actions',
-      header: 'Actions',
-      meta: { align: 'center' },
-      cell: ({ row }: any) => (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
-        >
-          <span className="font-inter font-semibold text-[12px] text-primary ">View More</span>
-        </Button>
-      )
-    }
+    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } }
+
+    // {
+    //   id: 'actions',
+    //   header: 'Actions',
+    //   meta: { align: 'center' },
+    //   cell: ({ row }: any) => (
+    //     <Button
+    //       variant="ghost"
+    //       className="cursor-pointer"
+    //       onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
+    //     >
+    //       <span className="font-inter font-semibold text-[12px] text-primary ">View More</span>
+    //     </Button>
+    //   )
+    // }
   ];
 
   const cityDropdownQuery = useQuery({
@@ -506,59 +542,65 @@ export default function YellowLeadsTracker() {
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
+  if (!leads?.leads || !analytics) {
+    return <Loading />;
+  }
 
   return (
-    <>
-      <TechnoFiltersGroup
-        filters={getFiltersData()}
-        handleFilters={applyFilter}
-        clearFilters={clearFilters}
-      />
-      {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
-      {leads?.leads && (
-        <TechnoDataTable
-          columns={columns}
-          data={leads.leads}
-          tableName="Active Leads"
-          currentPage={page}
-          totalPages={totalPages}
-          pageLimit={limit}
-          onPageChange={handlePageChange}
-          onLimitChange={handleLimitChange}
-          onSearch={handleSearch}
-          searchTerm={search}
-          onSort={handleSortChange}
-          totalEntries={totalEntries}
-          handleViewMore={handleViewMore}
-          selectedRowId={selectedRowId}
-          setSelectedRowId={setSelectedRowId}
-        >
-          <FilterBadges
-            onFilterRemove={handleFilterRemove}
-            assignedToData={assignedToDropdownData}
-            appliedFilters={appliedFilters}
-          />
-        </TechnoDataTable>
-      )}
-      <TechnoRightDrawer
-        title={'Lead Details'}
-        isOpen={isDrawerOpen}
-        onClose={() => {
-          setSelectedRowId(null);
-          setIsDrawerOpen(false);
-          setRefreshKey((prev) => prev + 1);
-        }}
-      >
-        {isDrawerOpen && editRow && (
-          <YellowLeadViewEdit
-            setIsDrawerOpen={setIsDrawerOpen}
+    leads?.leads &&
+    analytics && (
+      <>
+        <TechnoFiltersGroup
+          filters={getFiltersData()}
+          handleFilters={applyFilter}
+          clearFilters={clearFilters}
+        />
+        {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
+        {leads?.leads && (
+          <TechnoDataTable
+            columns={columns}
+            data={leads.leads}
+            tableName="Active Leads"
+            currentPage={page}
+            totalPages={totalPages}
+            pageLimit={limit}
+            onPageChange={handlePageChange}
+            onLimitChange={handleLimitChange}
+            onSearch={handleSearch}
+            searchTerm={search}
+            onSort={handleSortChange}
+            totalEntries={totalEntries}
+            handleViewMore={handleViewMore}
+            selectedRowId={selectedRowId}
             setSelectedRowId={setSelectedRowId}
-            setRefreshKey={setRefreshKey}
-            key={editRow._id}
-            data={editRow}
-          />
+          >
+            <FilterBadges
+              onFilterRemove={handleFilterRemove}
+              assignedToData={assignedToDropdownData}
+              appliedFilters={appliedFilters}
+            />
+          </TechnoDataTable>
         )}
-      </TechnoRightDrawer>
-    </>
+        <TechnoRightDrawer
+          title={'Lead Details'}
+          isOpen={isDrawerOpen}
+          onClose={() => {
+            setSelectedRowId(null);
+            setIsDrawerOpen(false);
+            setRefreshKey((prev) => prev + 1);
+          }}
+        >
+          {isDrawerOpen && editRow && (
+            <YellowLeadViewEdit
+              setIsDrawerOpen={setIsDrawerOpen}
+              setSelectedRowId={setSelectedRowId}
+              setRefreshKey={setRefreshKey}
+              key={editRow._id}
+              data={editRow}
+            />
+          )}
+        </TechnoRightDrawer>
+      </>
+    )
   );
 }

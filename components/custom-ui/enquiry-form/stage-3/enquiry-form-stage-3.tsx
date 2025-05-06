@@ -40,6 +40,7 @@ import { updateEnquiryDraftStep3, updateEnquiryStep3 } from './helper/apirequest
 import { useRouter } from 'next/navigation';
 import { error } from 'console';
 import { EnquiryDocument } from './documents-section/single-document-form';
+import DocumentVerificationSection from './document-verification';
 
 export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).extend({
   confirmation: z.boolean().refine((value) => value === true, {
@@ -47,12 +48,11 @@ export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).e
   })
 });
 
-
 const EnquiryFormStage3 = () => {
   const queryClient = useQueryClient();
   const pathVariables = useParams();
   const id = pathVariables.id as string;
-  const [refreshKey, setRefreshKey] = useState(0)
+  const [refreshKey, setRefreshKey] = useState(0);
   const router = useRouter();
 
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
@@ -62,28 +62,46 @@ const EnquiryFormStage3 = () => {
     enabled: !!id
   });
 
-  const [currentDocuments, setCurrentDocuments] = useState<EnquiryDocument[]>(data?.documents as EnquiryDocument[] ?? []);
+  const [currentDocuments, setCurrentDocuments] = useState<EnquiryDocument[]>(
+    (data?.documents as EnquiryDocument[]) ?? []
+  );
 
   useEffect(() => {
-    setCurrentDocuments(data?.documents as EnquiryDocument[] ?? [])
-  }, [data])
+    setCurrentDocuments((data?.documents as EnquiryDocument[]) ?? []);
+  }, [data]);
 
-  const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
+  const {
+    isChecking: isRedirectChecking,
+    isCheckError: isRedirectError,
+    isViewable
+  } = useAdmissionRedirect({
     id,
     currentStage: ApplicationStatus.STEP_3
   });
 
   const form = useForm<z.infer<typeof formSchemaStep3>>({
     resolver: zodResolver(formSchemaStep3),
+    disabled: isViewable
   });
 
   async function saveDraft() {
     let values = form.getValues();
-    console.log(values)
 
-    // Remove null values from the entire object
+    // Extract the physicalDocumentNote separately before removing nulls
+    const documentNotes = values.physicalDocumentNote || [];
+
+    // Remove null values from the rest of the form
     values = removeNullValues(values);
 
+    //ignoring null issues from the document
+    values.physicalDocumentNote = documentNotes.map((note) => ({
+      type: note.type,
+      status: note.status,
+      dueBy: note.dueBy
+    }));
+
+    // Rest of your submission logic...because we really need to have somewhere undefined and few values
+    console.log('Submitting values:', values);
     // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep3Schema.shape);
     // Filter out values not in the schema
@@ -106,9 +124,10 @@ const EnquiryFormStage3 = () => {
         {} as Partial<Record<keyof typeof enquiryDraftStep3Schema.shape, true>>
       )
     );
-    console.log('Partial Schema',partialSchema);
+    console.log('Partial Schema', partialSchema);
 
     const validationResult = partialSchema.safeParse(filteredValues);
+    console.log('Filtered data is', filteredValues);
     // Clear previous errors before setting new ones
     form.clearErrors();
 
@@ -134,7 +153,7 @@ const EnquiryFormStage3 = () => {
           }
         });
       }
-      console.log(errors)
+      console.log(errors);
       setNestedErrors(errors);
       return;
     }
@@ -150,7 +169,7 @@ const EnquiryFormStage3 = () => {
     toast.success('Enquiry draft updated successfully');
 
     form.setValue('confirmation', false);
-    setRefreshKey((prev) => prev + 1)
+    setRefreshKey((prev) => prev + 1);
   }
 
   const onSubmit = async () => {
@@ -159,17 +178,6 @@ const EnquiryFormStage3 = () => {
     values = removeNullValues(values);
     const filteredData = filterBySchema(formSchemaStep3, values);
     console.log('Filtered Data:', filteredData);
-
-    const documentTypesPresent = currentDocuments.map((doc: any) => doc.type);
-    const missingDocuments = mandatoryDocuments.filter(
-      (requiredType) => !documentTypesPresent.includes(requiredType)
-    );
-
-    if (missingDocuments.length > 0) {
-      toast.error("Please upload all mandatory documents before proceeding.");
-      return;
-    }
-
 
     // remove confirmation field from values
     const { confirmation, _id, ...rest } = filteredData;
@@ -186,21 +194,20 @@ const EnquiryFormStage3 = () => {
       }
     }
 
-
-    console.log(rest)
+    console.log(rest);
 
     const enquiry: any = await updateEnquiryStep3(rest);
 
-    const response = await updateEnquiryStatus({
-      id: enquiry?._id,
-      newStatus: ApplicationStatus.STEP_4
-    });
+    // const response = await updateEnquiryStatus({
+    //   id: enquiry?._id,
+    //   newStatus: ApplicationStatus.STEP_4
+    // });
 
-    if (!response) {
-      toast.error('Failed to update enquiry status');
-      return;
-    }
-    toast.success('Enquiry status updated successfully');
+    // if (!response) {
+    //   toast.error('Failed to update enquiry status');
+    //   return;
+    // }
+    // toast.success('Enquiry status updated successfully');
 
     form.setValue('confirmation', false);
     form.reset();
@@ -218,12 +225,10 @@ const EnquiryFormStage3 = () => {
         ...sanitizedData,
         dateOfAdmission: sanitizedData.dateOfAdmission || format(new Date(), 'dd/MM/yyyy'),
         id: id,
-        confirmation: false,
+        confirmation: false
       });
-
     }
   }, [data, form, id, refreshKey, isLoading, isFetching]);
-
 
   const toastIdRef = useRef<string | number | null>(null);
 
@@ -285,25 +290,31 @@ const EnquiryFormStage3 = () => {
           {/* Student Details */}
           <StudentDetailsSectionStage3
             form={form}
+            isViewable={isViewable}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
 
           <MoreDetailsSection
             form={form}
+            isViewable={isViewable}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
+            enquiryDocuments={currentDocuments}
+            setCurrentDocuments={setCurrentDocuments}
           />
 
           {/* Address details */}
           <AddressDetailsSectionStage3
             form={form}
+            isViewable={isViewable}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
 
           {/* Academic Details */}
           <AcademicDetailsSectionStage3
+            isViewable={isViewable}
             form={form}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
@@ -314,18 +325,33 @@ const EnquiryFormStage3 = () => {
             commonFormItemClass={commonFormItemClass}
           />
 
-          <AllDocuments enquiryDocuments={currentDocuments} setCurrentDocuments={setCurrentDocuments} />
+          <DocumentVerificationSection form={form} isViewable={isViewable} />
+
+          {/* <AllDocuments
+            enquiryDocuments={currentDocuments}
+            setCurrentDocuments={setCurrentDocuments}
+          /> */}
 
           <ConfirmationSection form={form} />
           <OfficeUseSection
             form={form}
+            isViewable={isViewable}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
           <ScholarshipDetailsSection form={form} />
-          <ConfirmationCheckBoxStage3 form={form} />
-
-          <EnquiryFormFooter form={form} onSubmit={onSubmit} saveDraft={saveDraft} confirmationChecked={confirmationChecked} />
+          {!isViewable && (
+            <>
+              {' '}
+              <ConfirmationCheckBoxStage3 form={form} />
+              <EnquiryFormFooter
+                form={form}
+                onSubmit={onSubmit}
+                saveDraft={saveDraft}
+                confirmationChecked={confirmationChecked}
+              />
+            </>
+          )}
         </form>
       </Form>
     </>

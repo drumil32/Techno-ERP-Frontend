@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { BookPlus, Search } from 'lucide-react';
 import { formatApplicationStatus } from './helpers/format-application-status';
 import { CellContext } from '@tanstack/react-table';
+import { toast } from 'sonner';
 
 export default function AdmissionsLandingPage() {
   const [search, setSearch] = useState('');
@@ -25,6 +26,10 @@ export default function AdmissionsLandingPage() {
 
   const handleViewMore = (row: AdmissionTableRow) => {
     if (row && row.id) {
+      if (row.applicationStatus === 'Confirmed') {
+        toast.success('Your application is already confirmed');
+        return;
+      }
       router.push(
         SITE_MAP.ADMISSIONS.GO_TO_ENQUIRY(row._id, row.applicationStatus.toLocaleLowerCase())
       );

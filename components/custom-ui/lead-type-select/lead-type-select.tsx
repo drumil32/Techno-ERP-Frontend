@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDown, Check } from 'lucide-react';
 import { LeadType, LeadTypeMapper } from '@/types/enum';
 
@@ -24,29 +25,45 @@ export default function LeadTypeSelect({
   isDisable = false
 }: LeadTypeSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [dropdownStyles, setDropdownStyles] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+    placeAbove: false
+  });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useLayoutEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const dropdownHeight = 240;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const placeAbove = spaceBelow < dropdownHeight;
+      setDropdownStyles({
+        top: placeAbove ? rect.top - dropdownHeight : rect.bottom,
+        left: rect.left,
+        width: rect.width,
+        placeAbove
+      });
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (isDisable) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
+    const close = (e: MouseEvent) => {
+      if (!buttonRef.current?.contains(e.target as Node)) setIsOpen(false);
     };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
   }, [isDisable]);
 
   return (
-    <div className="relative w-[150px] mx-auto" ref={dropdownRef}>
+    <>
       <button
-        onClick={() => !isDisable && setIsOpen(!isOpen)}
+        ref={buttonRef}
+        onClick={() => !isDisable && setIsOpen((o) => !o)}
         disabled={isDisable}
-        className={`w-full flex items-center justify-between gap-2 rounded-[5px] text-sm font-medium px-3 py-1 ${typeStyles[value]} ${
+        className={`w-[150px] mx-auto flex items-center justify-between gap-2 rounded-[5px] text-sm font-medium px-3 py-1 ${typeStyles[value]} ${
           isDisable
             ? 'opacity-70 cursor-not-allowed'
             : 'hover:opacity-90 hover:border-slate-500 border-1 border-transparent'
@@ -58,23 +75,32 @@ export default function LeadTypeSelect({
         )}
       </button>
 
-      {isOpen && !isDisable && (
-        <div className="absolute z-10 mt-1 w-full bg-white rounded-[5px] shadow-lg border border-gray-200 py-1">
-          {Object.values(LeadType).map((type) => (
-            <div
-              key={type}
-              onClick={() => {
-                onChange(type);
-                setIsOpen(false);
-              }}
-              className={`flex items-center justify-between px-3 py-2 mx-1 rounded-[3px] text-sm font-medium cursor-pointer transition-colors hover:opacity-80 ${typeStyles[type]}`}
-            >
-              <span>{LeadTypeMapper[type]}</span>
-              {value === type && <Check className="w-4 h-4" />}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+      {isOpen &&
+        createPortal(
+          <div
+            className="fixed z-50 bg-white rounded-[5px] shadow-lg border border-gray-200 py-1"
+            style={{
+              top: dropdownStyles.top,
+              left: dropdownStyles.left,
+              width: dropdownStyles.width
+            }}
+          >
+            {Object.values(LeadType).map((type) => (
+              <div
+                key={type}
+                onClick={() => {
+                  onChange(type);
+                  setIsOpen(false);
+                }}
+                className={`flexitems-center justify-between px-3 py-2 mx-1 rounded-[3px] text-sm font-medium cursor-pointer transition-colors hover:opacity-80 ${typeStyles[type]}`}
+              >
+                <span>{LeadTypeMapper[type]}</span>
+                {value === type && <Check className="w-4 h-4" />}
+              </div>
+            ))}
+          </div>,
+          document.body
+        )}
+    </>
   );
 }

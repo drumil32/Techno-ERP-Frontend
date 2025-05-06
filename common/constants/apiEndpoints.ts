@@ -14,6 +14,7 @@ export const API_ENDPOINTS = {
   isAuthenticated: `${API_DOMAIN}/auth/is-authenticated`,
 
   // Marketing
+  uploadMarketingData: `${API_DOMAIN}/crm/upload`,
   getAllLeads: `${API_DOMAIN}/crm/fetch-data`,
   getAllLeadsAnalytics: `${API_DOMAIN}/crm/analytics`,
   fetchAssignedToDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=MARKETING`,
@@ -41,9 +42,11 @@ export const API_ENDPOINTS = {
   fetchCounsellorsDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=COUNSELOR&moduleName=ADMISSION`,
   fetchMarketingSourcesDropdown: `${API_DOMAIN}/dropdown/${DropDownType.MARKETING_SOURCE}`,
   fetchCityDropdown: `${API_DOMAIN}/dropdown/${DropDownType.MARKETING_CITY}`,
-  fetchFixCityDropdown: `${API_DOMAIN}/dropdown/${DropDownType.FIX_CITY}`,
+  fetchFixCityDropdown: `${API_DOMAIN}/dropdown/${DropDownType.FIX_MARKETING_CITY}`,
   fetchCourseDropdown: `${API_DOMAIN}/dropdown/${DropDownType.MARKETING_COURSE_CODE}`,
-  fetchFixCourseDropdown: `${API_DOMAIN}/dropdown/${DropDownType.FIX_COURSE_CODE}`,
+  fetchFixCourseDropdown: `${API_DOMAIN}/dropdown/${DropDownType.FIX_MARKETING_COURSE_CODE}`,
+  fetchFixCourseCodesDropdown: `${API_DOMAIN}/course-metadata/course-code`,
+
   fetchDistricts: `${API_DOMAIN}/dropdown/${DropDownType.DISTRICT}`,
 
   // Fees Details
@@ -58,12 +61,14 @@ export const API_ENDPOINTS = {
 
   createEnquiryStep4: `${API_DOMAIN}/admission/enquiry/step-4`,
   updateEnquiryStep4: `${API_DOMAIN}/admission/enquiry/step-4`,
+  approveEnquiry: `${API_DOMAIN}/admission/enquiry/approve-enquiry`,
 
   updateEnquiryDraftStep3: `${API_DOMAIN}/admission/enquiry/save-draft-step-3`,
   updateEnquiryStep3: `${API_DOMAIN}/admission/enquiry/step-3`,
 
   // Document Upload
   uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,
+  fetchDocumentsByCourse: `${API_DOMAIN}/course-metadata`,
 
   //Department Meta Data
   createDepartmentMetaData: `${API_DOMAIN}/department-metadata`,

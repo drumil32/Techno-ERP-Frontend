@@ -52,6 +52,7 @@ import EnquiryFormFooter from '../stage-1/enquiry-form-footer-section';
 import { DatePicker } from '@/components/ui/date-picker';
 import { MultiSelectPopoverCheckbox } from '../../common/multi-select-popover-checkbox';
 import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
+import Loading from '@/app/loading';
 
 export const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -104,18 +105,16 @@ export const StudentFeesForm = () => {
   const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
   const router = useRouter();
 
-  const { isChecking: isRedirectChecking, isCheckError: isRedirectError } = useAdmissionRedirect({
+  const {
+    isChecking: isRedirectChecking,
+    isCheckError: isRedirectError,
+    isViewable
+  } = useAdmissionRedirect({
     id: enquiry_id,
     currentStage: ApplicationStatus.STEP_2
   });
 
   // Queries
-  const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
-    queryKey: ['otherFeesData'],
-    queryFn: getOtherFees,
-    refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5
-  });
 
   const {
     data: enquiryData,
@@ -156,8 +155,9 @@ export const StudentFeesForm = () => {
     isLoading: isLoadingSemFees
   } = useQuery<any>({
     queryKey: ['courseFees', courseName],
-    queryFn: () =>
-      courseName ? getFeesByCourseName(courseName) : Promise.reject('Course name not available'),
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5,
+    queryFn: () => getFeesByCourseName(courseName),
     enabled: !!courseName
   });
 
@@ -191,7 +191,16 @@ export const StudentFeesForm = () => {
       confirmationCheck: false,
       otpTarget: undefined,
       otpVerificationEmail: null
-    }
+    },
+    disabled: isViewable
+  });
+
+  const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
+    queryKey: ['otherFeesData'],
+    queryFn: () => getOtherFees(courseName),
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5,
+    enabled: !!courseName
   });
 
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmationCheck' });
@@ -208,6 +217,10 @@ export const StudentFeesForm = () => {
     control: form.control,
     name: 'otherFees'
   });
+
+  useEffect(() => {
+    console.log('other fees data is ', otherFeesData);
+  }, otherFeesData);
 
   const selectedOtpTarget = useWatch({ control: form.control, name: 'otpTarget' });
 
@@ -228,7 +241,7 @@ export const StudentFeesForm = () => {
       let initialSemFees: any[] = [];
       let initialOtherFees: any[] = [];
 
-      const baseSem1Fee = semWiseFeesData.fee?.[0];
+      const baseSem1Fee = semWiseFeesData[0];
 
       const existingSem1FeeDataInOther = feeDataSource?.otherFees?.find(
         (fee: any) => fee.type === FeeType.SEM1FEE
@@ -242,7 +255,7 @@ export const StudentFeesForm = () => {
           existingSem1FeeDataInSemWise?.finalFee ??
           baseSem1Fee ??
           undefined,
-        fee: baseSem1Fee,
+        amount: baseSem1Fee,
         feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined
       };
 
@@ -270,7 +283,7 @@ export const StudentFeesForm = () => {
       initialOtherFees.unshift(sem1FeeObject);
       otherFeesData.unshift(sem1FeeObject);
 
-      const courseSemFeeStructure = semWiseFeesData.fee || [];
+      const courseSemFeeStructure = semWiseFeesData || [];
       const existingSemFees = feeDataSource?.semWiseFees || [];
 
       initialSemFees = courseSemFeeStructure.map((baseFeeAmount: number, index: number) => {
@@ -337,7 +350,7 @@ export const StudentFeesForm = () => {
     let initialSemFees = [];
     let initialOtherFees = [];
 
-    const baseSem1Fee = semWiseFeesData?.fee?.[0];
+    const baseSem1Fee = semWiseFeesData[0];
 
     const existingSem1FeeDataInOther = feeDataSource.otherFees?.find(
       (fee: any) => fee.type === FeeType.SEM1FEE
@@ -351,7 +364,7 @@ export const StudentFeesForm = () => {
         existingSem1FeeDataInSemWise?.finalFee ??
         baseSem1Fee ??
         undefined,
-      fee: baseSem1Fee,
+      amount: baseSem1Fee,
       feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined
     };
 
@@ -374,7 +387,7 @@ export const StudentFeesForm = () => {
 
     initialOtherFees.unshift(sem1FeeObject as any);
 
-    const courseSemFeeStructure = semWiseFeesData?.fee || [];
+    const courseSemFeeStructure = semWiseFeesData || [];
     const existingSemFees = feeDataSource?.semWiseFees || [];
 
     initialSemFees = courseSemFeeStructure.map((baseFeeAmount: any, index: any) => {
@@ -636,9 +649,7 @@ export const StudentFeesForm = () => {
   }
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
-    return (
-      <div className="flex justify-center items-center h-full">Loading fee enquiryData...</div>
-    );
+    return <Loading />;
   }
 
   return (
@@ -657,7 +668,7 @@ export const StudentFeesForm = () => {
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-2/3">
-                <div className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 px-2 pb-1 font-bold text-[16px]">
+                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-5 grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 rounded-[5px] text-[16px]">
                   <div>Fees Details</div>
                   <div className="text-right">Schedule</div>
                   <div className="text-right">Fees</div>
@@ -669,8 +680,13 @@ export const StudentFeesForm = () => {
 
                 {otherFeesFields.map((field, index) => {
                   const feeType = form.getValues(`otherFees.${index}.type`);
-                  const originalFeeData = otherFeesData?.find((fee: any) => fee.type === feeType);
-                  const totalFee = originalFeeData?.fee;
+                  const originalFeeData = otherFeesData?.find((fee: any) =>
+                    fee.type === FeeType.SEM1FEE
+                      ? fee.type === feeType
+                      : fee.type === displayFeeMapper(feeType)
+                  );
+                  const totalFee = originalFeeData?.amount;
+
                   const finalFee = otherFeesWatched?.[index]?.finalFee;
                   const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
                   const discountValue = calculateDiscountPercentage(totalFee, finalFee);
@@ -681,7 +697,7 @@ export const StudentFeesForm = () => {
                   return (
                     <div
                       key={field.id}
-                      className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-8 gap-y-8 items-start px-2 py-1 my-4"
+                      className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-8 gap-y-8 items-start px-2 py-1 "
                     >
                       <div className="pt-2 text-sm">{displayFeeMapper(feeType)}</div>
                       <div className="pt-2 text-sm text-right">{scheduleFeeMapper(feeType)}</div>
@@ -750,7 +766,7 @@ export const StudentFeesForm = () => {
                   );
                 })}
 
-                <div className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mt-2 px-2 py-2 border-t font-semibold">
+                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-5 rounded-[5px] grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mt-2  border-t ">
                   <div className="text-sm">Total Fees</div>
                   <div>{/* Empty cell for Schedule */}</div>
                   <div className="text-sm text-right">
@@ -782,6 +798,7 @@ export const StudentFeesForm = () => {
                     control={form.control}
                     name="feesClearanceDate"
                     label="Fees Clearance Date"
+                    disabled={isViewable}
                     placeholder="Pick a Date"
                     showYearMonthDropdowns={true}
                     formItemClassName="w-[300px]"
@@ -806,9 +823,9 @@ export const StudentFeesForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-2/3">
+              <div className="w-max">
                 <div className="space-y-4">
-                  <div className="grid grid-cols-[1fr_0.5fr_1fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 px-2 pb-1 border-b">
+                  <div className="grid bg-[#F7F7F7] rounded-[5px] text-[#4E4E4E] p-5 grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-3 gap-y-2 mb-2pb-1 border-b">
                     <div className="font-medium text-sm text-gray-600">Semester</div>
                     <div className="font-medium text-sm text-gray-600 text-right">Fees</div>
                     <div className="font-medium text-sm text-gray-600 text-center">Final Fees</div>
@@ -818,7 +835,8 @@ export const StudentFeesForm = () => {
                   </div>
 
                   {semFields.map((field, index) => {
-                    const originalFeeAmount = semWiseFeesData?.fee?.[index];
+                    console.log('Sem Fields', field, index);
+                    const originalFeeAmount = semWiseFeesData[index];
                     const finalFee = semWiseFeesWatched?.[index]?.finalFee;
                     const discountValue = calculateDiscountPercentage(originalFeeAmount, finalFee);
                     const discountDisplay =
@@ -826,7 +844,7 @@ export const StudentFeesForm = () => {
                     return (
                       <div
                         key={field.id}
-                        className="grid grid-cols-[1fr_0.5fr_1fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 items-start px-2 py-1"
+                        className="grid w-max h-max grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-3 gap-y-2 items-start px-2 py-1"
                       >
                         <div className="pt-2 text-sm">Semester {index + 1}</div>
                         <div className="pt-2 text-sm text-right">
@@ -887,6 +905,7 @@ export const StudentFeesForm = () => {
                 <MultiSelectPopoverCheckbox
                   form={form}
                   name="counsellor"
+                  disabled={isViewable}
                   label="Counsellor’s Name"
                   options={counsellors}
                   placeholder="Select Counsellor's Name"
@@ -895,6 +914,7 @@ export const StudentFeesForm = () => {
                 <MultiSelectPopoverCheckbox
                   form={form}
                   name="telecaller"
+                  disabled={isViewable}
                   label="Telecaller’s Name"
                   options={telecallers}
                   placeholder="Select Telecaller's Name"
@@ -1009,22 +1029,26 @@ export const StudentFeesForm = () => {
           </AccordionItem>
         </Accordion>
 
-        <ConfirmationCheckBox
-          form={form}
-          name="confirmationCheck"
-          label="All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will be charged extra based on LU/AKTU norms."
-          id="checkbox-for-step2"
-          className="flex flex-row items-start bg-white rounded-md p-4"
-        />
+        {!isViewable && (
+          <ConfirmationCheckBox
+            form={form}
+            name="confirmationCheck"
+            label="All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will be charged extra based on LU/AKTU norms."
+            id="checkbox-for-step2"
+            className="flex flex-row items-start bg-white rounded-md p-4"
+          />
+        )}
 
-        <EnquiryFormFooter
-          form={form}
-          saveDraft={handleSaveDraft}
-          onSubmit={onSubmit}
-          isSavingDraft={isSavingDraft}
-          confirmationChecked={!!confirmationChecked}
-          draftExists={draftExists}
-        />
+        {!isViewable && (
+          <EnquiryFormFooter
+            form={form}
+            saveDraft={handleSaveDraft}
+            onSubmit={onSubmit}
+            isSavingDraft={isSavingDraft}
+            confirmationChecked={!!confirmationChecked}
+            draftExists={draftExists}
+          />
+        )}
       </form>
     </Form>
   );

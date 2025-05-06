@@ -16,7 +16,7 @@ export const addressSchema = z.object({
     .string()
     .regex(/^[1-9][0-9]{5}$/, 'Pincode must be a 6-digit number starting with a non-zero digit'),
 
-  district: z.nativeEnum(Districts),
+  district: z.string(),
   state: z.nativeEnum(StatesOfIndia),
   country: z.nativeEnum(Countries)
 });

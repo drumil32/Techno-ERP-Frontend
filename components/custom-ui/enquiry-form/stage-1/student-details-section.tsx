@@ -22,7 +22,7 @@ import { CalendarDaysIcon } from 'lucide-react';
 
 // Utilities
 import { toPascal } from '@/lib/utils';
-import { format } from 'date-fns';
+import { format, isAfter, isBefore, startOfDay } from 'date-fns';
 
 // Enums and Constants
 import {
@@ -38,19 +38,34 @@ import {
 import React from 'react';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
 import { DatePicker } from '@/components/ui/date-picker';
+import { useQuery } from '@tanstack/react-query';
+import {
+  cityDropdown,
+  fixCityDropdown,
+  fixCourseDropdown
+} from '@/components/layout/admin-tracker/helpers/fetch-data';
+import { fixCourseCodeDropdown } from './helpers/fetch-data';
 
 // Props Interface
 interface StudentDetailsFormPropInterface<T extends FieldValues = FieldValues> {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  isViewable?: boolean;
 }
 
 const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
   form,
   commonFormItemClass,
-  commonFieldClass
+  commonFieldClass,
+  isViewable
 }) => {
+  const fixCoursesQuery = useQuery({
+    queryKey: ['courses'],
+    queryFn: fixCourseCodeDropdown
+  });
+  const courses = Array.isArray(fixCoursesQuery.data) ? fixCoursesQuery.data : [];
+
   return (
     <Accordion type="single" collapsible defaultValue="student-details">
       <AccordionItem value="student-details">
@@ -77,6 +92,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
+                        disabled={isViewable}
                         defaultValue={AdmissionMode.OFFLINE}
                       >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
@@ -105,6 +121,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 control={form.control}
                 name="dateOfEnquiry"
                 formItemClassName={commonFormItemClass}
+                disabled={isViewable}
                 label="Date of Enquiry"
                 placeholder="Select Enquiry Date"
                 showYearMonthDropdowns={true}
@@ -350,6 +367,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 name="dateOfBirth"
                 label="Date of Birth"
                 placeholder="Select Date of Birth"
+                disabled={isViewable}
                 formItemClassName={commonFormItemClass}
                 showYearMonthDropdowns={true}
                 labelClassName="font-inter font-normal text-[12px] text-[#666666]"
@@ -374,7 +392,11 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isViewable}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select category" />
                         </SelectTrigger>
@@ -405,7 +427,11 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isViewable}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Gender" />
                         </SelectTrigger>
@@ -436,14 +462,18 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isViewable}
+                      >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select course" />
                         </SelectTrigger>
                         <SelectContent>
-                          {Object.values(Course).map((course) => (
+                          {Object.values(courses).map((course) => (
                             <SelectItem key={course} value={course}>
-                              {CourseNameMapper[course as Course]}
+                              {course}
                             </SelectItem>
                           ))}
                         </SelectContent>

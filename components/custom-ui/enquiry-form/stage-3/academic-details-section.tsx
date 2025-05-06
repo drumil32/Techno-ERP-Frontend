@@ -19,12 +19,14 @@ interface AcademicDetailsSectionInterface {
   form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
   commonFormItemClass: string;
   commonFieldClass: string;
+  isViewable?: boolean;
 }
 
 const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = ({
   form,
   commonFieldClass,
-  commonFormItemClass
+  commonFormItemClass,
+  isViewable
 }) => {
   const [isValid, setIsValid] = useState(false);
   const [validationLog, setValidationLog] = useState<string[]>([]);
@@ -123,7 +125,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
   }, []);
 
   return (
-    <Accordion type="single" collapsible>
+    <Accordion type="single" collapsible defaultValue="student-details">
       <AccordionItem value="student-details">
         <div className="space-y-2">
           <AccordionTrigger className="w-full items-center">
@@ -284,7 +286,11 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <TagInput value={field.value || []} onChange={field.onChange} />
+                          <TagInput
+                            disabled={isViewable}
+                            value={field.value || []}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <div className="h-[20px]">
                           <FormMessage className="text-[11px]" />
@@ -424,7 +430,11 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <TagInput value={field.value || []} onChange={field.onChange} />
+                          <TagInput
+                            disabled={isViewable}
+                            value={field.value || []}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <div className="h-[20px]">
                           <FormMessage className="text-[11px]" />
@@ -564,7 +574,11 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                           Subjects
                         </FormLabel>
                         <FormControl>
-                          <TagInput value={field.value || []} onChange={field.onChange} />
+                          <TagInput
+                            disabled={isViewable}
+                            value={field.value || []}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <div className="h-[20px]">
                           <FormMessage className="text-[11px]" />

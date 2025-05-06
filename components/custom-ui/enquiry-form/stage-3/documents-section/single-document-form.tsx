@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { format, isBefore, parseISO, startOfDay } from 'date-fns';
 import { useCallback, useRef, useState, DragEvent, ChangeEvent, useEffect } from 'react';
@@ -31,6 +31,7 @@ interface SingleEnquiryUploadDocumentProps {
   acceptedFileTypes?: string;
   onUploadSuccess?: (response: any) => void;
   onUploadError?: (error: any) => void;
+  isViewable?: boolean;
 }
 
 export interface EnquiryDocument {
@@ -75,7 +76,8 @@ export const SingleEnquiryUploadDocument = ({
   existingDocument,
   acceptedFileTypes = '.pdf,.jpeg,.jpg,.png',
   onUploadSuccess,
-  onUploadError
+  onUploadError,
+  isViewable
 }: SingleEnquiryUploadDocumentProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dueDate, setDueDate] = useState<Date | undefined>(() => {
@@ -212,17 +214,20 @@ export const SingleEnquiryUploadDocument = ({
         formDataPayload.append('dueBy', formatedDate);
       }
 
-      const response:any = await uploadDocumentAPI(formDataPayload);
+      const response: any = await uploadDocumentAPI(formDataPayload);
 
       const updatedDocuments = response?.documents;
 
       if (onUploadSuccess && Array.isArray(updatedDocuments)) {
-        console.log("Calling onUploadSuccess with updated documents array.");
-        onUploadSuccess(updatedDocuments); 
-        setSelectedFile(null); 
-        resetFileInput(); 
+        console.log('Calling onUploadSuccess with updated documents array.');
+        onUploadSuccess(updatedDocuments);
+        setSelectedFile(null);
+        resetFileInput();
       } else if (onUploadSuccess) {
-        console.error("Upload successful, but response.documents is not an array or missing:", response);
+        console.error(
+          'Upload successful, but response.documents is not an array or missing:',
+          response
+        );
       }
       setStatus({
         type: 'success',
@@ -268,12 +273,14 @@ export const SingleEnquiryUploadDocument = ({
 
   return (
     <div className="w-2/3 py-3 border-b border-gray-200 last:border-b-0">
-      <div className="flex justify-between items-start mb-2">
-        <Label className="text-sm font-semibold text-gray-800 flex">
-          {getReadableDocumentName(documentType)}
+      <div className="flex justify-between items-start  min-w-max gap-10 mb-4">
+        <div className="flex items-center gap-2 min-w-[120px]">
+          <Label className="text-sm font-semibold text-gray-800 whitespace-nowrap">
+            {getReadableDocumentName(documentType)}
+          </Label>
           {existingDocument && (
             <svg
-              className="h-5 w-5"
+              className="h-4 w-4 flex-shrink-0"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -291,208 +298,225 @@ export const SingleEnquiryUploadDocument = ({
               />
             </svg>
           )}
-        </Label>
+        </div>
+
         {displayExistingDocument && (
-          <div className="text-xs text-gray-600 bg-blue-50 p-2 rounded border border-blue-200 flex items-center gap-2">
-            <FileText className="h-4 w-4 text-blue-600 flex-shrink-0" />
-            <div className="overflow-hidden">
-              <a
-                href={existingDocument.fileUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-blue-700 hover:underline truncate block"
-                title={`View ${existingFilename}`}
-              >
-                {existingFilename}
-              </a>
-              <span className="text-gray-500 block">Due: {existingDueDateFormatted}</span>
+          <div className="flex-1 bg-[#4E2ECC]/5 w-max border border-[#4E2ECC]/30 rounded-lg p-3 hover:border-[#4E2ECC]/50 transition-colors">
+            <div className="flex items-center justify-between gap-3 w-full">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="bg-[#4E2ECC]/10 p-2 rounded">
+                  <FileText className="h-4 w-4 text-[#4E2ECC] flex-shrink-0" />
+                </div>
+                <div className="min-w-0">
+                  <a
+                    href={existingDocument.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-sm font-medium text-[#4E2ECC] hover:underline truncate"
+                    title={existingFilename}
+                  >
+                    {existingFilename}
+                  </a>
+                  <span className="text-xs w-max text-gray-600">
+                    Due: {existingDueDateFormatted}
+                  </span>
+                </div>
+              </div>
+              <div className="text-[#4E2ECC] hover:text-[#4E2ECC]/80 p-2 rounded-full hover:bg-[#4E2ECC]/10 flex-shrink-0">
+                <a
+                  title={'Open ' + getReadableDocumentName(documentType) + ' in New tab'}
+                  href={existingDocument.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <LinkIcon className="h-4 w-4" />
+                </a>
+              </div>
             </div>
-            <a
-              href={existingDocument.fileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Open document in new tab"
-              className="ml-1 text-blue-500 hover:text-blue-700 flex-shrink-0"
-            >
-              <LinkIcon className="h-4 w-4" />
-            </a>
           </div>
         )}
       </div>
-      <div className="flex flex-col sm:flex-row justify-between items-start gap-3 w-full">
-        <div className="">
-          {!isLoading &&
-            <div className='flex gap-2 mt-2'>
-              <Label
-                htmlFor={uniqueInputId}
-                className={cn(
-                  'flex flex-col items-center justify-center w-full sm:w-64 md:w-80 lg:w-96', // Responsive width
-                  'border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200 ease-in-out',
-                  'relative h-20', // Fixed height
-                  isDragging
-                    ? 'border-indigo-500 bg-indigo-50'
-                    : 'border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-gray-400'
-                )}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-              >
-                <div className="flex gap-3 items-center justify-center text-center pointer-events-none px-3 py-2">
-                  <UploadCloud
-                    className={cn('w-6 h-6', isDragging ? 'text-indigo-500' : 'text-gray-400')}
-                    aria-hidden="true"
-                  />
-                  <div className="text-left">
-                    <p className="text-xs text-gray-600">
-                      <span className="font-medium">Drop file or</span>{' '}
-                      <span className="font-semibold text-indigo-600 hover:underline">Choose</span>
-                      {existingDocument && <span className="font-medium"> to add/replace</span>}
-                    </p>
-                    <p className="text-[11px] text-gray-500">PDF, JPG, PNG supported</p>
-                  </div>
-                </div>
-                <Input
-                  id={uniqueInputId}
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="sr-only"
-                  disabled={isLoading}
-                  accept={acceptedFileTypes}
-                />
-              </Label>
-              {selectedFile && (
-                <div
-                  className={cn(
-                    'flex items-center justify-between gap-3 p-2 h-20',
-                    'border border-purple-200 bg-purple-50 rounded-lg',
-                    'w-full sm:w-64 md:w-80 lg:w-96'
-                  )}
-                >
-                  <div className="flex items-center gap-2 overflow-hidden">
-                    <FileText className="h-5 w-5 text-purple-600 flex-shrink-0" />
-                    <div className="flex flex-col overflow-hidden">
-                      <span
-                        className="text-sm font-medium text-purple-800 truncate"
-                        title={selectedFile.name}
-                      >
-                        {selectedFile.name}
-                      </span>
-                      <span className="text-xs text-purple-600">
-                        {formatFileSize(selectedFile.size)}
-                      </span>
-                    </div>
-                  </div>
-                  {/* Remove Button */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-6 w-6 text-purple-500 hover:bg-purple-100 hover:text-purple-700 flex-shrink-0 rounded-full"
-                    onClick={handleRemoveFile}
-                    aria-label="Remove file"
-                    disabled={isLoading}
+
+      {!isViewable && (
+        <>
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-3 w-full">
+            <div className="">
+              {!isLoading && (
+                <div className="flex gap-2 mt-2">
+                  <Label
+                    htmlFor={uniqueInputId}
+                    className={cn(
+                      'flex flex-col items-center justify-center w-full sm:w-64 md:w-80 lg:w-96', // Responsive width
+                      'border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-200 ease-in-out',
+                      'relative h-20', // Fixed height
+                      isDragging
+                        ? 'border-indigo-500 bg-indigo-50'
+                        : 'border-gray-300 bg-gray-50 hover:bg-gray-100 hover:border-gray-400'
+                    )}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
                   >
-                    <X className="h-4 w-4" />
-                  </Button>
+                    <div className="flex gap-3 items-center justify-center text-center pointer-events-none px-3 py-2">
+                      <UploadCloud
+                        className={cn('w-6 h-6', isDragging ? 'text-indigo-500' : 'text-gray-400')}
+                        aria-hidden="true"
+                      />
+                      <div className="text-left">
+                        <p className="text-xs text-gray-600">
+                          <span className="font-medium">Drop file or</span>{' '}
+                          <span className="font-semibold text-indigo-600 hover:underline">
+                            Choose
+                          </span>
+                          {existingDocument && <span className="font-medium"> to add/replace</span>}
+                        </p>
+                        <p className="text-[11px] text-gray-500">PDF, JPG, PNG supported</p>
+                      </div>
+                    </div>
+                    <Input
+                      id={uniqueInputId}
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="sr-only"
+                      disabled={isLoading}
+                      accept={acceptedFileTypes}
+                    />
+                  </Label>
+                  {selectedFile && (
+                    <div
+                      className={cn(
+                        'flex items-center justify-between gap-3 p-2 h-20',
+                        'border border-purple-200 bg-purple-50 rounded-lg',
+                        'w-full sm:w-64 md:w-80 lg:w-96'
+                      )}
+                    >
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <FileText className="h-5 w-5 text-purple-600 flex-shrink-0" />
+                        <div className="flex flex-col overflow-hidden">
+                          <span
+                            className="text-sm font-medium text-purple-800 truncate"
+                            title={selectedFile.name}
+                          >
+                            {selectedFile.name}
+                          </span>
+                          <span className="text-xs text-purple-600">
+                            {formatFileSize(selectedFile.size)}
+                          </span>
+                        </div>
+                      </div>
+                      {/* Remove Button */}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-purple-500 hover:bg-purple-100 hover:text-purple-700 flex-shrink-0 rounded-full"
+                        onClick={handleRemoveFile}
+                        aria-label="Remove file"
+                        disabled={isLoading}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {isLoading && (
+                <div className="flex items-center justify-center h-20 w-full sm:w-64 md:w-80 lg:w-96 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 text-sm">
+                  Processing...
                 </div>
               )}
             </div>
-          }
 
-          {isLoading && (
-            <div className="flex items-center justify-center h-20 w-full sm:w-64 md:w-80 lg:w-96 border border-gray-200 rounded-lg bg-gray-50 text-gray-500 text-sm">
-              Processing...
-            </div>
-          )}
-        </div>
-
-        <div className='flex gap-4'>
-          {/* Due Date Area */}
-          <div className="flex-shrink-0 w-full sm:w-auto">
-            <Label
-              htmlFor={`due-date-picker-${uniqueInputId}`}
-              className="text-xs font-medium text-gray-600 mb-1 block "
-            >
-              Due by
-            </Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  id={`due-date-picker-${uniqueInputId}`}
-                  variant={'outline'}
-                  className={cn(
-                    'w-full sm:w-[197px] justify-start text-left font-normal h-10 rounded-[5px]',
-                    !dueDate && 'text-muted-foreground',
-                    // Add red border if date is selected but invalid
-                    dueDate &&
-                    isBefore(dueDate, startOfDay(new Date())) &&
-                    'border-red-500 focus-visible:ring-red-500'
-                  )}
-                  disabled={isLoading}
+            <div className="flex gap-4">
+              {/* Due Date Area */}
+              <div className="flex-shrink-0 w-full sm:w-auto">
+                <Label
+                  htmlFor={`due-date-picker-${uniqueInputId}`}
+                  className="text-xs font-medium text-gray-600 mb-1 block "
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dueDate ? (
-                    format(dueDate, 'dd/MM/yy')
+                  Due by
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      id={`due-date-picker-${uniqueInputId}`}
+                      variant={'outline'}
+                      className={cn(
+                        'w-full sm:w-[197px] justify-start text-left font-normal h-10 rounded-[5px]',
+                        !dueDate && 'text-muted-foreground',
+                        // Add red border if date is selected but invalid
+                        dueDate &&
+                          isBefore(dueDate, startOfDay(new Date())) &&
+                          'border-red-500 focus-visible:ring-red-500'
+                      )}
+                      disabled={isLoading}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {dueDate ? (
+                        format(dueDate, 'dd/MM/yy')
+                      ) : (
+                        <span className="text-xs">Pick Due Date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={dueDate}
+                      onSelect={handleDueDateSelect}
+                      initialFocus
+                      disabled={isLoading || ((date) => isBefore(date, startOfDay(new Date())))}
+                      captionLayout={'dropdown-buttons'}
+                      fromYear={new Date().getFullYear() - 100}
+                      toYear={new Date().getFullYear() + 10}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              {/* Upload Button */}
+              <div className="flex-shrink-0 w-full sm:w-auto">
+                {/* Spacer for alignment on small screens */}
+                <Label className="text-xs font-medium text-transparent select-none mb-1 block">
+                  .
+                </Label>
+                <Button
+                  variant={'outline'}
+                  onClick={handleUpload}
+                  disabled={!canUpload} // Use the calculated canUpload state
+                  className="w-full sm:w-auto h-10"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...
+                    </>
                   ) : (
-                    <span className="text-xs">Pick Due Date</span>
+                    <>
+                      <Upload className="mr-2 h-4 w-4" /> Update {/* Changed text to Update */}
+                    </>
                   )}
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={dueDate}
-                  onSelect={handleDueDateSelect}
-                  initialFocus
-                  disabled={isLoading || ((date) => isBefore(date, startOfDay(new Date())))}
-                  captionLayout={"dropdown-buttons"}
-                  fromYear={new Date().getFullYear() - 100}
-                  toYear={new Date().getFullYear() + 10}
-                />
-              </PopoverContent>
-            </Popover>
+              </div>
+            </div>
           </div>
-
-          {/* Upload Button */}
-          <div className="flex-shrink-0 w-full sm:w-auto">
-            {/* Spacer for alignment on small screens */}
-            <Label className="text-xs font-medium text-transparent select-none mb-1 block">
-              .
-            </Label>
-            <Button
-              variant={'outline'}
-              onClick={handleUpload}
-              disabled={!canUpload} // Use the calculated canUpload state
-              className="w-full sm:w-auto h-10"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...
-                </>
-              ) : (
-                <>
-                  <Upload className="mr-2 h-4 w-4" /> Update {/* Changed text to Update */}
-                </>
+          {/* Status Messages - Placed below the controls */}
+          {status && (
+            <div
+              className={cn(
+                'mt-2 flex items-center text-xs px-1',
+                status.type === 'error' ? 'text-red-600' : 'text-green-600'
               )}
-            </Button>
-          </div>
-        </div>
-      </div>
-      {/* Status Messages - Placed below the controls */}
-      {status && (
-        <div
-          className={cn(
-            'mt-2 flex items-center text-xs px-1',
-            status.type === 'error' ? 'text-red-600' : 'text-green-600'
+            >
+              {status.type === 'success' ? (
+                <CheckCircle2 className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+              ) : (
+                <XCircle className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
+              )}
+              <span>{status.message}</span>
+            </div>
           )}
-        >
-          {status.type === 'success' ? (
-            <CheckCircle2 className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
-          ) : (
-            <XCircle className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
-          )}
-          <span>{status.message}</span>
-        </div>
+        </>
       )}
     </div>
   );

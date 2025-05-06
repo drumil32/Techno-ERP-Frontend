@@ -18,7 +18,6 @@ import {
   AreaType,
   BloodGroup,
   Category,
-  Course,
   DocumentType,
   EducationLevel,
   Gender,
@@ -49,13 +48,8 @@ export const academicDetailBaseSchema = z.object({
     // Keep regex for when value is present
     .regex(/^[A-Za-z\s]+$/, 'University/Board Name must only contain alphabets and spaces')
     .optional(),
-  passingYear: z
-    .number()
-    .int()
-    .optional(), // Keep refinements for when value is present
-  percentageObtained: z
-    .number()
-    .optional(), // Keep refinements for when value is present
+  passingYear: z.number().int().optional(), // Keep refinements for when value is present
+  percentageObtained: z.number().optional(), // Keep refinements for when value is present
   subjects: z
     .array(z.string().min(1, 'Subject name is required')) // Validate inner string if array present
     .optional()
@@ -80,7 +74,8 @@ export const academicDetailSchema = z.object({
     .max(100, 'Percentage cannot exceed 100'),
   subjects: z
     .array(z.string().min(1, 'Subject name is required'))
-    .nonempty('Subjects cannot be empty').optional()
+    .nonempty('Subjects cannot be empty')
+    .optional()
 });
 // Array schema
 export const academicDetailsArraySchema = z.array(academicDetailSchema);
@@ -107,10 +102,19 @@ export const singleDocumentSchema = z.object({
 });
 
 export const academicDetailsPartialArraySchema = z.array(academicDetailPartialSchema);
+export enum PhysicalDocumentNoteStatus {
+  PENDING = 'PENDING',
+  VERIFIED = 'VERIFIED',
+  NOT_APPLICABLE = 'NOT_APPLICABLE'
+}
+export const physicalDocumentNoteSchema = z.object({
+  type: z.string().optional(),
+  status: z.nativeEnum(PhysicalDocumentNoteStatus),
+  dueBy: requestDateSchema.optional()
+});
 
 export const enquirySchema = z.object({
   _id: z.string().optional(),
-  // Student Details
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
   dateOfEnquiry: requestDateSchema.optional(),
   studentName: z
@@ -118,7 +122,10 @@ export const enquirySchema = z.object({
     .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
     .nonempty('Student Name is required'),
   studentPhoneNumber: contactNumberSchema,
-  emailId: z.string({ required_error: 'Email is required' }).email('Invalid email format').nonempty('Email is required'),
+  emailId: z
+    .string({ required_error: 'Email is required' })
+    .email('Invalid email format')
+    .nonempty('Email is required'),
   fatherName: z
     .string({ required_error: 'Father Name is required' })
     .regex(/^[A-Za-z\s]+$/, 'Father Name must only contain alphabets and spaces')
@@ -140,7 +147,7 @@ export const enquirySchema = z.object({
   gender: z.nativeEnum(Gender),
   dateOfBirth: requestDateSchema,
   category: z.nativeEnum(Category),
-  course: z.nativeEnum(Course),
+  course: z.string(),
   reference: z.nativeEnum(AdmissionReference),
 
   // Address Details
@@ -167,7 +174,7 @@ export const enquirySchema = z.object({
     .string()
     .regex(/^\d{12}$/, 'Aadhar Number must be exactly 12 digits')
     .optional(),
-
+  physicalDocumentNote: z.array(physicalDocumentNoteSchema).optional(),
   religion: z.nativeEnum(Religion).optional(),
   bloodGroup: z.nativeEnum(BloodGroup).optional(),
   previousCollegeData: previousCollegeDataSchema.optional(),

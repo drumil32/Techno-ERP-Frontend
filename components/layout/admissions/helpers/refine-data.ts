@@ -15,6 +15,7 @@ export const refineAdmissions = (data: any) => {
     return {
       ...admission,
       id: index + 1,
+
       district: admission.address?.district ?? '-',
       fatherPhoneNumber: admission.fatherPhoneNumber ?? '-',
       motherPhoneNumber: admission.motherPhoneNumber ?? '-',

@@ -75,11 +75,11 @@ export enum Course {
 
 export enum DropDownType {
   MARKETING_CITY = 'MARKETING_CITY',
-  FIX_CITY = 'FIX_CITY',
+  FIX_MARKETING_CITY = 'FIX_MARKETING_CITY',
   DISTRICT = 'DISTRICT',
   MARKETING_SOURCE = 'MARKETING_SOURCE',
   MARKETING_COURSE_CODE = 'MARKETING_COURSE_CODE',
-  FIX_COURSE_CODE = 'FIX_COURSE_CODE'
+  FIX_MARKETING_COURSE_CODE = 'FIX_MARKETING_COURSE_CODE'
 }
 
 export const ReverseCourseNameMapper: Record<string, Course> = {
@@ -197,7 +197,8 @@ export enum ApplicationStatus {
   STEP_1 = 'Step_1',
   STEP_2 = 'Step_2',
   STEP_3 = 'Step_3',
-  STEP_4 = 'Step_4'
+  STEP_4 = 'Step_4',
+  CONFIRMED = 'Confirmed'
 }
 export enum ApplicationIdPrefix {
   'TIHS' = 'TIHS',
@@ -290,15 +291,15 @@ export enum Countries {
 // Fee types
 
 export enum FeeType {
-  HOSTEL = 'HOSTEL',
-  TRANSPORT = 'TRANSPORT',
+  SEM1FEE = 'SEM1FEE',
   PROSPECTUS = 'PROSPECTUS',
   STUDENTID = 'STUDENTID',
   UNIFORM = 'UNIFORM',
   STUDENTWELFARE = 'STUDENTWELFARE',
   BOOKBANK = 'BOOKBANK',
-  EXAMFEES = 'EXAMFEES',
-  SEM1FEE = 'SEM1FEE'
+  HOSTEL = 'HOSTEL',
+  TRANSPORT = 'TRANSPORT'
+  // EXAMFEES = 'EXAMFEES'
 }
 
 export enum Districts {

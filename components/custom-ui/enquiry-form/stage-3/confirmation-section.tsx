@@ -13,8 +13,9 @@ import React, { useMemo, useState } from 'react';
 import { UseFormReturn, useWatch } from 'react-hook-form';
 interface ConfirmationSectionInterface {
   form: UseFormReturn<any>;
+  isViewable?: boolean;
 }
-const ConfirmationSection: React.FC<ConfirmationSectionInterface> = ({ form }) => {
+const ConfirmationSection: React.FC<ConfirmationSectionInterface> = ({ form, isViewable }) => {
   const [isOtpSending, setIsOtpSending] = useState(false);
 
   const studentEmail = form.getValues('email');
@@ -33,7 +34,7 @@ const ConfirmationSection: React.FC<ConfirmationSectionInterface> = ({ form }) =
 
   return (
     <>
-      <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="college-info">
+      <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="confirmation">
         <AccordionItem value="confirmation" className="border-b-0">
           <AccordionTrigger className="w-full items-center">
             <h3 className="font-inter text-[16px] font-semibold"> Confirmation</h3>

@@ -6,6 +6,9 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { Toaster } from '@/components/ui/sonner';
 import Head from 'next/head';
+import ProgressBar from '@/components/custom-ui/progress-bar/progress-bar';
+import { NavigationEvents } from '@/components/custom-ui/router-events/router-event';
+import { Suspense } from 'react';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -35,13 +38,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/images/techno-logo.png" />
+        <link rel="icon" href="/images/techno-logo.webp" />
       </head>
       <body
         className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-        <Toaster richColors theme="light" position="top-center" />
+        <Suspense>
+          <ProgressBar />
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+          <NavigationEvents />
+          <Toaster richColors theme="light" position="top-center" />
+        </Suspense>
       </body>
     </html>
   );

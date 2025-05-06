@@ -18,22 +18,24 @@ export default function TechnoSidebarFooter() {
   const handleLogout = async () => {
     try {
       const res = await fetch(API_ENDPOINTS.logout, {
-        method: API_METHODS.GET,
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include'
       });
 
-      const data = await res.json();
+      document.cookie =
+        'is-authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=strict';
 
+      const data = await res.json();
       if (data && data.SUCCESS === true) {
-        logout();
+        useAuthStore.getState().logout();
         router.replace('/auth/login');
       }
     } catch (error) {
       console.error('Logout failed:', error);
-      logout();
+      document.cookie =
+        'is-authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=strict';
+      useAuthStore.getState().logout();
       router.replace('/auth/login');
     }
   };
@@ -41,9 +43,13 @@ export default function TechnoSidebarFooter() {
   return (
     <>
       {!hovered && (
-        <Avatar className="w-[33px] h-[32px] transition-transform duration-300 ease-in-out">
+        <Avatar className="transition-transform duration-300 ease-in-out">
           {/* TODO: Avatar will replace by the College Logo */}
-          <AvatarImage className="" src="/images/techno-logo.png" alt="User Avatar" />
+          <AvatarImage
+            className="rounded-full w-[33px] h-[33px]  object-contain p-1 bg-white"
+            src="/images/techno-logo.webp"
+            alt="User Avatar"
+          />
           <AvatarFallback></AvatarFallback>
         </Avatar>
       )}

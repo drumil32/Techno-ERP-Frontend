@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,7 +17,7 @@ import { Course, Gender, Locations, UserRoles } from '@/types/enum';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
-import { parse, format, isValid } from 'date-fns';
+import { parse, format, isValid, isBefore, startOfDay } from 'date-fns';
 import { toast } from 'sonner';
 import z, { boolean } from 'zod';
 import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
@@ -144,6 +144,55 @@ export default function YellowLeadViewEdit({
     queryFn: cityDropdown
   });
   const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
+
+  const toastIdRef = useRef<string | number | null>(null);
+
+  useEffect(() => {
+    const isLoading =
+      assignedToQuery.isLoading || fixCourseQuery.isLoading || cityDropdownQuery.isLoading;
+    const hasError = assignedToQuery.isError || fixCourseQuery.isError || cityDropdownQuery.isError;
+    const isSuccess =
+      assignedToQuery.isSuccess && fixCourseQuery.isSuccess && cityDropdownQuery.isSuccess;
+    const isFetching =
+      assignedToQuery.isFetching || fixCourseQuery.isFetching || cityDropdownQuery.isFetching;
+
+    if (toastIdRef.current) {
+      if (isLoading || isFetching) {
+        toast.loading('Loading dropdown data...', { id: toastIdRef.current, duration: Infinity });
+      }
+      if (hasError) {
+        toast.error('Failed to load dropdown data', { id: toastIdRef.current, duration: 3000 });
+        setTimeout(() => {
+          toastIdRef.current = null;
+        }, 3000);
+      }
+      if (isSuccess) {
+        toast.success('Dropdown data loaded', { id: toastIdRef.current!, duration: 2000 });
+        toastIdRef.current = null;
+      }
+    } else if (hasError) {
+      toastIdRef.current = toast.error('Failed to load dropdown data', { duration: 3000 });
+    } else if (isLoading || isFetching) {
+      toastIdRef.current = toast.loading('Loading dropdown data...', { duration: Infinity });
+    }
+
+    return () => {
+      if (toastIdRef.current) toast.dismiss(toastIdRef.current);
+    };
+  }, [
+    assignedToQuery.isLoading,
+    assignedToQuery.isError,
+    assignedToQuery.isSuccess,
+    assignedToQuery.isFetching,
+    fixCourseQuery.isLoading,
+    fixCourseQuery.isError,
+    fixCourseQuery.isSuccess,
+    fixCourseQuery.isFetching,
+    cityDropdownQuery.isLoading,
+    cityDropdownQuery.isError,
+    cityDropdownQuery.isSuccess,
+    cityDropdownQuery.isFetching
+  ]);
 
   const parseDateString = (dateString?: string): Date | undefined => {
     if (!dateString) return undefined;
@@ -538,6 +587,7 @@ export default function YellowLeadViewEdit({
             <PopoverContent className="w-auto p-0">
               <Calendar
                 mode="single"
+                disabled={(date) => isBefore(date, startOfDay(new Date()))}
                 selected={parseDateString(formData.nextDueDate)}
                 onSelect={handleDateChange}
                 initialFocus
@@ -621,7 +671,7 @@ export default function YellowLeadViewEdit({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              disabled={!hasRole(UserRoles.LEAD_MARKETING)}
+              disabled={!(hasRole(UserRoles.LEAD_MARKETING) || hasRole(UserRoles.ADMIN))}
               role="combobox"
               className={cn(
                 'w-full justify-between rounded-[5px] min-h-10',
