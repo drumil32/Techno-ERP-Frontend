@@ -2,13 +2,13 @@
 import { StudentDuesApiResponse } from '@/types/finance';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { fetchStudentDuesMock } from '../finance-student-dues/helpers/mock-api';
 import { useParams } from 'next/navigation';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import { Button } from '@/components/ui/button';
 import { LuDownload } from 'react-icons/lu';
 import TechnoPageHeading from '@/components/custom-ui/page-heading/techno-page-heading';
 import { Label } from '@/components/ui/label';
+import { fetchStudentFeeInformation } from '../finance-student-dues/helpers/fetch-data';
 
 export default function SelectedCourseDuesDetails() {
   const param = useParams();
@@ -76,10 +76,10 @@ export default function SelectedCourseDuesDetails() {
 
   const queryParams = getQueryParams();
 
-  const duesQuery = useQuery<StudentDuesApiResponse, Error>({
+  const duesQuery = useQuery<any, Error>({
     queryKey: ['studentDues', queryParams],
-    queryFn: () => fetchStudentDuesMock({ queryKey: ['studentDues', queryParams] } as any),
-    placeholderData: (previousData) => previousData
+    queryFn: () => fetchStudentFeeInformation({ queryKey: ['studentDues', queryParams] } as any),
+    placeholderData: (previousData:any) => previousData
   });
 
   const isLoading = duesQuery.isLoading || duesQuery.isFetching;

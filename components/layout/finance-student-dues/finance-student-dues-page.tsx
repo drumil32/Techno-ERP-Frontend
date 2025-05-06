@@ -212,7 +212,8 @@ function TableActionButton() {
   return (
     <>
       <TechnoFilterProvider key="bulk-update">
-        <BulkFeeUpdateDialogue />
+        {/* <BulkFeeUpdateDialogue /> */}
+        <></>
       </TechnoFilterProvider>
       <Button disabled className="h-8 rounded-[10px] border" icon={LuDownload}>
         <span className="font-inter font-semibold text-[12px]">Download</span>

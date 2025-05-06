@@ -52,7 +52,7 @@ declare module '@tanstack/react-table' {
   }
 }
 
-const TruncatedCell = ({ value, maxWidth }: { value: string; maxWidth?: number }) => {
+export const TruncatedCell = ({ value, maxWidth }: { value: string; maxWidth?: number }) => {
   const cellRef = useRef<HTMLSpanElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
 

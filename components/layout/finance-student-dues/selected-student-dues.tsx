@@ -4,7 +4,6 @@ import TechnoPageHeading from "@/components/custom-ui/page-heading/techno-page-h
 import { StudentDetails, StudentFeeInformationResponse } from "@/types/finance"
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query"
 import { useParams } from "next/navigation"
-import { fetchStudentDetails } from "./helpers/mock-api"
 import SemesterWiseFeesDetails from "./details-tables/semester-wise-fees-details"
 import AllTransactionsDetails from "./details-tables/all-transaction-details"
 import FeesBreakupDetails from "./details-tables/fee-breakup-details"
@@ -16,12 +15,6 @@ export default function SelectedStudentDuesDetails() {
   const param = useParams()
   const studentDuesId = param.studentDuesId as string
 
-  const studentDetails = useQuery<StudentDetails, Error>({
-    queryKey: ['studentDetails', studentDuesId],
-    queryFn: fetchStudentDetails,
-    placeholderData: (previousData) => previousData,
-
-  })
 
   const studentFeesInfomationQuery = useQuery<StudentFeeInformationResponse, Error>({
     queryKey: ['studentFeesInfomation', studentDuesId],
@@ -50,7 +43,7 @@ export default function SelectedStudentDuesDetails() {
       <StudentData studentData={studentData} />
       <SemesterWiseFeesDetails semesterWiseFeesInformation={semesterWiseFeesDetails} studentDetails={studentData} />
       <AllTransactionsDetails transactionHistory={transactionHistory} studentDuesId={studentDuesId} />
-      <FeesBreakupDetails semFeesBreakUp={semFeeBreakUp} studentName={studentDetails.data?.studentName} />
+      <FeesBreakupDetails semFeesBreakUp={semFeeBreakUp} studentName={studentData?.studentName} />
     </div>
   )
 }

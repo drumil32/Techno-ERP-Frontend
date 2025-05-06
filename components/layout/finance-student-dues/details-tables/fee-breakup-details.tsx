@@ -41,7 +41,7 @@ export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { se
     <div className="w-full p-3 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="w-full flex p-2 items-center">
         <div className="font-semibold text-[16px]">Fee Breakup</div>
-        <EditFeeBreakupDialogue studentName={studentName} semesterNumber={selectedSemester} feesBreakup={semWiseFeesBreakUpDetails} />
+        {/* <EditFeeBreakupDialogue studentName={studentName} semesterNumber={selectedSemester} feesBreakup={semWiseFeesBreakUpDetails} /> */}
       </div>
       <div className="flex gap-2 mb-4 p-2 items-center">
         <div className="text-[#5F5F5F]">Select Semester</div>
