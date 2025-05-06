@@ -52,6 +52,7 @@ import EnquiryFormFooter from '../stage-1/enquiry-form-footer-section';
 import { DatePicker } from '@/components/ui/date-picker';
 import { MultiSelectPopoverCheckbox } from '../../common/multi-select-popover-checkbox';
 import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
+import Loading from '@/app/loading';
 
 export const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -114,12 +115,6 @@ export const StudentFeesForm = () => {
   });
 
   // Queries
-  const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
-    queryKey: ['otherFeesData'],
-    queryFn: getOtherFees,
-    refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5
-  });
 
   const {
     data: enquiryData,
@@ -160,8 +155,9 @@ export const StudentFeesForm = () => {
     isLoading: isLoadingSemFees
   } = useQuery<any>({
     queryKey: ['courseFees', courseName],
-    queryFn: () =>
-      courseName ? getFeesByCourseName(courseName) : Promise.reject('Course name not available'),
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5,
+    queryFn: () => getFeesByCourseName(courseName),
     enabled: !!courseName
   });
 
@@ -199,6 +195,14 @@ export const StudentFeesForm = () => {
     disabled: isViewable
   });
 
+  const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
+    queryKey: ['otherFeesData'],
+    queryFn: () => getOtherFees(courseName),
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60 * 5,
+    enabled: !!courseName
+  });
+
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmationCheck' });
 
   const otherFeesWatched = useWatch({ control: form.control, name: 'otherFees' });
@@ -213,6 +217,10 @@ export const StudentFeesForm = () => {
     control: form.control,
     name: 'otherFees'
   });
+
+  useEffect(() => {
+    console.log('other fees data is ', otherFeesData);
+  }, otherFeesData);
 
   const selectedOtpTarget = useWatch({ control: form.control, name: 'otpTarget' });
 
@@ -233,7 +241,7 @@ export const StudentFeesForm = () => {
       let initialSemFees: any[] = [];
       let initialOtherFees: any[] = [];
 
-      const baseSem1Fee = semWiseFeesData.fee?.[0];
+      const baseSem1Fee = semWiseFeesData[0];
 
       const existingSem1FeeDataInOther = feeDataSource?.otherFees?.find(
         (fee: any) => fee.type === FeeType.SEM1FEE
@@ -247,7 +255,7 @@ export const StudentFeesForm = () => {
           existingSem1FeeDataInSemWise?.finalFee ??
           baseSem1Fee ??
           undefined,
-        fee: baseSem1Fee,
+        amount: baseSem1Fee,
         feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined
       };
 
@@ -275,7 +283,7 @@ export const StudentFeesForm = () => {
       initialOtherFees.unshift(sem1FeeObject);
       otherFeesData.unshift(sem1FeeObject);
 
-      const courseSemFeeStructure = semWiseFeesData.fee || [];
+      const courseSemFeeStructure = semWiseFeesData || [];
       const existingSemFees = feeDataSource?.semWiseFees || [];
 
       initialSemFees = courseSemFeeStructure.map((baseFeeAmount: number, index: number) => {
@@ -342,7 +350,7 @@ export const StudentFeesForm = () => {
     let initialSemFees = [];
     let initialOtherFees = [];
 
-    const baseSem1Fee = semWiseFeesData?.fee?.[0];
+    const baseSem1Fee = semWiseFeesData[0];
 
     const existingSem1FeeDataInOther = feeDataSource.otherFees?.find(
       (fee: any) => fee.type === FeeType.SEM1FEE
@@ -356,7 +364,7 @@ export const StudentFeesForm = () => {
         existingSem1FeeDataInSemWise?.finalFee ??
         baseSem1Fee ??
         undefined,
-      fee: baseSem1Fee,
+      amount: baseSem1Fee,
       feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined
     };
 
@@ -379,7 +387,7 @@ export const StudentFeesForm = () => {
 
     initialOtherFees.unshift(sem1FeeObject as any);
 
-    const courseSemFeeStructure = semWiseFeesData?.fee || [];
+    const courseSemFeeStructure = semWiseFeesData || [];
     const existingSemFees = feeDataSource?.semWiseFees || [];
 
     initialSemFees = courseSemFeeStructure.map((baseFeeAmount: any, index: any) => {
@@ -641,9 +649,7 @@ export const StudentFeesForm = () => {
   }
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
-    return (
-      <div className="flex justify-center items-center h-full">Loading fee enquiryData...</div>
-    );
+    return <Loading />;
   }
 
   return (
@@ -674,8 +680,13 @@ export const StudentFeesForm = () => {
 
                 {otherFeesFields.map((field, index) => {
                   const feeType = form.getValues(`otherFees.${index}.type`);
-                  const originalFeeData = otherFeesData?.find((fee: any) => fee.type === feeType);
-                  const totalFee = originalFeeData?.fee;
+                  const originalFeeData = otherFeesData?.find((fee: any) =>
+                    fee.type === FeeType.SEM1FEE
+                      ? fee.type === feeType
+                      : fee.type === displayFeeMapper(feeType)
+                  );
+                  const totalFee = originalFeeData?.amount;
+
                   const finalFee = otherFeesWatched?.[index]?.finalFee;
                   const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
                   const discountValue = calculateDiscountPercentage(totalFee, finalFee);
@@ -824,7 +835,8 @@ export const StudentFeesForm = () => {
                   </div>
 
                   {semFields.map((field, index) => {
-                    const originalFeeAmount = semWiseFeesData?.fee?.[index];
+                    console.log('Sem Fields', field, index);
+                    const originalFeeAmount = semWiseFeesData[index];
                     const finalFee = semWiseFeesWatched?.[index]?.finalFee;
                     const discountValue = calculateDiscountPercentage(originalFeeAmount, finalFee);
                     const discountDisplay =

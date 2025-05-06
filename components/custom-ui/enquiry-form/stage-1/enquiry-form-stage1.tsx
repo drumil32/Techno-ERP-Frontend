@@ -207,8 +207,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       }
 
       toast.success('Enquiry draft created successfully');
-
-      router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_1(response._id));
     } else {
       const response = await updateEnquiryDraft({ ...rest, id });
       if (!response) {

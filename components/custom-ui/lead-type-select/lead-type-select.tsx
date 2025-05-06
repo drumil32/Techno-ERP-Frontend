@@ -92,7 +92,7 @@ export default function LeadTypeSelect({
                   onChange(type);
                   setIsOpen(false);
                 }}
-                className={`flex items-center justify-between px-3 py-2 mx-1 rounded-[3px] text-sm font-medium cursor-pointer transition-colors hover:opacity-80 ${typeStyles[type]}`}
+                className={`flexitems-center justify-between px-3 py-2 mx-1 rounded-[3px] text-sm font-medium cursor-pointer transition-colors hover:opacity-80 ${typeStyles[type]}`}
               >
                 <span>{LeadTypeMapper[type]}</span>
                 {value === type && <Check className="w-4 h-4" />}

@@ -74,7 +74,6 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
       <div className="sticky bottom-0 left-0 z-10 flex items-center justify-between space-x-4 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] overflow-hidden">
         <div className="absolute bottom-0 left-0 -z-100 w-screen bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] overflow-hidden"></div>
 
-        {/* Draft Button and Dialog */}
         <Dialog open={isDraftDialogOpen} onOpenChange={setDraftDialogOpen}>
           <DialogTrigger asChild>
             <Button type="button" variant="outline" disabled={isSavingDraft}>

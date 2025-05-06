@@ -121,7 +121,7 @@ export const ProfileDropdown = () => {
       <motion.div
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 px-3 py-2 rounded-lg transition-colors duration-200"
+        className="flex items-center gap-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800  px-3 py-2 rounded-lg transition-colors duration-200"
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="relative">
@@ -151,7 +151,7 @@ export const ProfileDropdown = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 mt-2 w-64 origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-xl ring-1 ring-gray-200 dark:ring-gray-700 z-30 overflow-hidden"
+            className="absolute right-0 mt-2 w-64 origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-xl ring-1 ring-gray-200 dark:ring-gray-700 z-50 overflow-hidden"
           >
             <div className="py-1">
               <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">

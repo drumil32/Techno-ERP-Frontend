@@ -43,6 +43,12 @@ export default function AdmissionFormLayout({ children }: { children: React.Reac
         console.error('Error fetching enquiry status:', error);
       }
     };
+
+    // console.log(pathname);
+    if (pathname === '/c/admissions/application-process/new/step_1') {
+      setStatus('step_1');
+      return;
+    }
     fetchStatus();
   }, [id]);
 

@@ -7,14 +7,6 @@ import { AdmissionStep } from '@/common/constants/admissionSteps';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 
-interface AdmissionStepperProps {
-  steps: AdmissionStep[];
-  currentStepPath?: string;
-  applicationCurrentStatus: number;
-  className?: string;
-  applicationId: string;
-}
-
 export function AdmissionStepper({
   steps,
   currentStepPath,
@@ -31,10 +23,14 @@ export function AdmissionStepper({
       router.push(`/c/admissions/application-process/${applicationId}/${stepPath}`);
     }
   };
+  const maxStepNameHeight = steps.reduce((max, step) => {
+    const lineCount = step.name.split(' ').length > 3 ? 2 : 1;
+    return Math.max(max, lineCount);
+  }, 1);
 
   return (
     <nav aria-label="Admission Process Steps" className={cn('w-full', className)}>
-      <ol className="flex items-center">
+      <ol className="flex items-end">
         {steps.map((step, index) => {
           const isCompleted = index < applicationCurrentStatus;
           const isCurrent = index === currentStepIndex;
@@ -43,15 +39,9 @@ export function AdmissionStepper({
           const isApplicationCurrent = index === applicationCurrentStatus - 1;
 
           return (
-            <motion.li
-              key={step.id}
-              className="relative w-full"
-              initial={false}
-              whileHover={isAccessible ? { scale: 1.03 } : {}}
-              transition={{ type: 'spring', stiffness: 300, damping: 50 }}
-            >
+            <li key={step.id} className="relative w-full">
               {index > 0 && (
-                <div className="absolute left-0 top-[70%] -translate-x-1/2 -translate-y-1/2 h-[2px] w-full pointer-events-none">
+                <div className="absolute left-0 top-[calc(50%+20px)] -translate-x-1/2 -translate-y-1/2 h-[2px] w-full pointer-events-none">
                   <div
                     className={cn(
                       'absolute h-full w-full',
@@ -61,10 +51,10 @@ export function AdmissionStepper({
                 </div>
               )}
 
-              <div className="relative z-10 flex flex-col items-center gap-1">
-                <motion.span
+              <div className="relative z-30 flex flex-col items-center">
+                <div
                   className={cn(
-                    'text-xs font-medium text-center mt-1',
+                    'text-xs font-medium text-center min-h-[40px] flex items-end pb-1',
                     isCurrent
                       ? 'text-primary font-bold'
                       : isCompleted
@@ -72,21 +62,19 @@ export function AdmissionStepper({
                         : 'text-muted-foreground',
                     isAccessible && 'cursor-pointer hover:text-primary'
                   )}
-                  style={{ minWidth: '80px' }}
-                  whileHover={isAccessible ? { y: -1 } : {}}
-                  transition={{ type: 'spring', stiffness: 500 }}
+                  style={{}}
                 >
-                  {step.name}
-                </motion.span>
+                  <span>{step.name}</span>
+                </div>
 
                 <motion.div
-                  className="relative"
+                  className="relative mt-1"
+                  whileHover={isAccessible ? { scale: 1.1 } : {}}
                   whileTap={isAccessible ? { scale: 0.95 } : {}}
-                  transition={{ type: 'spring', stiffness: 500 }}
                   onClick={() => handleStepClick(step.path, index)}
                   style={{ cursor: isAccessible ? 'pointer' : 'default' }}
                 >
-                  <motion.span
+                  <span
                     className={cn(
                       'flex items-center justify-center rounded-full text-xs font-medium relative',
                       isCompleted && 'bg-primary text-white',
@@ -98,10 +86,8 @@ export function AdmissionStepper({
                         'bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600',
                       'h-10 w-10'
                     )}
-                    animate={{
-                      scale: isCurrent ? [1, 1.05, 1] : 1,
-                      boxShadow: isCurrent ? '0 4px 20px -5px rgba(0, 100, 255, 0.3)' : 'none',
-                      transition: isCurrent ? { duration: 1.5, repeat: Infinity } : {}
+                    style={{
+                      boxShadow: isCurrent ? '0 4px 20px -5px rgba(0, 100, 255, 0.3)' : 'none'
                     }}
                   >
                     {isCompleted ? (
@@ -117,13 +103,21 @@ export function AdmissionStepper({
                     ) : (
                       <span className="text-gray-700 dark:text-gray-300">{step.id}</span>
                     )}
-                  </motion.span>
+                  </span>
                 </motion.div>
               </div>
-            </motion.li>
+            </li>
           );
         })}
       </ol>
     </nav>
   );
+}
+
+interface AdmissionStepperProps {
+  steps: AdmissionStep[];
+  currentStepPath?: string;
+  applicationCurrentStatus: number;
+  className?: string;
+  applicationId: string;
 }
