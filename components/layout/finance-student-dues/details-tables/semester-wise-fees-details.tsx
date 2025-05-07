@@ -2,6 +2,7 @@ import { SemesterWiseFeeInformation, StudentDetails } from "@/types/finance"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import RecordPaymentDialog from "./record-payment-dialog"
 import { Course, CourseNameMapper } from "@/types/enum";
+import { format } from "date-fns";
 
 type ExtendedSemesterWiseFeeInformation = SemesterWiseFeeInformation & {
   sno: number;
@@ -55,9 +56,9 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
                 <TableCell>{semFee.academicYear}</TableCell>
                 <TableCell>0{semFee.semesterNumber}</TableCell>
                 <TableCell className="text-right">{semFee.finalFee != null ? `₹ ${semFee.finalFee.toLocaleString()}` : '__'}</TableCell>
-                <TableCell className="text-right">{semFee.paidAmount != null ? `₹ ${semFee.paidAmount.toLocaleString()}` : '__'}</TableCell>
-                <TableCell className="text-right">{semFee.dueFees != null ? `₹ ${semFee.dueFees.toLocaleString()}` : '__'}</TableCell>
-                <TableCell className=" pl-8">{semFee.dueDate ?? '--'}</TableCell>
+                <TableCell className="text-right">{semFee.paidAmount != null && semFee.dueDate ? `₹ ${semFee.paidAmount.toLocaleString()}` : '__'}</TableCell>
+                <TableCell className="text-right">{semFee.dueFees != null && semFee.dueDate ? `₹ ${semFee.dueFees.toLocaleString()}` : '__'}</TableCell>
+                <TableCell className=" pl-8">{semFee.dueDate ? format(semFee.dueDate, 'dd/MM/yyyy') : '--'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
