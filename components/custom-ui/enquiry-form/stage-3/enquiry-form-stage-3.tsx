@@ -179,16 +179,6 @@ const EnquiryFormStage3 = () => {
     const filteredData = filterBySchema(formSchemaStep3, values);
     console.log('Filtered Data:', filteredData);
 
-    const documentTypesPresent = currentDocuments.map((doc: any) => doc.type);
-    const missingDocuments = mandatoryDocuments.filter(
-      (requiredType) => !documentTypesPresent.includes(requiredType)
-    );
-
-    if (missingDocuments.length > 0) {
-      toast.error('Please upload all mandatory documents before proceeding.');
-      return;
-    }
-
     // remove confirmation field from values
     const { confirmation, _id, ...rest } = filteredData;
 

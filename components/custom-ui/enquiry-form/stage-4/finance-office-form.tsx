@@ -53,12 +53,6 @@ const FinanceOfficeForm = () => {
     currentStage: ApplicationStatus.STEP_4
   });
   // Queries
-  const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
-    queryKey: ['otherFeesData'],
-    queryFn: getOtherFees,
-    staleTime: 1000 * 60 * 5,
-    refetchOnWindowFocus: false
-  });
 
   const {
     data: enquiryData,
@@ -73,6 +67,15 @@ const FinanceOfficeForm = () => {
 
   const existingFinalFee = enquiryData?.studentFee;
   const existingFeeDraft = enquiryData?.studentFeeDraft;
+  const courseName = enquiryData?.course;
+
+  const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
+    queryKey: ['otherFeesData'],
+    queryFn: () => getOtherFees(courseName),
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    enabled: !!courseName
+  });
 
   // Determine the current status
   const feeStatus: 'none' | 'draft' | 'final' = useMemo(() => {
@@ -85,7 +88,6 @@ const FinanceOfficeForm = () => {
   const finalFeeId = existingFinalFee?._id;
   const studentEmail = enquiryData?.emailId;
   const studentPhone = enquiryData?.studentPhoneNumber;
-  const courseName = enquiryData?.course;
 
   const {
     data: semWiseFeesData,
@@ -93,8 +95,7 @@ const FinanceOfficeForm = () => {
     isLoading: isLoadingSemFees
   } = useQuery<any>({
     queryKey: ['courseFees', courseName],
-    queryFn: () =>
-      courseName ? getFeesByCourseName(courseName) : Promise.reject('Course name not available'),
+    queryFn: () => getFeesByCourseName(courseName),
     enabled: !!courseName
   });
 
@@ -138,7 +139,7 @@ const FinanceOfficeForm = () => {
       let initialSemFees: any[] = [];
       let initialOtherFees: any[] = [];
 
-      const baseSem1Fee = semWiseFeesData.fee?.[0];
+      const baseSem1Fee = semWiseFeesData[0];
 
       const existingSem1FeeDataInOther = feeDataSource?.otherFees?.find(
         (fee: any) => fee.type === FeeType.SEM1FEE
@@ -152,7 +153,7 @@ const FinanceOfficeForm = () => {
           existingSem1FeeDataInSemWise?.finalFee ??
           baseSem1Fee ??
           undefined,
-        fee: baseSem1Fee,
+        amount: baseSem1Fee,
         feesDepositedTOA: existingSem1FeeDataInOther?.feesDepositedTOA ?? undefined
       };
 
@@ -178,7 +179,7 @@ const FinanceOfficeForm = () => {
       initialOtherFees.unshift(sem1FeeObject);
       otherFeesData.unshift(sem1FeeObject);
 
-      const courseSemFeeStructure = semWiseFeesData.fee || [];
+      const courseSemFeeStructure = semWiseFeesData || [];
       const existingSemFees = feeDataSource?.semWiseFees || [];
 
       initialSemFees = courseSemFeeStructure.map((baseFeeAmount: number, index: number) => {
@@ -217,7 +218,7 @@ const FinanceOfficeForm = () => {
     let totalDeposited = 0;
 
     if (otherFeesData) {
-      totalOriginal = otherFeesData.reduce((sum: any, fee: any) => sum + (fee.fee ?? 0), 0);
+      totalOriginal = otherFeesData.reduce((sum: any, fee: any) => sum + (fee.amount ?? 0), 0);
     }
 
     (otherFeesWatched ?? []).forEach((fee) => {
@@ -359,8 +360,12 @@ const FinanceOfficeForm = () => {
 
                 {otherFeesFields.map((field, index) => {
                   const feeType = form.getValues(`otherFees.${index}.type`);
-                  const originalFeeData = otherFeesData?.find((fee: any) => fee.type === feeType);
-                  const totalFee = originalFeeData?.fee;
+                  const originalFeeData = otherFeesData?.find((fee: any) =>
+                    fee.type === FeeType.SEM1FEE
+                      ? fee.type === feeType
+                      : fee.type === displayFeeMapper(feeType)
+                  );
+                  const totalFee = originalFeeData?.amount;
                   const finalFee = otherFeesWatched?.[index]?.finalFee;
                   const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
                   const discountValue = calculateDiscountPercentage(totalFee, finalFee);
@@ -449,7 +454,12 @@ const FinanceOfficeForm = () => {
                   <div className="text-sm text-right pr-2">
                     {formatCurrency(otherFeesTotals.totalFinal)}
                   </div>
-                  <div>{/* Empty cell for Discount */}</div>
+                  <div className="text-right">
+                    {calculateDiscountPercentage(
+                      otherFeesTotals.totalOriginal,
+                      otherFeesTotals.totalFinal
+                    ) + '%'}
+                  </div>
                   <div className="text-sm text-right pr-2">
                     {formatCurrency(otherFeesTotals.totalDeposited)}
                   </div>
@@ -508,7 +518,7 @@ const FinanceOfficeForm = () => {
                   </div>
 
                   {semFields.map((field, index) => {
-                    const originalFeeAmount = semWiseFeesData?.fee?.[index];
+                    const originalFeeAmount = semWiseFeesData[index];
                     const finalFee = semWiseFeesWatched?.[index]?.finalFee;
                     const discountValue = calculateDiscountPercentage(originalFeeAmount, finalFee);
                     const discountDisplay =

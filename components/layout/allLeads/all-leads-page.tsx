@@ -284,7 +284,11 @@ export default function AllLeadsPage() {
   const columns = [
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'dateView', header: 'Date' },
-    { accessorKey: 'name', header: 'Name', meta: { align: 'left', maxWidth: 120 } },
+    {
+      accessorKey: 'name',
+      header: 'Name',
+      meta: { align: 'left', maxWidth: 120 }
+    },
     { accessorKey: 'phoneNumber', header: 'Phone Number' },
     { accessorKey: 'areaView', header: 'Area', meta: { align: 'left' } },
     { accessorKey: 'cityView', header: 'City', meta: { align: 'left' } },
@@ -374,7 +378,7 @@ export default function AllLeadsPage() {
 
         return (
           <LeadTypeSelect
-            isDisable={row.original.leadType == LeadType.INTERESTED}
+            disabled={row.original.leadType == LeadType.INTERESTED}
             value={selectedType}
             onChange={handleDropdownChange}
           />

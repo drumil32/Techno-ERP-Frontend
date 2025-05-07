@@ -1,6 +1,4 @@
-import { updateStudent, updateStudentDocuments } from '@/components/custom-ui/student-repository/helpers/api';
 import { DropDownType } from '@/types/enum';
-import { get } from 'http';
 
 export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
 
@@ -106,4 +104,12 @@ export const API_ENDPOINTS = {
   getSingleStudent: (id: string) => `${API_DOMAIN}/student/repo/${id}`,
   updateStudentRepository: `${API_DOMAIN}/student/repo/student-details`,
   updateStudentDocuments: `${API_DOMAIN}/student/repo/student-physical-document`,
+
+  
+  //Finance
+  getStudentActiveDues: `${API_DOMAIN}/student/fees/active-dues`,
+  getStudentFeeInformation: (student_id: string) => `${API_DOMAIN}/student/fees/fee-information/${student_id}`,
+
+  recordPayment: `${API_DOMAIN}/student/fees/record-payment`,
+  updateFeeBreakup: `${API_DOMAIN}/student/fees/fee-breakup`,
 };

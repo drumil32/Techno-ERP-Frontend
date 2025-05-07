@@ -11,7 +11,6 @@ interface AddMoreDataBtnProps {
 }
 
 export const AddMoreDataBtn: React.FC<AddMoreDataBtnProps> = ({ icon, label, onClick, btnClassName = "", iconClassName = "", labelClassName = "", disabled}) => {
-   console.log("In add more button,", disabled);
     return (
         <button onClick={onClick} className={`flex items-center gap-2 text-sm border rounded px-3 py-2 upload-materials-border-box transition ${btnClassName} hover:bg-gray-100`} disabled={ undefined }>
             <span className={`text-lg font-inter ${iconClassName}`}>{icon}</span>

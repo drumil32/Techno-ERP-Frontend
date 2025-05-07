@@ -147,7 +147,6 @@ export const CreateCourseDialog = () => {
 
 
   const handleFormSubmit = (data: FormData) => {
-    console.log("Form Data:", data);
 
     const matchedDepartment = departments.find(
       (dep) =>
@@ -164,7 +163,6 @@ export const CreateCourseDialog = () => {
       totalSemesters: data.totalSemesters
     }
 
-    console.log("Created Request Object:", requestObject);
 
     createCourseMutation.mutate(requestObject);
   };

@@ -18,7 +18,6 @@ interface FilterBadgesProps {
 }
 
 const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: FilterBadgesProps) => {
-  console.log('Applied filters : ', appliedFilters);
   const [badges, setBadges] = useState<BadgeData[]>([]);
 
   const getAssignedToLabel = (id: string) => {
@@ -99,8 +98,6 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
     }
 
     Object.entries(appliedFilters).forEach(([key, value]) => {
-      console.log('Key is : ', key);
-      console.log('Value is : ', value);
       if (key === 'startDate' || key === 'endDate') return; // Skip startDate and endDate because handled above
       if (Array.isArray(value) && value.length > 0) {
         let displayValue: string;
@@ -115,7 +112,6 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
         } else if (key === 'source') {
           getLabel = (val: string) => toPascal(val);
         } else {
-          console.log('We are here!');
           getLabel = (val: string) => val;
         }
 
@@ -131,7 +127,6 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
           value: displayValue
         });
 
-        console.log('New badges : ', newBadges);
       }
     });
 

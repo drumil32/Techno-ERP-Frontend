@@ -80,14 +80,12 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
                 name="counsellor"
                 label="Counsellor’s Name"
                 options={counsellors}
-                disabled={true}
                 placeholder="Select Counsellor's Name"
                 className="col-span-1"
               />
 
               <MultiSelectPopoverCheckbox
                 form={form}
-                disabled={true}
                 name="telecaller"
                 label="Telecaller’s Name"
                 options={telecallers}
