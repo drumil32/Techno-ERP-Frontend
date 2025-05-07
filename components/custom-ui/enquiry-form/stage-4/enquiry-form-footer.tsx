@@ -50,7 +50,11 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   }
 
   function handleSubmitClick() {
-    form.handleSubmit(onSubmit, onError)();
+    try {
+      form.handleSubmit(onSubmit, onError)();
+    } finally {
+      setSubmitDialogOpen(false);
+    }
   }
 
   async function handleDialogSaveDraft() {

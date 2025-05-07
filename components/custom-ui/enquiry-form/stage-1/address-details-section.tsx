@@ -179,15 +179,11 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                     <FormControl>
                       <Select
                         onValueChange={field.onChange}
-                        defaultValue={StatesOfIndia.UttarPradesh}
                         value={field.value}
                         disabled={isViewable}
                       >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue
-                            defaultValue={StatesOfIndia.UttarPradesh}
-                            placeholder="Select the state"
-                          />
+                          <SelectValue placeholder="Select the state" />
                         </SelectTrigger>
                         <SelectContent>
                           {Object.values(StatesOfIndia).map((state) => (

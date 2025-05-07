@@ -43,6 +43,7 @@ import { UserRoles } from '@/types/enum';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import Loading from '@/app/loading';
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends unknown, TValue> {
@@ -200,6 +201,10 @@ export default function TechnoDataTable({
     'yellowLeadsFollowUpCount'
   ];
 
+  if (!table.getRowModel().rows.length) {
+    return <Loading />;
+  }
+
   const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate'];
 
   return (
@@ -221,29 +226,28 @@ export default function TechnoDataTable({
               <Search className="h-4 w-4 text-gray-500" />
             </span>
           </div>
-          {
-            tableActionButton ?
-              tableActionButton
-              :
-              <>
-                <Button
-                  disabled={
-              !hasRole(UserRoles.EMPLOYEE_MARKETING) ||
-              !hasRole(UserRoles.LEAD_MARKETING) ||
-              tableName != 'All Leads'
-            }
-            onClick={uploadAction}
-                  variant="outline"
-                  className="h-8 w-[85px] rounded-[10px] border"
-                  icon={LuUpload}
-                >
-                  <span className="font-inter font-medium text-[12px]">Upload</span>
-                </Button>
-                <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
-                  <span className="font-inter font-semibold text-[12px]">Download</span>
-                </Button>
-              </>
-          }
+          {tableActionButton ? (
+            tableActionButton
+          ) : (
+            <>
+              <Button
+                disabled={
+                  !hasRole(UserRoles.EMPLOYEE_MARKETING) ||
+                  !hasRole(UserRoles.LEAD_MARKETING) ||
+                  tableName != 'All Leads'
+                }
+                onClick={uploadAction}
+                variant="outline"
+                className="h-8 w-[85px] rounded-[10px] border"
+                icon={LuUpload}
+              >
+                <span className="font-inter font-medium text-[12px]">Upload</span>
+              </Button>
+              <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
+                <span className="font-inter font-semibold text-[12px]">Download</span>
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
