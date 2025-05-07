@@ -55,7 +55,11 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     }
 
     setTimeout(() => {
-      form.handleSubmit(onSubmit, onError)();
+      try {
+        form.handleSubmit(onSubmit, onError)();
+      } finally {
+        setSubmitDialogOpen(false);
+      }
     }, 0);
   }
 

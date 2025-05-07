@@ -54,7 +54,7 @@ const EnquiryFormStage3 = () => {
   const id = pathVariables.id as string;
   const [refreshKey, setRefreshKey] = useState(0);
   const router = useRouter();
-
+  const [isDocumentVerificationValid, setIsDocumentVerificationValid] = useState(false);
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id, refreshKey],
     queryFn: () => getEnquiry(id ? id : ''),
@@ -155,6 +155,11 @@ const EnquiryFormStage3 = () => {
       }
       console.log(errors);
       setNestedErrors(errors);
+      return;
+    }
+
+    if (!isDocumentVerificationValid) {
+      toast.error('Please ensure you complete document verification first');
       return;
     }
 
@@ -325,14 +330,18 @@ const EnquiryFormStage3 = () => {
             commonFormItemClass={commonFormItemClass}
           />
 
-          <DocumentVerificationSection form={form} isViewable={isViewable} />
+          <DocumentVerificationSection
+            onValidationChange={setIsDocumentVerificationValid}
+            form={form}
+            isViewable={isViewable}
+          />
 
           {/* <AllDocuments
             enquiryDocuments={currentDocuments}
             setCurrentDocuments={setCurrentDocuments}
           /> */}
 
-          <ConfirmationSection form={form} />
+          {!isViewable && <ConfirmationSection form={form} />}
           <OfficeUseSection
             form={form}
             isViewable={isViewable}

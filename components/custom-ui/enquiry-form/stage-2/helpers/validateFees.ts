@@ -1,32 +1,33 @@
 // helpers/validation.ts or within StudentFeesForm.tsx
-
+import { displayFeeMapper } from './mappers';
 import { UseFormSetError, UseFormClearErrors } from 'react-hook-form';
 import { FeeType } from '@/types/enum'; // Adjust path if needed
 import { IFeesRequestSchema } from '../studentFeesSchema';
 
 // Helper to find original fee amount for 'other' fees
 const findOriginalOtherFee = (
-    type: FeeType | undefined,
-    otherFeesData: any[] | undefined | null // Assuming structure like [{ type: FeeType, fee: number }, ...]
+  type: FeeType | string | undefined,
+  otherFeesData: any[] | undefined | null // Assuming structure like [{ type: FeeType, fee: number }, ...]
 ): number | undefined => {
-    if (!otherFeesData || type === undefined) return undefined;
-    const found = otherFeesData.find((f) => f.type === type);
-    // Ensure the fee is a valid number before returning
-    return typeof found?.fee === 'number' && !isNaN(found.fee) ? found.fee : undefined;
+  if (!otherFeesData || type === undefined) return undefined;
+  const found = otherFeesData.find((f) => f.type === type);
+  // Ensure the fee is a valid number before returning
+  console.log('Other fees data', otherFeesData);
+  console.log('I am founding for this type', type, ' ', found?.amount);
+  return typeof found?.amount === 'number' && !isNaN(found.amount) ? found.amount : undefined;
 };
 
 // Helper to format currency
 const formatCurrency = (value: number | undefined | null): string => {
-    if (value === undefined || value === null || isNaN(value)) {
-        // Return a default or empty string based on preference
-        // Using '₹-' for undefined/NaN might be clearer than '₹0' sometimes
-        return '₹-';
-        // Or return '₹0' if that's preferred
-        // return `₹${(0).toLocaleString('en-IN')}`;
-    }
-    return `₹${value.toLocaleString('en-IN')}`;
-}
-
+  if (value === undefined || value === null || isNaN(value)) {
+    // Return a default or empty string based on preference
+    // Using '₹-' for undefined/NaN might be clearer than '₹0' sometimes
+    return '₹-';
+    // Or return '₹0' if that's preferred
+    // return `₹${(0).toLocaleString('en-IN')}`;
+  }
+  return `₹${value.toLocaleString('en-IN')}`;
+};
 
 /**
  * Performs custom validation logic for fee amounts.
@@ -35,93 +36,97 @@ const formatCurrency = (value: number | undefined | null): string => {
  * @returns true if all custom validations pass, false otherwise.
  */
 export const validateCustomFeeLogic = (
-    values: IFeesRequestSchema,
-    otherFeesDataBase: any, // Base data with original fees
-    semWiseFeesDataBase: any, // Base data with original fees { fee: [num1, num2,...] }
-    setError: UseFormSetError<IFeesRequestSchema>,
-    clearErrors: UseFormClearErrors<IFeesRequestSchema>
+  values: IFeesRequestSchema,
+  otherFeesDataBase: any, // Base data with original fees
+  semWiseFeesDataBase: any, // Base data with original fees { fee: [num1, num2,...] }
+  setError: UseFormSetError<IFeesRequestSchema>,
+  clearErrors: UseFormClearErrors<IFeesRequestSchema>
 ): boolean => {
-    let isOverallValid = true;
+  let isOverallValid = true;
 
-    // --- Validate Other Fees ---
-    values.otherFees?.forEach((otherFee:any, index:any) => {
-        if (!otherFee) return; // Skip if item is somehow null/undefined
+  // --- Validate Other Fees ---
+  values.otherFees?.forEach((otherFee: any, index: any) => {
+    if (!otherFee) return; // Skip if item is somehow null/undefined
 
-        // Define field names for clarity
-        const finalFeeField = `otherFees.${index}.finalFee` as const;
-        const depositField = `otherFees.${index}.feesDepositedTOA` as const;
+    // Define field names for clarity
+    const finalFeeField = `otherFees.${index}.finalFee` as const;
+    const depositField = `otherFees.${index}.feesDepositedTOA` as const;
+    console.log('Other fee type', otherFee.type);
+    // Get fee values (handle potential undefined/null)
+    const originalFeeAmount = findOriginalOtherFee(
+      displayFeeMapper(otherFee?.type as FeeType),
+      otherFeesDataBase
+    );
+    const finalFee = otherFee.finalFee; // Already potentially undefined | number
+    const feesDeposited = otherFee.feesDepositedTOA; // Already potentially undefined | number
+    console.log(finalFee, originalFeeAmount);
+    // Clear previous errors for these fields before re-validating
+    clearErrors(finalFeeField);
+    clearErrors(depositField);
 
-        // Get fee values (handle potential undefined/null)
-        const originalFeeAmount = findOriginalOtherFee(otherFee.type, otherFeesDataBase);
-        const finalFee = otherFee.finalFee; // Already potentially undefined | number
-        const feesDeposited = otherFee.feesDepositedTOA; // Already potentially undefined | number
-
-        // Clear previous errors for these fields before re-validating
-        clearErrors(finalFeeField);
-        clearErrors(depositField);
-
-        // Validation 1: Final Fee <= Original Fee
-        if (
-            typeof finalFee === 'number' &&
-            typeof originalFeeAmount === 'number' &&
-            finalFee > originalFeeAmount
-        ) {
-            setError(finalFeeField, {
-                type: 'manual_comparison',
-                message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`,
-            });
-            isOverallValid = false;
-        }
-
-        // Validation 2: Fees Deposited <= Final Fee
-        if (
-            typeof feesDeposited === 'number' && feesDeposited > 0 // Only validate if deposit > 0
-        ) {
-            if (typeof finalFee !== 'number' || isNaN(finalFee)) {
-                // If deposit exists but final fee is invalid/missing
-                 setError(depositField, {
-                     type: 'manual_dependency',
-                     message: `Final fee must be set if deposit is entered`,
-                 });
-                 isOverallValid = false;
-            } else if (feesDeposited > finalFee) {
-                // If deposit exceeds final fee
-                setError(depositField, {
-                    type: 'manual_comparison',
-                    message: `Cannot exceed final fee (${formatCurrency(finalFee)})`,
-                });
-                isOverallValid = false;
-            }
-        }
-    });
-
-    // --- Validate Semester Fees ---
-    const originalSemFees = semWiseFeesDataBase?.fee; // Assuming structure { fee: [num1, num2,...] }
-    if (Array.isArray(originalSemFees)) {
-        values.semWiseFees?.forEach((semFee:any, index:any) => {
-            if (!semFee) return;
-
-            const finalFeeField = `semWiseFees.${index}.finalFee` as const;
-            const originalFeeAmount = originalSemFees[index];
-            const finalFee = semFee.finalFee;
-
-            // Clear previous error
-            clearErrors(finalFeeField);
-
-            // Validation: Final Fee <= Original Fee
-            if (
-                typeof finalFee === 'number' &&
-                typeof originalFeeAmount === 'number' && // Make sure original fee is also valid
-                finalFee > originalFeeAmount
-            ) {
-                setError(finalFeeField, {
-                    type: 'manual_comparison',
-                    message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`,
-                });
-                isOverallValid = false;
-            }
-        });
+    // Validation 1: Final Fee <= Original Fee
+    if (
+      typeof finalFee === 'number' &&
+      typeof originalFeeAmount === 'number' &&
+      finalFee > originalFeeAmount
+    ) {
+      setError(finalFeeField, {
+        type: 'manual_comparison',
+        message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`
+      });
+      isOverallValid = false;
     }
 
-    return isOverallValid;
+    // Validation 2: Fees Deposited <= Final Fee
+    if (
+      typeof feesDeposited === 'number' &&
+      feesDeposited > 0 // Only validate if deposit > 0
+    ) {
+      if (typeof finalFee !== 'number' || isNaN(finalFee)) {
+        // If deposit exists but final fee is invalid/missing
+        setError(depositField, {
+          type: 'manual_dependency',
+          message: `Final fee must be set if deposit is entered`
+        });
+        isOverallValid = false;
+      } else if (feesDeposited > finalFee) {
+        // If deposit exceeds final fee
+        setError(depositField, {
+          type: 'manual_comparison',
+          message: `Cannot exceed final fee (${formatCurrency(finalFee)})`
+        });
+        isOverallValid = false;
+      }
+    }
+  });
+
+  // --- Validate Semester Fees ---
+  const originalSemFees = semWiseFeesDataBase; // Assuming structure { fee: [num1, num2,...] }
+  if (Array.isArray(originalSemFees)) {
+    values.semWiseFees?.forEach((semFee: any, index: any) => {
+      if (!semFee) return;
+
+      const finalFeeField = `semWiseFees.${index}.finalFee` as const;
+      const originalFeeAmount = originalSemFees[index];
+      const finalFee = semFee.finalFee;
+
+      // Clear previous error
+      clearErrors(finalFeeField);
+
+      // Validation: Final Fee <= Original Fee
+      if (
+        typeof finalFee === 'number' &&
+        typeof originalFeeAmount === 'number' && // Make sure original fee is also valid
+        finalFee > originalFeeAmount
+      ) {
+        setError(finalFeeField, {
+          type: 'manual_comparison',
+          message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`
+        });
+        isOverallValid = false;
+      }
+    });
+  }
+
+  return isOverallValid;
 };

@@ -17,6 +17,7 @@ import { BookPlus, Search } from 'lucide-react';
 import { formatApplicationStatus } from './helpers/format-application-status';
 import { CellContext } from '@tanstack/react-table';
 import { toast } from 'sonner';
+import Loading from '@/app/loading';
 
 export default function AdmissionsLandingPage() {
   const [search, setSearch] = useState('');
@@ -105,6 +106,10 @@ export default function AdmissionsLandingPage() {
   const admissionsData = admissionsQuery.data ? refineAdmissions(admissionsQuery.data) : [];
   console.log(admissionsData);
 
+  if (!admissionsData) {
+    <Loading />;
+  }
+
   return (
     <>
       <TechnoPageTitle title="Admission Application Process" />
@@ -130,22 +135,21 @@ export default function AdmissionsLandingPage() {
           </Button>
         </AdmissionCard>
       </div>
-      {admissionsData && (
-        <TechnoDataTable
-          selectedRowId={selectedRowId}
-          setSelectedRowId={setSelectedRowId}
-          columns={columns}
-          data={admissionsData}
-          tableName="Ongoing Admissions"
-          currentPage={1}
-          totalPages={1}
-          pageLimit={10}
-          onSearch={handleSearch}
-          searchTerm={search}
-          showPagination={false}
-          handleViewMore={handleViewMore}
-        />
-      )}
+
+      <TechnoDataTable
+        selectedRowId={selectedRowId}
+        setSelectedRowId={setSelectedRowId}
+        columns={columns}
+        data={admissionsData}
+        tableName="Ongoing Admissions"
+        currentPage={1}
+        totalPages={1}
+        pageLimit={10}
+        onSearch={handleSearch}
+        searchTerm={search}
+        showPagination={false}
+        handleViewMore={handleViewMore}
+      />
     </>
   );
 }
