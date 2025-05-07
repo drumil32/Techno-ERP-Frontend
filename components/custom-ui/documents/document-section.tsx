@@ -51,7 +51,7 @@ export default function SubjectMaterialsSection({
         {materials.map((material, index) => (
           <div
             key={index}
-            className={`flex items-center justify-between px-3 py-2 border-box rounded-md bg-white shadow-sm hover:shadow-md transition`}
+            className={`flex items-center justify-between border border-[#c1c1c1] px-3 py-2 rounded-[10px] bg-white transition hover:shadow-sm  cursor-pointer hover:border-[#5b31d1]`}
             style={{
               minWidth: "243px",
               maxWidth: "350px",

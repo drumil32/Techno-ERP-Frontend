@@ -62,6 +62,7 @@ const DynamicInfoGrid: React.FC<InfoGridProps> = ({
         gap: columnGap,
   
         borderRadius: "12px",
+        backgroundColor: "white"
       }}
     >
       {columnData.map((column, i) => (

@@ -224,10 +224,10 @@ export const SingleCoursePage = () => {
                     rowsPerColumn={rows}
                     data={courseData}
                     design={{
-                        containerWidth: "1339px",
-                        containerHeight: "149px",
-                        columnWidth: "475px",
-                        columnHeight: "96px",
+                        containerWidth: "full",
+                        containerHeight: "full",
+                        columnWidth: "full",
+                        columnHeight: "full",
                         columnGap: "65px",
                         rowGap: "12px",
                         keyWidth: "125px",
