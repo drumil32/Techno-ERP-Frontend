@@ -114,11 +114,7 @@ export default function StudentDuesPage() {
     { accessorKey: 'studentPhoneNumber', header: "Student's Phone Number" },
     { accessorKey: 'fatherName', header: 'Father Name' },
     { accessorKey: 'fatherPhoneNumber', header: "Father's Phone Number" },
-    { accessorKey: 'courseName', header: 'Course',
-      cell: ({row}:any) => {
-        return <span>{CourseNameMapper[row.original.courseName as Course]}</span>
-      }
-    },
+    { accessorKey: 'courseName', header: 'Course' },
     {
       accessorKey: 'courseYear', header: 'Course Year',
       cell: ({ row }: any) => {

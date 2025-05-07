@@ -5,8 +5,8 @@ import FeesPaidTag from "./fees-paid-status-tag";
 
 export default function StudentData({ studentData }: { studentData: StudentDetails }) {
   return (
-    <div className="w-full flex flex-row gap-40 px-4 py-5 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
-      <div className="w-1/6 flex flex-col gap-3">
+    <div className="w-full flex flex-row px-4 py-5 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
+      <div className="w-2/6 flex flex-col gap-3 ">
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">Student Name</Label>
           <Label>{studentData.studentName}</Label>
@@ -20,7 +20,7 @@ export default function StudentData({ studentData }: { studentData: StudentDetai
           <Label>{studentData.fatherName}</Label>
         </div>
       </div>
-      <div className="w-1/6 flex flex-col gap-3">
+      <div className="w-2/6 flex flex-col gap-3">
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">Fees Status</Label>
           {studentData.feeStatus &&
@@ -29,7 +29,7 @@ export default function StudentData({ studentData }: { studentData: StudentDetai
         </div>
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">Course</Label>
-          <Label>{CourseNameMapper[studentData.course as Course]}</Label>
+          <Label>{studentData.course}</Label>
         </div>
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">HOD</Label>
