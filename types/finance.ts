@@ -82,7 +82,7 @@ export interface StudentDetails {
   feeStatus: FeesPaidStatus;
   course: string;
   HOD: string;
-  extraBalance: number | null;
+  extraBalance?: number | null;
 }
 
 // For a single row in the Semester-wise Fees table
