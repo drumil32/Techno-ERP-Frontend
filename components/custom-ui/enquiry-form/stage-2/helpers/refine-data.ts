@@ -8,17 +8,16 @@ export const cleanDataForDraft = (data: any) => {
   const cleaned: any = {};
 
   if (Array.isArray(data.otherFees)) {
-    const cleanedOtherFees = data.otherFees.filter((fee: any) =>
-      fee &&
-      !isEmpty(fee.type) &&
-      typeof fee.finalFee === 'number' && fee.finalFee >= 0
+    const cleanedOtherFees = data.otherFees.filter(
+      (fee: any) =>
+        fee && !isEmpty(fee.type) && typeof fee.finalFee === 'number' && fee.finalFee >= 0
     );
     const minimalOtherFees = cleanedOtherFees.map((fee: any) => ({
       type: fee.type,
       finalFee: fee.finalFee,
       ...(typeof fee.feesDepositedTOA === 'number' && { feesDepositedTOA: fee.feesDepositedTOA }),
       ...(fee.remarks && { remarks: fee.remarks })
-    }))
+    }));
 
     if (minimalOtherFees.length > 0) {
       cleaned.otherFees = minimalOtherFees;
@@ -26,9 +25,8 @@ export const cleanDataForDraft = (data: any) => {
   }
 
   if (Array.isArray(data.semWiseFees)) {
-    const cleanedSemWiseFees = data.semWiseFees.filter((fee: any) =>
-      fee &&
-      typeof fee.finalFee === 'number' && fee.finalFee >= 0
+    const cleanedSemWiseFees = data.semWiseFees.filter(
+      (fee: any) => fee && typeof fee.finalFee === 'number' && fee.finalFee >= 0
     );
     const minimalSemWiseFees = cleanedSemWiseFees.map((fee: any) => ({
       finalFee: fee.finalFee
@@ -50,7 +48,6 @@ export const cleanDataForDraft = (data: any) => {
     }
   }
 
-
   if (Array.isArray(data.telecaller)) {
     const validTelecaller = data.telecaller.filter((c: any) => !isEmpty(c));
     if (validTelecaller.length >= 0) {
@@ -58,8 +55,12 @@ export const cleanDataForDraft = (data: any) => {
     }
   }
 
-  if(data.remarks) {
-    cleaned.remarks = data.remarks
+  if (data.reference) {
+    cleaned.reference = data.reference;
+  }
+
+  if (data.remarks) {
+    cleaned.remarks = data.remarks;
   }
 
   return Object.keys(cleaned).length > 0 ? cleaned : undefined;

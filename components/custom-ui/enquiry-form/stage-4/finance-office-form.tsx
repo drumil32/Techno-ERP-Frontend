@@ -25,7 +25,7 @@ import { validateCustomFeeLogic } from '../stage-2/helpers/validateFees';
 import { cleanDataForDraft } from '../stage-2/helpers/refine-data';
 import { calculateDiscountPercentage, formatCurrency } from '../stage-2/student-fees-form';
 import { displayFeeMapper, scheduleFeeMapper } from '../stage-2/helpers/mappers';
-import { ApplicationStatus, FeeType } from '@/types/enum';
+import { AdmissionReference, ApplicationStatus, FeeType } from '@/types/enum';
 import ShowStudentData from '../stage-2/data-show';
 import FilledByCollegeSection from '../stage-1/filled-by-college-section';
 import ConfirmationOTPSection from './confirmation-otp-section';
@@ -57,6 +57,7 @@ const FinanceOfficeForm = () => {
   const {
     data: enquiryData,
     error,
+    isFetched,
     isLoading: isLoadingEnquiry
   } = useQuery<any>({
     queryKey: ['enquireFormData', enquiry_id, dataUpdated],
@@ -197,12 +198,12 @@ const FinanceOfficeForm = () => {
       } else {
         initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
       }
-
       form.reset({
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,
         semWiseFees: initialSemFees,
         feesClearanceDate: initialFeesClearanceDate,
+        reference: enquiryData.reference,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
         remarks: initialCollegeRemarks
@@ -347,9 +348,9 @@ const FinanceOfficeForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-2/3">
-                <div className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 px-2 pb-1 font-bold text-[16px]">
-                  <div>Fees Details</div>
+              <div className="w-full lg:w-2/3">
+                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-3 sm:p-5 grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mb-2 rounded-[5px] text-[14px] sm:text-[16px]">
+                  <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Fees Details</div>
                   <div className="text-right">Schedule</div>
                   <div className="text-right">Fees</div>
                   <div className="text-right">Final Fees</div>
@@ -376,99 +377,113 @@ const FinanceOfficeForm = () => {
                   return (
                     <div
                       key={field.id}
-                      className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-8 gap-y-8 items-start px-2 py-1 my-4"
+                      className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-2 sm:gap-3 md:gap-4 items-start px-1 py-1 sm:px-2 sm:py-1"
                     >
-                      <div className="pt-2 text-sm">{displayFeeMapper(feeType)}</div>
-                      <div className="pt-2 text-sm text-right">{scheduleFeeMapper(feeType)}</div>
-                      <div className="pt-2 text-sm text-right">{formatCurrency(totalFee)}</div>
+                      <div className="xs:col-span-2 sm:col-span-4 md:col-span-1 pt-2 text-[12px] sm:text-sm">
+                        {displayFeeMapper(feeType)}
+                      </div>
 
-                      <FormField
-                        control={form.control}
-                        name={`otherFees.${index}.finalFee`}
-                        render={({ field: formField }) => (
-                          <FormItem className="flex flex-col justify-end">
-                            <FormControl>
-                              <Input
-                                type="number"
-                                min="0"
-                                placeholder="Enter fees"
-                                {...formField}
-                                className="text-right px-2 h-11 text-sm"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  formField.onChange(value === '' ? undefined : Number(value));
-                                }}
-                                value={formField.value ?? ''}
-                              />
-                            </FormControl>
-                            <div className="h-3">
-                              <FormMessage className="text-xs mt-0" /> {/* Smaller message */}
-                            </div>
-                          </FormItem>
-                        )}
-                      />
+                      <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
+                        {scheduleFeeMapper(feeType)}
+                      </div>
 
-                      <div className="flex items-center text-sm h-11 border border-input rounded-md px-2">
+                      <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
+                        {formatCurrency(totalFee)}
+                      </div>
+
+                      <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
+                        <FormField
+                          control={form.control}
+                          name={`otherFees.${index}.finalFee`}
+                          render={({ field: formField }) => (
+                            <FormItem className="flex flex-col justify-end">
+                              <FormControl>
+                                <Input
+                                  type="text"
+                                  min="0"
+                                  placeholder="Enter fees"
+                                  {...formField}
+                                  className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    formField.onChange(value === '' ? undefined : Number(value));
+                                  }}
+                                  value={formField.value ?? ''}
+                                />
+                              </FormControl>
+                              <div className="h-[20px] sm:h-[45px]">
+                                <FormMessage className="text-[10px] sm:text-xs mt-0" />
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
                         <p className="ml-auto">{discountDisplay}</p>
                       </div>
 
-                      <FormField
-                        control={form.control}
-                        name={`otherFees.${index}.feesDepositedTOA`}
-                        render={({ field: formField }) => (
-                          <FormItem className="flex flex-col justify-end">
-                            <FormControl>
-                              <Input
-                                type="number"
-                                min="0"
-                                placeholder="Enter deposit"
-                                {...formField}
-                                className="text-right px-2 h-11 text-sm"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  formField.onChange(value === '' ? undefined : Number(value));
-                                }}
-                                value={formField.value ?? ''}
-                              />
-                            </FormControl>
-                            <div className="h-3">
-                              <FormMessage className="text-xs mt-0" /> {/* Smaller message */}
-                            </div>
-                          </FormItem>
-                        )}
-                      />
+                      <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
+                        <FormField
+                          control={form.control}
+                          name={`otherFees.${index}.feesDepositedTOA`}
+                          render={({ field: formField }) => (
+                            <FormItem className="flex flex-col justify-end">
+                              <FormControl>
+                                <Input
+                                  type="text"
+                                  min="0"
+                                  placeholder="Enter deposit"
+                                  {...formField}
+                                  className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    formField.onChange(value === '' ? undefined : Number(value));
+                                  }}
+                                  value={formField.value ?? ''}
+                                />
+                              </FormControl>
+                              <div className="h-[20px] sm:h-[45px]">
+                                <FormMessage className="text-[10px] sm:text-xs min-h-10 mt-0" />
+                              </div>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
 
-                      <div className="flex items-center justify-end text-sm h-11 border border-input rounded-md px-2">
+                      <div className="flex items-center justify-end text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
                         {formatCurrency(remainingFee)}
                       </div>
                     </div>
                   );
                 })}
 
-                <div className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mt-2 px-2 py-2 border-t font-semibold">
-                  <div className="text-sm">Total Fees</div>
-                  <div>{/* Empty cell for Schedule */}</div>
-                  <div className="text-sm text-right">
+                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-3 sm:p-5 rounded-[5px] grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mt-2 border-t">
+                  <div className="text-[12px] sm:text-sm xs:col-span-2 sm:col-span-4 md:col-span-1">
+                    Total Fees
+                  </div>
+                  <div></div>
+                  <div className="text-[12px] sm:text-sm text-right">
                     {formatCurrency(otherFeesTotals.totalOriginal)}
                   </div>
-                  <div className="text-sm text-right pr-2">
+                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {formatCurrency(otherFeesTotals.totalFinal)}
                   </div>
-                  <div className="text-right">
+                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {calculateDiscountPercentage(
                       otherFeesTotals.totalOriginal,
                       otherFeesTotals.totalFinal
                     ) + '%'}
                   </div>
-                  <div className="text-sm text-right pr-2">
+                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {formatCurrency(otherFeesTotals.totalDeposited)}
                   </div>
-                  <div className="text-sm text-right pr-2">
+                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {formatCurrency(otherFeesTotals.totalDue)}
                   </div>
                 </div>
 
-                <div className="mt-4 px-2 text-xs text-gray-600 space-y-1">
+                <div className="mt-3 sm:mt-4 px-1 sm:px-2 text-[10px] sm:text-xs text-gray-600 space-y-1">
                   <p>Book Bank - *50% adjustable at the end of final semester</p>
                   <p>Book Bank - *Applicable only in BBA, MBA, BAJMC, MAJMC & BCom (Hons)</p>
                   <p>
@@ -477,15 +492,16 @@ const FinanceOfficeForm = () => {
                   </p>
                 </div>
 
-                <div className="mt-6 px-2">
+                <div className="mt-4 sm:mt-6 px-1 sm:px-2">
                   <DatePicker
                     control={form.control}
                     name="feesClearanceDate"
                     label="Fees Clearance Date"
+                    disabled={isViewable}
                     placeholder="Pick a Date"
                     showYearMonthDropdowns={true}
-                    formItemClassName="w-[300px]"
-                    labelClassName="font-inter font-normal text-[12px] text-[#666666]"
+                    formItemClassName="w-full sm:w-[300px]"
+                    labelClassName="font-inter font-normal text-[10px] sm:text-[12px] text-[#666666]"
                     calendarProps={{
                       disabled: (date) => {
                         const today = new Date();
@@ -498,7 +514,6 @@ const FinanceOfficeForm = () => {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="sem-fees">
           <AccordionItem value="sem-fees">
             <AccordionTrigger className="w-full items-center">
@@ -506,13 +521,17 @@ const FinanceOfficeForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-2/3">
-                <div className="space-y-4">
-                  <div className="grid grid-cols-[1fr_0.5fr_1fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 px-2 pb-1 border-b">
-                    <div className="font-medium text-sm text-gray-600">Semester</div>
-                    <div className="font-medium text-sm text-gray-600 text-right">Fees</div>
-                    <div className="font-medium text-sm text-gray-600 text-center">Final Fees</div>
-                    <div className="font-medium text-sm text-gray-600 text-center">
+              <div className="w-full lg:w-2/3">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="grid bg-[#F7F7F7] rounded-[5px] text-[#4E4E4E] p-3 sm:p-5 grid-cols-1 xs:grid-cols-2 sm:grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mb-2 pb-1 border-b">
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600">Semester</div>
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-right">
+                      Fees
+                    </div>
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-center">
+                      Final Fees
+                    </div>
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-center">
                       Applicable Discount
                     </div>
                   </div>
@@ -526,10 +545,10 @@ const FinanceOfficeForm = () => {
                     return (
                       <div
                         key={field.id}
-                        className="grid grid-cols-[1fr_0.5fr_1fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 items-start px-2 py-1"
+                        className="grid w-full h-max grid-cols-1 xs:grid-cols-2 sm:grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 items-start px-1 sm:px-2 py-1"
                       >
-                        <div className="pt-2 text-sm">Semester {index + 1}</div>
-                        <div className="pt-2 text-sm text-right">
+                        <div className="pt-2 text-[12px] sm:text-sm">Semester {index + 1}</div>
+                        <div className="pt-2 text-[12px] sm:text-sm text-right">
                           {formatCurrency(originalFeeAmount)}
                         </div>
 
@@ -540,11 +559,11 @@ const FinanceOfficeForm = () => {
                             <FormItem className="flex flex-col justify-end">
                               <FormControl>
                                 <Input
-                                  className="text-right px-2 h-12 text-sm"
-                                  type="number"
+                                  className="text-right px-2 h-9 sm:h-12 text-[12px] sm:text-sm"
+                                  type="text"
                                   min="0"
                                   placeholder="Enter fees"
-                                  {...formField} // Use formField here
+                                  {...formField}
                                   onChange={(e) =>
                                     formField.onChange(
                                       e.target.value === '' ? undefined : Number(e.target.value)
@@ -553,12 +572,12 @@ const FinanceOfficeForm = () => {
                                   value={formField.value ?? ''}
                                 />
                               </FormControl>
-                              <FormMessage className="text-xs mt-1" />
+                              <FormMessage className="text-[10px] sm:text-xs mt-1" />
                             </FormItem>
                           )}
                         />
 
-                        <div className="flex items-center text-sm h-11 border border-input rounded-md px-2">
+                        <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2">
                           <p className="ml-auto">{discountDisplay}</p>
                         </div>
                       </div>

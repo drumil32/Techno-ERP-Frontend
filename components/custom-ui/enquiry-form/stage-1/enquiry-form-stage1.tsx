@@ -34,7 +34,7 @@ import ConfirmationCheckBox from './confirmation-check-box';
 
 // Utility and constants imports
 import { toast } from 'sonner';
-import { ApplicationStatus, EducationLevel } from '@/types/enum';
+import { ApplicationStatus, EducationLevel, StatesOfIndia } from '@/types/enum';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
 import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
@@ -62,8 +62,11 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       studentName: '',
+      address: {
+        state: StatesOfIndia.UttarPradesh
+      },
       studentPhoneNumber: '',
-      confirmation: false
+      confirmation: true
     },
     disabled: isViewable
   });
@@ -81,6 +84,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   useEffect(() => {
     if (data) {
       const sanitizedData = removeNullValues(data);
+      console.log(sanitizedData);
       form.reset(sanitizedData);
     }
   }, [data, form]);
@@ -197,9 +201,10 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     }
 
     // Remove confirmation field from values
+    console.log('Filtered Values', filteredValues);
     const { confirmation, id, _id, ...rest } = filteredValues;
 
-    if (!id) {
+    if (!_id) {
       const response: any = await createEnquiryDraft(rest);
       if (!response) {
         toast.error('Failed to create enquiry draft');
@@ -207,8 +212,9 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       }
 
       toast.success('Enquiry draft created successfully');
+      router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_1(response._id));
     } else {
-      const response = await updateEnquiryDraft({ ...rest, id });
+      const response = await updateEnquiryDraft({ ...rest, id: _id });
       if (!response) {
         toast.error('Failed to update enquiry draft');
         return;
@@ -220,6 +226,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
   async function onSubmit() {
     let values = form.getValues();
+    console.log('ON submit form data', values);
     values = removeNullValues(values);
     const filteredData = filterBySchema(formSchema, values);
 

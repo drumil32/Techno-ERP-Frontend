@@ -1,5 +1,5 @@
 // React and Hooks
-import React from 'react';
+import React, { useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
 // UI Components
@@ -30,6 +30,7 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { AdmissionReference } from '@/types/enum';
+import { formSchema } from './enquiry-form-stage1';
 
 interface UserRoleInterface {
   _id: string;
@@ -91,12 +92,16 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                     </FormLabel>
                     <FormControl>
                       <Select
-                        onValueChange={field.onChange}
+                        onValueChange={(value) => {
+                          if (value) {
+                            field.onChange(value);
+                          }
+                        }}
                         value={field.value}
                         disabled={isViewable}
                       >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue className="text-[#9D9D9D]" placeholder="Select reference" />
+                          <SelectValue placeholder="Select reference" />
                         </SelectTrigger>
                         <SelectContent>
                           {Object.values(AdmissionReference).map((ref) => (
@@ -113,7 +118,6 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                   </FormItem>
                 )}
               />
-
               <MultiSelectPopoverCheckbox
                 form={form}
                 className={commonFormItemClass}
