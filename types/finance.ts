@@ -46,6 +46,7 @@ export interface SemesterWiseFeeInformation {
 
 export interface SemesterBreakUp {
   semesterNumber: number;
+  semesterId: string;
   details: {
     feeCategory: FinanceFeeType;
     feeDetailId: string;

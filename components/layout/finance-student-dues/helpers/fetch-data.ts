@@ -40,3 +40,11 @@ export const recordPayment = async (data: any) => {
     );
 }
 
+export const updateFeeBreakUp = async (data:any) => {
+  return apiRequest(
+    API_METHODS.PUT,
+    API_ENDPOINTS.updateFeeBreakup,
+    data
+  )
+}
+
