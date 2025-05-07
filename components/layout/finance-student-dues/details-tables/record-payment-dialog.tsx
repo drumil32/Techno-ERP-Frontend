@@ -79,7 +79,12 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
     };
 
     try {
-      await recordPayment(payload);
+      const res = await recordPayment(payload);
+
+      console.log(res)
+      if(res == null) {
+        throw new Error("")
+      }
 
       toast.success("Payment recorded successfully!");
 
@@ -89,10 +94,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
         queryKey: ['studentFeesInfomation', studentDuesId]
       });
     } catch (error) {
-      toast.error("Failed to record payment. Please try again.");
     }
-
-    form.reset();
   };
 
 
