@@ -39,7 +39,7 @@ export default function StudentData({ studentData }: { studentData: StudentDetai
       <div className="w-2/6 flex flex-col gap-3">
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">Extra Balance</Label>
-          <Label>{studentData.extraBalance ? `₹ ${studentData.extraBalance}` : "--"}</Label>
+          <Label>{studentData.extraBalance ? `₹ ${studentData.extraBalance.toLocaleString()}` : "--"}</Label>
         </div>
       </div>
     </div>
