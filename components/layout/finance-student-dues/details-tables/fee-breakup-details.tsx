@@ -10,18 +10,18 @@ export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { se
   const [semWiseFeesBreakUpDetails, setSemWiseFeesBreakUpDetails] = useState<SemesterBreakUp["details"]>([])
 
   useEffect(() => {
-  if (semFeesBreakUp) {
-    const selectedSemData = semFeesBreakUp.find(
-      (item) => item.semesterNumber === selectedSemester
-    )
-    setSemWiseFeesBreakUpDetails(
-      selectedSemData?.details.map((item) => ({
-        ...item,
-        totalDues: item.finalFee - item.paidAmount,
-      })) ?? []
-    )
-  }
-}, [selectedSemester, semFeesBreakUp])
+    if (semFeesBreakUp) {
+      const selectedSemData = semFeesBreakUp.find(
+        (item) => item.semesterNumber === selectedSemester
+      )
+      setSemWiseFeesBreakUpDetails(
+        selectedSemData?.details.map((item) => ({
+          ...item,
+          totalDues: item.finalFee - item.paidAmount,
+        })) ?? []
+      )
+    }
+  }, [selectedSemester, semFeesBreakUp])
 
   const feeTotals = semWiseFeesBreakUpDetails.reduce(
     (totals, item) => {
@@ -62,36 +62,38 @@ export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { se
         </Select>
       </div>
 
-      <Table className="w-auto">
-        <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg [&_th]:!text-[#5B31D1] ">
-          <TableRow>
-            <TableHead className="w-[150px] rounded-l-[5px]">Fees Category</TableHead>
-            <TableHead className="w-[110px]">Schedule</TableHead>
-            <TableHead className="w-[100px] text-right">Final Fees</TableHead>
-            <TableHead className="w-[100px] text-right">Fees paid</TableHead>
-            <TableHead className="w-[100px] rounded-r-[5px] text-right">Total Dues</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {semWiseFeesBreakUpDetails.map((item) => (
-            <TableRow key={item.feeCategory}>
-              <TableCell className="w-[150px]">{getFinanceFeeTypeLabel(item.feeCategory)}</TableCell>
-              <TableCell className="w-[110px]">{getScheduleLabel(item.feeSchedule)}</TableCell>
-              <TableCell className="w-[100px] text-right">{item.finalFee != null ? `₹ ${item.finalFee.toLocaleString()}` : '__'}</TableCell>
-              <TableCell className="w-[100px] text-right">{item.paidAmount != null ? `₹ ${item.paidAmount.toLocaleString()}` : '__'}</TableCell>
-              <TableCell className="w-[100px] text-right">{item.totalDues != null ? `₹ ${item.totalDues.toLocaleString()}` : '__'}</TableCell>
+      <div className="w-full overflow-x-auto">
+        <Table className="w-auto">
+          <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg [&_th]:!text-[#5B31D1] ">
+            <TableRow>
+              <TableHead className="w-[150px] rounded-l-[5px]">Fees Category</TableHead>
+              <TableHead className="w-[110px]">Schedule</TableHead>
+              <TableHead className="w-[100px] text-right">Final Fees</TableHead>
+              <TableHead className="w-[100px] text-right">Fees paid</TableHead>
+              <TableHead className="w-[100px] rounded-r-[5px] text-right">Total Dues</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell className="rounded-l-[5px]" colSpan={2}>Total</TableCell>
-            <TableCell className="text-right">₹{feeTotals?.finalFee.toLocaleString()}</TableCell>
-            <TableCell className="text-right">₹{feeTotals?.paidAmount.toLocaleString()}</TableCell>
-            <TableCell className="text-right rounded-r-[5px]">₹{feeTotals?.totalDues.toLocaleString()}</TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {semWiseFeesBreakUpDetails.map((item) => (
+              <TableRow key={item.feeCategory}>
+                <TableCell className="w-[150px]">{getFinanceFeeTypeLabel(item.feeCategory)}</TableCell>
+                <TableCell className="w-[110px]">{getScheduleLabel(item.feeSchedule)}</TableCell>
+                <TableCell className="w-[100px] text-right">{item.finalFee != null ? `₹ ${item.finalFee.toLocaleString()}` : '__'}</TableCell>
+                <TableCell className="w-[100px] text-right">{item.paidAmount != null ? `₹ ${item.paidAmount.toLocaleString()}` : '__'}</TableCell>
+                <TableCell className="w-[100px] text-right">{item.totalDues != null ? `₹ ${item.totalDues.toLocaleString()}` : '__'}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell className="rounded-l-[5px]" colSpan={2}>Total</TableCell>
+              <TableCell className="text-right">₹{feeTotals?.finalFee.toLocaleString()}</TableCell>
+              <TableCell className="text-right">₹{feeTotals?.paidAmount.toLocaleString()}</TableCell>
+              <TableCell className="text-right rounded-r-[5px]">₹{feeTotals?.totalDues.toLocaleString()}</TableCell>
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </div>
     </div>
   )
 }
