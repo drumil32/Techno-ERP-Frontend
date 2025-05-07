@@ -1,117 +1,85 @@
-import Image from 'next/image';
+// React and Next.js imports
 import React from 'react';
-import { FieldDefinition, StudentData } from './helpers/interface';
+import Image from 'next/image';
+
+// UI Components
 import { Label } from '@/components/ui/label';
+
+// Types and interfaces
+import { FieldDefinition, StudentData } from './helpers/interface';
+
+// Utilities
 import { formatYearRange } from '@/lib/utils';
 
-interface StudentProfileViewProps {
-  studentData: StudentData;
-}
+/**
+ * Displays a labeled field with value
+ */
+const InfoField = ({ label, value }: FieldDefinition) => (
+  <div className="flex flex-row gap-2 items-start">
+    <Label className="text-sm font-normal text-gray-500 shrink-0">{label}:</Label>
+    <p className="font-medium truncate max-w-[200px]" title={value?.toString()}>
+      {value}
+    </p>
+  </div>
+);
 
-const StudentProfileView: React.FC<StudentProfileViewProps> = ({ studentData }) => {
-  const ProfilePicSection: React.FC<{ name: string; id: string }> = ({ name, id }) => (
-    <div className="bg-white rounded-[10px] p-4 flex items-center justify-center flex-col gap-2">
-      <div className="relative w-24 h-24 overflow-hidden">
-        <Image
-          src="/images/techno-logo.png"
-          alt={`${name}'s Profile Picture`}
-          fill
-          className="object-cover rounded-full border border-[#A5A5A5]"
-        />
-      </div>
-      <h2
-        className="font-inter text-[16px] font-semibold text-center truncate max-w-[150px]"
-        title={name}
-      >
-        {name}
-      </h2>
-      <p className="font-inter text-[13px] font-normal">{id}</p>
+/**
+ * Displays student profile picture and identification
+ */
+const ProfilePicSection = ({ name, id, image }: { name: string; id: string; image: string }) => (
+  <div className="bg-white rounded-lg p-4 flex flex-col items-center gap-2">
+    <div className="relative w-24 h-24 overflow-hidden">
+      <Image
+        src={image || '/images/default-profile.png'}
+        alt={`${name}'s Profile Picture`}
+        fill
+        className="object-cover rounded-full border border-gray-400"
+      />
     </div>
-  );
+    <h2 className="text-base font-semibold text-center truncate max-w-[150px]" title={name}>
+      {name}
+    </h2>
+    <p className="text-xs">{id}</p>
+  </div>
+);
 
-  // Combine fields into a single object with labels, keys, and values
-  const displayFields: FieldDefinition[] = [
-    {
-      label: 'Student Name',
-      key: 'studentName',
-      value: studentData?.studentInfo?.studentName
-    },
-    {
-      label: "Father's Name",
-      key: 'fatherName',
-      value: studentData?.studentInfo?.fatherName
-    },
-    {
-      label: 'Course Code',
-      key: 'courseName',
-      value: studentData?.courseName
-    },
-    {
-      label: 'Student ID',
-      key: 'universityId',
-      value: studentData?.studentInfo?.universityId
-    },
-    {
-      label: "Student's Phone Number",
-      key: 'studentPhoneNumber',
-      value: studentData?.studentInfo?.studentPhoneNumber
-    },
-    {
-      label: "Father's Phone Number",
-      key: 'fatherPhoneNumber',
-      value: studentData?.studentInfo?.fatherPhoneNumber
-    },
+/**
+ * StudentProfileView Component
+ * Displays a student's profile information in a structured layout
+ */
+const StudentProfileView = ({ studentData }: { studentData: StudentData }) => {
+  if (!studentData) return <div className="p-4">No student data available</div>;
+
+  const { studentInfo, courseName, currentAcademicYear, currentSemester } = studentData || {};
+
+  // Define fields to display
+  const studentDisplayFields: FieldDefinition[] = [
+    { label: 'Student Name', value: studentInfo?.studentName },
+    { label: "Father's Name", value: studentInfo?.fatherName },
+    { label: 'Course Code', value: courseName },
+    { label: 'Student ID', value: studentInfo?.universityId },
+    { label: "Student's Phone Number", value: studentInfo?.studentPhoneNumber },
+    { label: "Father's Phone Number", value: studentInfo?.fatherPhoneNumber },
     {
       label: 'Course Year',
-      key: 'courseYear',
-      value: formatYearRange(studentData?.currentAcademicYear)
+      value: currentAcademicYear ? formatYearRange(currentAcademicYear) : undefined
     },
-    {
-      label: 'Semester',
-      key: 'currentSemester',
-      value: studentData?.currentSemester
-    },
-    {
-      label: 'Lurn/Pre-registration No.',
-      key: 'lurnNo',
-      value: studentData?.studentInfo?.lurnRegistrationNo
-    }
+    { label: 'Semester', value: currentSemester },
+    { label: 'Lurn/Pre-registration No.', value: studentInfo?.lurnRegistrationNo }
   ];
-
-  // Info Field
-  const InfoField: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-    <div className="flex flex-row gap-2 items-start">
-      <Label className="text-[14px] font-normal text-[#666666] shrink-0">{label} :</Label>
-      <p className="font-inter text-[14px] font-medium truncate max-w-[200px]" title={value}>
-        {value}
-      </p>
-    </div>
-  );
-
-  // Student Fields
-  const StudentFields: React.FC<{
-    fields: FieldDefinition[];
-  }> = ({ fields }) => (
-    <>
-      {fields.map((field) => (
-        <InfoField
-          key={field.key}
-          label={field.label}
-          value={field.value ? String(field.value) : 'N/A'}
-        />
-      ))}
-    </>
-  );
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
       <ProfilePicSection
-        name={studentData?.studentInfo?.studentName || ''}
-        id={studentData?.studentInfo?.universityId || ''}
+        name={studentInfo?.studentName || 'Unknown Student'}
+        id={studentInfo?.universityId || 'No ID'}
+        image={studentInfo?.documents[0] || ''} // TO DO : change the document for photo of user profile
       />
 
       <div className="bg-white p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow rounded-lg shadow-sm">
-        <StudentFields fields={displayFields} />
+        {studentDisplayFields.map(({ label, value }) => (
+          <InfoField key={label} label={label} value={value || 'N/A'} />
+        ))}
       </div>
     </div>
   );

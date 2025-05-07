@@ -27,7 +27,6 @@ export interface FilterData {
 
 export interface FieldDefinition {
   label: string;
-  key: string;
   value?: string | number | boolean;
 }
 

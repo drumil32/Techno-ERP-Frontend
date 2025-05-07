@@ -48,15 +48,15 @@ export default function StudentRepositoryPage() {
   const router = useRouter();
   const { filters, updateFilter } = useTechnoFilterContext();
 
-  // Course data query
-  const courseQuery = useQuery({
+  // Course Dropdown 
+  const coursesDropdownQuery = useQuery({
     queryKey: ['courses'],
     queryFn: courseDropdown,
     placeholderData: (previousData) => previousData,
     enabled: true,
   });
 
-  const courses = Array.isArray(courseQuery.data) ? courseQuery.data : [];
+  const courses = Array.isArray(coursesDropdownQuery.data) ? coursesDropdownQuery.data : [];
 
   // Handle Navigation to Single Student Page
   const handleViewMore = (row: StudentListItem) => {
@@ -105,7 +105,7 @@ export default function StudentRepositoryPage() {
   };
 
   // Filter Configuration
-  const getFiltersData = (): FilterData[] => {
+  const getFilterConfigurations = (): FilterData[] => {
     const academicYearOptions: FilterOption[] = generateAcademicYearDropdown().map(
       (year: string) => ({
         label: year,
@@ -152,7 +152,7 @@ export default function StudentRepositoryPage() {
   };
 
   const clearFilters = () => {
-    getFiltersData().forEach((filter) => {
+    getFilterConfigurations().forEach((filter) => {
       if (filter?.filterKey === 'date' || filter?.isDateFilter) {
         //
         const dateKeys: string[] = []; // Add date keys here
@@ -189,7 +189,7 @@ export default function StudentRepositoryPage() {
 
   // ---
 
-  const studentsQuery = useQuery({
+  const studentListQuery = useQuery({
     queryKey: ['students', appliedFilters, debouncedSearch],
     queryFn: () => fetchStudents(filterParams),
     placeholderData: (previousData) => previousData,
@@ -197,8 +197,8 @@ export default function StudentRepositoryPage() {
     enabled: true
   });
 
-  const studentsData: StudentListData = studentsQuery.data
-    ? refineStudents(studentsQuery.data)
+  const studentsData: StudentListData = studentListQuery.data
+    ? refineStudents(studentListQuery.data)
     : { students: [], pagination: { total: 0, page: 0, limit: 0, totalPages: 0 } };
 
   useEffect(() => {
@@ -218,10 +218,10 @@ export default function StudentRepositoryPage() {
   const toastIdRef = useRef<string | number | null>(null);
 
   useEffect(() => {
-    const isLoading = courseQuery.isLoading || studentsQuery.isLoading;
-    const hasError = courseQuery.isError || studentsQuery.isError;
-    const isSuccess = courseQuery.isSuccess && studentsQuery.isSuccess;
-    const isFetching = courseQuery.isFetching || studentsQuery.isFetching;
+    const isLoading = coursesDropdownQuery.isLoading || studentListQuery.isLoading;
+    const hasError = coursesDropdownQuery.isError || studentListQuery.isError;
+    const isSuccess = coursesDropdownQuery.isSuccess && studentListQuery.isSuccess;
+    const isFetching = coursesDropdownQuery.isFetching || studentListQuery.isFetching;
 
     if (toastIdRef.current) {
       if (isLoading || isFetching) {
@@ -266,10 +266,10 @@ export default function StudentRepositoryPage() {
     };
   }, [
     refreshKey,
-    studentsQuery.isLoading,
-    studentsQuery.isError,
-    studentsQuery.isSuccess,
-    studentsQuery.isFetching
+    studentListQuery.isLoading,
+    studentListQuery.isError,
+    studentListQuery.isSuccess,
+    studentListQuery.isFetching
   ]);
 
   return (
@@ -279,7 +279,7 @@ export default function StudentRepositoryPage() {
       </div>
 
       <TechnoFiltersGroup
-        filters={getFiltersData()}
+        filters={getFilterConfigurations()}
         handleFilters={applyFilter}
         clearFilters={clearFilters}
       />
