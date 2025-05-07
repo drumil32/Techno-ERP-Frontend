@@ -72,7 +72,6 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
       studentId: studentDuesId,
       feeAction: feesActionMapping[values.feesAction],
       txnType: transactionTypeMapping[values.transactionType],
-      actionedBy: "67c69b45a5632b20905eb7e2",
       amount: values.amount,
       remark: values.remark || "",
       date: new Date().toISOString()
@@ -81,7 +80,6 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
     try {
       const res = await recordPayment(payload);
 
-      console.log(res)
       if(res == null) {
         throw new Error("")
       }
