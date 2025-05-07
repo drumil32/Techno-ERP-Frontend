@@ -2,24 +2,49 @@ import { SemesterBreakUp } from "@/types/finance"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useEffect, useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import EditFeeBreakupDialogue from "./edit-fee-breakup-dialog"
 import { getFinanceFeeTypeLabel, getScheduleLabel } from "@/lib/enumDisplayMapper"
+import UpdateFeeDetailDialog from "./update-detail-fee-dialog"
 
 export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { semFeesBreakUp: SemesterBreakUp[], studentName: string | undefined }) {
   const [selectedSemester, setSelectedSemester] = useState(1)
   const [semWiseFeesBreakUpDetails, setSemWiseFeesBreakUpDetails] = useState<SemesterBreakUp["details"]>([])
+  const [selectedSemesterId, setSelectedSemesterId] = useState("")
+
+  useEffect(() => {
+    if (semFeesBreakUp && semFeesBreakUp.length > 0) {
+      const initialSemData = semFeesBreakUp.find(
+        (item) => item.semesterNumber === selectedSemester
+      ) || semFeesBreakUp[0]
+
+      setSelectedSemester(initialSemData.semesterNumber)
+      setSelectedSemesterId(initialSemData.semesterId)
+
+      setSemWiseFeesBreakUpDetails(
+        initialSemData?.details.map((item) => ({
+          ...item,
+          totalDues: item.finalFee - item.paidAmount,
+        })) ?? []
+      )
+    }
+  }, [semFeesBreakUp])
+
 
   useEffect(() => {
     if (semFeesBreakUp) {
       const selectedSemData = semFeesBreakUp.find(
         (item) => item.semesterNumber === selectedSemester
       )
-      setSemWiseFeesBreakUpDetails(
-        selectedSemData?.details.map((item) => ({
-          ...item,
-          totalDues: item.finalFee - item.paidAmount,
-        })) ?? []
-      )
+
+      if (selectedSemData) {
+        setSelectedSemesterId(selectedSemData.semesterId)
+
+        setSemWiseFeesBreakUpDetails(
+          selectedSemData.details.map((item) => ({
+            ...item,
+            totalDues: item.finalFee - item.paidAmount,
+          })) ?? []
+        )
+      }
     }
   }, [selectedSemester, semFeesBreakUp])
 
@@ -70,7 +95,8 @@ export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { se
               <TableHead className="w-[110px]">Schedule</TableHead>
               <TableHead className="w-[100px] text-right">Final Fees</TableHead>
               <TableHead className="w-[100px] text-right">Fees paid</TableHead>
-              <TableHead className="w-[100px] rounded-r-[5px] text-right">Total Dues</TableHead>
+              <TableHead className="w-[100px] text-right">Total Dues</TableHead>
+              <TableHead className=" rounded-r-[5px] ">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -81,6 +107,14 @@ export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { se
                 <TableCell className="w-[100px] text-right">{item.finalFee != null ? `₹ ${item.finalFee.toLocaleString()}` : '__'}</TableCell>
                 <TableCell className="w-[100px] text-right">{item.paidAmount != null ? `₹ ${item.paidAmount.toLocaleString()}` : '__'}</TableCell>
                 <TableCell className="w-[100px] text-right">{item.totalDues != null ? `₹ ${item.totalDues.toLocaleString()}` : '__'}</TableCell>
+                <TableCell className="flex gap-2 items-center text-[#5B31D1]">
+                  <UpdateFeeDetailDialog
+                    semesterNumber={selectedSemester}
+                    semesterId={selectedSemesterId}
+                    feeDetail={item}
+                    studentName={studentName ?? ""}
+                  />
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
