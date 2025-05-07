@@ -43,7 +43,7 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
               <TableHead className="rounded-l-[5px] ">S. No</TableHead>
               <TableHead>Academic Year</TableHead>
               <TableHead>Semester</TableHead>
-              <TableHead className="text-right">Final Fees Due</TableHead>
+              <TableHead className="text-right">Final Fees</TableHead>
               <TableHead className="text-right">Fees Paid</TableHead>
               <TableHead className="text-right">Due Fees</TableHead>
               <TableHead className="rounded-r-[5px]  pl-8" >Due Date</TableHead>
