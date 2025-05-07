@@ -124,6 +124,7 @@ export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { se
               <TableCell className="text-right">₹{feeTotals?.finalFee.toLocaleString()}</TableCell>
               <TableCell className="text-right">₹{feeTotals?.paidAmount.toLocaleString()}</TableCell>
               <TableCell className="text-right rounded-r-[5px]">₹{feeTotals?.totalDues.toLocaleString()}</TableCell>
+              <TableCell className="text-right rounded-r-[5px]"></TableCell>
             </TableRow>
           </TableFooter>
         </Table>

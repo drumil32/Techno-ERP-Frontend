@@ -42,7 +42,6 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
               <TableHead className="rounded-l-[5px] ">S. No</TableHead>
               <TableHead>Academic Year</TableHead>
               <TableHead>Semester</TableHead>
-              <TableHead>Course</TableHead>
               <TableHead className="text-right">Final Fees Due</TableHead>
               <TableHead className="text-right">Fees Paid</TableHead>
               <TableHead className="text-right">Due Fees</TableHead>
@@ -55,7 +54,6 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
                 <TableCell>{semFee.sno}</TableCell>
                 <TableCell>{semFee.academicYear}</TableCell>
                 <TableCell>0{semFee.semesterNumber}</TableCell>
-                <TableCell>{CourseNameMapper[studentDetails.course as Course]}</TableCell>
                 <TableCell className="text-right">{semFee.finalFee != null ? `₹ ${semFee.finalFee.toLocaleString()}` : '__'}</TableCell>
                 <TableCell className="text-right">{semFee.paidAmount != null ? `₹ ${semFee.paidAmount.toLocaleString()}` : '__'}</TableCell>
                 <TableCell className="text-right">{semFee.dueFees != null ? `₹ ${semFee.dueFees.toLocaleString()}` : '__'}</TableCell>
@@ -65,7 +63,7 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell className="rounded-l-[5px]" colSpan={4}>Total</TableCell>
+              <TableCell className="rounded-l-[5px]" colSpan={3}>Total</TableCell>
               <TableCell className="text-right">₹{feeTotals?.finalFee.toLocaleString()}</TableCell>
               <TableCell className="text-right">₹{feeTotals?.paidAmount.toLocaleString()}</TableCell>
               <TableCell className="text-right">₹{feeTotals?.dueFees.toLocaleString()}</TableCell>
