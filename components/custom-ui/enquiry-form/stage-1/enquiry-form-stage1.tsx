@@ -202,6 +202,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
           throw new Error('Failed to create draft');
         }
         toast.success('Enquiry draft created successfully');
+        sessionStorage.setItem('draftSaved', 'true');
         router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_1(response._id));
       } else {
         const response = await updateEnquiryDraft({ ...rest, id: _id });

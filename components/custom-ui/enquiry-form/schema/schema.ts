@@ -41,12 +41,12 @@ export const academicDetailBaseSchema = z.object({
   schoolCollegeName: z
     .string()
     // Keep regex for when value is present
-    .regex(/^[A-Za-z\s]+$/, 'School/College Name must only contain alphabets and spaces')
+    // .regex(/^[A-Za-z\s]+$/, 'School/College Name must only contain alphabets and spaces')
     .optional(),
   universityBoardName: z
     .string()
     // Keep regex for when value is present
-    .regex(/^[A-Za-z\s]+$/, 'University/Board Name must only contain alphabets and spaces')
+    // .regex(/^[A-Za-z\s]+$/, 'University/Board Name must only contain alphabets and spaces')
     .optional(),
   passingYear: z.number().int().optional(), // Keep refinements for when value is present
   percentageObtained: z.number().optional(), // Keep refinements for when value is present

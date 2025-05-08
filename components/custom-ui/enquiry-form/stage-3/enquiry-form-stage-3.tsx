@@ -161,53 +161,51 @@ const EnquiryFormStage3 = () => {
       throw error;
     }
   }
-  const onSubmit = async () => {
-    let values = form.getValues();
+  const onSubmit = async (): Promise<boolean> => {
+    try {
+      let values = form.getValues();
+      values = removeNullValues(values);
+      const filteredData = filterBySchema(formSchemaStep3, values);
 
-    values = removeNullValues(values);
-    const filteredData = filterBySchema(formSchemaStep3, values);
-    console.log('Filtered Data:', filteredData);
-
-    // remove confirmation field from values
-    const { confirmation, _id, ...rest } = filteredData;
-
-    if ((rest as any).academicDetails) {
-      const academicDetails = (rest as any).academicDetails;
-      if (Array.isArray(academicDetails)) {
-        (rest as any).academicDetails = academicDetails.filter((entry: any) => {
-          const { educationLevel, _id, ...otherFields } = entry;
-          return Object.values(otherFields).some(
-            (value) => value !== null && value !== undefined && value !== ''
-          );
-        });
+      if (currentDocuments.length !== 2) {
+        toast.error('Please upload all mandatory documents before proceeding.');
+        return false;
       }
+
+      const { confirmation, _id, ...rest } = filteredData;
+
+      if ((rest as any).academicDetails) {
+        const academicDetails = (rest as any).academicDetails;
+        if (Array.isArray(academicDetails)) {
+          (rest as any).academicDetails = academicDetails.filter((entry: any) => {
+            const { educationLevel, _id, ...otherFields } = entry;
+            return Object.values(otherFields).some(
+              (value) => value !== null && value !== undefined && value !== ''
+            );
+          });
+        }
+      }
+
+      if (!isDocumentVerificationValid) {
+        toast.error('Please ensure you complete document verification first');
+        return false;
+      }
+
+      const enquiry: any = await updateEnquiryStep3(rest);
+      if (!enquiry) {
+        toast.error('Failed to update enquiry');
+        return false;
+      }
+
+      form.setValue('confirmation', false);
+      form.reset();
+      router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_4(enquiry._id));
+      return true;
+    } catch (error) {
+      toast.error('An error occurred during submission');
+      return false;
     }
-
-    console.log(rest);
-    if (!isDocumentVerificationValid) {
-      toast.error('Please ensure you complete document verification first');
-      return;
-    }
-
-    const enquiry: any = await updateEnquiryStep3(rest);
-
-    // const response = await updateEnquiryStatus({
-    //   id: enquiry?._id,
-    //   newStatus: ApplicationStatus.STEP_4
-    // });
-
-    // if (!response) {
-    //   toast.error('Failed to update enquiry status');
-    //   return;
-    // }
-    // toast.success('Enquiry status updated successfully');
-
-    form.setValue('confirmation', false);
-    form.reset();
-
-    router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_4(enquiry._id));
   };
-
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmation' });
 
   useEffect(() => {

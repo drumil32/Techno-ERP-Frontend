@@ -36,7 +36,13 @@ import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
 import { DatePicker } from '@/components/ui/date-picker';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { getTransactionTypeLable } from '@/lib/enumDisplayMapper';
 
@@ -265,7 +271,7 @@ const FinanceOfficeForm = () => {
     if (!isCustomValid) {
       toast.error('Fee validation failed. Please check highlighted fields');
       setIsSubmittingFinal(false);
-      return;
+      return false;
     }
 
     const isUpdate = finalFeeExists;
@@ -284,7 +290,7 @@ const FinanceOfficeForm = () => {
           }
         });
 
-        return;
+        return false;
       }
 
       const validatedDataForCleaning = validationResult.data;
@@ -298,6 +304,7 @@ const FinanceOfficeForm = () => {
       await updateEnquiryStep4(finalPayLoad);
 
       toast.success('Fee record updated successfully!');
+      return true;
     } else {
       const validationResult = finalFeesUpdateSchema.safeParse(values);
 
@@ -310,7 +317,7 @@ const FinanceOfficeForm = () => {
             form.setError(fieldName, { type: 'manual', message: err.message });
           }
         });
-        return;
+        return false;
       }
 
       const validatedDataForCleaning = validationResult.data;
@@ -322,7 +329,8 @@ const FinanceOfficeForm = () => {
       };
 
       await createFinalFeeMutation.mutateAsync(finalPayLoad);
-
+      toast.success('Fee record created successfully!');
+      return true;
       setDataUpdated((prev) => !prev);
     }
   }
@@ -332,28 +340,34 @@ const FinanceOfficeForm = () => {
     setTransactionType(type);
   };
 
-  async function onSubmit() {
-    setIsSubmittingFinal(true);
+  async function onSubmit(): Promise<boolean> {
+    try {
+      setIsSubmittingFinal(true);
 
-    if (!transactionTypeRef.current) {
-      toast.error('Please select a transaction type');
-      return;
-    }
+      if (!transactionTypeRef.current) {
+        toast.error('Please select a transaction type');
+        return false;
+      }
 
-    console.log('Transaction Type:', transactionTypeRef.current);
-    console.log('Enquiry ID:', enquiry_id);
+      const response = await approveEnquiry({
+        id: enquiry_id,
+        transactionType: transactionTypeRef.current
+      });
 
-    const response = await approveEnquiry({ 
-      id: enquiry_id,
-      transactionType: transactionTypeRef.current
-    });
+      if (!response) {
+        transactionTypeRef.current = '';
+        setTransactionType('');
+        return false;
+      }
 
-    if (response) {
       toast.success('Enquiry submitted for final approval');
       router.push(SITE_MAP.ADMISSIONS.DEFAULT);
-    } else {
-      transactionTypeRef.current = ''; 
+      return true;
+    } catch (error) {
+      transactionTypeRef.current = '';
       setTransactionType('');
+      return false;
+    } finally {
       setIsSubmittingFinal(false);
     }
   }
@@ -644,46 +658,50 @@ const FinanceOfficeForm = () => {
           saveDraft={saveDraft}
           form={form}
           onSubmit={onSubmit}
-          confirmationChecked={!!confirmationChecked}
+          draftExists={existingFeeDraft}
+          confirmationChecked={confirmationChecked}
           closeOnError={false}
-          customSaveDialog={<FinalFeeSaveDialog studentData={enquiryData} otherFeesWatched={otherFeesWatched} onTransactionTypeChange={handleTransactionTypeUpdate}/>}
+          customSaveDialog={
+            <FinalFeeSaveDialog
+              studentData={enquiryData}
+              otherFeesWatched={otherFeesWatched}
+              onTransactionTypeChange={handleTransactionTypeUpdate}
+            />
+          }
         />
       </form>
     </Form>
   );
 };
 
-function FinalFeeSaveDialog({ studentData, otherFeesWatched, onTransactionTypeChange }:any) {
+function FinalFeeSaveDialog({ studentData, otherFeesWatched, onTransactionTypeChange }: any) {
   const [transactionType, setTransactionType] = useState('');
   const today = format(new Date(), 'dd/MM/yyyy');
-  
+
   const handleTransactionTypeChange = (newValue: string) => {
     setTransactionType(newValue);
-    onTransactionTypeChange(newValue); 
+    onTransactionTypeChange(newValue);
   };
-  
+
   return (
     <div className="flex flex-col w-full max-w-md">
       <h2 className="text-lg font-semibold mb-4">Final Fee Submission</h2>
-      
+
       <div className="w-full space-y-4 text-left">
         <div className="grid grid-cols-2 gap-2">
           <p className="text-sm text-gray-600">Student Name:</p>
           <p className="text-sm font-medium">{studentData?.studentName || 'N/A'}</p>
-          
+
           <p className="text-sm text-gray-600">Father's Name:</p>
           <p className="text-sm font-medium">{studentData?.fatherName || 'N/A'}</p>
-          
+
           <p className="text-sm text-gray-600">Date:</p>
           <p className="text-sm font-medium">{today}</p>
         </div>
-        
+
         <div className="pt-2">
           <Label className="text-sm text-gray-600 block mb-1">Transaction Type</Label>
-          <Select
-            onValueChange={handleTransactionTypeChange}
-            defaultValue={transactionType}
-          >
+          <Select onValueChange={handleTransactionTypeChange} defaultValue={transactionType}>
             <SelectTrigger className="w-full text-md">
               <SelectValue placeholder="Select a transaction type" />
             </SelectTrigger>
@@ -697,13 +715,26 @@ function FinalFeeSaveDialog({ studentData, otherFeesWatched, onTransactionTypeCh
           </Select>
           <FormMessage className="text-[10px] sm:text-xs mt-1" />
         </div>
-        
+
         <div className="flex justify-between py-3">
-          <p className="text-sm text-gray-600 font-medium">Total Fee Amount: {formatCurrency(otherFeesWatched?.reduce((sum:number, fee:any) => sum + (fee?.finalFee || 0), 0) || 0)}</p>
-          <p className="text-sm text-green-700 font-medium">Total Deposited: {formatCurrency(otherFeesWatched?.reduce((sum:number, fee:any) => sum + (fee?.feesDepositedTOA || 0), 0) || 0)}</p>
+          <p className="text-sm text-gray-600 font-medium">
+            Total Fee Amount:{' '}
+            {formatCurrency(
+              otherFeesWatched?.reduce((sum: number, fee: any) => sum + (fee?.finalFee || 0), 0) ||
+                0
+            )}
+          </p>
+          <p className="text-sm text-green-700 font-medium">
+            Total Deposited:{' '}
+            {formatCurrency(
+              otherFeesWatched?.reduce(
+                (sum: number, fee: any) => sum + (fee?.feesDepositedTOA || 0),
+                0
+              ) || 0
+            )}
+          </p>
         </div>
       </div>
-      
     </div>
   );
 }

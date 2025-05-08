@@ -90,14 +90,14 @@ export const validateCustomFeeLogic = (
         // If deposit exists but final fee is invalid/missing
         setError(depositField, {
           type: 'manual_dependency',
-          message: `Final fee must be set if deposit is entered`
+          message: `Final fee required`
         });
         isOverallValid = false;
       } else if (feesDeposited > finalFee) {
         // If deposit exceeds final fee
         setError(depositField, {
-          type: 'manual_comparison',
-          message: `Cannot exceed final fee (${formatCurrency(finalFee)})`
+          type: 'manual_comparison'
+          // message: `Cannot exceed final fee (${formatCurrency(finalFee)})`
         });
         isOverallValid = false;
       }
@@ -124,8 +124,8 @@ export const validateCustomFeeLogic = (
         finalFee > originalFeeAmount
       ) {
         setError(finalFeeField, {
-          type: 'manual_comparison',
-          message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`
+          type: 'manual_comparison'
+          // message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`
         });
         isOverallValid = false;
       }

@@ -33,6 +33,7 @@ type Document = {
   type: string;
   status: PhysicalDocumentNoteStatus;
   dueBy?: Date;
+  touched?: boolean;
 };
 
 type DocumentVerificationProps = {
@@ -49,14 +50,16 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isTouched, setIsTouched] = useState(false);
   const course = form.watch('course');
   const physicalDocumentNote = form.watch('physicalDocumentNote');
 
   const isValid = useMemo(() => {
+    if (isViewable) return true;
     return !documents.some(
       (doc) => doc.status === PhysicalDocumentNoteStatus.PENDING && !doc.dueBy
     );
-  }, [documents]);
+  }, [documents, isViewable, isTouched]);
 
   const initializeDocuments = useCallback(
     async (course: string) => {
@@ -71,7 +74,8 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
               id: `${index + 1}`,
               type: note.type || '',
               status: note.status || PhysicalDocumentNoteStatus.PENDING,
-              dueBy: note.dueBy ? parse(note.dueBy, 'dd/MM/yyyy', new Date()) : undefined
+              dueBy: note.dueBy ? parse(note.dueBy, 'dd/MM/yyyy', new Date()) : undefined,
+              touched: false
             }))
           );
           return;
@@ -88,7 +92,8 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
             id: `${index + 1}`,
             type: docName,
             status: PhysicalDocumentNoteStatus.PENDING,
-            dueBy: undefined
+            dueBy: undefined,
+            touched: false
           }));
           setDocuments(initialDocs);
           form.setValue('physicalDocumentNote', initialDocs);
@@ -126,13 +131,16 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
         );
         return updated;
       });
+      setIsTouched(true);
     },
     [form]
   );
 
   const handleStatusChange = useCallback(
     (docId: string, status: PhysicalDocumentNoteStatus) => {
-      updateDocuments((prev) => prev.map((doc) => (doc.id === docId ? { ...doc, status } : doc)));
+      updateDocuments((prev) =>
+        prev.map((doc) => (doc.id === docId ? { ...doc, status, touched: true } : doc))
+      );
     },
     [updateDocuments]
   );
@@ -140,7 +148,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
   const handleDueDateChange = useCallback(
     (docId: string, date: Date | undefined) => {
       updateDocuments((prev) =>
-        prev.map((doc) => (doc.id === docId ? { ...doc, dueBy: date } : doc))
+        prev.map((doc) => (doc.id === docId ? { ...doc, dueBy: date, touched: true } : doc))
       );
     },
     [updateDocuments]
@@ -261,17 +269,16 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                   )}
                 </div>
               </div>
-              {!isViewable && doc.status === PhysicalDocumentNoteStatus.PENDING && !doc.dueBy && (
-                <p className="text-red-500 text-sm">Due date is required for pending documents</p>
-              )}
+              {/* {!isViewable &&
+                doc.touched &&
+                doc.status === PhysicalDocumentNoteStatus.PENDING &&
+                !doc.dueBy && (
+                  <p className="text-red-500 text-sm">Due date is required for pending documents</p>
+                )} */}
             </div>
           ))}
-          {!isValid && (
-            <div className="text-red-500 text-sm">
-              {isViewable
-                ? 'Some documents are pending verification'
-                : 'Set due dates for all pending documents'}
-            </div>
+          {!isValid && !isViewable && isTouched && (
+            <div className="text-red-500 text-sm">Set due dates for all pending documents</div>
           )}
         </AccordionContent>
       </AccordionItem>

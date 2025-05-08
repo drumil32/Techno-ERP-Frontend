@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,7 +33,13 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   const [isSubmitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [isDraftDialogOpen, setDraftDialogOpen] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
-
+  useEffect(() => {
+    const saved = sessionStorage.getItem('draftSaved');
+    if (saved === 'true') {
+      setDraftSaved(true);
+      sessionStorage.removeItem('draftSaved');
+    }
+  }, []);
   function handleSubmitClick() {
     const currentValues = form.getValues();
 
