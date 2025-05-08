@@ -1,7 +1,7 @@
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { apiRequest } from '@/lib/apiClient';
-import { StudentDuesApiResponse, StudentFeeInformationResponse } from '@/types/finance';
+import { FeeHistoryItemType, FeeHistoryResponse, StudentDuesApiResponse, StudentFeeInformationResponse } from '@/types/finance';
 
 import { QueryFunctionContext } from '@tanstack/react-query';
 
@@ -47,4 +47,18 @@ export const updateFeeBreakUp = async (data:any) => {
     data
   )
 }
+
+export const fetchFeeBreakUpHistory = async (
+  context: QueryFunctionContext<readonly [string, any]>
+): Promise<FeeHistoryResponse> => {
+  const [, params] = context.queryKey;
+  const res = await apiRequest<FeeHistoryResponse>(
+    API_METHODS.POST,
+    API_ENDPOINTS.fetchFeeBreakUpHistory,
+    params
+  );
+  if (!res) throw new Error('Failed to fetch student dues');
+  return res;
+};
+
 

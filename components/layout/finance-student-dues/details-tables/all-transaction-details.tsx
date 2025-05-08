@@ -78,14 +78,14 @@ export default function AllTransactionsDetails({
                   <FeeActionTag status={transaction.feeAction as FeeActions} />
                 </TableCell>
                 <TableCell className="w-[120px] text-right">
-                  {transaction.amount != null ? `₹ ${transaction.amount.toLocaleString()}` : '__'}
+                  {transaction.amount != null ? `₹ ${transaction.amount.toLocaleString()}` : '--'}
                 </TableCell>
                 <TableCell className="w-[110px]">
                   <TxnTypaTag status={transaction.txnType as TransactionTypes} />
                 </TableCell>
                 <TableCell className="">
                   <TruncatedCell
-                    value={transaction.remark === '' ? '--' : transaction.remark}
+                    value={!transaction.remark ? '--' : transaction.remark}
                     maxWidth={300}
                   />
                 </TableCell>

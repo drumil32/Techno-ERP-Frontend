@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, JSX } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import {
   Dialog,
@@ -20,6 +20,8 @@ interface EnquiryFormFooterProps {
   saveDraft: () => void;
   isSavingDraft?: boolean;
   draftExists?: boolean;
+  closeOnError?: boolean;
+  customSaveDialog?: JSX.Element;
 }
 
 const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
@@ -28,6 +30,8 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   confirmationChecked,
   saveDraft,
   isSavingDraft,
+  customSaveDialog,
+  closeOnError = true,
   draftExists
 }) => {
   const [isSubmitDialogOpen, setSubmitDialogOpen] = useState(false);
@@ -53,7 +57,9 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     try {
       form.handleSubmit(onSubmit, onError)();
     } finally {
-      setSubmitDialogOpen(false);
+      if (closeOnError) {
+        setSubmitDialogOpen(false);
+      }
     }
   }
 
@@ -134,6 +140,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             <FaCircleExclamation className="text-yellow-500 w-8 h-8" />
             <span>Please reverify all details again before submitting.</span>
           </div>
+          {customSaveDialog ? customSaveDialog : <></>}
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="secondary" disabled={form.formState.isSubmitting}>

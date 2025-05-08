@@ -124,7 +124,7 @@ export default function UpdateFeeDetailDialog({
               <SquarePen className="w-5 h-5 text-gray-500" />
               Edit Fee Breakup
             </Dialog.Title>
-            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold" onClick={handleDialogClose}>
+            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold cursor-pointer" onClick={handleDialogClose}>
               &times;
             </Dialog.Close>
           </div>
@@ -172,7 +172,7 @@ export default function UpdateFeeDetailDialog({
                       <FormLabel>Adjustment Amount (+ for increase, - for decrease)</FormLabel>
                       <FormControl>
                         <Input
-                          type="number"
+                          type="text"
                           placeholder="Enter adjustment amount"
                           {...field}
                           onChange={(e) => {
