@@ -352,6 +352,8 @@ const FinanceOfficeForm = () => {
       toast.success('Enquiry submitted for final approval');
       router.push(SITE_MAP.ADMISSIONS.DEFAULT);
     } else {
+      transactionTypeRef.current = ''; 
+      setTransactionType('');
       setIsSubmittingFinal(false);
     }
   }

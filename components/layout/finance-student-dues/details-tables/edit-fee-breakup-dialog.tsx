@@ -133,7 +133,7 @@ export default function EditFeeBreakupDialogue({ studentName, feesBreakup, semes
               <Pencil className="w-5 h-5 text-gray-500" />
               &nbsp;Edit Fees Breakup
             </Dialog.Title>
-            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold" onClick={handleDiscard}>
+            <Dialog.Close className="text-gray-500 z-40 hover:text-black text-xl font-bold !cursor-pointer" onClick={handleDiscard}>
               &times;
             </Dialog.Close>
           </div>

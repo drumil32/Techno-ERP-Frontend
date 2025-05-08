@@ -201,7 +201,7 @@ export default function TechnoDataTable({
     'yellowLeadsFollowUpCount'
   ];
 
-  if (!table.getRowModel().rows.length) {
+  if (!table.getRowModel().rows) {
     return <Loading />;
   }
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { getFinanceFeeTypeLabel, getScheduleLabel } from "@/lib/enumDisplayMapper"
 import UpdateFeeDetailDialog from "./update-detail-fee-dialog"
+import ShowHistoryDialog from "./show-history-dialog"
 
 export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { semFeesBreakUp: SemesterBreakUp[], studentName: string | undefined }) {
   const [selectedSemester, setSelectedSemester] = useState(1)
@@ -108,12 +109,19 @@ export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { se
                 <TableCell className="w-[100px] text-right">{item.paidAmount != null ? `₹ ${item.paidAmount.toLocaleString()}` : '--'}</TableCell>
                 <TableCell className="w-[100px] text-right">{item.totalDues != null ? `₹ ${item.totalDues.toLocaleString()}` : '--'}</TableCell>
                 <TableCell className="flex gap-2 items-center text-[#5B31D1]">
+                  <ShowHistoryDialog
+                    semesterNumber={selectedSemester}
+                    semesterId={selectedSemesterId}
+                    feeDetail={item}
+                    studentName={studentName ?? ""}
+                  />
                   <UpdateFeeDetailDialog
                     semesterNumber={selectedSemester}
                     semesterId={selectedSemesterId}
                     feeDetail={item}
                     studentName={studentName ?? ""}
                   />
+
                 </TableCell>
               </TableRow>
             ))}

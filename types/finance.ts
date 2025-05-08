@@ -70,6 +70,22 @@ export interface Transaction {
   actionedBy: string;
 }
 
+export interface FeeHistoryRequestType {
+  studentId: string;
+  semesterId: string;
+  detailId: string;
+}
+
+export interface FeeHistoryItemType {
+  updatedAt: string;
+  updatedFee: number;
+  extraAmount: number;
+  updatedBy?: string;
+}
+
+export interface FeeHistoryResponse {
+  feeUpdateHistory: FeeHistoryItemType[]
+}
 
 // ------------------------------------------------------------
 // TEMP

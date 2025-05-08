@@ -110,7 +110,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
               <BookOpen className="w-5 h-5 text-gray-500 text-xl" />
               &nbsp;Record a payment
             </Dialog.Title>
-            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold">&times;</Dialog.Close>
+            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold cursor-pointer">&times;</Dialog.Close>
           </div>
 
           {/*Readable Fields - Student Information*/}

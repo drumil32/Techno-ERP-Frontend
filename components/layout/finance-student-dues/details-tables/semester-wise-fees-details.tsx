@@ -10,7 +10,6 @@ type ExtendedSemesterWiseFeeInformation = SemesterWiseFeeInformation & {
 };
 
 export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFeesInformation }: { studentDetails: StudentDetails, semesterWiseFeesInformation: SemesterWiseFeeInformation[] }) {
-
   const extendedSemesterWiseFeesInformation: ExtendedSemesterWiseFeeInformation[] =
     semesterWiseFeesInformation.map((item, index) => ({
       ...item,
@@ -23,7 +22,7 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
     (totals, item) => {
       totals.finalFee += item.finalFee ?? 0
       totals.paidAmount += (item.dueDate ? item.paidAmount : 0 )
-      totals.dueFees += (item.dueDate ? item.finalFee - item.paidAmount : 0) 
+      totals.dueFees += (item.dueDate ? item.finalFee - item.paidAmount : 0)
       return totals
     },
     { finalFee: 0, paidAmount: 0, dueFees: 0 }

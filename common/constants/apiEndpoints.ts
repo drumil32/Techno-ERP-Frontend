@@ -102,4 +102,5 @@ export const API_ENDPOINTS = {
 
   recordPayment: `${API_DOMAIN}/student/fees/record-payment`,
   updateFeeBreakup: `${API_DOMAIN}/student/fees/fee-breakup`,
+  fetchFeeBreakUpHistory: `${API_DOMAIN}/student/fees/fee-update-history`,
 };
