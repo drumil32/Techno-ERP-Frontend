@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -25,7 +25,7 @@ import { validateCustomFeeLogic } from '../stage-2/helpers/validateFees';
 import { cleanDataForDraft } from '../stage-2/helpers/refine-data';
 import { calculateDiscountPercentage, formatCurrency } from '../stage-2/student-fees-form';
 import { displayFeeMapper, scheduleFeeMapper } from '../stage-2/helpers/mappers';
-import { AdmissionReference, ApplicationStatus, FeeType } from '@/types/enum';
+import { AdmissionReference, ApplicationStatus, FeeType, TransactionTypes } from '@/types/enum';
 import ShowStudentData from '../stage-2/data-show';
 import FilledByCollegeSection from '../stage-1/filled-by-college-section';
 import ConfirmationOTPSection from './confirmation-otp-section';
@@ -36,12 +36,18 @@ import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
 import { DatePicker } from '@/components/ui/date-picker';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { getTransactionTypeLable } from '@/lib/enumDisplayMapper';
 
 const FinanceOfficeForm = () => {
   const params = useParams();
   const enquiry_id = params.id as string;
   const [dataUpdated, setDataUpdated] = useState(true);
   const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
+  const [transactionType, setTransactionType] = useState('');
+  const transactionTypeRef = useRef('');
+
   const router = useRouter();
 
   const {
@@ -320,13 +326,33 @@ const FinanceOfficeForm = () => {
       setDataUpdated((prev) => !prev);
     }
   }
+
+  const handleTransactionTypeUpdate = (type: any) => {
+    transactionTypeRef.current = type;
+    setTransactionType(type);
+  };
+
   async function onSubmit() {
     setIsSubmittingFinal(true);
 
-    const response = await approveEnquiry({ id: enquiry_id });
+    if (!transactionTypeRef.current) {
+      toast.error('Please select a transaction type');
+      return;
+    }
+
+    console.log('Transaction Type:', transactionTypeRef.current);
+    console.log('Enquiry ID:', enquiry_id);
+
+    const response = await approveEnquiry({ 
+      id: enquiry_id,
+      transactionType: transactionTypeRef.current
+    });
+
     if (response) {
       toast.success('Enquiry submitted for final approval');
       router.push(SITE_MAP.ADMISSIONS.DEFAULT);
+    } else {
+      setIsSubmittingFinal(false);
     }
   }
 
@@ -602,7 +628,7 @@ const FinanceOfficeForm = () => {
           form={form}
           name="confirmationCheck"
           label="All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will be charged extra based on LU/AKTU norms."
-          id="checkbox-for-step2"
+          id="checkbox-for-step4"
           className="flex flex-row items-start bg-white rounded-md p-4"
         />
 
@@ -612,10 +638,66 @@ const FinanceOfficeForm = () => {
           form={form}
           onSubmit={onSubmit}
           confirmationChecked={!!confirmationChecked}
+          closeOnError={false}
+          customSaveDialog={<FinalFeeSaveDialog studentData={enquiryData} otherFeesWatched={otherFeesWatched} onTransactionTypeChange={handleTransactionTypeUpdate}/>}
         />
       </form>
     </Form>
   );
 };
 
+function FinalFeeSaveDialog({ studentData, otherFeesWatched, onTransactionTypeChange }:any) {
+  const [transactionType, setTransactionType] = useState('');
+  const today = format(new Date(), 'dd/MM/yyyy');
+  
+  const handleTransactionTypeChange = (newValue: string) => {
+    setTransactionType(newValue);
+    onTransactionTypeChange(newValue); 
+  };
+  
+  return (
+    <div className="flex flex-col w-full max-w-md">
+      <h2 className="text-lg font-semibold mb-4">Final Fee Submission</h2>
+      
+      <div className="w-full space-y-4 text-left">
+        <div className="grid grid-cols-2 gap-2">
+          <p className="text-sm text-gray-600">Student Name:</p>
+          <p className="text-sm font-medium">{studentData?.studentName || 'N/A'}</p>
+          
+          <p className="text-sm text-gray-600">Father's Name:</p>
+          <p className="text-sm font-medium">{studentData?.fatherName || 'N/A'}</p>
+          
+          <p className="text-sm text-gray-600">Date:</p>
+          <p className="text-sm font-medium">{today}</p>
+        </div>
+        
+        <div className="pt-2">
+          <Label className="text-sm text-gray-600 block mb-1">Transaction Type</Label>
+          <Select
+            onValueChange={handleTransactionTypeChange}
+            defaultValue={transactionType}
+          >
+            <SelectTrigger className="w-full text-md">
+              <SelectValue placeholder="Select a transaction type" />
+            </SelectTrigger>
+            <SelectContent className="text-md">
+              {Object.values(TransactionTypes).map((type) => (
+                <SelectItem key={type} value={type}>
+                  {getTransactionTypeLable(type)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <FormMessage className="text-[10px] sm:text-xs mt-1" />
+        </div>
+        
+        <div className="flex justify-between py-3">
+          <p className="text-sm text-gray-600 font-medium">Total Fee Amount: {formatCurrency(otherFeesWatched?.reduce((sum:number, fee:any) => sum + (fee?.finalFee || 0), 0) || 0)}</p>
+          <p className="text-sm text-green-700 font-medium">Total Deposited: {formatCurrency(otherFeesWatched?.reduce((sum:number, fee:any) => sum + (fee?.feesDepositedTOA || 0), 0) || 0)}</p>
+        </div>
+      </div>
+      
+    </div>
+  );
+}
 export default FinanceOfficeForm;
