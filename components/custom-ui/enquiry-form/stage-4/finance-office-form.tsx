@@ -240,7 +240,7 @@ const FinanceOfficeForm = () => {
   const createFinalFeeMutation = useMutation({
     mutationFn: createEnquiryStep4,
     onSuccess: () => {
-      toast.success('Fee record created successfully!');
+      // toast.success('Fee record created successfully!');
       queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
     }
   });
@@ -406,14 +406,16 @@ const FinanceOfficeForm = () => {
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    formField.onChange(value === '' ? undefined : Number(value));
+                                    if (value === '' || /^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    }
                                   }}
                                   value={formField.value ?? ''}
                                 />
                               </FormControl>
-                              <div className="h-[20px] sm:h-[45px]">
-                                <FormMessage className="text-[10px] sm:text-xs mt-0" />
-                              </div>
+                              {/* <div className="h-[20px] sm:h-[45px]"> */}
+                              <FormMessage className="text-[10px] sm:text-xs mt-0" />
+                              {/* </div> */}
                             </FormItem>
                           )}
                         />
@@ -433,19 +435,21 @@ const FinanceOfficeForm = () => {
                                 <Input
                                   type="text"
                                   min="0"
-                                  placeholder="Enter deposit"
+                                  placeholder="Enter fees"
                                   {...formField}
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    formField.onChange(value === '' ? undefined : Number(value));
+                                    if (value === '' || /^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    }
                                   }}
                                   value={formField.value ?? ''}
                                 />
                               </FormControl>
-                              <div className="h-[20px] sm:h-[45px]">
-                                <FormMessage className="text-[10px] sm:text-xs min-h-10 mt-0" />
-                              </div>
+                              {/* <div className="h-[20px] sm:h-[45px]"> */}
+                              <FormMessage className="text-[10px] sm:text-xs min-h-10 mt-0" />
+                              {/* </div> */}
                             </FormItem>
                           )}
                         />
@@ -559,16 +563,17 @@ const FinanceOfficeForm = () => {
                             <FormItem className="flex flex-col justify-end">
                               <FormControl>
                                 <Input
-                                  className="text-right px-2 h-9 sm:h-12 text-[12px] sm:text-sm"
                                   type="text"
                                   min="0"
                                   placeholder="Enter fees"
                                   {...formField}
-                                  onChange={(e) =>
-                                    formField.onChange(
-                                      e.target.value === '' ? undefined : Number(e.target.value)
-                                    )
-                                  }
+                                  className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === '' || /^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    }
+                                  }}
                                   value={formField.value ?? ''}
                                 />
                               </FormControl>

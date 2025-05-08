@@ -51,7 +51,8 @@ export const academicDetailBaseSchema = z.object({
   passingYear: z.number().int().optional(), // Keep refinements for when value is present
   percentageObtained: z.number().optional(), // Keep refinements for when value is present
   subjects: z
-    .array(z.string().min(1, 'Subject name is required')) // Validate inner string if array present
+    .string()
+    .nonempty('Subject name is required') // Validate inner string if array present
     .optional()
 });
 
@@ -72,10 +73,7 @@ export const academicDetailSchema = z.object({
     .number()
     .min(0, 'Percentage must be at least 0')
     .max(100, 'Percentage cannot exceed 100'),
-  subjects: z
-    .array(z.string().min(1, 'Subject name is required'))
-    .nonempty('Subjects cannot be empty')
-    .optional()
+  subjects: z.string().nonempty('Subjects cannot be empty').optional()
 });
 // Array schema
 export const academicDetailsArraySchema = z.array(academicDetailSchema);

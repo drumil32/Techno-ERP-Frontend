@@ -86,31 +86,21 @@ const EnquiryFormStage3 = () => {
 
   async function saveDraft() {
     let values = form.getValues();
-
-    // Extract the physicalDocumentNote separately before removing nulls
     const documentNotes = values.physicalDocumentNote || [];
 
-    // Remove null values from the rest of the form
     values = removeNullValues(values);
-
-    //ignoring null issues from the document
     values.physicalDocumentNote = documentNotes.map((note) => ({
       type: note.type,
       status: note.status,
       dueBy: note.dueBy
     }));
 
-    // Rest of your submission logic...because we really need to have somewhere undefined and few values
-    console.log('Submitting values:', values);
-    // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep3Schema.shape);
-    // Filter out values not in the schema
     const filteredValues = Object.fromEntries(
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
     );
 
     const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber', 'emailId'];
-
     const filteredKeys = Array.from(new Set([...Object.keys(values), ...alwaysIncludeKeys])).filter(
       (key) => schemaKeys.includes(key)
     );
@@ -124,11 +114,8 @@ const EnquiryFormStage3 = () => {
         {} as Partial<Record<keyof typeof enquiryDraftStep3Schema.shape, true>>
       )
     );
-    console.log('Partial Schema', partialSchema);
 
     const validationResult = partialSchema.safeParse(filteredValues);
-    console.log('Filtered data is', filteredValues);
-    // Clear previous errors before setting new ones
     form.clearErrors();
 
     if (!validationResult.success) {
@@ -138,7 +125,6 @@ const EnquiryFormStage3 = () => {
         message: 'Validation failed. Please check the form fields.'
       });
 
-      // Recursive function to set errors for nested fields
       function setNestedErrors(errorObj: any, path = '') {
         Object.entries(errorObj).forEach(([key, value]) => {
           if (key === '_errors') {
@@ -153,30 +139,28 @@ const EnquiryFormStage3 = () => {
           }
         });
       }
-      console.log(errors);
+
       setNestedErrors(errors);
-      return;
+      throw new Error('Validation failed');
     }
 
-    if (!isDocumentVerificationValid) {
-      toast.error('Please ensure you complete document verification first');
-      return;
-    }
-
-    // Remove confirmation field from values
     const { confirmation, _id, ...rest } = filteredValues;
 
-    const response = await updateEnquiryDraftStep3({ ...rest, id });
-    if (!response) {
-      toast.error('Failed to update enquiry draft');
-      return;
+    try {
+      const response = await updateEnquiryDraftStep3({ ...rest, id });
+      if (!response) {
+        toast.error('Failed to update enquiry draft');
+        throw new Error('Update failed');
+      }
+
+      toast.success('Enquiry draft updated successfully');
+      form.setValue('confirmation', false);
+      setRefreshKey((prev) => prev + 1);
+      return true;
+    } catch (error) {
+      throw error;
     }
-    toast.success('Enquiry draft updated successfully');
-
-    form.setValue('confirmation', false);
-    setRefreshKey((prev) => prev + 1);
   }
-
   const onSubmit = async () => {
     let values = form.getValues();
 
@@ -200,6 +184,10 @@ const EnquiryFormStage3 = () => {
     }
 
     console.log(rest);
+    if (!isDocumentVerificationValid) {
+      toast.error('Please ensure you complete document verification first');
+      return;
+    }
 
     const enquiry: any = await updateEnquiryStep3(rest);
 

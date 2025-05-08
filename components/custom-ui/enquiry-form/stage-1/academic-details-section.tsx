@@ -49,13 +49,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
       values.academicDetails?.forEach((entry, index) => {
         if (entry) {
           const allFilled =
-            entry.schoolCollegeName &&
-            entry.universityBoardName &&
-            entry.passingYear &&
-            entry.percentageObtained &&
-            (Array.isArray(entry.subjects) ||
-              entry.subjects === undefined ||
-              (entry.subjects as unknown[]).length === 0);
+            (entry.schoolCollegeName &&
+              entry.universityBoardName &&
+              entry.passingYear &&
+              entry.percentageObtained &&
+              entry.subjects) ||
+            entry.subjects === undefined;
 
           const expectedLevel = educationLevels[index];
 
@@ -150,7 +149,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         control={form.control}
                         name="academicDetails.0.passingYear"
                         render={({ field }) => (
-                          <FormItem className={`w-[36%]`}>
+                          <FormItem className={`w-[36%] gap-y-0`}>
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
                               Passing Year
                             </FormLabel>
@@ -164,6 +163,18 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 value={field.value ?? ''}
                               />
                             </FormControl>
+                            <div className="h-[20px]">
+                              <FormMessage className="text-[11px] mt-0">
+                                {form.formState.errors.academicDetails?.[0]?.passingYear && (
+                                  <p className="text-[#E7000B]">
+                                    {
+                                      form.formState.errors.academicDetails?.[0]?.passingYear
+                                        .message
+                                    }
+                                  </p>
+                                )}
+                              </FormMessage>
+                            </div>
                           </FormItem>
                         )}
                       />
@@ -173,7 +184,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         control={form.control}
                         name="academicDetails.0.percentageObtained"
                         render={({ field }) => (
-                          <FormItem className="w-[64%]">
+                          <FormItem className="w-[64%] gap-y-0">
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                               Percentage Obtained
                             </FormLabel>
@@ -189,25 +200,21 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 max={100}
                               />
                             </FormControl>
+                            <div className="h-[20px]">
+                              <FormMessage className="text-[11px]">
+                                {form.formState.errors.academicDetails?.[0]?.percentageObtained && (
+                                  <p className="text-[#E7000B]">
+                                    {
+                                      form.formState.errors.academicDetails?.[0]?.percentageObtained
+                                        .message
+                                    }
+                                  </p>
+                                )}
+                              </FormMessage>
+                            </div>
                           </FormItem>
                         )}
                       />
-                    </div>
-
-                    <div className="row-start-1">
-                      {form.formState.errors.academicDetails?.[0]?.passingYear && (
-                        <p className="text-[#E7000B]">
-                          {form.formState.errors.academicDetails?.[0]?.passingYear.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="row-start-1">
-                      {form.formState.errors.academicDetails?.[0]?.percentageObtained && (
-                        <p className="text-[#E7000B]">
-                          {form.formState.errors.academicDetails?.[0]?.percentageObtained.message}
-                        </p>
-                      )}
                     </div>
                   </div>
 
@@ -221,10 +228,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                           Mention Subjects
                         </FormLabel>
                         <FormControl>
-                          <TagInput
+                          <Input
                             disabled={isViewable}
-                            value={field.value || []}
-                            onChange={field.onChange}
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter subjects"
                           />
                         </FormControl>
                         <div className="h-[20px]">
@@ -241,7 +250,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                 {/* Subheading */}
                 <h4 className="font-inter  text-[16px] font-semibold">12th</h4>
 
-                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px]">
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-1 gap-x-[32px]">
                   <FormField
                     key="academicDetails.1.schoolCollegeName"
                     control={form.control}
@@ -297,7 +306,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         control={form.control}
                         name="academicDetails.1.passingYear"
                         render={({ field }) => (
-                          <FormItem className={`w-[36%]`}>
+                          <FormItem className={`w-[36%] gap-y-0`}>
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
                               Passing Year
                             </FormLabel>
@@ -311,6 +320,18 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 value={field.value ?? ''}
                               />
                             </FormControl>
+                            <div className="h-[20px]">
+                              <FormMessage className="text-[11px]">
+                                {form.formState.errors.academicDetails?.[1]?.passingYear && (
+                                  <p className="text-[#E7000B]">
+                                    {
+                                      form.formState.errors.academicDetails?.[1]?.passingYear
+                                        .message
+                                    }
+                                  </p>
+                                )}
+                              </FormMessage>
+                            </div>
                           </FormItem>
                         )}
                       />
@@ -320,7 +341,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         control={form.control}
                         name="academicDetails.1.percentageObtained"
                         render={({ field }) => (
-                          <FormItem className="w-[64%]">
+                          <FormItem className="w-[64%] gap-y-0">
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                               Percentage Obtained
                             </FormLabel>
@@ -336,25 +357,21 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 max={100}
                               />
                             </FormControl>
+                            <div className="h-[20px]">
+                              <FormMessage className="text-[11px]">
+                                {form.formState.errors.academicDetails?.[1]?.percentageObtained && (
+                                  <p className="text-[#E7000B]">
+                                    {
+                                      form.formState.errors.academicDetails?.[1]?.percentageObtained
+                                        .message
+                                    }
+                                  </p>
+                                )}
+                              </FormMessage>
+                            </div>
                           </FormItem>
                         )}
                       />
-                    </div>
-
-                    <div className="row-start-1">
-                      {form.formState.errors.academicDetails?.[1]?.passingYear && (
-                        <p className="text-[#E7000B]">
-                          {form.formState.errors.academicDetails?.[1]?.passingYear.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="row-start-1">
-                      {form.formState.errors.academicDetails?.[1]?.percentageObtained && (
-                        <p className="text-[#E7000B]">
-                          {form.formState.errors.academicDetails?.[1]?.percentageObtained.message}
-                        </p>
-                      )}
                     </div>
                   </div>
 
@@ -368,11 +385,18 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                           Mention Subjects
                         </FormLabel>
                         <FormControl>
-                          <TagInput
+                          <Input
+                            disabled={isViewable}
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter subjects"
+                          />
+                          {/* <TagInput
                             disabled={isViewable}
                             value={field.value || []}
                             onChange={field.onChange}
-                          />
+                          /> */}
                         </FormControl>
                         <div className="h-[20px]">
                           <FormMessage className="text-[11px]" />
@@ -388,7 +412,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                 {/* Subheading */}
                 <h4 className="font-inter  text-[16px] font-semibold">Graduation</h4>
 
-                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6 gap-x-[32px]">
+                <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-1 gap-x-[32px]">
                   <FormField
                     key="academicDetails.2.schoolCollegeName"
                     control={form.control}
@@ -444,7 +468,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         control={form.control}
                         name="academicDetails.2.passingYear"
                         render={({ field }) => (
-                          <FormItem className={`w-[36%]`}>
+                          <FormItem className={`w-[36%] gap-y-0 `}>
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
                               Passing Year
                             </FormLabel>
@@ -458,6 +482,18 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 value={field.value ?? ''}
                               />
                             </FormControl>
+                            <div className="h-[20px]">
+                              <FormMessage className="text-[11px] mt-0">
+                                {form.formState.errors.academicDetails?.[2]?.passingYear && (
+                                  <p className="text-[#E7000B] text-xs">
+                                    {
+                                      form.formState.errors.academicDetails?.[2]?.passingYear
+                                        .message
+                                    }
+                                  </p>
+                                )}
+                              </FormMessage>
+                            </div>
                           </FormItem>
                         )}
                       />
@@ -467,7 +503,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         control={form.control}
                         name="academicDetails.2.percentageObtained"
                         render={({ field }) => (
-                          <FormItem className="w-[64%]">
+                          <FormItem className="w-[64%] gap-y-0">
                             <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                               Percentage Obtained
                             </FormLabel>
@@ -483,25 +519,21 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                                 max={100}
                               />
                             </FormControl>
+                            <div className="h-[20px]">
+                              <FormMessage className="text-[11px]">
+                                {form.formState.errors.academicDetails?.[2]?.percentageObtained && (
+                                  <p className="text-[#E7000B]">
+                                    {
+                                      form.formState.errors.academicDetails?.[2]?.percentageObtained
+                                        .message
+                                    }
+                                  </p>
+                                )}
+                              </FormMessage>
+                            </div>
                           </FormItem>
                         )}
                       />
-                    </div>
-
-                    <div className="row-start-1">
-                      {form.formState.errors.academicDetails?.[2]?.passingYear && (
-                        <p className="text-[#E7000B]">
-                          {form.formState.errors.academicDetails?.[2]?.passingYear.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="row-start-1">
-                      {form.formState.errors.academicDetails?.[2]?.percentageObtained && (
-                        <p className="text-[#E7000B]">
-                          {form.formState.errors.academicDetails?.[2]?.percentageObtained.message}
-                        </p>
-                      )}
                     </div>
                   </div>
 
@@ -515,10 +547,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                           Mention Stream
                         </FormLabel>
                         <FormControl>
-                          <TagInput
+                          <Input
                             disabled={isViewable}
-                            value={field.value || []}
-                            onChange={field.onChange}
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter stream"
                           />
                         </FormControl>
                         <div className="h-[20px]">

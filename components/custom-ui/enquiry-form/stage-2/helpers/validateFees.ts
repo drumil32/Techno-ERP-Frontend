@@ -75,8 +75,8 @@ export const validateCustomFeeLogic = (
       finalFee > originalFeeAmount
     ) {
       setError(finalFeeField, {
-        type: 'manual_comparison',
-        message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`
+        type: 'manual_comparison'
+        // message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`
       });
       isOverallValid = false;
     }
