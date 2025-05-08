@@ -36,7 +36,7 @@ import FootFallSelect from './foot-fall-select';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { SelectValue } from '@radix-ui/react-select';
 import Loading from '@/app/loading';
-import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
+import { FilterData } from '@/components/custom-ui/filter/type';
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -455,6 +455,7 @@ export default function YellowLeadsTracker() {
       {
         filterKey: 'source',
         label: 'Source',
+        placeholder: 'Source',
         options: marketingSource.map((item: string) => {
           return {
             label: item,

@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/table';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
-import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
+import { FilterData } from '@/components/custom-ui/filter/type';
 
 // Zod schema for validation
 const feeSchema = z.object({
@@ -273,7 +273,7 @@ export default function BulkFeeUpdateDialogue() {
       return editedValue === null ? '' : editedValue;
     }
 
-    const originalValue = studentData.find(item => item.id === id)?.amount;
+    const originalValue = studentData.find((item) => item.id === id)?.amount;
     return originalValue === null ? '' : originalValue || '';
   };
 

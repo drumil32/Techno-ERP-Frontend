@@ -23,7 +23,8 @@ import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title
 import { DropDownType } from '@/types/enum';
 import { LeadConversionDashboard } from './yellow-leads-converted';
 import Loading from '@/app/loading';
-import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
+import { FilterData } from '@/components/custom-ui/filter/type';
+// import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
 
 const AdminTracker = () => {
   const { filters, updateFilter } = useTechnoFilterContext();
@@ -56,7 +57,7 @@ const AdminTracker = () => {
   const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
   const marketingSource = Array.isArray(marketingSourceQuery.data) ? marketingSourceQuery.data : [];
 
-  const getFiltersData = ():FilterData[] => {
+  const getFiltersData = (): FilterData[] => {
     return [
       {
         filterKey: 'date',

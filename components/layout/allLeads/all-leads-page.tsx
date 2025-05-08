@@ -28,7 +28,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { SelectValue } from '@radix-ui/react-select';
 import Loading from '@/app/loading';
-import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
+import { FilterData } from '@/components/custom-ui/filter/type';
 export default function AllLeadsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -519,7 +519,7 @@ export default function AllLeadsPage() {
   });
   const courses = Array.isArray(courseQuery.data) ? courseQuery.data : [];
 
-  const getFiltersData = ():FilterData[] => {
+  const getFiltersData = (): FilterData[] => {
     return [
       {
         filterKey: 'date',
@@ -574,14 +574,14 @@ export default function AllLeadsPage() {
       },
       {
         filterKey: 'assignedTo',
-        label: 'Assigned To', 
+        label: 'Assigned To',
         options: assignedToDropdownData.map((item: any) => {
           return {
             label: item.name,
             id: item._id
           };
         }),
-        placeholder: 'person',
+        placeholder: 'assignee',
         hasSearch: true,
         multiSelect: true
       }
