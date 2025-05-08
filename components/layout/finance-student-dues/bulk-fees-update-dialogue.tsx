@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/table';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
+import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
 
 // Zod schema for validation
 const feeSchema = z.object({
@@ -123,22 +124,24 @@ export default function BulkFeeUpdateDialogue() {
     }
   };
 
-  const getFiltersData = () => {
+  const getFiltersData = (): FilterData[] => {
     return [
       {
         filterKey: 'academic-year',
         label: 'Academic Year',
+        placeholder: 'Academic Year',
         options: [
           {
             label: '24-25',
             id: '2024-25'
           }
-        ] as FilterOption[],
-        multiSelect: true
+        ],
+        multiSelect: false
       },
       {
         filterKey: 'course',
         label: 'Course',
+        placeholder: 'Course',
         options: courses.map((item: string) => {
           return {
             label: item,
@@ -150,18 +153,20 @@ export default function BulkFeeUpdateDialogue() {
       },
       {
         filterKey: 'selected-semester',
+        placeholder: 'Semester',
         label: 'Semester',
         options: [
           {
             label: 'Sem 1',
             id: 'sem1'
           }
-        ] as FilterOption[],
+        ],
         multiSelect: true
       },
       {
         filterKey: 'fees-type',
         label: 'Fees Type',
+        placeholder: 'Fees Type',
         options: [
           {
             label: 'MISC',
