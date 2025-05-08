@@ -22,7 +22,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
         <>
             <TechnoTopHeader headerItems={HEADER_ITEMS} />
             <div className="flex flex-col px-4 gap-4">
-                <CourseBreadCrumb />
+                <CourseBreadCrumb rootUrl={SITE_MAP.ACADEMICS.DEFAULT} />
                 <TechnoFilterProvider>
                     {children}
                 </TechnoFilterProvider>

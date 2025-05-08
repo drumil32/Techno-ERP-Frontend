@@ -36,6 +36,7 @@ import FootFallSelect from './foot-fall-select';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { SelectValue } from '@radix-ui/react-select';
 import Loading from '@/app/loading';
+import { FilterData } from '@/components/custom-ui/filter/type';
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -443,16 +444,18 @@ export default function YellowLeadsTracker() {
     queryFn: courseDropdown
   });
   const courses = Array.isArray(courseQuery.data) ? courseQuery.data : [];
-  const getFiltersData = () => {
+  const getFiltersData = (): FilterData[] => {
     return [
       {
         filterKey: 'leadTypeModifiedDate',
+        placeholder: 'LTC Date',
         label: 'LTC Date',
         isDateFilter: true
       },
       {
         filterKey: 'source',
         label: 'Source',
+        placeholder: 'Source',
         options: marketingSource.map((item: string) => {
           return {
             label: item,
@@ -464,6 +467,7 @@ export default function YellowLeadsTracker() {
       {
         filterKey: 'city',
         label: 'City',
+        placeholder: 'City',
         options: cityDropdownData.map((item: string) => {
           return {
             label: item,
@@ -476,6 +480,7 @@ export default function YellowLeadsTracker() {
       {
         filterKey: 'course',
         label: 'Course',
+        placeholder: 'Course',
         options: courses.map((item: string) => {
           return {
             label: item,
@@ -488,18 +493,18 @@ export default function YellowLeadsTracker() {
       {
         filterKey: 'finalConversionType',
         label: 'Final Conversion',
+        placeholder: 'Final Conversion',
         options: Object.values(FinalConversionStatus),
         multiSelect: true
       },
       {
         filterKey: 'assignedTo',
         label: 'Assigned To',
-        options: assignedToDropdownData.map((item: any) => {
-          return {
-            label: item.name,
-            id: item._id
-          };
-        }) as FilterOption[],
+        placeholder: 'Assigned To',
+        options: assignedToDropdownData?.map((item: any) => ({
+          label: item.name,
+          id: item._id
+        })),
         hasSearch: true,
         multiSelect: true
       }

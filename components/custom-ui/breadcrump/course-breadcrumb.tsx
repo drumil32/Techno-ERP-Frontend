@@ -13,7 +13,11 @@ import {
 import { usePathname } from 'next/navigation';
 import React from 'react';
 
-export default function CourseBreadCrumb() {
+type BreadCrumbProps = {
+  rootUrl?: string;
+};
+
+export default function CourseBreadCrumb({ rootUrl }: BreadCrumbProps) {
   const pathname = usePathname();
   const pathSegments = pathname.split('/').filter(Boolean);
   const findSidebarKey = () => {
@@ -34,13 +38,14 @@ export default function CourseBreadCrumb() {
 
   const sidebarKey = findSidebarKey();
 
+
   const sidebarTitle = SIDEBAR_ITEMS[sidebarKey as keyof typeof SIDEBAR_ITEMS] || 'Marketing';
   const generateBreadcrumbs = () => {
     const breadcrumbs = [];
 
     breadcrumbs.push(
       <BreadcrumbItem key="sidebar">
-        <BreadcrumbLink href="/">{sidebarTitle}</BreadcrumbLink>
+        <BreadcrumbLink href={rootUrl}>{sidebarTitle}</BreadcrumbLink>
       </BreadcrumbItem>
     );
 

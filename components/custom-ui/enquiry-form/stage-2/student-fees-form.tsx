@@ -308,6 +308,7 @@ export const StudentFeesForm = () => {
         otherFees: initialOtherFees,
         semWiseFees: initialSemFees,
         feesClearanceDate: initialFeesClearanceDate,
+        reference: enquiryData.reference,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
         remarks: initialCollegeRemarks,
@@ -534,7 +535,7 @@ export const StudentFeesForm = () => {
     if (!isCustomValid) {
       toast.error('Fee validation failed. Please check highlighted fields.');
       setIsSavingDraft(false);
-      return;
+      return false;
     }
 
     const validationResult = frontendFeesDraftValidationSchema.safeParse(currentValues);
@@ -548,7 +549,7 @@ export const StudentFeesForm = () => {
         }
       });
       setIsSavingDraft(false);
-      return;
+      return false;
     }
 
     const validatedDataForCleaning = validationResult.data;
@@ -570,9 +571,13 @@ export const StudentFeesForm = () => {
         delete finalPayload.id;
         await createDraftMutation.mutateAsync(finalPayload);
       }
-    } catch (error) {}
+      return true;
+    } catch (error) {
+      return false;
+    } finally {
+      setIsSavingDraft(false);
+    }
   }
-
   async function onSubmit() {
     setIsSubmittingFinal(true);
     form.clearErrors();
@@ -668,7 +673,7 @@ export const StudentFeesForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-full lg:w-2/3">
+              <div className="w-full xl:w-2/3">
                 <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-3 sm:p-5 grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mb-2 rounded-[5px] text-[14px] sm:text-[16px]">
                   <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Fees Details</div>
                   <div className="text-right">Schedule</div>
@@ -726,14 +731,16 @@ export const StudentFeesForm = () => {
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    formField.onChange(value === '' ? undefined : Number(value));
+                                    if (value === '' || /^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    }
                                   }}
                                   value={formField.value ?? ''}
                                 />
                               </FormControl>
-                              <div className="h-[20px] sm:h-[45px]">
-                                <FormMessage className="text-[10px] sm:text-xs mt-0" />
-                              </div>
+                              {/* <div className="h-[20px] sm:h-[45px]"> */}
+                              <FormMessage className="text-[10px] sm:text-xs mt-0" />
+                              {/* </div> */}
                             </FormItem>
                           )}
                         />
@@ -753,19 +760,21 @@ export const StudentFeesForm = () => {
                                 <Input
                                   type="text"
                                   min="0"
-                                  placeholder="Enter deposit"
+                                  placeholder="Enter fees"
                                   {...formField}
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    formField.onChange(value === '' ? undefined : Number(value));
+                                    if (value === '' || /^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    }
                                   }}
                                   value={formField.value ?? ''}
                                 />
                               </FormControl>
-                              <div className="h-[20px] sm:h-[45px]">
-                                <FormMessage className="text-[10px] sm:text-xs min-h-10 mt-0" />
-                              </div>
+                              {/* <div className="h-[20px] sm:h-[45px]"> */}
+                              <FormMessage className="text-[10px] sm:text-xs min-h-10 mt-0" />
+                              {/* </div> */}
                             </FormItem>
                           )}
                         />
@@ -880,16 +889,17 @@ export const StudentFeesForm = () => {
                             <FormItem className="flex flex-col justify-end">
                               <FormControl>
                                 <Input
-                                  className="text-right px-2 h-9 sm:h-12 text-[12px] sm:text-sm"
                                   type="text"
                                   min="0"
                                   placeholder="Enter fees"
                                   {...formField}
-                                  onChange={(e) =>
-                                    formField.onChange(
-                                      e.target.value === '' ? undefined : Number(e.target.value)
-                                    )
-                                  }
+                                  className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === '' || /^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    }
+                                  }}
                                   value={formField.value ?? ''}
                                 />
                               </FormControl>

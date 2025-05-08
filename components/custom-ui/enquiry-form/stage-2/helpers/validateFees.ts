@@ -44,6 +44,8 @@ export const validateCustomFeeLogic = (
 ): boolean => {
   let isOverallValid = true;
 
+  console.log('custom validation values', values);
+
   // --- Validate Other Fees ---
   values.otherFees?.forEach((otherFee: any, index: any) => {
     if (!otherFee) return; // Skip if item is somehow null/undefined
@@ -54,7 +56,9 @@ export const validateCustomFeeLogic = (
     console.log('Other fee type', otherFee.type);
     // Get fee values (handle potential undefined/null)
     const originalFeeAmount = findOriginalOtherFee(
-      displayFeeMapper(otherFee?.type as FeeType),
+      otherFee.type === FeeType.SEM1FEE
+        ? otherFee.type
+        : displayFeeMapper(otherFee?.type as FeeType),
       otherFeesDataBase
     );
     const finalFee = otherFee.finalFee; // Already potentially undefined | number
@@ -71,8 +75,8 @@ export const validateCustomFeeLogic = (
       finalFee > originalFeeAmount
     ) {
       setError(finalFeeField, {
-        type: 'manual_comparison',
-        message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`
+        type: 'manual_comparison'
+        // message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`
       });
       isOverallValid = false;
     }
