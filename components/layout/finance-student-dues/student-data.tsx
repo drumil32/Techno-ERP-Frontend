@@ -6,21 +6,21 @@ import FeesPaidTag from "./fees-paid-status-tag";
 export default function StudentData({ studentData }: { studentData: StudentDetails }) {
   return (
     <div className="w-full flex flex-row px-4 py-5 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
-      <div className="w-2/6 flex flex-col gap-3 ">
-        <div className="flex w-full h-7">
+      <div className="w-1/4 flex flex-col gap-3 ">
+        <div className="flex h-7">
           <Label className="text-[#666666] w-1/2">Student Name</Label>
-          <Label>{studentData.studentName}</Label>
+          <Label className="w-1/2">{studentData.studentName}</Label>
         </div>
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">Student ID</Label>
-          <Label>{studentData.studentID}</Label>
+          <Label className="w-1/2">{studentData.studentID}</Label>
         </div>
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">Father's Name</Label>
-          <Label>{studentData.fatherName}</Label>
+          <Label className="w-1/2">{studentData.fatherName}</Label>
         </div>
       </div>
-      <div className="w-2/6 flex flex-col gap-3">
+      <div className="w-1/4 flex flex-col gap-3">
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">Fees Status</Label>
           {studentData.feeStatus &&
@@ -29,17 +29,17 @@ export default function StudentData({ studentData }: { studentData: StudentDetai
         </div>
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">Course</Label>
-          <Label>{studentData.course}</Label>
+          <Label className="w-1/2">{studentData.course}</Label>
         </div>
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">HOD</Label>
-          <Label>{studentData.HOD}</Label>
+          <Label className="w-1/2">{studentData.HOD}</Label>
         </div>
       </div>
-      <div className="w-2/6 flex flex-col gap-3">
+      <div className="w-1/4 flex flex-col gap-3">
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/2">Extra Balance</Label>
-          <Label>{studentData.extraBalance ? `₹ ${studentData.extraBalance.toLocaleString()}` : "--"}</Label>
+          <Label className="w-1/2">{studentData.extraBalance ? `₹ ${studentData.extraBalance.toLocaleString()}` : "--"}</Label>
         </div>
       </div>
     </div>

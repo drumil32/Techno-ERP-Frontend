@@ -204,7 +204,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                         <Input
                           placeholder="Enter the amount"
                           {...field}
-                          type="number"
+                          type="text"
                           className="!text-md"
                         />
                       </FormControl>

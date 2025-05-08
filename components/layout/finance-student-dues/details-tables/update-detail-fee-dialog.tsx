@@ -172,7 +172,7 @@ export default function UpdateFeeDetailDialog({
                       <FormLabel>Adjustment Amount (+ for increase, - for decrease)</FormLabel>
                       <FormControl>
                         <Input
-                          type="number"
+                          type="text"
                           placeholder="Enter adjustment amount"
                           {...field}
                           onChange={(e) => {
