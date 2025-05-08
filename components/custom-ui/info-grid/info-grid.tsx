@@ -54,14 +54,16 @@ const DynamicInfoGrid: React.FC<InfoGridProps> = ({
 
   return (
     <div
+      className="rounded-[10px] bg-white shadow-sm"
       style={{
         width: containerWidth,
         height: containerHeight,
         padding: containerPadding,
         display: "flex",
         gap: columnGap,
-  
+        
         borderRadius: "12px",
+        backgroundColor: "white"
       }}
     >
       {columnData.map((column, i) => (
@@ -80,7 +82,7 @@ const DynamicInfoGrid: React.FC<InfoGridProps> = ({
               key={key}
               style={{ display: "flex", alignItems: "center" }}
             >
-              <div className="font-light"
+              <div className="text-[#666666] text-[14px] font-inter"
                 style={{
                   width: keyWidth,
                   color: "#666666",

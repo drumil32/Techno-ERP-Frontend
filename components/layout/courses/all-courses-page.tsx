@@ -1,13 +1,11 @@
 'use client';
 
-import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchCourses, fetchDepartmentDropdown } from './helpers/fetch-data';
+import { fetchCourses } from './helpers/fetch-data';
 import { toast } from 'sonner';
 import TechnoPageHeading from '@/components/custom-ui/page-heading/techno-page-heading';
-import { getCurrentAcademicYear } from '@/lib/getCurrentAcademicYear';
 import { useTechnoFilterContext } from '@/components/custom-ui/filter/filter-context';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
@@ -51,11 +49,6 @@ export default function AllCoursesPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-
-  const departmentDropDown = useQuery({
-    queryKey: ['departmentDropDown'],
-    queryFn: fetchDepartmentDropdown
-  });
 
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -135,11 +128,19 @@ export default function AllCoursesPage() {
     };
   }, []);
 
+  const [filtersReady, setFiltersReady] = useState(false);
+
   useEffect(() => {
     const academicYearList = generateAcademicYearDropdown();
     const currentAcademicYear = academicYearList[5];
     updateFilter('academicYear', currentAcademicYear);
   }, []);
+  
+  useEffect(() => {
+    if (filters.academicYear) {
+      setFiltersReady(true);
+    }
+  }, [filters.academicYear]);
 
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
@@ -157,27 +158,12 @@ export default function AllCoursesPage() {
     setPage(1);
   };
 
-  const getQueryParams = () => {
-    const params: { [key: string]: any } = {
-      page,
-      limit,
-      academicYear: getCurrentAcademicYear(),
-      search: debouncedSearch,
-      ...appliedFilters,
-      refreshKey
-    };
-
-    return params;
-  };
-
-  const filterParams = getQueryParams();
-
   const courseQuery = useQuery({
-    queryKey: ['courses', filterParams, appliedFilters, debouncedSearch],
+    queryKey: ['courses', appliedFilters, debouncedSearch],
     queryFn: fetchCourses,
     placeholderData: (previousData) => previousData,
-    enabled: true,
-  });
+    enabled: filtersReady,
+  });        
 
   const courseResponse: CourseApiResponse = courseQuery.data as CourseApiResponse;
   console.log(courseResponse)
