@@ -218,7 +218,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                          Subjects
+                          Mention Subjects
                         </FormLabel>
                         <FormControl>
                           <TagInput
@@ -365,7 +365,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                          Subjects
+                          Mention Subjects
                         </FormLabel>
                         <FormControl>
                           <TagInput
@@ -512,7 +512,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                          Subjects
+                          Mention Stream
                         </FormLabel>
                         <FormControl>
                           <TagInput

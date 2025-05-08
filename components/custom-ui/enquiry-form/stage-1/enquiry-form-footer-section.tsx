@@ -67,7 +67,6 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     try {
       await saveDraft();
       setDraftSaved(true);
-      toast.success(draftExists ? 'Draft updated successfully!' : 'Draft saved successfully!');
     } finally {
       setDraftDialogOpen(false);
     }

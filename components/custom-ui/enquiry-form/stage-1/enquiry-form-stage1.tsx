@@ -34,7 +34,7 @@ import ConfirmationCheckBox from './confirmation-check-box';
 
 // Utility and constants imports
 import { toast } from 'sonner';
-import { ApplicationStatus, EducationLevel, StatesOfIndia } from '@/types/enum';
+import { ApplicationStatus, Countries, EducationLevel, StatesOfIndia } from '@/types/enum';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
 import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
@@ -63,7 +63,9 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     defaultValues: {
       studentName: '',
       address: {
-        state: StatesOfIndia.UttarPradesh
+        state: StatesOfIndia.UttarPradesh,
+        district: 'Lucknow',
+        country: Countries.India
       },
       studentPhoneNumber: '',
       confirmation: true
@@ -174,6 +176,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
     if (!validationResult.success) {
       toast.error('Validation failed. Please check the form fields.');
+
       const errors = validationResult.error.format();
       form.setError('root', {
         type: 'manual',
@@ -206,6 +209,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
     if (!_id) {
       const response: any = await createEnquiryDraft(rest);
+
       if (!response) {
         toast.error('Failed to create enquiry draft');
         return;

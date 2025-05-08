@@ -472,8 +472,8 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                         </SelectTrigger>
                         <SelectContent>
                           {Object.values(courses).map((course) => (
-                            <SelectItem key={course} value={course}>
-                              {course}
+                            <SelectItem key={course.courseCode} value={course.courseCode}>
+                              {course.courseName}
                             </SelectItem>
                           ))}
                         </SelectContent>

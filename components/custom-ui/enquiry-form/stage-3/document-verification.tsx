@@ -159,14 +159,23 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
     }
   }, []);
 
+  const renderStatusView = (status: PhysicalDocumentNoteStatus) => {
+    switch (status) {
+      case PhysicalDocumentNoteStatus.VERIFIED:
+        return <span className="text-green-600">Verified</span>;
+      case PhysicalDocumentNoteStatus.NOT_APPLICABLE:
+        return <span className="text-blue-500">Not Applicable</span>;
+      case PhysicalDocumentNoteStatus.PENDING:
+        return <span className="text-yellow-500">Pending</span>;
+      default:
+        return null;
+    }
+  };
+
   if (loading) return <div className="py-4 text-gray-500">Loading document verification...</div>;
   if (error) return <div className="py-4 text-red-500">{error}</div>;
   if (documents.length === 0)
-    return (
-      <div className="py-4 text-gray-500">
-        No documents to verify. Please check course configuration.
-      </div>
-    );
+    return <div className="py-4 text-gray-500">No documents to verify.</div>;
 
   return (
     <Accordion
@@ -187,68 +196,81 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                 {doc.type.replace(/_/g, ' ')}
               </div>
               <div className="flex flex-row items-center">
-                <div className="flex items-center">
-                  <Select
-                    disabled={isViewable}
-                    value={doc.status}
-                    onValueChange={(value) =>
-                      handleStatusChange(doc.id, value as PhysicalDocumentNoteStatus)
-                    }
-                  >
-                    <SelectTrigger className="w-[400px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={PhysicalDocumentNoteStatus.VERIFIED}>Verified</SelectItem>
-                      <SelectItem value={PhysicalDocumentNoteStatus.PENDING}>Pending</SelectItem>
-                      <SelectItem value={PhysicalDocumentNoteStatus.NOT_APPLICABLE}>
-                        Not Applicable
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {getStatusIcon(doc.status)}
-                </div>
+                {isViewable ? (
+                  <div className="flex items-center w-[400px]">
+                    {renderStatusView(doc.status)}
+                    {getStatusIcon(doc.status)}
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <Select
+                      value={doc.status}
+                      onValueChange={(value) =>
+                        handleStatusChange(doc.id, value as PhysicalDocumentNoteStatus)
+                      }
+                    >
+                      <SelectTrigger className="w-[400px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={PhysicalDocumentNoteStatus.VERIFIED}>
+                          Verified
+                        </SelectItem>
+                        <SelectItem value={PhysicalDocumentNoteStatus.PENDING}>Pending</SelectItem>
+                        <SelectItem value={PhysicalDocumentNoteStatus.NOT_APPLICABLE}>
+                          Not Applicable
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {getStatusIcon(doc.status)}
+                  </div>
+                )}
                 <div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'ml-5 w-[200px] justify-start text-left font-normal',
-                          !doc.dueBy && 'text-muted-foreground',
-                          doc.status !== PhysicalDocumentNoteStatus.PENDING &&
-                            'cursor-not-allowed opacity-60'
-                        )}
-                        disabled={isViewable || doc.status !== PhysicalDocumentNoteStatus.PENDING}
-                      >
-                        {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : 'Pick a due date'}
-                      </Button>
-                    </PopoverTrigger>
-                    {doc.status === PhysicalDocumentNoteStatus.PENDING && (
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={doc.dueBy}
-                          onSelect={(date) => handleDueDateChange(doc.id, date)}
-                          disabled={(date) =>
-                            isViewable || date < new Date(new Date().setHours(0, 0, 0, 0))
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    )}
-                  </Popover>
+                  {isViewable ? (
+                    <div className="ml-5 w-[200px] text-left">
+                      {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : '-'}
+                    </div>
+                  ) : (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'ml-5 w-[200px] justify-start text-left font-normal',
+                            !doc.dueBy && 'text-muted-foreground',
+                            doc.status !== PhysicalDocumentNoteStatus.PENDING &&
+                              'cursor-not-allowed opacity-60'
+                          )}
+                          disabled={doc.status !== PhysicalDocumentNoteStatus.PENDING}
+                        >
+                          {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : 'Pick a due date'}
+                        </Button>
+                      </PopoverTrigger>
+                      {doc.status === PhysicalDocumentNoteStatus.PENDING && (
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={doc.dueBy}
+                            onSelect={(date) => handleDueDateChange(doc.id, date)}
+                            disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      )}
+                    </Popover>
+                  )}
                 </div>
               </div>
-              {doc.status === PhysicalDocumentNoteStatus.PENDING && !doc.dueBy && (
+              {!isViewable && doc.status === PhysicalDocumentNoteStatus.PENDING && !doc.dueBy && (
                 <p className="text-red-500 text-sm">Due date is required for pending documents</p>
               )}
             </div>
           ))}
           {!isValid && (
             <div className="text-red-500 text-sm">
-              You are supposed to set due dates for all the documents which are yet remaining to
-              verify.
+              {isViewable
+                ? 'Some documents are pending verification'
+                : 'Set due dates for all pending documents'}
             </div>
           )}
         </AccordionContent>

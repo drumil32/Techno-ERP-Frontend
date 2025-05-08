@@ -131,7 +131,7 @@ export default function AdmissionsLandingPage() {
             }}
           >
             {' '}
-            Create New Admission
+            Start New Admission
           </Button>
         </AdmissionCard>
       </div>
