@@ -19,11 +19,3 @@ export const fetchAssignedToDropdown = async () => {
   return result;
 };
 
-export const fetchMarketingData = async () => {
-  const result = await apiRequest()
-}
-
-export const downloadMarketingData = async () => {
-  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.downloadMarketingData);
-  return result;
-}

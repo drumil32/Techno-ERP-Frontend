@@ -9,7 +9,7 @@ import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
 import LeadViewEdit, { LeadData } from './leads-view-edit';
 import { Course, LeadType, Locations, UserRoles } from '@/types/enum';
-import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics, downloadMarketingData } from './helpers/fetch-data';
+import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
 import { refineLeads, refineAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
 1;
