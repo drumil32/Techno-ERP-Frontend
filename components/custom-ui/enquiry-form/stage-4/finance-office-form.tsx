@@ -45,6 +45,8 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { getTransactionTypeLable } from '@/lib/enumDisplayMapper';
+import { Loader } from 'lucide-react';
+import Loading from '@/app/loading';
 
 const FinanceOfficeForm = () => {
   const params = useParams();
@@ -373,9 +375,7 @@ const FinanceOfficeForm = () => {
   }
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
-    return (
-      <div className="flex justify-center items-center h-full">Loading fee enquiryData...</div>
-    );
+    return <Loading />;
   }
 
   return (
