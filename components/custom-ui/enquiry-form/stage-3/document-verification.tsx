@@ -40,12 +40,14 @@ type DocumentVerificationProps = {
   form: UseFormReturn<any>;
   isViewable?: boolean;
   onValidationChange?: (isValid: boolean) => void;
+  documentVerificationStatus?: boolean;
 };
 
 const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
   form,
   isViewable,
-  onValidationChange
+  onValidationChange,
+  documentVerificationStatus
 }) => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
@@ -277,7 +279,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                 )} */}
             </div>
           ))}
-          {!isValid && !isViewable && isTouched && (
+          {!documentVerificationStatus && (
             <div className="text-red-500 text-sm">Set due dates for all pending documents</div>
           )}
         </AccordionContent>

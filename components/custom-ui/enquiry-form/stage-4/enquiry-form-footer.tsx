@@ -70,13 +70,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
         <DialogTrigger asChild>
           <Button type="button" variant="outline" disabled={isSavingDraft}>
             <span className="font-inter font-semibold text-[12px]">
-              {isSavingDraft
-                ? 'Saving...'
-                : draftSaved
-                  ? 'Draft Saved!'
-                  : draftExists
-                    ? 'Update Draft'
-                    : 'Save Draft'}
+            {isSavingDraft ? 'Saving...' : draftSaved || draftExists ? 'Update Draft' : 'Save Draft'}
             </span>
           </Button>
         </DialogTrigger>
