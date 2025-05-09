@@ -37,6 +37,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/u
 import { SelectValue } from '@radix-ui/react-select';
 import Loading from '@/app/loading';
 import { FilterData } from '@/components/custom-ui/filter/type';
+import useAuthStore from '@/stores/auth-store';
+import { UserRoles } from '@/types/enum';
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -44,6 +46,8 @@ export default function YellowLeadsTracker() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editRow, setEditRow] = useState<any>(null);
+  const authStore = useAuthStore()
+  const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING)
 
   const [sortState, setSortState] = useState<any>({
     sortBy: ['leadTypeModifiedDate'],
@@ -54,6 +58,9 @@ export default function YellowLeadsTracker() {
   const handleSortChange = (column: string, order: string) => {
     if (column === 'nextDueDateView') {
       column = 'nextDueDate';
+    }
+    if (column === 'dateView') {
+      column = 'date';
     }
     if (column === 'dateView') {
       column = 'date';
@@ -295,7 +302,6 @@ export default function YellowLeadsTracker() {
       }
     },
 
-    { accessorKey: 'nextDueDateView', header: 'Next Call Date', meta: { align: 'center' } },
     {
       accessorKey: 'yellowLeadsFollowUpCount',
       meta: { align: 'center' },
@@ -367,6 +373,7 @@ export default function YellowLeadsTracker() {
         );
       }
     },
+    { accessorKey: 'nextDueDateView', header: 'Next Call Date', meta: { align: 'center' } },
     {
       accessorKey: 'finalConversion',
       header: 'Final Conversion',
@@ -408,7 +415,14 @@ export default function YellowLeadsTracker() {
         );
       }
     },
-    { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } },
+
+    ...(
+      isRoleLeadMarketing
+        ? [
+          { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } },
+        ]
+        : []
+    ),
     { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } }
 
     // {
@@ -497,17 +511,24 @@ export default function YellowLeadsTracker() {
         options: Object.values(FinalConversionStatus),
         multiSelect: true
       },
-      {
-        filterKey: 'assignedTo',
-        label: 'Assigned To',
-        placeholder: 'Assigned To',
-        options: assignedToDropdownData?.map((item: any) => ({
-          label: item.name,
-          id: item._id
-        })),
-        hasSearch: true,
-        multiSelect: true
-      }
+      ...(
+        isRoleLeadMarketing
+          ? [
+            {
+              filterKey: 'assignedTo',
+              label: 'Assigned To',
+              placeholder: 'Assigned To',
+              options: assignedToDropdownData?.map((item: any) => ({
+                label: item.name,
+                id: item._id
+              })),
+              hasSearch: true,
+              multiSelect: true
+            }
+
+          ]
+          : []
+      ),
     ];
   };
 

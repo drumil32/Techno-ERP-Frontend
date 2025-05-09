@@ -9,7 +9,7 @@ export const fetchLeads = async ({ queryKey }: any) => {
 };
 
 export const fetchLeadsAnalytics = async ({ queryKey }: any) => {
-  const [, params] = queryKey;  
+  const [, params] = queryKey;
   const res = await apiRequest(API_METHODS.POST, API_ENDPOINTS.getAllLeadsAnalytics, params);
   return res;
 };
@@ -18,3 +18,12 @@ export const fetchAssignedToDropdown = async () => {
   const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchAssignedToDropdown);
   return result;
 };
+
+export const fetchMarketingData = async () => {
+  const result = await apiRequest()
+}
+
+export const downloadMarketingData = async () => {
+  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.downloadMarketingData);
+  return result;
+}
