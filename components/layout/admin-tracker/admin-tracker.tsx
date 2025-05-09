@@ -11,7 +11,7 @@ import {
   fetchAssignedToDropdown,
   marketingSourcesDropdown
 } from './helpers/fetch-data';
-import { Locations } from '@/types/enum';
+import { Locations, UserRoles } from '@/types/enum';
 import TechnoAnalyticCardsGroup, {
   CardItem
 } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
@@ -24,6 +24,7 @@ import { DropDownType } from '@/types/enum';
 import { LeadConversionDashboard } from './yellow-leads-converted';
 import Loading from '@/app/loading';
 import { FilterData } from '@/components/custom-ui/filter/type';
+import useAuthStore from '@/stores/auth-store';
 // import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
 
 const AdminTracker = () => {
@@ -32,6 +33,9 @@ const AdminTracker = () => {
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
   const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
+  const authStore = useAuthStore()
+  const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING)
+
   const getQueryParams = () => {
     const params: { [key: string]: any } = {
       ...(currentFiltersRef.current || {}),
@@ -90,19 +94,23 @@ const AdminTracker = () => {
         hasSearch: true,
         multiSelect: true
       },
-      {
-        filterKey: 'assignedTo',
-        label: 'Assigned To',
-        placeholder: 'person',
-        options: assignedToDropdownData.map((item: any) => {
-          return {
-            label: item.name,
-            id: item._id
-          };
-        }),
-        hasSearch: true,
-        multiSelect: true
-      }
+      ...(isRoleLeadMarketing
+        ? [
+          {
+            filterKey: 'assignedTo',
+            label: 'Assigned To',
+            placeholder: 'person',
+            options: assignedToDropdownData.map((item: any) => {
+              return {
+                label: item.name,
+                id: item._id
+              };
+            }),
+            hasSearch: true,
+            multiSelect: true
+          }
+        ]
+        : []),
     ];
   };
 

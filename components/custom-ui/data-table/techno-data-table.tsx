@@ -197,15 +197,13 @@ export default function TechnoDataTable({
     'leadType',
     'footFall',
     'finalConversion',
-    'leadsFollowUpCount',
-    'yellowLeadsFollowUpCount'
   ];
 
   if (!table.getRowModel().rows) {
     return <Loading />;
   }
 
-  const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate'];
+  const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate', 'leadsFollowUpCount', 'yellowLeadsFollowUpCount'];
 
   return (
     <div className="w-full mb-10 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">

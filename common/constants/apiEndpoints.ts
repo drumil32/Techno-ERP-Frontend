@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
 
   // Marketing
   uploadMarketingData: `${API_DOMAIN}/crm/upload`,
+  downloadMarketingData: `${API_DOMAIN}/crm/download`,
   getAllLeads: `${API_DOMAIN}/crm/fetch-data`,
   getAllLeadsAnalytics: `${API_DOMAIN}/crm/analytics`,
   fetchAssignedToDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=MARKETING`,

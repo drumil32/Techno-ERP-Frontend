@@ -18,7 +18,6 @@ export const leadMasterSchema = z.object({
   schoolName: z.string().optional(),
   name: z
     .string()
-    .regex(/^[A-Za-z\s]+$/, 'Name can only contain alphabets and spaces')
     .optional(),
   phoneNumber: contactNumberSchema,
   altPhoneNumber: contactNumberSchema.optional(),
