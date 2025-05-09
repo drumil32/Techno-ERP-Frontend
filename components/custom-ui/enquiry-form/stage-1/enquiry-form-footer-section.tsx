@@ -40,6 +40,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
       sessionStorage.removeItem('draftSaved');
     }
   }, []);
+
   function handleSubmitClick() {
     const currentValues = form.getValues();
 
@@ -47,8 +48,21 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
       const filteredAcademicDetails: IAcademicDetailArraySchema =
         currentValues.academicDetails.filter((entry: IAcademicDetailSchema) => {
           if (!entry) return false;
-          return Object.values(entry).some((value) => value !== undefined);
+
+          // Only look at the fields we care about for "emptiness"
+          const { schoolCollegeName, universityBoardName, passingYear, percentageObtained } = entry;
+
+          // If ALL are empty/undefined/null/blank, skip the row
+          const isAllEmpty =
+            !schoolCollegeName &&
+            !universityBoardName &&
+            (passingYear === undefined || passingYear === null) &&
+            (percentageObtained === undefined || percentageObtained === null);
+
+          return !isAllEmpty; // keep if at least one is filled
         });
+
+      console.log('Filtered Academic Details:', filteredAcademicDetails);
 
       form.setValue('academicDetails', filteredAcademicDetails);
     }
@@ -78,13 +92,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
         <DialogTrigger asChild>
           <Button type="button" variant="outline" disabled={isSavingDraft}>
             <span className="font-inter font-semibold text-[12px]">
-              {isSavingDraft
-                ? 'Saving...'
-                : draftSaved
-                  ? 'Draft Saved!'
-                  : draftExists
-                    ? 'Update Draft'
-                    : 'Save Draft'}
+                {isSavingDraft ? 'Saving...' : draftSaved || draftExists ? 'Update Draft' : 'Save Draft'}
             </span>
           </Button>
         </DialogTrigger>
