@@ -1,6 +1,5 @@
 import { z } from 'zod';
-import { Course, Gender, LeadType, Locations, Marketing_Source } from '@/types/enum';
-import { FinalConversionStatus } from '../yellowLeads/final-conversion-tag';
+import { Course, FinalConversionStatus, Gender, LeadType, Locations, Marketing_Source } from '@/types/enum';
 
 export const objectIdSchema = z.string();
 
@@ -27,7 +26,7 @@ export const leadMasterSchema = z.object({
   city: z.string().optional(),
   course: z.string().optional(),
   assignedTo: objectIdSchema.array(),
-  leadType: z.nativeEnum(LeadType).default(LeadType.OPEN),
+  leadType: z.nativeEnum(LeadType).default(LeadType.LEFT_OVER),
   leadTypeModifiedDate: z.string().optional(),
   nextDueDate: z.date().optional(),
   footFall: z.boolean().optional(),
@@ -35,7 +34,7 @@ export const leadMasterSchema = z.object({
     .nativeEnum(FinalConversionStatus)
     .optional()
     .default(FinalConversionStatus.NO_FOOTFALL),
-  remarks: z.string().optional(),
+    remarks: z.array(z.string()).optional(),
   leadsFollowUpCount: z.number().optional().default(0),
   yellowLeadsFollowUpCount: z.number().optional().default(0)
 });
@@ -61,7 +60,7 @@ export const leadRequestSchema = leadSchema.extend({
 export const updateLeadRequestSchema = leadRequestSchema
   .extend({
     _id: objectIdSchema,
-    remarks: z.string().optional(),
+    remarks: z.array(z.string()).optional(),
     date: requestDateSchema.optional(),
     phoneNumber: contactNumberSchema.optional(),
     gender: z.nativeEnum(Gender).optional(),

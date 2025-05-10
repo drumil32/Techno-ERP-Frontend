@@ -81,7 +81,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: new Date(lead.updatedAt).toLocaleString(),
       remarks: lead.remarks,
-      remarksView: lead.remarks ?? '-',
+      remarksView: lead.remarks[lead.remarks.length-1] ?? '-',
       leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'N/A',
       leadTypeModifiedDateView: formatTimeStampView(lead.leadTypeModifiedDate) ?? 'N/A'
     };
@@ -119,14 +119,14 @@ export const refineAnalytics = (analytics: any) => {
       color: 'text-black'
     },
     {
-      heading: analytics.openLeads ?? '',
-      subheading: calculatePercentage(analytics.openLeads),
+      heading: analytics.leftOverLeads ?? '',
+      subheading: calculatePercentage(analytics.leftOverLeads),
       title: 'Left Over Leads',
       color: 'text-orange-600'
     },
     {
-      heading: analytics.interestedLeads ?? '',
-      subheading: calculatePercentage(analytics.interestedLeads),
+      heading: analytics.activeLeads ?? '',
+      subheading: calculatePercentage(analytics.activeLeads),
       title: 'Active Leads',
       color: 'text-yellow-600'
     },

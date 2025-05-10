@@ -1,12 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ChevronDown, Check } from 'lucide-react';
-import { FinalConversionStatus, FinalConversionStatusMapper } from './final-conversion-tag';
+import { FinalConversionStatus, FinalConversionStatusMapper } from '@/types/enum';
 
-const conversionStyles: Record<FinalConversionStatus, string> = {
+export const conversionStyles: Record<FinalConversionStatus, string> = {
   [FinalConversionStatus.UNCONFIRMED]: 'bg-pink-100 text-pink-700',
   [FinalConversionStatus.CONVERTED]: 'bg-green-100 text-green-700',
-  [FinalConversionStatus.DEAD]: 'bg-red-100 text-red-700',
+  [FinalConversionStatus.NOT_INTERESTED]: 'bg-red-100 text-red-700',
   [FinalConversionStatus.NO_FOOTFALL]: 'bg-yellow-100 text-orange-700'
 };
 

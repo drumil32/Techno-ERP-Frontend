@@ -1,23 +1,6 @@
-export enum FinalConversionStatus {
-  NO_FOOTFALL = 'NO_FOOTFALL',
-  UNCONFIRMED = 'UNCONFIRMED',
-  CONVERTED = 'CONVERTED',
-  DEAD = 'DEAD',
-}
+import { FinalConversionStatus, FinalConversionStatusMapper } from "@/types/enum";
+import { conversionStyles } from "./final-conversion-select";
 
-export const FinalConversionStatusMapper: Record<FinalConversionStatus, string> = {
-  [FinalConversionStatus.CONVERTED]: 'Admission',
-  [FinalConversionStatus.DEAD]: 'Not Interested',
-  [FinalConversionStatus.UNCONFIRMED]: 'Unconfirmed',
-  [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall',
-};
-
-const conversionStyles = {
-  [FinalConversionStatus.UNCONFIRMED]: 'bg-pink-100 text-pink-700',
-  [FinalConversionStatus.CONVERTED]: 'bg-green-100 text-green-700',
-  [FinalConversionStatus.DEAD]: 'bg-red-100 text-red-700',
-  [FinalConversionStatus.NO_FOOTFALL]: 'bg-yellow-100 text-orange-700',
-};
 
 interface FinalConversionTagProps {
   status: FinalConversionStatus;

@@ -413,20 +413,21 @@ export enum COLLECTION_NAMES {
 }
 
 export enum LeadType {
-  OPEN = 'OPEN',
-  DEAD = 'DEAD',
-  COURSE_UNAVAILABLE = 'COURSE_UNAVAILABLE',
-  NO_CLARITY = 'NO_CLARITY',
-  INTERESTED = 'INTERESTED',
+  LEFT_OVER = 'LEFT_OVER',
+  NOT_INTERESTED = 'NOT_INTERESTED',
+  ACTIVE = 'ACTIVE',
+  NEUTRAL = 'NEUTRAL',
   DID_NOT_PICK = 'DID_NOT_PICK',
+  COURSE_UNAVAILABLE = 'COURSE_UNAVAILABLE',
   INVALID = 'INVALID'
 }
+
 export const LeadTypeMapper: Record<LeadType, string> = {
-  [LeadType.OPEN]: 'Left Over Data',
-  [LeadType.DEAD]: 'Dead Data',
+  [LeadType.LEFT_OVER]: 'Left Over Data',
+  [LeadType.NOT_INTERESTED]: 'Dead Data',
   [LeadType.COURSE_UNAVAILABLE]: 'Course NA',
-  [LeadType.NO_CLARITY]: 'Neutral Data',
-  [LeadType.INTERESTED]: 'Active Data',
+  [LeadType.NEUTRAL]: 'Neutral Data',
+  [LeadType.ACTIVE]: 'Active Data',
   [LeadType.DID_NOT_PICK]: 'Did Not Pick',
   [LeadType.INVALID]: 'Invalid Data'
 };
@@ -501,3 +502,17 @@ export enum FinanceFeeSchedule {
   MISCELLANEOUS = 'HALF_YEARLY',
   SEMESTERFEE = 'HALF_YEARLY'
 }
+
+export enum FinalConversionStatus {
+  NO_FOOTFALL = 'NO_FOOTFALL',
+  UNCONFIRMED = 'UNCONFIRMED',
+  CONVERTED = 'CONVERTED',
+  NOT_INTERESTED = 'NOT_INTERESTED',
+}
+
+export const FinalConversionStatusMapper: Record<FinalConversionStatus, string> = {
+  [FinalConversionStatus.CONVERTED]: 'Admission',
+  [FinalConversionStatus.NOT_INTERESTED]: 'Not Interested',
+  [FinalConversionStatus.UNCONFIRMED]: 'Unconfirmed',
+  [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall',
+};
