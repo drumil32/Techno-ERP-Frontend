@@ -31,6 +31,9 @@ interface DepartmentMetaData {
 
 const createCourseSchema = z.object({
   collegeName: z.nativeEnum(CollegeNames, { required_error: 'College Name is required' }),
+  courseFullName: z
+    .string({ required_error: 'Course Full Name is Required' })
+    .nonempty('Course Full Name is Required.'),
   courseName: z
     .string({ required_error: 'Course Name is Required' })
     .nonempty('Course Name is Required.'),
@@ -179,6 +182,7 @@ export const CreateCourseDialog = () => {
     const requestObject = {
       courseName: data.courseName,
       courseCode: data.courseCode,
+      courseFullName: data.courseFullName,
       collegeName: data.collegeName,
       departmentMetaDataId: matchedDepartment?.departmentMetaDataId,
       startingYear: parseAcademicYear(data.academicYear),
@@ -245,6 +249,26 @@ export const CreateCourseDialog = () => {
               )}
             </div>
 
+            {/* Course Full Name */}
+            <div className="space-y-1">
+              <label className="form-field-label font-inter space-y-3">Course Full Name</label>
+              <Controller
+                name="courseFullName"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    placeholder="Enter the course Full Name"
+                    className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${!field.value ? 'form-field-input-init-text' : ''
+                      }`}
+                  />
+                )}
+              />
+              {errors.courseFullName && (
+                <p className="text-red-500 text-sm">{errors.courseFullName.message}</p>
+              )}
+            </div>
+
             {/* Course Name & Code */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
@@ -255,10 +279,9 @@ export const CreateCourseDialog = () => {
                   render={({ field }) => (
                     <input
                       {...field}
-                      placeholder="Enter the full course name"
-                      className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${
-                        !field.value ? 'form-field-input-init-text' : ''
-                      }`}
+                      placeholder="Enter the course name"
+                      className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${!field.value ? 'form-field-input-init-text' : ''
+                        }`}
                     />
                   )}
                 />
@@ -356,9 +379,8 @@ export const CreateCourseDialog = () => {
                   <input
                     {...field}
                     placeholder="Enter the HOD name"
-                    className={`p-3 form-field-input-text border rounded-md w-full ${
-                      !field.value ? 'form-field-input-init-text' : ''
-                    }`}
+                    className={`p-3 form-field-input-text border rounded-md w-full ${!field.value ? 'form-field-input-init-text' : ''
+                      }`}
                     disabled
                   />
                 )}
