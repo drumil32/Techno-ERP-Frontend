@@ -53,6 +53,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { SimpleDatePicker } from '@/components/ui/simple-date-picker';
 import { formatDateForAPI } from '../filter/techno-filter';
 import { isValid, parse } from 'date-fns';
+import clsx from 'clsx';
 
 const confirmationStatus: Record<LectureConfirmation, { name: string; textStyle: string; bgStyle: string }> = {
   [LectureConfirmation.TO_BE_DONE]: {
@@ -310,10 +311,10 @@ export default function TechnoDataTableAdvanced({
             </span>
           </div>
 
-          <Button variant="outline" className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
+          <Button variant="outline" disabled className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
             <span className="font-inter font-medium text-[12px]">Upload</span>
           </Button>
-          <Button className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
+          <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
             <span className="font-inter font-semibold text-[12px]">Download</span>
           </Button>
         </div>
@@ -321,12 +322,14 @@ export default function TechnoDataTableAdvanced({
 
       <div className={`relative overflow-auto min-h-[580px]`} style={{ minHeight: `${visibleRows * 39 + 40}px` }}>
         <Table className="w-full">
-          <TableHeader className="bg-[#F7F7F7] sticky top-0">
+          <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg font-bolds sticky top-0 z-10">
             <TableRow>
               {columns.map((column: any, idx: number) => (
-                <TableHead key={idx} className="text-center font-light h-10">
-                  {column.header}
-                </TableHead>
+                <TableHead
+                  key={idx}
+                  className={clsx('text-[#5B31D1] font-semibold h-10 text-center')}
+
+                > {column.header}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
