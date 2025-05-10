@@ -13,7 +13,7 @@ import {
 import { CalendarIcon, Loader2, Pencil, Save, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Course, Gender, Locations, UserRoles } from '@/types/enum';
+import { Course, FinalConversionStatus, Gender, Locations, UserRoles } from '@/types/enum';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
@@ -22,7 +22,7 @@ import { toast } from 'sonner';
 import z, { boolean } from 'zod';
 import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
 import { FootFallStatus } from './foot-fall-tag';
-import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
+import FinalConversionTag from './final-conversion-tag';
 import FootFallTag from './foot-fall-tag';
 import { yellowLeadUpdateSchema } from '../allLeads/validators';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';

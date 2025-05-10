@@ -1,5 +1,5 @@
 import { FootFallStatus } from "@/components/layout/yellowLeads/foot-fall-tag";
-import { FinalConversionStatus } from "@/components/layout/yellowLeads/final-conversion-tag";
+import { FinalConversionStatus } from "@/types/enum";
 
 export interface YellowLead {
   _id: string;

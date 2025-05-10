@@ -502,3 +502,17 @@ export enum FinanceFeeSchedule {
   MISCELLANEOUS = 'HALF_YEARLY',
   SEMESTERFEE = 'HALF_YEARLY'
 }
+
+export enum FinalConversionStatus {
+  NO_FOOTFALL = 'NO_FOOTFALL',
+  UNCONFIRMED = 'UNCONFIRMED',
+  CONVERTED = 'CONVERTED',
+  NOT_INTERESTED = 'NOT_INTERESTED',
+}
+
+export const FinalConversionStatusMapper: Record<FinalConversionStatus, string> = {
+  [FinalConversionStatus.CONVERTED]: 'Admission',
+  [FinalConversionStatus.NOT_INTERESTED]: 'Not Interested',
+  [FinalConversionStatus.UNCONFIRMED]: 'Unconfirmed',
+  [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall',
+};

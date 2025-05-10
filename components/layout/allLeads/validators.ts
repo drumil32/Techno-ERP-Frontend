@@ -1,6 +1,5 @@
 import { z } from 'zod';
-import { Course, Gender, LeadType, Locations, Marketing_Source } from '@/types/enum';
-import { FinalConversionStatus } from '../yellowLeads/final-conversion-tag';
+import { Course, FinalConversionStatus, Gender, LeadType, Locations, Marketing_Source } from '@/types/enum';
 
 export const objectIdSchema = z.string();
 

@@ -165,7 +165,6 @@ export default function LeadViewEdit({
 
     try {
       let tempData = { ...formData, [name]: value };
-
       tempData = removeNullValues(tempData);
       let validationData = {
         _id: tempData._id,
@@ -186,6 +185,7 @@ export default function LeadViewEdit({
         assignedTo: tempData.assignedTo,
         leadTypeModifiedDate: tempData.leadTypeModifiedDate
       };
+
 
       validationData = removeNullValues(validationData);
 

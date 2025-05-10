@@ -17,7 +17,7 @@ import {
 } from './helpers/fetch-data';
 import { refineAnalytics, refineLeads, YellowLeadAnalytics } from './helpers/refine-data';
 import FootFallTag, { FootFallStatus } from './foot-fall-tag';
-import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
+import FinalConversionTag from './final-conversion-tag';
 import FilterBadges from '../allLeads/components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import YellowLeadViewEdit from './yellow-view-edit';
@@ -38,7 +38,7 @@ import { SelectValue } from '@radix-ui/react-select';
 import Loading from '@/app/loading';
 import { FilterData } from '@/components/custom-ui/filter/type';
 import useAuthStore from '@/stores/auth-store';
-import { UserRoles } from '@/types/enum';
+import { FinalConversionStatus, UserRoles } from '@/types/enum';
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
