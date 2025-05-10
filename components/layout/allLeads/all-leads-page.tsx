@@ -321,7 +321,7 @@ export default function AllLeadsPage() {
         const toastIdRef = useRef<string | number | null>(null);
 
         const handleDropdownChange = async (value: LeadType) => {
-          if (row.original.leadType == LeadType.INTERESTED) {
+          if (row.original.leadType == LeadType.ACTIVE) {
             toast.info('Please refer to Active Leads page to change Active Lead Type');
             return;
           }
@@ -397,7 +397,7 @@ export default function AllLeadsPage() {
 
         return (
           <LeadTypeSelect
-            disabled={row.original.leadType == LeadType.INTERESTED}
+            disabled={row.original.leadType == LeadType.ACTIVE}
             value={selectedType}
             onChange={handleDropdownChange}
           />
@@ -659,6 +659,7 @@ export default function AllLeadsPage() {
             selectedRowId={selectedRowId}
             tableActionButton={<TableActionButton />}
             setSelectedRowId={setSelectedRowId}
+            searchBarPlaceholder="Search student name or number"
           >
             <FilterBadges
               onFilterRemove={handleFilterRemove}

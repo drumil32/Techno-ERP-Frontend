@@ -119,14 +119,14 @@ export const refineAnalytics = (analytics: any) => {
       color: 'text-black'
     },
     {
-      heading: analytics.openLeads ?? '',
-      subheading: calculatePercentage(analytics.openLeads),
+      heading: analytics.leftOverLeads ?? '',
+      subheading: calculatePercentage(analytics.leftOverLeads),
       title: 'Left Over Leads',
       color: 'text-orange-600'
     },
     {
-      heading: analytics.interestedLeads ?? '',
-      subheading: calculatePercentage(analytics.interestedLeads),
+      heading: analytics.activeLeads ?? '',
+      subheading: calculatePercentage(analytics.activeLeads),
       title: 'Active Leads',
       color: 'text-yellow-600'
     },

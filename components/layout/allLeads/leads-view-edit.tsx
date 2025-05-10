@@ -436,7 +436,7 @@ export default function LeadViewEdit({
       <div className='flex gap-2 items-center'>
         <div className="flex flex-col gap-2 w-1/3">
           <EditLabel htmlFor="name" title={'Date'} />
-          <p className='h-9'>{formatDateView(data.date)}</p>
+          <p className='h-9 font-medium'>{formatDateView(data.date)}</p>
         </div>
 
         <div className="space-y-2 w-2/3">
@@ -565,7 +565,7 @@ export default function LeadViewEdit({
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="leadType" title={'Lead Type'} />
           <Select
-            disabled={formData.leadType == LeadType.INTERESTED}
+            disabled={formData.leadType == LeadType.ACTIVE}
             defaultValue={formData.leadType || ''}
             onValueChange={(value) => handleSelectChange('leadType', value)}
           >

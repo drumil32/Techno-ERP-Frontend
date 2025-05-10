@@ -413,20 +413,21 @@ export enum COLLECTION_NAMES {
 }
 
 export enum LeadType {
-  OPEN = 'OPEN',
-  DEAD = 'DEAD',
-  COURSE_UNAVAILABLE = 'COURSE_UNAVAILABLE',
-  NO_CLARITY = 'NO_CLARITY',
-  INTERESTED = 'INTERESTED',
+  LEFT_OVER = 'LEFT_OVER',
+  NOT_INTERESTED = 'NOT_INTERESTED',
+  ACTIVE = 'ACTIVE',
+  NEUTRAL = 'NEUTRAL',
   DID_NOT_PICK = 'DID_NOT_PICK',
+  COURSE_UNAVAILABLE = 'COURSE_UNAVAILABLE',
   INVALID = 'INVALID'
 }
+
 export const LeadTypeMapper: Record<LeadType, string> = {
-  [LeadType.OPEN]: 'Left Over Data',
-  [LeadType.DEAD]: 'Dead Data',
+  [LeadType.LEFT_OVER]: 'Left Over Data',
+  [LeadType.NOT_INTERESTED]: 'Dead Data',
   [LeadType.COURSE_UNAVAILABLE]: 'Course NA',
-  [LeadType.NO_CLARITY]: 'Neutral Data',
-  [LeadType.INTERESTED]: 'Active Data',
+  [LeadType.NEUTRAL]: 'Neutral Data',
+  [LeadType.ACTIVE]: 'Active Data',
   [LeadType.DID_NOT_PICK]: 'Did Not Pick',
   [LeadType.INVALID]: 'Invalid Data'
 };
