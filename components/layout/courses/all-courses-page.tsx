@@ -294,6 +294,7 @@ export default function AllCoursesPage() {
             filters={getFiltersData()}
             handleFilters={applyFilter}
             clearFilters={clearFilters}
+            clearFiltersVisible = {false}
           />
           
           <CreateCourseDialog />
@@ -320,6 +321,7 @@ export default function AllCoursesPage() {
          <FilterBadges
             onFilterRemove={handleFilterRemove}
             appliedFilters={appliedFilters}
+            crossVisible = {false}
           />
       </TechnoDataTableAdvanced>
     </>
