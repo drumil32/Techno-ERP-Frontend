@@ -94,7 +94,7 @@ export interface StudentInfo {
   reference: string;
   address: Address;
   academicDetails: any[];
-  documents: any[];
+  documents: DocumentWithFileUrl[];
   physicalDocumentNote: any[];
   gender: Gender;
   admittedThrough: AdmissionMode;
@@ -154,8 +154,11 @@ export interface Attendance {
 
 export interface Subject {
   subjectId: string;
+  subjectName: string;
+  subjectCode: string;
   attendance: Attendance[];
   exams: Exam[];
+  instructor: string[];
   _id: string;
 }
 
@@ -182,4 +185,10 @@ export interface Document {
   type: string;
   status: PhysicalDocumentNoteStatus;
   dueBy?: Date;
+}
+
+export interface DocumentWithFileUrl {
+  type: string;
+  fileUrl: string;
+  _id: string;
 }

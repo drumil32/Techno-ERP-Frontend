@@ -130,7 +130,7 @@ const SingleStudentRepositoryPage: React.FC = () => {
       </div>
 
       {/* Student Profile View */}
-      {studentData && <StudentProfileView studentData={studentData} />}
+      {studentData && <StudentProfileView studentData={studentData}/>}
 
       {/* Tabs Navigation */}
       <MoreDetailsHeader headerItems={HEADER_ITEMS} />

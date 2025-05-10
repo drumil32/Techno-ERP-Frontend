@@ -119,8 +119,8 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
 
                 return (
                   <TableRow key={subject._id}>
-                    <TableCell className="font-medium">{subject.subjectId}</TableCell>
-                    <TableCell className="text-right">{subject.subjectId}</TableCell>
+                    <TableCell className="font-medium">{subject.subjectCode}</TableCell>
+                    <TableCell className="text-right">{subject?.instructor?.join(", ") || ''}</TableCell>
                     <TableCell className="text-right">{subject.subjectId}</TableCell>
                     <TableCell className="text-right">{renderSafe(totalClasses)}</TableCell>
                     <TableCell className="text-right">{renderSafe(attended)}</TableCell>

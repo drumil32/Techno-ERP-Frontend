@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 
 // Types and interfaces
-import { FieldDefinition, StudentData } from './helpers/interface';
+import { DocumentWithFileUrl, FieldDefinition, StudentData } from './helpers/interface';
 
 // Utilities
 import { formatYearRange } from '@/lib/utils';
@@ -50,13 +50,13 @@ const ProfilePicSection = ({ name, id, image }: { name: string; id: string; imag
 const StudentProfileView = ({ studentData }: { studentData: StudentData }) => {
   if (!studentData) return <div className="p-4">No student data available</div>;
 
-  const { studentInfo, courseName, currentAcademicYear, currentSemester } = studentData || {};
+  const { studentInfo, courseCode, currentAcademicYear, currentSemester } = studentData || {};
 
   // Define fields to display
   const studentDisplayFields: FieldDefinition[] = [
     { label: 'Student Name', value: studentInfo?.studentName },
     { label: "Father's Name", value: studentInfo?.fatherName },
-    { label: 'Course Code', value: courseName },
+    { label: 'Course Code', value: courseCode },
     { label: 'Student ID', value: studentInfo?.universityId },
     { label: "Student's Phone Number", value: studentInfo?.studentPhoneNumber },
     { label: "Father's Phone Number", value: studentInfo?.fatherPhoneNumber },
@@ -73,7 +73,10 @@ const StudentProfileView = ({ studentData }: { studentData: StudentData }) => {
       <ProfilePicSection
         name={studentInfo?.studentName || 'Unknown Student'}
         id={studentInfo?.universityId || 'No ID'}
-        image={studentInfo?.documents[0] || ''} // TO DO : change the document for photo of user profile
+        image={
+          studentInfo?.documents?.find((doc: DocumentWithFileUrl) => doc.type === 'Photo')
+            ?.fileUrl || '/images/techno-logo.png'
+        }
       />
 
       <div className="bg-white p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow rounded-lg shadow-sm">

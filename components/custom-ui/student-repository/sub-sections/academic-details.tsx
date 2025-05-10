@@ -281,7 +281,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                   ) : (
                     <DisplayField
                       label="Subjects"
-                      value={form.getValues('academicDetails.0.subjects')?.join(', ') || null}
+                      value={form.getValues('academicDetails.0.subjects') || null}
                     />
                   )}
                 </div>
@@ -468,7 +468,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                   ) : (
                     <DisplayField
                       label="Subjects"
-                      value={form.getValues('academicDetails.1.subjects')?.join(', ') || null}
+                      value={form.getValues('academicDetails.1.subjects') || null}
                     />
                   )}
                 </div>
@@ -655,7 +655,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                   ) : (
                     <DisplayField
                       label="Subjects"
-                      value={form.getValues('academicDetails.2.subjects')?.join(', ') || null}
+                      value={form.getValues('academicDetails.2.subjects') || null}
                     />
                   )}
                 </div>
