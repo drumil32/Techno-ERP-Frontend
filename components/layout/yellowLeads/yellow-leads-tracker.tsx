@@ -415,6 +415,7 @@ export default function YellowLeadsTracker() {
         );
       }
     },
+    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } },
 
     ...(
       isRoleLeadMarketing
@@ -423,7 +424,6 @@ export default function YellowLeadsTracker() {
         ]
         : []
     ),
-    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } }
 
     // {
     //   id: 'actions',
@@ -599,6 +599,7 @@ export default function YellowLeadsTracker() {
             handleViewMore={handleViewMore}
             selectedRowId={selectedRowId}
             setSelectedRowId={setSelectedRowId}
+            searchBarPlaceholder="Search student name or number"
           >
             <FilterBadges
               onFilterRemove={handleFilterRemove}

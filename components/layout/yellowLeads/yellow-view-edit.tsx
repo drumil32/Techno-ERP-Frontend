@@ -496,13 +496,15 @@ export default function YellowLeadViewEdit({
     </>
   );
 
+  const inputStyle = 'rounded-[5px] font-medium';
+
   // Render edit view
   const EditView = (
     <>
       <div className="flex flex-row gap-2 items-center">
         <div className="flex flex-col gap-2 w-1/3">
           <EditLabel htmlFor="ltcDate" title={'LTC Date'} />
-          <p className="h-9">{formatTimeStampView(data.leadTypeModifiedDate)}</p>
+          <p className="h-9 font-medium">{formatTimeStampView(data.leadTypeModifiedDate)}</p>
         </div>
 
         <div className="space-y-2 w-2/3">
@@ -512,7 +514,7 @@ export default function YellowLeadViewEdit({
             name="name"
             value={formData.name || ''}
             onChange={handleChange}
-            className="rounded-[5px]"
+            className={inputStyle}
           />
           {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
         </div>
@@ -526,7 +528,7 @@ export default function YellowLeadViewEdit({
             name="phoneNumber"
             value={formData.phoneNumber || ''}
             onChange={handleChange}
-            className={`rounded-[5px] ${errors.phoneNumber ? 'border-red-500' : ''}`}
+            className={`${inputStyle} ${errors.phoneNumber ? 'border-red-500' : ''}`}
           />
           {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
         </div>
@@ -538,7 +540,7 @@ export default function YellowLeadViewEdit({
             name="altPhoneNumber"
             value={formData.altPhoneNumber || ''}
             onChange={handleChange}
-            className={`rounded-[5px] ${errors.altPhoneNumber ? 'border-red-500' : ''}`}
+            className={`${inputStyle} ${errors.altPhoneNumber ? 'border-red-500' : ''}`}
           />
           {errors.altPhoneNumber && (
             <p className="text-red-500 text-xs mt-1">{errors.altPhoneNumber}</p>
@@ -555,7 +557,7 @@ export default function YellowLeadViewEdit({
             type="email"
             value={formData.email || ''}
             onChange={handleChange}
-            className={`rounded-[5px] ${errors.email ? 'border-red-500' : ''}`}
+            className={`${inputStyle} ${errors.email ? 'border-red-500' : ''}`}
           />
           {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
         </div>
@@ -572,7 +574,9 @@ export default function YellowLeadViewEdit({
             <SelectContent>
               {Object.values(Gender).map((gender) => (
                 <SelectItem key={gender} value={gender}>
+                  <span className='font-medium'>
                   {toPascal(gender)}
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -589,7 +593,7 @@ export default function YellowLeadViewEdit({
             type="area"
             value={formData.area || ''}
             onChange={handleChange}
-            className="rounded-[5px]"
+            className={inputStyle}
           />
           {errors.area && <p className="text-red-500 text-xs mt-1">{errors.area}</p>}
         </div>
@@ -688,7 +692,9 @@ export default function YellowLeadViewEdit({
             <SelectContent>
               {Array.from({ length: formData.yellowLeadsFollowUpCount + 2 }, (_, i) => (
                 <SelectItem key={i} value={i.toString()}>
+                  <span className='font-medium'>
                   {i.toString().padStart(2, '0')}
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -697,13 +703,13 @@ export default function YellowLeadViewEdit({
       </div>
       <div className="flex gap-5">
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="schoolName" title={'School Name'} />
+          <EditLabel htmlFor="schoolName" title={'School/College Name'} />
           <Input
             id="schoolName"
             name="schoolName"
             value={formData.schoolName || ''}
             onChange={handleChange}
-            className="rounded-[5px]"
+            className={inputStyle}
           />
           {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
         </div>

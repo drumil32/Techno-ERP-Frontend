@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { CalendarIcon, Loader2, Pencil, Plus, Save, Trash2 } from 'lucide-react';
+import { CalendarIcon, Edit, Loader2, Pencil, Plus, Save, Trash2 } from 'lucide-react';
 import { Course, CourseNameMapper, Gender, LeadType, Locations, UserRoles } from '@/types/enum';
 import TechnoLeadTypeTag from '@/components/custom-ui/lead-type-tag/techno-lead-type-tag';
 import { apiRequest } from '@/lib/apiClient';
@@ -576,7 +576,9 @@ export default function LeadViewEdit({
             <SelectContent>
               {Object.values(Gender).map((gender) => (
                 <SelectItem key={gender} value={gender}>
+                  <span className={inputStyle}>
                   {toPascal(gender)}
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -693,7 +695,9 @@ export default function LeadViewEdit({
             <SelectContent>
               {Array.from({ length: formData?.leadsFollowUpCount! + 2 }, (_, i) => (
                 <SelectItem key={i} value={i.toString()}>
+                  <span className='font-medium'>
                   {i.toString().padStart(2, '0')}
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -892,8 +896,8 @@ export default function LeadViewEdit({
       )}
 
       <div className="flex flex-col gap-2">
-        <p className="text-[#666666]">Last Modified Date</p>
-        <p>{formatTimeStampView(formData.leadTypeModifiedDate) ?? 'Not Provided'}</p>
+        <EditLabel className="text-[#666666]" title='Last Modified Date'/>
+        <p className='font-medium'>{formatTimeStampView(formData.leadTypeModifiedDate) ?? 'Not Provided'}</p>
       </div>
     </>
   );

@@ -83,7 +83,7 @@ export const MultiSelectCustomDropdown = ({
             className="text-left rounded-sm bg-inherit w-full font-normal h-full justify-between"
             disabled={disabled}
           >
-            <span>
+            <span className='font-medium'>
               {currentValue
                 ? allOptions.find((opt) => opt._id === currentValue)?.name || currentValue
                 : placeholder}

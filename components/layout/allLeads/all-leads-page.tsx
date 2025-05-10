@@ -405,11 +405,9 @@ export default function AllLeadsPage() {
       }
     },
 
-    ...(isRoleLeadMarketing
-      ? [
-        { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } }
-      ]
-      : []),
+    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } },
+
+    
     {
       accessorKey: 'leadsFollowUpCount',
       header: 'Follow Ups',
@@ -509,6 +507,11 @@ export default function AllLeadsPage() {
     },
 
     { accessorKey: 'nextDueDateView', header: 'Next Due Date', meta: { align: 'center' } },
+    ...(isRoleLeadMarketing
+      ? [
+        { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } }
+      ]
+      : []),
     // { accessorKey: 'leadTypeModifiedDateView', header: 'Timestamp', meta: { align: 'center' } },
     // {
     //   id: 'actions',
@@ -527,7 +530,7 @@ export default function AllLeadsPage() {
     //     </Button>
     //   )
     // },
-    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } }
+    
   ];
 
   const marketingSourceQuery = useQuery({
