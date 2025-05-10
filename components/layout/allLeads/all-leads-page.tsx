@@ -39,7 +39,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import { FaCircleExclamation } from 'react-icons/fa6';
 
 export default function AllLeadsPage() {
@@ -54,8 +54,8 @@ export default function AllLeadsPage() {
     orderBy: ['desc']
   });
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-  const authStore = useAuthStore()
-  const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING)
+  const authStore = useAuthStore();
+  const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING);
 
   // const handleSortChange = (column: string, order: string) => {
   //   if (column === 'nextDueDateView') {
@@ -90,7 +90,7 @@ export default function AllLeadsPage() {
       column = 'date';
     }
     if (column === 'yellowLeadsFollowUpCount') {
-      column = 'yellowLeadsFollowUpCount'
+      column = 'yellowLeadsFollowUpCount';
     }
 
     setSortState({
@@ -405,9 +405,12 @@ export default function AllLeadsPage() {
       }
     },
 
-    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } },
+    {
+      accessorKey: 'remarksView',
+      header: 'Remarks',
+      meta: { maxWidth: 130 }
+    },
 
-    
     {
       accessorKey: 'leadsFollowUpCount',
       header: 'Follow Ups',
@@ -508,10 +511,8 @@ export default function AllLeadsPage() {
 
     { accessorKey: 'nextDueDateView', header: 'Next Due Date', meta: { align: 'center' } },
     ...(isRoleLeadMarketing
-      ? [
-        { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } }
-      ]
-      : []),
+      ? [{ accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } }]
+      : [])
     // { accessorKey: 'leadTypeModifiedDateView', header: 'Timestamp', meta: { align: 'center' } },
     // {
     //   id: 'actions',
@@ -530,7 +531,6 @@ export default function AllLeadsPage() {
     //     </Button>
     //   )
     // },
-    
   ];
 
   const marketingSourceQuery = useQuery({
@@ -598,9 +598,8 @@ export default function AllLeadsPage() {
         options: Object.values(LeadType),
         multiSelect: true
       },
-      ...(
-        isRoleLeadMarketing
-          ? [
+      ...(isRoleLeadMarketing
+        ? [
             {
               filterKey: 'assignedTo',
               label: 'Assigned To',
@@ -615,9 +614,7 @@ export default function AllLeadsPage() {
               multiSelect: true
             }
           ]
-          : []
-      ),
-
+        : [])
     ];
   };
 
@@ -723,9 +720,9 @@ function TableActionButton() {
     try {
       const response = await fetch(API_ENDPOINTS.downloadMarketingData, {
         method: 'GET',
-        credentials: 'include',
+        credentials: 'include'
       });
-  
+
       if (!response.ok) {
         try {
           const errorData = await response.json();
@@ -734,10 +731,10 @@ function TableActionButton() {
           throw new Error('Download failed');
         }
       }
-  
+
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
-  
+
       const a = document.createElement('a');
       a.href = url;
       a.download = 'leads.xlsx';
@@ -745,18 +742,17 @@ function TableActionButton() {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
-  
+
       toast.success('Marketing Data Downloaded Successfully');
       setDownloadOpen(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Download failed');
     }
   };
-  
 
   const isUploadDisabled = !hasRole(UserRoles.LEAD_MARKETING);
-  const isDownloadDisabled = !hasRole(UserRoles.EMPLOYEE_MARKETING) &&
-    !hasRole(UserRoles.LEAD_MARKETING);
+  const isDownloadDisabled =
+    !hasRole(UserRoles.EMPLOYEE_MARKETING) && !hasRole(UserRoles.LEAD_MARKETING);
 
   return (
     <>
@@ -774,11 +770,11 @@ function TableActionButton() {
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className='flex gap-2 items-center'>
+            <DialogTitle className="flex gap-2 items-center">
               <FaCircleExclamation className="text-yellow-500 w-6 h-6" />
               Upload Marketing Data
             </DialogTitle>
-            <DialogDescription className='my-3'>
+            <DialogDescription className="my-3">
               Are you sure you want to upload marketing data?
             </DialogDescription>
           </DialogHeader>
@@ -788,10 +784,7 @@ function TableActionButton() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button
-              onClick={uploadAction}
-              className="font-inter text-sm"
-            >
+            <Button onClick={uploadAction} className="font-inter text-sm">
               Confirm Upload
             </Button>
           </DialogFooter>
@@ -801,21 +794,18 @@ function TableActionButton() {
       {/* Download Dialog */}
       <Dialog open={downloadOpen} onOpenChange={setDownloadOpen}>
         <DialogTrigger asChild>
-          <Button
-            disabled={isDownloadDisabled}
-            className="h-8 w-[103px] rounded-[10px] border"
-          >
+          <Button disabled={isDownloadDisabled} className="h-8 w-[103px] rounded-[10px] border">
             <LuDownload className="mr-1 h-4 w-4" />
             <span className="font-inter font-semibold text-[12px]">Download</span>
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className='flex gap-2 items-center'>
+            <DialogTitle className="flex gap-2 items-center">
               <FaCircleExclamation className="text-yellow-500 w-6 h-6" />
               Download Marketing Data
             </DialogTitle>
-            <DialogDescription className='my-3'>
+            <DialogDescription className="my-3">
               Are you sure you want to download marketing data?
             </DialogDescription>
           </DialogHeader>
@@ -825,10 +815,7 @@ function TableActionButton() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button
-              onClick={downloadAction}
-              className="font-inter text-sm"
-            >
+            <Button onClick={downloadAction} className="font-inter text-sm">
               Confirm Download
             </Button>
           </DialogFooter>

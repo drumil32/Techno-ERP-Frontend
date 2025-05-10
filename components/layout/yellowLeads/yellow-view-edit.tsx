@@ -328,8 +328,6 @@ export default function YellowLeadViewEdit({
 
       filteredData = removeNullValues(filteredData);
       const validation = yellowLeadUpdateSchema.safeParse(filteredData);
-      console.log(filteredData);
-      console.log(validation);
       if (!validation.success) {
         const newErrors: FormErrors = {};
         validation.error.errors.forEach((err) => {

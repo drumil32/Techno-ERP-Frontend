@@ -40,7 +40,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
         lead.finalConversion,
       yellowLeadsFollowUpCount: lead.yellowLeadsFollowUpCount,
       remarks: lead.remarks,
-      remarksView: lead.remarks ?? '-',
+      remarksView: lead.remarks[lead.remarks.length-1] ?? '-',
       date: lead.date,
       leadTypeModifiedDate:
         formatTimeStampView(lead.leadTypeModifiedDate) ?? formatDateView(lead.date),

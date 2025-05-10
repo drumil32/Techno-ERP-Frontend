@@ -167,7 +167,6 @@ export default function LeadViewEdit({
       let tempData = { ...formData, [name]: value };
 
       tempData = removeNullValues(tempData);
-      console.log(tempData);
       let validationData = {
         _id: tempData._id,
         date: tempData.date,
@@ -189,7 +188,6 @@ export default function LeadViewEdit({
       };
 
       validationData = removeNullValues(validationData);
-      console.log('Validation Data', validationData);
 
       const response = updateLeadRequestSchema.parse(validationData);
 
