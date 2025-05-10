@@ -2,6 +2,7 @@ import { SemesterWiseFeeInformation, StudentDetails } from "@/types/finance"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import RecordPaymentDialog from "./record-payment-dialog"
 import { Course, CourseNameMapper } from "@/types/enum";
+import { format } from "date-fns";
 
 type ExtendedSemesterWiseFeeInformation = SemesterWiseFeeInformation & {
   sno: number;
@@ -9,7 +10,6 @@ type ExtendedSemesterWiseFeeInformation = SemesterWiseFeeInformation & {
 };
 
 export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFeesInformation }: { studentDetails: StudentDetails, semesterWiseFeesInformation: SemesterWiseFeeInformation[] }) {
-
   const extendedSemesterWiseFeesInformation: ExtendedSemesterWiseFeeInformation[] =
     semesterWiseFeesInformation.map((item, index) => ({
       ...item,
@@ -21,8 +21,8 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
   const feeTotals = semesterWiseFeesInformation.reduce(
     (totals, item) => {
       totals.finalFee += item.finalFee ?? 0
-      totals.paidAmount += item.paidAmount ?? 0
-      totals.dueFees += (item.finalFee - item.paidAmount)
+      totals.paidAmount += (item.dueDate ? item.paidAmount : 0 )
+      totals.dueFees += (item.dueDate ? item.finalFee - item.paidAmount : 0)
       return totals
     },
     { finalFee: 0, paidAmount: 0, dueFees: 0 }
@@ -42,8 +42,7 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
               <TableHead className="rounded-l-[5px] ">S. No</TableHead>
               <TableHead>Academic Year</TableHead>
               <TableHead>Semester</TableHead>
-              <TableHead>Course</TableHead>
-              <TableHead className="text-right">Final Fees Due</TableHead>
+              <TableHead className="text-right">Final Fees</TableHead>
               <TableHead className="text-right">Fees Paid</TableHead>
               <TableHead className="text-right">Due Fees</TableHead>
               <TableHead className="rounded-r-[5px]  pl-8" >Due Date</TableHead>
@@ -55,17 +54,16 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
                 <TableCell>{semFee.sno}</TableCell>
                 <TableCell>{semFee.academicYear}</TableCell>
                 <TableCell>0{semFee.semesterNumber}</TableCell>
-                <TableCell>{CourseNameMapper[studentDetails.course as Course]}</TableCell>
-                <TableCell className="text-right">{semFee.finalFee != null ? `₹ ${semFee.finalFee.toLocaleString()}` : '__'}</TableCell>
-                <TableCell className="text-right">{semFee.paidAmount != null ? `₹ ${semFee.paidAmount.toLocaleString()}` : '__'}</TableCell>
-                <TableCell className="text-right">{semFee.dueFees != null ? `₹ ${semFee.dueFees.toLocaleString()}` : '__'}</TableCell>
-                <TableCell className=" pl-8">{semFee.dueDate ?? '--'}</TableCell>
+                <TableCell className="text-right">{semFee.finalFee != null ? `₹ ${semFee.finalFee.toLocaleString()}` : '--'}</TableCell>
+                <TableCell className="text-right">{semFee.paidAmount != null && semFee.dueDate ? `₹ ${semFee.paidAmount.toLocaleString()}` : '--'}</TableCell>
+                <TableCell className="text-right">{semFee.dueFees != null && semFee.dueDate ? `₹ ${semFee.dueFees.toLocaleString()}` : '--'}</TableCell>
+                <TableCell className=" pl-8">{semFee.dueDate ? format(semFee.dueDate, 'dd/MM/yyyy') : '--'}</TableCell>
               </TableRow>
             ))}
           </TableBody>
           <TableFooter>
             <TableRow>
-              <TableCell className="rounded-l-[5px]" colSpan={4}>Total</TableCell>
+              <TableCell className="rounded-l-[5px]" colSpan={3}>Total</TableCell>
               <TableCell className="text-right">₹{feeTotals?.finalFee.toLocaleString()}</TableCell>
               <TableCell className="text-right">₹{feeTotals?.paidAmount.toLocaleString()}</TableCell>
               <TableCell className="text-right">₹{feeTotals?.dueFees.toLocaleString()}</TableCell>

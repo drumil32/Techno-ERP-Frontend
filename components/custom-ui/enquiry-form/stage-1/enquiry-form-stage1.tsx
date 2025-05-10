@@ -34,7 +34,7 @@ import ConfirmationCheckBox from './confirmation-check-box';
 
 // Utility and constants imports
 import { toast } from 'sonner';
-import { ApplicationStatus, EducationLevel } from '@/types/enum';
+import { ApplicationStatus, Countries, EducationLevel, StatesOfIndia } from '@/types/enum';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
 import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
@@ -62,6 +62,11 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       studentName: '',
+      address: {
+        state: StatesOfIndia.UttarPradesh,
+        district: 'Lucknow',
+        country: Countries.India
+      },
       studentPhoneNumber: '',
       confirmation: false
     },
@@ -81,6 +86,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   useEffect(() => {
     if (data) {
       const sanitizedData = removeNullValues(data);
+      console.log(sanitizedData);
       form.reset(sanitizedData);
     }
   }, [data, form]);
@@ -136,20 +142,13 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
   async function saveDraft() {
     let values = form.getValues();
-
-    // Remove null values from the entire object
     values = removeNullValues(values);
-
-    // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep1RequestSchema.shape);
-
-    // Filter out values not in the schema
     const filteredValues = Object.fromEntries(
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
     );
 
     const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber', 'emailId'];
-
     const filteredKeys = Array.from(new Set([...Object.keys(values), ...alwaysIncludeKeys])).filter(
       (key) => schemaKeys.includes(key)
     );
@@ -165,18 +164,15 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     );
 
     const validationResult = partialSchema.safeParse(filteredValues);
-    // Clear previous errors before setting new ones
     form.clearErrors();
 
     if (!validationResult.success) {
       toast.error('Validation failed. Please check the form fields.');
-      const errors = validationResult.error.format();
       form.setError('root', {
         type: 'manual',
         message: 'Validation failed. Please check the form fields.'
       });
 
-      // Recursive function to set errors for nested fields
       function setNestedErrors(errorObj: any, path = '') {
         Object.entries(errorObj).forEach(([key, value]) => {
           if (key === '_errors') {
@@ -192,38 +188,44 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         });
       }
 
-      setNestedErrors(errors);
-      return;
+      setNestedErrors(validationResult.error.format());
+      throw new Error('Validation failed');
     }
 
-    // Remove confirmation field from values
     const { confirmation, id, _id, ...rest } = filteredValues;
 
-    if (!id) {
-      const response: any = await createEnquiryDraft(rest);
-      if (!response) {
-        toast.error('Failed to create enquiry draft');
-        return;
+    try {
+      if (!_id) {
+        const response: any = await createEnquiryDraft(rest);
+        if (!response) {
+          toast.error('Failed to create enquiry draft');
+          throw new Error('Failed to create draft');
+        }
+        toast.success('Enquiry draft created successfully');
+        sessionStorage.setItem('draftSaved', 'true');
+        router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_1(response._id));
+      } else {
+        const response = await updateEnquiryDraft({ ...rest, id: _id });
+        if (!response) {
+          toast.error('Failed to update enquiry draft');
+          throw new Error('Failed to update draft');
+        }
+        toast.success('Enquiry draft updated successfully');
       }
-
-      toast.success('Enquiry draft created successfully');
-    } else {
-      const response = await updateEnquiryDraft({ ...rest, id });
-      if (!response) {
-        toast.error('Failed to update enquiry draft');
-        return;
-      }
-      toast.success('Enquiry draft updated successfully');
+      form.setValue('confirmation', false);
+      return true;
+    } catch (error) {
+      throw error;
     }
-    form.setValue('confirmation', false);
   }
 
   async function onSubmit() {
     let values = form.getValues();
+    console.log('ON submit form data', values);
     values = removeNullValues(values);
     const filteredData = filterBySchema(formSchema, values);
 
-    const { confirmation, _id, ...rest } = filteredData;
+    const { confirmation, ...rest } = filteredData;
 
     if ((rest as any).academicDetails) {
       const academicDetails = (rest as any).academicDetails;

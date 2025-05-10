@@ -3,13 +3,13 @@ import { createPortal } from 'react-dom';
 import { ChevronDown, Check } from 'lucide-react';
 import { LeadType, LeadTypeMapper } from '@/types/enum';
 
-const typeStyles: Record<LeadType, string> = {
-  [LeadType.OPEN]: 'bg-[#FFE3CB] text-[#E06C06]',
-  [LeadType.DEAD]: 'bg-[#FFD0D6] text-[#E22339]',
-  [LeadType.INTERESTED]: 'bg-[#F8F6BC] text-[#A67B0A]',
+export const typeStyles: Record<LeadType, string> = {
+  [LeadType.LEFT_OVER]: 'bg-[#FFE3CB] text-[#E06C06]',
+  [LeadType.NOT_INTERESTED]: 'bg-[#FFD0D6] text-[#E22339]',
+  [LeadType.ACTIVE]: 'bg-[#FFD60A] text-[#685701]',
   [LeadType.COURSE_UNAVAILABLE]: 'bg-[#CECECE] text-[#696969]',
-  [LeadType.NO_CLARITY]: 'bg-[#C8E4FF] text-[#006ED8]',
-  [LeadType.DID_NOT_PICK]: 'bg-[#F5F5F5] text-[#9E9E9E]',
+  [LeadType.NEUTRAL]: 'bg-[#C8E4FF] text-[#006ED8]',
+  [LeadType.DID_NOT_PICK]: 'bg-[#ECD0FA] text-[#8D2CBE]',
   [LeadType.INVALID]: 'bg-black text-[#FFFFFF]'
 };
 

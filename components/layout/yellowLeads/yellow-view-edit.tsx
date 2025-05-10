@@ -10,10 +10,10 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
+import { CalendarIcon, Loader2, Pencil, Save, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Course, Gender, Locations, UserRoles } from '@/types/enum';
+import { Course, FinalConversionStatus, Gender, Locations, UserRoles } from '@/types/enum';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
@@ -22,7 +22,7 @@ import { toast } from 'sonner';
 import z, { boolean } from 'zod';
 import { YellowLead } from '@/components/custom-ui/yellow-leads/interfaces';
 import { FootFallStatus } from './foot-fall-tag';
-import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
+import FinalConversionTag from './final-conversion-tag';
 import FootFallTag from './foot-fall-tag';
 import { yellowLeadUpdateSchema } from '../allLeads/validators';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
@@ -75,10 +75,17 @@ export default function YellowLeadViewEdit({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [changedFields, setChangedFields] = useState<Set<string>>(new Set());
   const { hasRole } = useAuthStore();
+
+  const [newRemark, setNewRemark] = useState('');
+
   useEffect(() => {
     if (data) {
-      setFormData(data);
-      setOriginalData(data);
+      const formattedData = {
+        ...data,
+        remarks: Array.isArray(data.remarks) ? data.remarks : data.remarks ? [data.remarks] : []
+      };
+      setFormData(formattedData);
+      setOriginalData(formattedData);
     }
   }, [data]);
 
@@ -210,6 +217,14 @@ export default function YellowLeadViewEdit({
     validateField(name, value);
   };
 
+  const handleExistingRemarkChange = (index: number, value: string) => {
+    if (!formData) return;
+    const updatedRemarks = [...formData.remarks];
+    updatedRemarks[index] = value;
+    setFormData((prev) => (prev ? { ...prev, remarks: updatedRemarks } : null));
+    validateField('remarks', updatedRemarks);
+  };
+
   const handleSelectChange = (name: string, value: string | boolean | string[]) => {
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
     validateField(name, value);
@@ -231,6 +246,7 @@ export default function YellowLeadViewEdit({
 
   const hasChanges = () => {
     if (!formData || !originalData) return false;
+    if (newRemark) return true;
 
     const allowedFields = [
       'name',
@@ -251,9 +267,18 @@ export default function YellowLeadViewEdit({
       'leadTypeModifiedDate'
     ];
 
-    return allowedFields.some((field: any) => {
+    return allowedFields.some((field) => {
       const origValue = originalData[field] || '';
       const newValue = formData[field] || '';
+
+      if (field === 'remarks') {
+        const origRemarks = Array.isArray(originalData.remarks) ? originalData.remarks : [];
+        const newRemarks = Array.isArray(formData.remarks) ? formData.remarks : [];
+
+        if (origRemarks.length !== newRemarks.length) return true;
+        return origRemarks.some((remark, index) => remark !== newRemarks[index]);
+      }
+
       return origValue !== newValue;
     });
   };
@@ -295,10 +320,14 @@ export default function YellowLeadViewEdit({
       let filteredData = Object.fromEntries(
         Object.entries(formData).filter(([key]) => allowedFields.includes(key))
       );
+
+      if (newRemark) {
+        filteredData.remarks.push(newRemark);
+        setNewRemark('');
+      }
+
       filteredData = removeNullValues(filteredData);
       const validation = yellowLeadUpdateSchema.safeParse(filteredData);
-      console.log(filteredData);
-      console.log(validation);
       if (!validation.success) {
         const newErrors: FormErrors = {};
         validation.error.errors.forEach((err) => {
@@ -392,13 +421,15 @@ export default function YellowLeadViewEdit({
             <p>-</p>
           )}
         </div>
-        <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">Assigned To</p>
-          <p>
-            {assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)?.name ??
-              '-'}
-          </p>
-        </div>
+        {hasRole(UserRoles.LEAD_MARKETING) && (
+          <div className="flex gap-2">
+            <p className="w-1/4 text-[#666666]">Assigned To</p>
+            <p>
+              {assignedToDropdownData.find((user: any) => user._id === formData.assignedTo)?.name ??
+                '-'}
+            </p>
+          </div>
+        )}
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Follow-ups</p>
           <p>{formData.yellowLeadsFollowUpCount ?? '-'}</p>
@@ -423,25 +454,28 @@ export default function YellowLeadViewEdit({
     </>
   );
 
+  const inputStyle = 'rounded-[5px] font-medium';
+
   // Render edit view
   const EditView = (
     <>
-      <div className="flex flex-col gap-2">
-        <p className="text-[#666666] font-normal">LTC Date</p>
-        <p>{formatTimeStampView(data.leadTypeModifiedDate)}</p>
-        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
-      </div>
+      <div className="flex flex-row gap-2 items-center">
+        <div className="flex flex-col gap-2 w-1/3">
+          <EditLabel htmlFor="ltcDate" title={'LTC Date'} />
+          <p className="h-9 font-medium">{formatTimeStampView(data.leadTypeModifiedDate)}</p>
+        </div>
 
-      <div className="space-y-2">
-        <EditLabel htmlFor="name" title={'Name'} />
-        <Input
-          id="name"
-          name="name"
-          value={formData.name || ''}
-          onChange={handleChange}
-          className="rounded-[5px]"
-        />
-        {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+        <div className="space-y-2 w-2/3">
+          <EditLabel htmlFor="name" title={'Name'} />
+          <Input
+            id="name"
+            name="name"
+            value={formData.name || ''}
+            onChange={handleChange}
+            className={inputStyle}
+          />
+          {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+        </div>
       </div>
 
       <div className="flex gap-5">
@@ -452,7 +486,7 @@ export default function YellowLeadViewEdit({
             name="phoneNumber"
             value={formData.phoneNumber || ''}
             onChange={handleChange}
-            className={`rounded-[5px] ${errors.phoneNumber ? 'border-red-500' : ''}`}
+            className={`${inputStyle} ${errors.phoneNumber ? 'border-red-500' : ''}`}
           />
           {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
         </div>
@@ -464,7 +498,7 @@ export default function YellowLeadViewEdit({
             name="altPhoneNumber"
             value={formData.altPhoneNumber || ''}
             onChange={handleChange}
-            className={`rounded-[5px] ${errors.altPhoneNumber ? 'border-red-500' : ''}`}
+            className={`${inputStyle} ${errors.altPhoneNumber ? 'border-red-500' : ''}`}
           />
           {errors.altPhoneNumber && (
             <p className="text-red-500 text-xs mt-1">{errors.altPhoneNumber}</p>
@@ -481,7 +515,7 @@ export default function YellowLeadViewEdit({
             type="email"
             value={formData.email || ''}
             onChange={handleChange}
-            className={`rounded-[5px] ${errors.email ? 'border-red-500' : ''}`}
+            className={`${inputStyle} ${errors.email ? 'border-red-500' : ''}`}
           />
           {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
         </div>
@@ -498,7 +532,7 @@ export default function YellowLeadViewEdit({
             <SelectContent>
               {Object.values(Gender).map((gender) => (
                 <SelectItem key={gender} value={gender}>
-                  {toPascal(gender)}
+                  <span className="font-medium">{toPascal(gender)}</span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -515,7 +549,7 @@ export default function YellowLeadViewEdit({
             type="area"
             value={formData.area || ''}
             onChange={handleChange}
-            className="rounded-[5px]"
+            className={inputStyle}
           />
           {errors.area && <p className="text-red-500 text-xs mt-1">{errors.area}</p>}
         </div>
@@ -614,7 +648,7 @@ export default function YellowLeadViewEdit({
             <SelectContent>
               {Array.from({ length: formData.yellowLeadsFollowUpCount + 2 }, (_, i) => (
                 <SelectItem key={i} value={i.toString()}>
-                  {i.toString().padStart(2, '0')}
+                  <span className="font-medium">{i.toString().padStart(2, '0')}</span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -623,13 +657,13 @@ export default function YellowLeadViewEdit({
       </div>
       <div className="flex gap-5">
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="schoolName" title={'School Name'} />
+          <EditLabel htmlFor="schoolName" title={'School/College Name'} />
           <Input
             id="schoolName"
             name="schoolName"
             value={formData.schoolName || ''}
             onChange={handleChange}
-            className="rounded-[5px]"
+            className={inputStyle}
           />
           {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
         </div>
@@ -654,110 +688,140 @@ export default function YellowLeadViewEdit({
         </div>
       </div>
 
-      <div className="space-y-2">
+      {/* Remarks Section */}
+      <div className="space-y-2 max-w-2xl mx-auto">
         <EditLabel htmlFor="remarks" title={'Remarks'} />
-        <textarea
-          id="remarks"
-          name="remarks"
-          value={formData.remarks || ''}
-          onChange={handleChange}
-          className="w-full min-h-20 px-3 py-2 border rounded-[5px]"
-          placeholder="Enter remarks here"
-        />
+        <div className="flex items-center gap-2 p-2 border border-gray-300 rounded-[5px]">
+          <div className="bg-blue-100 px-3 py-1 rounded-md text-sm text-blue-600 min-w-24 flex justify-center h-7">
+            Remark {(formData.remarks?.length ?? 0) + 1}:
+          </div>
+          <Input
+            placeholder="Add your remarks"
+            value={newRemark}
+            onChange={(e) => setNewRemark(e.target.value)}
+            className="rounded-md flex-1 border-none px-2 shadow-none font-medium"
+          />
+        </div>
+        {formData.remarks && formData.remarks.length > 0 ? (
+          [...formData.remarks].reverse().map((remark, reversedIndex) => {
+            const actualIndex = formData.remarks.length - 1 - reversedIndex;
+            return (
+              <div
+                className="flex items-center gap-2 p-2 border border-gray-300 rounded-[5px]"
+                key={actualIndex}
+              >
+                <div className="bg-blue-100 px-3 py-1 rounded-md text-sm text-blue-600 min-w-24 flex justify-center h-7">
+                  Remark {actualIndex + 1}:
+                </div>
+                <Input
+                  placeholder="Add your remarks"
+                  value={formData.remarks[actualIndex] || ''}
+                  onChange={(e) => handleExistingRemarkChange(actualIndex, e.target.value)}
+                  className="rounded-md flex-1 border-none px-2 shadow-none font-medium"
+                />
+              </div>
+            );
+          })
+        ) : (
+          <p className="text-gray-500 italic">No remarks added yet</p>
+        )}
       </div>
-      <div className="space-y-2 w-full">
-        <EditLabel htmlFor="assignedTo" title="Assigned To" />
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              disabled={!(hasRole(UserRoles.LEAD_MARKETING) || hasRole(UserRoles.ADMIN))}
-              role="combobox"
-              className={cn(
-                'w-full justify-between rounded-[5px] min-h-10',
-                !formData.assignedTo?.length && 'text-muted-foreground'
-              )}
-            >
-              <div className="flex gap-1 flex-wrap overflow-hidden max-w-[calc(100%-30px)]">
-                {formData.assignedTo?.length > 0 ? (
-                  assignedToDropdownData
-                    .filter((user) => formData.assignedTo.includes(user._id))
-                    .map((user) => (
-                      <div
-                        key={user._id}
-                        className="inline-flex items-center"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Badge variant="secondary" className="mb-0.5 max-w-full truncate pr-1">
-                          <span className="truncate">{user.name}</span>
-                          <span
-                            role="button"
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
+
+      {hasRole(UserRoles.LEAD_MARKETING) && (
+        <div className="space-y-2 w-full">
+          <EditLabel htmlFor="assignedTo" title="Assigned To" />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                disabled={!(hasRole(UserRoles.LEAD_MARKETING) || hasRole(UserRoles.ADMIN))}
+                role="combobox"
+                className={cn(
+                  'w-full justify-between rounded-[5px] min-h-10',
+                  !formData.assignedTo?.length && 'text-muted-foreground'
+                )}
+              >
+                <div className="flex gap-1 flex-wrap overflow-hidden max-w-[calc(100%-30px)]">
+                  {formData.assignedTo?.length > 0 ? (
+                    assignedToDropdownData
+                      .filter((user) => formData.assignedTo.includes(user._id))
+                      .map((user) => (
+                        <div
+                          key={user._id}
+                          className="inline-flex items-center"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Badge variant="secondary" className="mb-0.5 max-w-full truncate pr-1">
+                            <span className="truncate">{user.name}</span>
+                            <span
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  handleSelectChange(
+                                    'assignedTo',
+                                    formData.assignedTo.filter((id) => id !== user._id)
+                                  );
+                                }
+                              }}
+                              onClick={(e) => {
                                 e.preventDefault();
                                 handleSelectChange(
                                   'assignedTo',
                                   formData.assignedTo.filter((id) => id !== user._id)
                                 );
-                              }
-                            }}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleSelectChange(
-                                'assignedTo',
-                                formData.assignedTo.filter((id) => id !== user._id)
-                              );
-                            }}
-                            className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                          >
-                            <X className="h-3 w-3" />
-                          </span>
-                        </Badge>
-                      </div>
-                    ))
-                ) : (
-                  <span className="truncate">Select Assigned To</span>
-                )}
-              </div>
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-full p-0" align="start">
-            <Command shouldFilter={true}>
-              <CommandInput placeholder="Search users..." />
-              <CommandEmpty>No users found.</CommandEmpty>
-              <CommandGroup>
-                <ScrollArea className="h-48">
-                  {assignedToDropdownData.map((user: { _id: string; name: string }) => (
-                    <CommandItem
-                      key={user._id}
-                      value={`${user.name}${user._id}`}
-                      onSelect={() => {
-                        const currentAssigned = formData.assignedTo || [];
-                        const newAssigned = currentAssigned.includes(user._id)
-                          ? currentAssigned.filter((id) => id !== user._id)
-                          : [...currentAssigned, user._id];
-                        handleSelectChange('assignedTo', newAssigned);
-                      }}
-                      className="cursor-pointer aria-selected:bg-accent aria-selected:text-accent-foreground"
-                      data-user-id={user._id}
-                    >
-                      <Check
-                        className={cn(
-                          'mr-2 h-4 w-4',
-                          formData.assignedTo?.includes(user._id) ? 'opacity-100' : 'opacity-0'
-                        )}
-                      />
-                      <span className="truncate">{user.name}</span>
-                    </CommandItem>
-                  ))}
-                </ScrollArea>
-              </CommandGroup>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </div>
+                              }}
+                              className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                            >
+                              <X className="h-3 w-3" />
+                            </span>
+                          </Badge>
+                        </div>
+                      ))
+                  ) : (
+                    <span className="truncate">Select Assigned To</span>
+                  )}
+                </div>
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-full p-0" align="start">
+              <Command shouldFilter={true}>
+                <CommandInput placeholder="Search users..." />
+                <CommandEmpty>No users found.</CommandEmpty>
+                <CommandGroup>
+                  <ScrollArea className="h-48">
+                    {assignedToDropdownData.map((user: { _id: string; name: string }) => (
+                      <CommandItem
+                        key={user._id}
+                        value={`${user.name}${user._id}`}
+                        onSelect={() => {
+                          const currentAssigned = formData.assignedTo || [];
+                          const newAssigned = currentAssigned.includes(user._id)
+                            ? currentAssigned.filter((id) => id !== user._id)
+                            : [...currentAssigned, user._id];
+                          handleSelectChange('assignedTo', newAssigned);
+                        }}
+                        className="cursor-pointer aria-selected:bg-accent aria-selected:text-accent-foreground"
+                        data-user-id={user._id}
+                      >
+                        <Check
+                          className={cn(
+                            'mr-2 h-4 w-4',
+                            formData.assignedTo?.includes(user._id) ? 'opacity-100' : 'opacity-0'
+                          )}
+                        />
+                        <span className="truncate">{user.name}</span>
+                      </CommandItem>
+                    ))}
+                  </ScrollArea>
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+      )}
     </>
   );
 

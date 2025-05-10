@@ -41,17 +41,23 @@ export const academicDetailBaseSchema = z.object({
   schoolCollegeName: z
     .string()
     // Keep regex for when value is present
-    .regex(/^[A-Za-z\s]+$/, 'School/College Name must only contain alphabets and spaces')
+    // .regex(/^[A-Za-z\s]+$/, 'School/College Name must only contain alphabets and spaces')
     .optional(),
   universityBoardName: z
     .string()
     // Keep regex for when value is present
-    .regex(/^[A-Za-z\s]+$/, 'University/Board Name must only contain alphabets and spaces')
+    // .regex(/^[A-Za-z\s]+$/, 'University/Board Name must only contain alphabets and spaces')
     .optional(),
-  passingYear: z.number().int().optional(), // Keep refinements for when value is present
+  passingYear: z
+    .number()
+    .int()
+    .refine((year) => year.toString().length === 4, {
+      message: 'Passing Year must be a valid 4-digit year'
+    }), // Keep refinements for when value is present
   percentageObtained: z.number().optional(), // Keep refinements for when value is present
   subjects: z
-    .array(z.string().min(1, 'Subject name is required')) // Validate inner string if array present
+    .string()
+    .nonempty('Subject name is required') // Validate inner string if array present
     .optional()
 });
 
@@ -72,10 +78,7 @@ export const academicDetailSchema = z.object({
     .number()
     .min(0, 'Percentage must be at least 0')
     .max(100, 'Percentage cannot exceed 100'),
-  subjects: z
-    .array(z.string().min(1, 'Subject name is required'))
-    .nonempty('Subjects cannot be empty')
-    .optional()
+  subjects: z.string().nonempty('Subjects cannot be empty').optional()
 });
 // Array schema
 export const academicDetailsArraySchema = z.array(academicDetailSchema);

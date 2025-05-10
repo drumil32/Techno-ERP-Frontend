@@ -12,8 +12,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsLargeScreen(window.innerWidth >= 1024);
-      if (window.innerWidth < 1024) setHovered(false);
+      setIsLargeScreen(window.innerWidth >= 1025);
+      if (window.innerWidth < 1025) setHovered(false);
     };
 
     checkScreenSize();

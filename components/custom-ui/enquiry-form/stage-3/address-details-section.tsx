@@ -21,6 +21,8 @@ import { formSchemaStep3 } from './enquiry-form-stage-3';
 import { districtDropdown } from '../stage-1/helpers/fetch-data';
 import { useQuery } from '@tanstack/react-query';
 import { fixCourseDropdown } from '@/components/layout/admin-tracker/helpers/fetch-data';
+import { MultiSelectCustomDropdown } from '../../common/multi-select-custom-editable';
+import { MultiSelectDropdown } from '../../multi-select/mutli-select';
 
 interface AddressDetailsSectionInterface {
   form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
@@ -177,31 +179,30 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
               />
 
               <FormField
+                key="district"
                 control={form.control}
                 name="address.district"
                 render={({ field }) => (
-                  <FormItem className={commonFormItemClass}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                  <FormItem className={`${commonFormItemClass}`}>
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full gap-x-1">
                       District
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select
+                      <MultiSelectCustomDropdown
                         disabled={isViewable}
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue placeholder="Select district" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.values(districts).map((district) => (
-                            <SelectItem key={district} value={district}>
-                              {district}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                        form={form}
+                        name="address.district"
+                        options={Object.values(districts).map((district) => ({
+                          _id: district,
+                          name: district
+                        }))}
+                        placeholder="Select the district"
+                        allowCustomInput={true}
+                        onChange={(value) => {
+                          field.onChange(value);
+                        }}
+                      />
                     </FormControl>
                     <div className="h-[20px]">
                       <FormMessage className="text-[11px]" />

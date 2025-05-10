@@ -54,7 +54,8 @@ const EnquiryFormStage3 = () => {
   const id = pathVariables.id as string;
   const [refreshKey, setRefreshKey] = useState(0);
   const router = useRouter();
-
+  const [isDocumentVerificationValid, setIsDocumentVerificationValid] = useState(false);
+  const [documentVerificationStatus, setDocumentVerificationStatus] = useState(true);
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id, refreshKey],
     queryFn: () => getEnquiry(id ? id : ''),
@@ -86,31 +87,21 @@ const EnquiryFormStage3 = () => {
 
   async function saveDraft() {
     let values = form.getValues();
-
-    // Extract the physicalDocumentNote separately before removing nulls
     const documentNotes = values.physicalDocumentNote || [];
 
-    // Remove null values from the rest of the form
     values = removeNullValues(values);
-
-    //ignoring null issues from the document
     values.physicalDocumentNote = documentNotes.map((note) => ({
       type: note.type,
       status: note.status,
       dueBy: note.dueBy
     }));
 
-    // Rest of your submission logic...because we really need to have somewhere undefined and few values
-    console.log('Submitting values:', values);
-    // Pick only the present fields from schema
     const schemaKeys = Object.keys(enquiryDraftStep3Schema.shape);
-    // Filter out values not in the schema
     const filteredValues = Object.fromEntries(
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
     );
 
     const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber', 'emailId'];
-
     const filteredKeys = Array.from(new Set([...Object.keys(values), ...alwaysIncludeKeys])).filter(
       (key) => schemaKeys.includes(key)
     );
@@ -124,11 +115,8 @@ const EnquiryFormStage3 = () => {
         {} as Partial<Record<keyof typeof enquiryDraftStep3Schema.shape, true>>
       )
     );
-    console.log('Partial Schema', partialSchema);
 
     const validationResult = partialSchema.safeParse(filteredValues);
-    console.log('Filtered data is', filteredValues);
-    // Clear previous errors before setting new ones
     form.clearErrors();
 
     if (!validationResult.success) {
@@ -138,7 +126,6 @@ const EnquiryFormStage3 = () => {
         message: 'Validation failed. Please check the form fields.'
       });
 
-      // Recursive function to set errors for nested fields
       function setNestedErrors(errorObj: any, path = '') {
         Object.entries(errorObj).forEach(([key, value]) => {
           if (key === '_errors') {
@@ -153,68 +140,74 @@ const EnquiryFormStage3 = () => {
           }
         });
       }
-      console.log(errors);
+
       setNestedErrors(errors);
-      return;
+      throw new Error('Validation failed');
     }
 
-    // Remove confirmation field from values
     const { confirmation, _id, ...rest } = filteredValues;
 
-    const response = await updateEnquiryDraftStep3({ ...rest, id });
-    if (!response) {
-      toast.error('Failed to update enquiry draft');
-      return;
-    }
-    toast.success('Enquiry draft updated successfully');
-
-    form.setValue('confirmation', false);
-    setRefreshKey((prev) => prev + 1);
-  }
-
-  const onSubmit = async () => {
-    let values = form.getValues();
-
-    values = removeNullValues(values);
-    const filteredData = filterBySchema(formSchemaStep3, values);
-    console.log('Filtered Data:', filteredData);
-
-    // remove confirmation field from values
-    const { confirmation, _id, ...rest } = filteredData;
-
-    if ((rest as any).academicDetails) {
-      const academicDetails = (rest as any).academicDetails;
-      if (Array.isArray(academicDetails)) {
-        (rest as any).academicDetails = academicDetails.filter((entry: any) => {
-          const { educationLevel, _id, ...otherFields } = entry;
-          return Object.values(otherFields).some(
-            (value) => value !== null && value !== undefined && value !== ''
-          );
-        });
+    try {
+      const response = await updateEnquiryDraftStep3({ ...rest, id });
+      if (!response) {
+        toast.error('Failed to update enquiry draft');
+        throw new Error('Update failed');
       }
+
+      toast.success('Enquiry draft updated successfully');
+      form.setValue('confirmation', false);
+      setRefreshKey((prev) => prev + 1);
+      return true;
+    } catch (error) {
+      throw error;
     }
+  }
+  const onSubmit = async (): Promise<boolean> => {
+    try {
+      let values = form.getValues();
+      values = removeNullValues(values);
+      const filteredData = filterBySchema(formSchemaStep3, values);
 
-    console.log(rest);
+      if (currentDocuments.length !== 2) {
+        toast.error('Please upload all mandatory documents before proceeding.');
+        return false;
+      }
 
-    const enquiry: any = await updateEnquiryStep3(rest);
+      const { confirmation, _id, ...rest } = filteredData;
 
-    // const response = await updateEnquiryStatus({
-    //   id: enquiry?._id,
-    //   newStatus: ApplicationStatus.STEP_4
-    // });
+      if ((rest as any).academicDetails) {
+        const academicDetails = (rest as any).academicDetails;
+        if (Array.isArray(academicDetails)) {
+          (rest as any).academicDetails = academicDetails.filter((entry: any) => {
+            const { educationLevel, _id, ...otherFields } = entry;
+            return Object.values(otherFields).some(
+              (value) => value !== null && value !== undefined && value !== ''
+            );
+          });
+        }
+      }
 
-    // if (!response) {
-    //   toast.error('Failed to update enquiry status');
-    //   return;
-    // }
-    // toast.success('Enquiry status updated successfully');
+      if (!isDocumentVerificationValid) {
+        toast.error('Please ensure you complete document verification first');
+        setDocumentVerificationStatus(false);
+        return false;
+      }
 
-    form.setValue('confirmation', false);
-    form.reset();
+      const enquiry: any = await updateEnquiryStep3(rest);
+      if (!enquiry) {
+        toast.error('Failed to update enquiry');
+        return false;
+      }
 
-    router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_4(enquiry._id));
+      form.setValue('confirmation', false);
+      form.reset();
+      router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_4(enquiry._id));
+      return true;
+    } catch (error) {
+      toast.error('An error occurred during submission');
+      return false;
+    }
   };
-
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmation' });
 
   useEffect(() => {
@@ -325,14 +318,19 @@ const EnquiryFormStage3 = () => {
             commonFormItemClass={commonFormItemClass}
           />
 
-          <DocumentVerificationSection form={form} isViewable={isViewable} />
+          <DocumentVerificationSection
+            documentVerificationStatus={documentVerificationStatus}
+            onValidationChange={setIsDocumentVerificationValid}
+            form={form}
+            isViewable={isViewable}
+          />
 
           {/* <AllDocuments
             enquiryDocuments={currentDocuments}
             setCurrentDocuments={setCurrentDocuments}
           /> */}
 
-          <ConfirmationSection form={form} />
+          {!isViewable && <ConfirmationSection form={form} />}
           <OfficeUseSection
             form={form}
             isViewable={isViewable}

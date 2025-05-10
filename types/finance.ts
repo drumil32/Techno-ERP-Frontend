@@ -30,6 +30,7 @@ export interface StudentFeeInformationResponse {
   fatherName: string;
   HOD: string;
   course: Course;
+  extraBalance?: number;
   feeStatus: FeesPaidStatus;
   semesterWiseFeeInformation: SemesterWiseFeeInformation[];
   semesterBreakUp: SemesterBreakUp[];
@@ -69,6 +70,22 @@ export interface Transaction {
   actionedBy: string;
 }
 
+export interface FeeHistoryRequestType {
+  studentId: string;
+  semesterId: string;
+  detailId: string;
+}
+
+export interface FeeHistoryItemType {
+  updatedAt: string;
+  updatedFee: number;
+  extraAmount: number;
+  updatedBy?: string;
+}
+
+export interface FeeHistoryResponse {
+  feeUpdateHistory: FeeHistoryItemType[]
+}
 
 // ------------------------------------------------------------
 // TEMP
@@ -82,6 +99,7 @@ export interface StudentDetails {
   feeStatus: FeesPaidStatus;
   course: string;
   HOD: string;
+  extraBalance?: number;
 }
 
 // For a single row in the Semester-wise Fees table

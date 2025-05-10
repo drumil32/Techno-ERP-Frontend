@@ -17,7 +17,7 @@ import {
 } from './helpers/fetch-data';
 import { refineAnalytics, refineLeads, YellowLeadAnalytics } from './helpers/refine-data';
 import FootFallTag, { FootFallStatus } from './foot-fall-tag';
-import FinalConversionTag, { FinalConversionStatus } from './final-conversion-tag';
+import FinalConversionTag from './final-conversion-tag';
 import FilterBadges from '../allLeads/components/filter-badges';
 import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
 import YellowLeadViewEdit from './yellow-view-edit';
@@ -36,6 +36,9 @@ import FootFallSelect from './foot-fall-select';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select';
 import { SelectValue } from '@radix-ui/react-select';
 import Loading from '@/app/loading';
+import { FilterData } from '@/components/custom-ui/filter/type';
+import useAuthStore from '@/stores/auth-store';
+import { FinalConversionStatus, UserRoles } from '@/types/enum';
 export default function YellowLeadsTracker() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -43,6 +46,8 @@ export default function YellowLeadsTracker() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editRow, setEditRow] = useState<any>(null);
+  const authStore = useAuthStore()
+  const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING)
 
   const [sortState, setSortState] = useState<any>({
     sortBy: ['leadTypeModifiedDate'],
@@ -53,6 +58,9 @@ export default function YellowLeadsTracker() {
   const handleSortChange = (column: string, order: string) => {
     if (column === 'nextDueDateView') {
       column = 'nextDueDate';
+    }
+    if (column === 'dateView') {
+      column = 'date';
     }
     if (column === 'dateView') {
       column = 'date';
@@ -294,7 +302,6 @@ export default function YellowLeadsTracker() {
       }
     },
 
-    { accessorKey: 'nextDueDateView', header: 'Next Call Date', meta: { align: 'center' } },
     {
       accessorKey: 'yellowLeadsFollowUpCount',
       meta: { align: 'center' },
@@ -366,6 +373,7 @@ export default function YellowLeadsTracker() {
         );
       }
     },
+    { accessorKey: 'nextDueDateView', header: 'Next Call Date', meta: { align: 'center' } },
     {
       accessorKey: 'finalConversion',
       header: 'Final Conversion',
@@ -407,8 +415,15 @@ export default function YellowLeadsTracker() {
         );
       }
     },
-    { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } },
-    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } }
+    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } },
+
+    ...(
+      isRoleLeadMarketing
+        ? [
+          { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } },
+        ]
+        : []
+    ),
 
     // {
     //   id: 'actions',
@@ -443,16 +458,18 @@ export default function YellowLeadsTracker() {
     queryFn: courseDropdown
   });
   const courses = Array.isArray(courseQuery.data) ? courseQuery.data : [];
-  const getFiltersData = () => {
+  const getFiltersData = (): FilterData[] => {
     return [
       {
         filterKey: 'leadTypeModifiedDate',
+        placeholder: 'LTC Date',
         label: 'LTC Date',
         isDateFilter: true
       },
       {
         filterKey: 'source',
         label: 'Source',
+        placeholder: 'Source',
         options: marketingSource.map((item: string) => {
           return {
             label: item,
@@ -464,6 +481,7 @@ export default function YellowLeadsTracker() {
       {
         filterKey: 'city',
         label: 'City',
+        placeholder: 'City',
         options: cityDropdownData.map((item: string) => {
           return {
             label: item,
@@ -476,6 +494,7 @@ export default function YellowLeadsTracker() {
       {
         filterKey: 'course',
         label: 'Course',
+        placeholder: 'Course',
         options: courses.map((item: string) => {
           return {
             label: item,
@@ -488,21 +507,28 @@ export default function YellowLeadsTracker() {
       {
         filterKey: 'finalConversionType',
         label: 'Final Conversion',
+        placeholder: 'Final Conversion',
         options: Object.values(FinalConversionStatus),
         multiSelect: true
       },
-      {
-        filterKey: 'assignedTo',
-        label: 'Assigned To',
-        options: assignedToDropdownData.map((item: any) => {
-          return {
-            label: item.name,
-            id: item._id
-          };
-        }) as FilterOption[],
-        hasSearch: true,
-        multiSelect: true
-      }
+      ...(
+        isRoleLeadMarketing
+          ? [
+            {
+              filterKey: 'assignedTo',
+              label: 'Assigned To',
+              placeholder: 'Assigned To',
+              options: assignedToDropdownData?.map((item: any) => ({
+                label: item.name,
+                id: item._id
+              })),
+              hasSearch: true,
+              multiSelect: true
+            }
+
+          ]
+          : []
+      ),
     ];
   };
 
@@ -573,6 +599,7 @@ export default function YellowLeadsTracker() {
             handleViewMore={handleViewMore}
             selectedRowId={selectedRowId}
             setSelectedRowId={setSelectedRowId}
+            searchBarPlaceholder="Search student name or number"
           >
             <FilterBadges
               onFilterRemove={handleFilterRemove}

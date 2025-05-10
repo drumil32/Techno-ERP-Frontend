@@ -15,10 +15,8 @@ import { format, parse } from 'date-fns';
 import TechnoLeadTypeTag from '../lead-type-tag/techno-lead-type-tag';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import FinalConversionTag, {
-  FinalConversionStatus
-} from '@/components/layout/yellowLeads/final-conversion-tag';
-import { Course, CourseNameMapper } from '@/types/enum';
+import FinalConversionTag from '@/components/layout/yellowLeads/final-conversion-tag';
+import { Course, CourseNameMapper, FinalConversionStatus } from '@/types/enum';
 import { toPascal } from '@/lib/utils';
 import { LeadType } from '@/types/enum';
 

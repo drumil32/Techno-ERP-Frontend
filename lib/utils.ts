@@ -38,10 +38,32 @@ export function filterBySchema<T extends ZodObject<any>>(
 
   return filtered;
 }
-export function removeNullValues(obj: any): any {
+
+const skipKeys = [ 'remarks' ];
+
+function isObject(value: any): boolean {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function isAllValuesUndefined(obj: any): boolean {
+  return Object.values(obj).every(
+    (v) =>
+      v === null ||
+      v === undefined ||
+      v === '' ||
+      (Array.isArray(v) && v.length === 0) ||
+      (isObject(v) && isAllValuesUndefined(v))
+  );
+}
+
+export function removeNullValues(obj: any, parentKey?: string): any {
   if (Array.isArray(obj)) {
+    if (skipKeys.includes(parentKey || '')) {
+      return obj.map((item) => isObject(item) ? removeNullValues(item) : item);
+    }
+
     return obj
-      .map(removeNullValues)
+      .map((item) => removeNullValues(item))
       .filter(
         (item) =>
           item !== null &&
@@ -53,14 +75,15 @@ export function removeNullValues(obj: any): any {
   } else if (isObject(obj)) {
     const cleaned = Object.fromEntries(
       Object.entries(obj)
-        .map(([k, v]) => [k, removeNullValues(v)])
+        .map(([k, v]) => [k, removeNullValues(v, k)])
         .filter(
-          ([_, v]) =>
-            v !== null &&
-            v !== undefined &&
-            v !== '' &&
-            !(Array.isArray(v) && v.length === 0) &&
-            !(isObject(v) && isAllValuesUndefined(v))
+          ([k, v]) =>
+            skipKeys.includes(k) || 
+            (v !== null &&
+              v !== undefined &&
+              v !== '' &&
+              !(Array.isArray(v) && v.length === 0) &&
+              !(isObject(v) && isAllValuesUndefined(v)))
         )
     );
 
@@ -69,15 +92,6 @@ export function removeNullValues(obj: any): any {
 
   return obj;
 }
-
-function isObject(value: any): boolean {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function isAllValuesUndefined(obj: object): boolean {
-  return Object.values(obj).every((val) => val === undefined);
-}
-
 
 export const handleNumericInputChange = (
   e: React.ChangeEvent<HTMLInputElement>,

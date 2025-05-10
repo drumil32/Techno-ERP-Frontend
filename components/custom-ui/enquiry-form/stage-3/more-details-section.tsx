@@ -355,26 +355,25 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                   </FormItem>
                 )}
               />
-              <br />
-
-              <div className="flex flex-col">
-                <SingleEnquiryUploadDocument
-                  key={DocumentType.PHOTO}
-                  isViewable={isViewable}
-                  enquiryId={enquiry_id}
-                  documentType={DocumentType.PHOTO}
-                  existingDocument={findExistingDocument(DocumentType.PHOTO)}
-                  onUploadSuccess={setCurrentDocuments}
-                />
-                <SingleEnquiryUploadDocument
-                  isViewable={isViewable}
-                  key={DocumentType.SIGNATURE}
-                  enquiryId={enquiry_id}
-                  documentType={DocumentType.SIGNATURE}
-                  existingDocument={findExistingDocument(DocumentType.SIGNATURE)}
-                  onUploadSuccess={setCurrentDocuments}
-                />
-              </div>
+              {/* <br /> */}
+            </div>
+            <div className="col-span-1 rounded-lg rounded-t-none pl-5 bg-white gap-y-0 ">
+              <SingleEnquiryUploadDocument
+                key={DocumentType.PHOTO}
+                isViewable={isViewable}
+                enquiryId={enquiry_id}
+                documentType={DocumentType.PHOTO}
+                existingDocument={findExistingDocument(DocumentType.PHOTO)}
+                onUploadSuccess={setCurrentDocuments}
+              />
+              <SingleEnquiryUploadDocument
+                isViewable={isViewable}
+                key={DocumentType.SIGNATURE}
+                enquiryId={enquiry_id}
+                documentType={DocumentType.SIGNATURE}
+                existingDocument={findExistingDocument(DocumentType.SIGNATURE)}
+                onUploadSuccess={setCurrentDocuments}
+              />
             </div>
           </AccordionContent>
         </div>

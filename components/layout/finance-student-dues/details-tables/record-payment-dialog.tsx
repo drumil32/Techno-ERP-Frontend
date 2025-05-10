@@ -72,7 +72,6 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
       studentId: studentDuesId,
       feeAction: feesActionMapping[values.feesAction],
       txnType: transactionTypeMapping[values.transactionType],
-      actionedBy: "67c69b45a5632b20905eb7e2",
       amount: values.amount,
       remark: values.remark || "",
       date: new Date().toISOString()
@@ -81,7 +80,6 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
     try {
       const res = await recordPayment(payload);
 
-      console.log(res)
       if(res == null) {
         throw new Error("")
       }
@@ -112,7 +110,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
               <BookOpen className="w-5 h-5 text-gray-500 text-xl" />
               &nbsp;Record a payment
             </Dialog.Title>
-            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold">&times;</Dialog.Close>
+            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold cursor-pointer">&times;</Dialog.Close>
           </div>
 
           {/*Readable Fields - Student Information*/}
@@ -206,7 +204,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                         <Input
                           placeholder="Enter the amount"
                           {...field}
-                          type="number"
+                          type="text"
                           className="!text-md"
                         />
                       </FormControl>

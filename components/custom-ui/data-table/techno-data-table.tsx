@@ -43,6 +43,7 @@ import { UserRoles } from '@/types/enum';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
+import Loading from '@/app/loading';
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends unknown, TValue> {
@@ -107,8 +108,7 @@ export default function TechnoDataTable({
   rowCursor = true,
   showPagination = true,
   tableActionButton,
-  tableStyles,
-  headerStyles,
+  searchBarPlaceholder = 'Search here',
   children
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -196,11 +196,13 @@ export default function TechnoDataTable({
     'leadType',
     'footFall',
     'finalConversion',
-    'leadsFollowUpCount',
-    'yellowLeadsFollowUpCount'
   ];
 
-  const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate'];
+  if (!table.getRowModel().rows) {
+    return <Loading />;
+  }
+
+  const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate', 'leadsFollowUpCount', 'yellowLeadsFollowUpCount'];
 
   return (
     <div className="w-full mb-10 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -212,7 +214,7 @@ export default function TechnoDataTable({
         <div className="flex items-center space-x-2 ml-auto">
           <div className="relative w-[300px]">
             <Input
-              placeholder="Search here"
+              placeholder={searchBarPlaceholder}
               value={globalFilter}
               onChange={handleSearchChange}
               className="max-w-[500px] h-[32px] rounded-md bg-[#f3f3f3] px-4 py-2 pr-10 text-gray-600 placeholder-gray-400"
@@ -221,29 +223,28 @@ export default function TechnoDataTable({
               <Search className="h-4 w-4 text-gray-500" />
             </span>
           </div>
-          {
-            tableActionButton ?
-              tableActionButton
-              :
-              <>
-                <Button
-                  disabled={
-              !hasRole(UserRoles.EMPLOYEE_MARKETING) ||
-              !hasRole(UserRoles.LEAD_MARKETING) ||
-              tableName != 'All Leads'
-            }
-            onClick={uploadAction}
-                  variant="outline"
-                  className="h-8 w-[85px] rounded-[10px] border"
-                  icon={LuUpload}
-                >
-                  <span className="font-inter font-medium text-[12px]">Upload</span>
-                </Button>
-                <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
-                  <span className="font-inter font-semibold text-[12px]">Download</span>
-                </Button>
-              </>
-          }
+          {tableActionButton ? (
+            tableActionButton
+          ) : (
+            <>
+              <Button
+                disabled={
+                  !hasRole(UserRoles.EMPLOYEE_MARKETING) ||
+                  !hasRole(UserRoles.LEAD_MARKETING) ||
+                  tableName != 'All Leads'
+                }
+                onClick={uploadAction}
+                variant="outline"
+                className="h-8 w-[85px] rounded-[10px] border"
+                icon={LuUpload}
+              >
+                <span className="font-inter font-medium text-[12px]">Upload</span>
+              </Button>
+              <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
+                <span className="font-inter font-semibold text-[12px]">Download</span>
+              </Button>
+            </>
+          )}
         </div>
       </div>
 

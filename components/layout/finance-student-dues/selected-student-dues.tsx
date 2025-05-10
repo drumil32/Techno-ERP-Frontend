@@ -30,7 +30,8 @@ export default function SelectedStudentDuesDetails() {
     feeStatus: studentFeesInfomation?.feeStatus as FeesPaidStatus || '',
     studentID: studentFeesInfomation?.studentID || '',
     course: studentFeesInfomation?.course || '',
-    HOD: studentFeesInfomation?.HOD || ''
+    HOD: studentFeesInfomation?.HOD || '',
+    extraBalance: studentFeesInfomation?.extraBalance,
   }
 
   const semesterWiseFeesDetails = studentFeesInfomation?.semesterWiseFeeInformation || []

@@ -53,6 +53,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { MultiSelectPopoverCheckbox } from '../../common/multi-select-popover-checkbox';
 import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
 import Loading from '@/app/loading';
+import FilledByCollegeSection from '../stage-1/filled-by-college-section';
 
 export const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -307,6 +308,7 @@ export const StudentFeesForm = () => {
         otherFees: initialOtherFees,
         semWiseFees: initialSemFees,
         feesClearanceDate: initialFeesClearanceDate,
+        reference: enquiryData.reference,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
         remarks: initialCollegeRemarks,
@@ -533,7 +535,7 @@ export const StudentFeesForm = () => {
     if (!isCustomValid) {
       toast.error('Fee validation failed. Please check highlighted fields.');
       setIsSavingDraft(false);
-      return;
+      return false;
     }
 
     const validationResult = frontendFeesDraftValidationSchema.safeParse(currentValues);
@@ -547,7 +549,7 @@ export const StudentFeesForm = () => {
         }
       });
       setIsSavingDraft(false);
-      return;
+      return false;
     }
 
     const validatedDataForCleaning = validationResult.data;
@@ -569,9 +571,13 @@ export const StudentFeesForm = () => {
         delete finalPayload.id;
         await createDraftMutation.mutateAsync(finalPayload);
       }
-    } catch (error) {}
+      return true;
+    } catch (error) {
+      return false;
+    } finally {
+      setIsSavingDraft(false);
+    }
   }
-
   async function onSubmit() {
     setIsSubmittingFinal(true);
     form.clearErrors();
@@ -667,9 +673,9 @@ export const StudentFeesForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-2/3">
-                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-5 grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mb-2 rounded-[5px] text-[16px]">
-                  <div>Fees Details</div>
+              <div className="w-full xl:w-2/3">
+                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-3 sm:p-5 grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mb-2 rounded-[5px] text-[14px] sm:text-[16px]">
+                  <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Fees Details</div>
                   <div className="text-right">Schedule</div>
                   <div className="text-right">Fees</div>
                   <div className="text-right">Final Fees</div>
@@ -686,7 +692,6 @@ export const StudentFeesForm = () => {
                       : fee.type === displayFeeMapper(feeType)
                   );
                   const totalFee = originalFeeData?.amount;
-
                   const finalFee = otherFeesWatched?.[index]?.finalFee;
                   const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
                   const discountValue = calculateDiscountPercentage(totalFee, finalFee);
@@ -697,99 +702,117 @@ export const StudentFeesForm = () => {
                   return (
                     <div
                       key={field.id}
-                      className="grid grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-8 gap-y-8 items-start px-2 py-1 "
+                      className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-2 sm:gap-3 md:gap-4 items-start px-1 py-1 sm:px-2 sm:py-1"
                     >
-                      <div className="pt-2 text-sm">{displayFeeMapper(feeType)}</div>
-                      <div className="pt-2 text-sm text-right">{scheduleFeeMapper(feeType)}</div>
-                      <div className="pt-2 text-sm text-right">{formatCurrency(totalFee)}</div>
+                      <div className="xs:col-span-2 sm:col-span-4 md:col-span-1 pt-2 text-[12px] sm:text-sm">
+                        {displayFeeMapper(feeType)}
+                      </div>
 
-                      <FormField
-                        control={form.control}
-                        name={`otherFees.${index}.finalFee`}
-                        render={({ field: formField }) => (
-                          <FormItem className="flex flex-col justify-end">
-                            <FormControl>
-                              <Input
-                                type="number"
-                                min="0"
-                                placeholder="Enter fees"
-                                {...formField}
-                                className="text-right px-2 h-11 text-sm"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  formField.onChange(value === '' ? undefined : Number(value));
-                                }}
-                                value={formField.value ?? ''}
-                              />
-                            </FormControl>
-                            <div className="h-3">
-                              <FormMessage className="text-xs mt-0" /> {/* Smaller message */}
-                            </div>
-                          </FormItem>
-                        )}
-                      />
+                      <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
+                        {scheduleFeeMapper(feeType)}
+                      </div>
 
-                      <div className="flex items-center text-sm h-11 border border-input rounded-md px-2">
+                      <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
+                        {formatCurrency(totalFee)}
+                      </div>
+
+                      <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
+                        <FormField
+                          control={form.control}
+                          name={`otherFees.${index}.finalFee`}
+                          render={({ field: formField }) => (
+                            <FormItem className="flex flex-col justify-end">
+                              <FormControl>
+                                <Input
+                                  type="text"
+                                  min="0"
+                                  placeholder="Enter fees"
+                                  {...formField}
+                                  className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === '' || /^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    }
+                                  }}
+                                  value={formField.value ?? ''}
+                                />
+                              </FormControl>
+                              {/* <div className="h-[20px] sm:h-[45px]"> */}
+                              <FormMessage className="text-[10px] sm:text-xs mt-0" />
+                              {/* </div> */}
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+
+                      <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
                         <p className="ml-auto">{discountDisplay}</p>
                       </div>
 
-                      <FormField
-                        control={form.control}
-                        name={`otherFees.${index}.feesDepositedTOA`}
-                        render={({ field: formField }) => (
-                          <FormItem className="flex flex-col justify-end">
-                            <FormControl>
-                              <Input
-                                type="number"
-                                min="0"
-                                placeholder="Enter deposit"
-                                {...formField}
-                                className="text-right px-2 h-11 text-sm"
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  formField.onChange(value === '' ? undefined : Number(value));
-                                }}
-                                value={formField.value ?? ''}
-                              />
-                            </FormControl>
-                            <div className="h-3">
-                              <FormMessage className="text-xs mt-0" /> {/* Smaller message */}
-                            </div>
-                          </FormItem>
-                        )}
-                      />
+                      <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
+                        <FormField
+                          control={form.control}
+                          name={`otherFees.${index}.feesDepositedTOA`}
+                          render={({ field: formField }) => (
+                            <FormItem className="flex flex-col justify-end">
+                              <FormControl>
+                                <Input
+                                  type="text"
+                                  min="0"
+                                  placeholder="Enter fees"
+                                  {...formField}
+                                  className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === '' || /^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    }
+                                  }}
+                                  value={formField.value ?? ''}
+                                />
+                              </FormControl>
+                              {/* <div className="h-[20px] sm:h-[45px]"> */}
+                              <FormMessage className="text-[10px] sm:text-xs min-h-10 mt-0" />
+                              {/* </div> */}
+                            </FormItem>
+                          )}
+                        />
+                      </div>
 
-                      <div className="flex items-center justify-end text-sm h-11 border border-input rounded-md px-2">
+                      <div className="flex items-center justify-end text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
                         {formatCurrency(remainingFee)}
                       </div>
                     </div>
                   );
                 })}
 
-                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-5 rounded-[5px] grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-3 gap-y-2 mt-2  border-t ">
-                  <div className="text-sm">Total Fees</div>
-                  <div>{/* Empty cell for Schedule */}</div>
-                  <div className="text-sm text-right">
+                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-3 sm:p-5 rounded-[5px] grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mt-2 border-t">
+                  <div className="text-[12px] sm:text-sm xs:col-span-2 sm:col-span-4 md:col-span-1">
+                    Total Fees
+                  </div>
+                  <div></div>
+                  <div className="text-[12px] sm:text-sm text-right">
                     {formatCurrency(otherFeesTotals.totalOriginal)}
                   </div>
-                  <div className="text-sm text-right pr-2">
+                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {formatCurrency(otherFeesTotals.totalFinal)}
                   </div>
-                  <div className="text-sm text-right pr-2">
+                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {calculateDiscountPercentage(
                       otherFeesTotals.totalOriginal,
                       otherFeesTotals.totalFinal
                     ) + '%'}
                   </div>
-                  <div className="text-sm text-right pr-2">
+                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {formatCurrency(otherFeesTotals.totalDeposited)}
                   </div>
-                  <div className="text-sm text-right pr-2">
+                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {formatCurrency(otherFeesTotals.totalDue)}
                   </div>
                 </div>
 
-                <div className="mt-4 px-2 text-xs text-gray-600 space-y-1">
+                <div className="mt-3 sm:mt-4 px-1 sm:px-2 text-[10px] sm:text-xs text-gray-600 space-y-1">
                   <p>Book Bank - *50% adjustable at the end of final semester</p>
                   <p>Book Bank - *Applicable only in BBA, MBA, BAJMC, MAJMC & BCom (Hons)</p>
                   <p>
@@ -798,7 +821,7 @@ export const StudentFeesForm = () => {
                   </p>
                 </div>
 
-                <div className="mt-6 px-2">
+                <div className="mt-4 sm:mt-6 px-1 sm:px-2">
                   <DatePicker
                     control={form.control}
                     name="feesClearanceDate"
@@ -806,8 +829,8 @@ export const StudentFeesForm = () => {
                     disabled={isViewable}
                     placeholder="Pick a Date"
                     showYearMonthDropdowns={true}
-                    formItemClassName="w-[300px]"
-                    labelClassName="font-inter font-normal text-[12px] text-[#666666]"
+                    formItemClassName="w-full sm:w-[300px]"
+                    labelClassName="font-inter font-normal text-[10px] sm:text-[12px] text-[#666666]"
                     calendarProps={{
                       disabled: (date) => {
                         const today = new Date();
@@ -828,19 +851,22 @@ export const StudentFeesForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-max">
-                <div className="space-y-4">
-                  <div className="grid bg-[#F7F7F7] rounded-[5px] text-[#4E4E4E] p-5 grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-3 gap-y-2 mb-2pb-1 border-b">
-                    <div className="font-medium text-sm text-gray-600">Semester</div>
-                    <div className="font-medium text-sm text-gray-600 text-right">Fees</div>
-                    <div className="font-medium text-sm text-gray-600 text-center">Final Fees</div>
-                    <div className="font-medium text-sm text-gray-600 text-center">
+              <div className="lg:w-2/3 w-full">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="grid bg-[#F7F7F7] rounded-[5px] text-[#4E4E4E] p-3 sm:p-5 grid-cols-1 xs:grid-cols-2 sm:grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mb-2 pb-1 border-b">
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600">Semester</div>
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-right">
+                      Fees
+                    </div>
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-center">
+                      Final Fees
+                    </div>
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-center">
                       Applicable Discount
                     </div>
                   </div>
 
                   {semFields.map((field, index) => {
-                    console.log('Sem Fields', field, index);
                     const originalFeeAmount = semWiseFeesData[index];
                     const finalFee = semWiseFeesWatched?.[index]?.finalFee;
                     const discountValue = calculateDiscountPercentage(originalFeeAmount, finalFee);
@@ -849,10 +875,10 @@ export const StudentFeesForm = () => {
                     return (
                       <div
                         key={field.id}
-                        className="grid w-max h-max grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-3 gap-y-2 items-start px-2 py-1"
+                        className="grid w-full h-max grid-cols-1 xs:grid-cols-2 sm:grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 items-start px-1 sm:px-2 py-1"
                       >
-                        <div className="pt-2 text-sm">Semester {index + 1}</div>
-                        <div className="pt-2 text-sm text-right">
+                        <div className="pt-2 text-[12px] sm:text-sm">Semester {index + 1}</div>
+                        <div className="pt-2 text-[12px] sm:text-sm text-right">
                           {formatCurrency(originalFeeAmount)}
                         </div>
 
@@ -863,25 +889,26 @@ export const StudentFeesForm = () => {
                             <FormItem className="flex flex-col justify-end">
                               <FormControl>
                                 <Input
-                                  className="text-right px-2 h-12 text-sm"
-                                  type="number"
+                                  type="text"
                                   min="0"
                                   placeholder="Enter fees"
-                                  {...formField} // Use formField here
-                                  onChange={(e) =>
-                                    formField.onChange(
-                                      e.target.value === '' ? undefined : Number(e.target.value)
-                                    )
-                                  }
+                                  {...formField}
+                                  className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (value === '' || /^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    }
+                                  }}
                                   value={formField.value ?? ''}
                                 />
                               </FormControl>
-                              <FormMessage className="text-xs mt-1" />
+                              <FormMessage className="text-[10px] sm:text-xs mt-1" />
                             </FormItem>
                           )}
                         />
 
-                        <div className="flex items-center text-sm h-11 border border-input rounded-md px-2">
+                        <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2">
                           <p className="ml-auto">{discountDisplay}</p>
                         </div>
                       </div>
@@ -893,7 +920,7 @@ export const StudentFeesForm = () => {
           </AccordionItem>
         </Accordion>
 
-        <Accordion
+        {/* <Accordion
           type="single"
           collapsible
           className="w-full space-y-4"
@@ -950,89 +977,105 @@ export const StudentFeesForm = () => {
               </div>
             </AccordionContent>
           </AccordionItem>
-        </Accordion>
+        </Accordion> */}
+        <FilledByCollegeSection
+          commonFieldClass=""
+          commonFormItemClass=""
+          form={form}
+          isViewable={isViewable}
+        />
 
-        <Accordion
-          type="single"
-          collapsible
-          className="w-full space-y-4"
-          defaultValue="college-info"
-        >
-          <AccordionItem value="confirmation" className="border-b-0">
-            <AccordionTrigger className="w-full items-center">
-              <h3 className="font-inter text-[16px] font-semibold"> Confirmation</h3>
-              <hr className="flex-1 border-t border-[#DADADA] ml-2" />
-            </AccordionTrigger>
-            <AccordionContent className="p-6 space-y-4 bg-white text-gray-600 rounded-[10px]">
-              <FormField
-                control={form.control}
-                name="otpTarget"
-                render={({ field }) => (
-                  <FormItem className="space-y-2">
-                    <FormLabel className="text-sm font-medium block">
-                      Select Contact for OTP Verification
+        {!isViewable && (
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full space-y-4"
+            defaultValue="college-info"
+          >
+            <AccordionItem value="confirmation" className="border-b-0">
+              <AccordionTrigger className="w-full items-center">
+                <h3 className="font-inter text-[16px] font-semibold"> Confirmation</h3>
+                <hr className="flex-1 border-t border-[#DADADA] ml-2" />
+              </AccordionTrigger>
+              <AccordionContent className="p-6 space-y-4 bg-white text-gray-600 rounded-[10px]">
+                <FormField
+                  control={form.control}
+                  name="otpTarget"
+                  render={({ field }) => (
+                    <FormItem className="space-y-2">
+                      <FormLabel className="text-sm font-medium block">
+                        Select Contact for OTP Verification
+                      </FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          value={field.value ?? ''}
+                          className="flex flex-col sm:flex-row gap-y-2 gap-x-6 pt-1"
+                        >
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem
+                                value="email"
+                                id="otp-email"
+                                disabled={!studentEmail}
+                              />
+                            </FormControl>
+                            <FormLabel
+                              htmlFor="otp-email"
+                              className={`font-normal text-sm cursor-pointer ${!studentEmail ? 'text-gray-400 cursor-not-allowed' : ''}`}
+                            >
+                              Email: {studentEmail || '(Not Available)'}
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem
+                                value="phone"
+                                id="otp-phone"
+                                disabled={!studentPhone}
+                              />
+                            </FormControl>
+                            <FormLabel
+                              htmlFor="otp-phone"
+                              className={`font-normal text-sm cursor-pointer ${!studentPhone ? 'text-gray-400 cursor-not-allowed' : ''}`}
+                            >
+                              Phone: {studentPhone || '(Not Available)'}
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage className="text-xs pt-1" />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex gap-8 items-stretch">
+                  <div>
+                    <FormLabel htmlFor="otp-display" className="text-sm mb-3 text-gray-600">
+                      Selected Contact
                     </FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value ?? ''}
-                        className="flex flex-col sm:flex-row gap-y-2 gap-x-6 pt-1"
-                      >
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="email" id="otp-email" disabled={!studentEmail} />
-                          </FormControl>
-                          <FormLabel
-                            htmlFor="otp-email"
-                            className={`font-normal text-sm cursor-pointer ${!studentEmail ? 'text-gray-400 cursor-not-allowed' : ''}`}
-                          >
-                            Email: {studentEmail || '(Not Available)'}
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-2 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="phone" id="otp-phone" disabled={!studentPhone} />
-                          </FormControl>
-                          <FormLabel
-                            htmlFor="otp-phone"
-                            className={`font-normal text-sm cursor-pointer ${!studentPhone ? 'text-gray-400 cursor-not-allowed' : ''}`}
-                          >
-                            Phone: {studentPhone || '(Not Available)'}
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage className="text-xs pt-1" />
-                  </FormItem>
-                )}
-              />
+                    <Input
+                      id="otp-display"
+                      readOnly
+                      value={otpDisplayValue}
+                      placeholder="Select Email or Phone above"
+                      className="h-9 text-sm cursor-not-allowed"
+                    />
+                  </div>
 
-              <div className="flex gap-8 items-stretch">
-                <div>
-                  <FormLabel htmlFor="otp-display" className="text-sm mb-3 text-gray-600">
-                    Selected Contact
-                  </FormLabel>
-                  <Input
-                    id="otp-display"
-                    readOnly
-                    value={otpDisplayValue}
-                    placeholder="Select Email or Phone above"
-                    className="h-9 text-sm cursor-not-allowed"
-                  />
+                  <Button
+                    type="button"
+                    onClick={() => {}}
+                    disabled={isOtpSending || !selectedOtpTarget}
+                    className="h-9 text-sm mt-auto"
+                  >
+                    {isOtpSending ? 'Sending...' : 'Send OTP'}
+                  </Button>
                 </div>
-
-                <Button
-                  type="button"
-                  onClick={() => {}}
-                  disabled={isOtpSending || !selectedOtpTarget}
-                  className="h-9 text-sm mt-auto"
-                >
-                  {isOtpSending ? 'Sending...' : 'Send OTP'}
-                </Button>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
 
         {!isViewable && (
           <ConfirmationCheckBox

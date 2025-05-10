@@ -15,8 +15,8 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { CheckCircle2, CheckCircle, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useState, useEffect } from 'react';
-import { format } from 'date-fns';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { format, parse } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { UseFormReturn } from 'react-hook-form';
 import axios from 'axios';
@@ -33,107 +33,130 @@ type Document = {
   type: string;
   status: PhysicalDocumentNoteStatus;
   dueBy?: Date;
+  touched?: boolean;
 };
 
 type DocumentVerificationProps = {
   form: UseFormReturn<any>;
   isViewable?: boolean;
+  onValidationChange?: (isValid: boolean) => void;
+  documentVerificationStatus?: boolean;
 };
-function formatDate(date: Date): string {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
 
-  return `${day}/${month}/${year}`;
-}
-
-const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ form, isViewable }) => {
+const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
+  form,
+  isViewable,
+  onValidationChange,
+  documentVerificationStatus
+}) => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [initialized, setInitialized] = useState(false);
-
+  const [isTouched, setIsTouched] = useState(false);
   const course = form.watch('course');
   const physicalDocumentNote = form.watch('physicalDocumentNote');
 
+  const isValid = useMemo(() => {
+    if (isViewable) return true;
+    return !documents.some(
+      (doc) => doc.status === PhysicalDocumentNoteStatus.PENDING && !doc.dueBy
+    );
+  }, [documents, isViewable, isTouched]);
+
+  const initializeDocuments = useCallback(
+    async (course: string) => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const existingNotes = form.getValues('physicalDocumentNote');
+        if (existingNotes?.length > 0) {
+          setDocuments(
+            existingNotes.map((note: any, index: number) => ({
+              id: `${index + 1}`,
+              type: note.type || '',
+              status: note.status || PhysicalDocumentNoteStatus.PENDING,
+              dueBy: note.dueBy ? parse(note.dueBy, 'dd/MM/yyyy', new Date()) : undefined,
+              touched: false
+            }))
+          );
+          return;
+        }
+
+        const response = await axios.get(
+          `${API_DOMAIN}/course-metadata/${course}/admission-documents`,
+          { withCredentials: true }
+        );
+
+        const docList: string[] = response.data?.DATA?.documentTypeList || [];
+        if (docList.length > 0) {
+          const initialDocs = docList.map((docName, index) => ({
+            id: `${index + 1}`,
+            type: docName,
+            status: PhysicalDocumentNoteStatus.PENDING,
+            dueBy: undefined,
+            touched: false
+          }));
+          setDocuments(initialDocs);
+          form.setValue('physicalDocumentNote', initialDocs);
+        } else {
+          setError('No documents configured for this course');
+        }
+      } catch (error: any) {
+        setError(error.response?.data?.message || error.message || 'Failed to load documents');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [form]
+  );
+
   useEffect(() => {
-    console.log(course, initialized);
-    if (course && !initialized) {
-      initializeDocuments(course);
-    }
-  }, [form, initialized, course, physicalDocumentNote]);
+    if (course) initializeDocuments(course);
+  }, [course, initializeDocuments]);
 
-  const initializeDocuments = async (course: string) => {
-    try {
-      setLoading(true);
-      setError(null);
+  useEffect(() => {
+    onValidationChange?.(isValid);
+  }, [isValid, onValidationChange]);
 
-      const existingNotes = form.getValues('physicalDocumentNote');
-      if (existingNotes?.length > 0) {
-        const mappedDocs = existingNotes.map((note: any, index: number) => ({
-          id: `${index + 1}`,
-          type: note.type || '',
-          status: note.status || PhysicalDocumentNoteStatus.PENDING,
-          dueBy: note.dueBy ? new Date(note.dueBy) : undefined
-        }));
-        setDocuments(mappedDocs);
-        setInitialized(true);
-        return;
-      }
+  const updateDocuments = useCallback(
+    (updater: (prev: Document[]) => Document[]) => {
+      setDocuments((prev) => {
+        const updated = updater(prev);
+        form.setValue(
+          'physicalDocumentNote',
+          updated.map((doc) => ({
+            type: doc.type,
+            status: doc.status,
+            dueBy: doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : undefined
+          }))
+        );
+        return updated;
+      });
+      setIsTouched(true);
+    },
+    [form]
+  );
 
-      const response = await axios.get(
-        `${API_DOMAIN}/course-metadata/${course}/admission-documents`,
-        { withCredentials: true }
+  const handleStatusChange = useCallback(
+    (docId: string, status: PhysicalDocumentNoteStatus) => {
+      updateDocuments((prev) =>
+        prev.map((doc) => (doc.id === docId ? { ...doc, status, touched: true } : doc))
       );
+    },
+    [updateDocuments]
+  );
 
-      const docList: string[] = response.data?.DATA?.documentTypeList || [];
+  const handleDueDateChange = useCallback(
+    (docId: string, date: Date | undefined) => {
+      updateDocuments((prev) =>
+        prev.map((doc) => (doc.id === docId ? { ...doc, dueBy: date, touched: true } : doc))
+      );
+    },
+    [updateDocuments]
+  );
 
-      if (docList.length > 0) {
-        const initialDocs: Document[] = docList.map((docName, index) => ({
-          id: `${index + 1}`,
-          type: docName,
-          status: PhysicalDocumentNoteStatus.PENDING,
-          dueBy: undefined
-        }));
-        setDocuments(initialDocs);
-        updateFormValue(initialDocs);
-      } else {
-        setError('No documents configured for this course');
-      }
-
-      setInitialized(true);
-    } catch (error: any) {
-      setError(error.response?.data?.message || error.message || 'Failed to load documents');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateFormValue = (docs: Document[]) => {
-    const physicalDocumentNote = docs.map((doc) => ({
-      type: doc.type,
-      status: doc.status,
-      dueBy: doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : undefined
-    }));
-    form.setValue('physicalDocumentNote', physicalDocumentNote, {
-      shouldDirty: true,
-      shouldValidate: true
-    });
-  };
-
-  const handleStatusChange = (docId: string, status: PhysicalDocumentNoteStatus) => {
-    const updatedDocs = documents.map((doc) => (doc.id === docId ? { ...doc, status } : doc));
-    setDocuments(updatedDocs);
-    updateFormValue(updatedDocs);
-  };
-
-  const handleDueDateChange = (docId: string, date: Date | undefined) => {
-    const updatedDocs = documents.map((doc) => (doc.id === docId ? { ...doc, dueBy: date } : doc));
-    setDocuments(updatedDocs);
-    updateFormValue(updatedDocs);
-  };
-
-  const getStatusIcon = (status: PhysicalDocumentNoteStatus) => {
+  const getStatusIcon = useCallback((status: PhysicalDocumentNoteStatus) => {
     switch (status) {
       case PhysicalDocumentNoteStatus.VERIFIED:
         return <CheckCircle2 className="ml-2 h-4 w-4 text-green-600" />;
@@ -144,16 +167,25 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ form
       default:
         return null;
     }
+  }, []);
+
+  const renderStatusView = (status: PhysicalDocumentNoteStatus) => {
+    switch (status) {
+      case PhysicalDocumentNoteStatus.VERIFIED:
+        return <span className="text-green-600">Verified</span>;
+      case PhysicalDocumentNoteStatus.NOT_APPLICABLE:
+        return <span className="text-blue-500">Not Applicable</span>;
+      case PhysicalDocumentNoteStatus.PENDING:
+        return <span className="text-yellow-500">Pending</span>;
+      default:
+        return null;
+    }
   };
 
   if (loading) return <div className="py-4 text-gray-500">Loading document verification...</div>;
   if (error) return <div className="py-4 text-red-500">{error}</div>;
   if (documents.length === 0)
-    return (
-      <div className="py-4 text-gray-500">
-        No documents to verify. Please check course configuration.
-      </div>
-    );
+    return <div className="py-4 text-gray-500">No documents to verify.</div>;
 
   return (
     <Accordion
@@ -174,61 +206,82 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ form
                 {doc.type.replace(/_/g, ' ')}
               </div>
               <div className="flex flex-row items-center">
-                <div className="flex items-center">
-                  <Select
-                    disabled={isViewable}
-                    value={doc.status}
-                    onValueChange={(value) =>
-                      handleStatusChange(doc.id, value as PhysicalDocumentNoteStatus)
-                    }
-                  >
-                    <SelectTrigger className="w-[400px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value={PhysicalDocumentNoteStatus.VERIFIED}>Verified</SelectItem>
-                      <SelectItem value={PhysicalDocumentNoteStatus.PENDING}>Pending</SelectItem>
-                      <SelectItem value={PhysicalDocumentNoteStatus.NOT_APPLICABLE}>
-                        Not Applicable
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {getStatusIcon(doc.status)}
-                </div>
+                {isViewable ? (
+                  <div className="flex items-center w-[400px]">
+                    {renderStatusView(doc.status)}
+                    {getStatusIcon(doc.status)}
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <Select
+                      value={doc.status}
+                      onValueChange={(value) =>
+                        handleStatusChange(doc.id, value as PhysicalDocumentNoteStatus)
+                      }
+                    >
+                      <SelectTrigger className="w-[400px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value={PhysicalDocumentNoteStatus.VERIFIED}>
+                          Verified
+                        </SelectItem>
+                        <SelectItem value={PhysicalDocumentNoteStatus.PENDING}>Pending</SelectItem>
+                        <SelectItem value={PhysicalDocumentNoteStatus.NOT_APPLICABLE}>
+                          Not Applicable
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {getStatusIcon(doc.status)}
+                  </div>
+                )}
                 <div>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className={cn(
-                          'ml-5 w-[200px] justify-start text-left font-normal',
-                          !doc.dueBy && 'text-muted-foreground',
-                          doc.status !== PhysicalDocumentNoteStatus.PENDING &&
-                            'cursor-not-allowed opacity-60'
-                        )}
-                        disabled={isViewable || doc.status !== PhysicalDocumentNoteStatus.PENDING}
-                      >
-                        {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : 'Pick a due date'}
-                      </Button>
-                    </PopoverTrigger>
-                    {doc.status === PhysicalDocumentNoteStatus.PENDING && (
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={doc.dueBy}
-                          onSelect={(date) => handleDueDateChange(doc.id, date)}
-                          disabled={(date) =>
-                            isViewable || date < new Date(new Date().setHours(0, 0, 0, 0))
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    )}
-                  </Popover>
+                  {isViewable ? (
+                    <div className="ml-5 w-[200px] text-left">
+                      {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : '-'}
+                    </div>
+                  ) : (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            'ml-5 w-[200px] justify-start text-left font-normal',
+                            !doc.dueBy && 'text-muted-foreground',
+                            doc.status !== PhysicalDocumentNoteStatus.PENDING &&
+                              'cursor-not-allowed opacity-60'
+                          )}
+                          disabled={doc.status !== PhysicalDocumentNoteStatus.PENDING}
+                        >
+                          {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : 'Pick a due date'}
+                        </Button>
+                      </PopoverTrigger>
+                      {doc.status === PhysicalDocumentNoteStatus.PENDING && (
+                        <PopoverContent className="w-auto p-0">
+                          <Calendar
+                            mode="single"
+                            selected={doc.dueBy}
+                            onSelect={(date) => handleDueDateChange(doc.id, date)}
+                            disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      )}
+                    </Popover>
+                  )}
                 </div>
               </div>
+              {/* {!isViewable &&
+                doc.touched &&
+                doc.status === PhysicalDocumentNoteStatus.PENDING &&
+                !doc.dueBy && (
+                  <p className="text-red-500 text-sm">Due date is required for pending documents</p>
+                )} */}
             </div>
           ))}
+          {!documentVerificationStatus && (
+            <div className="text-red-500 text-sm">Set due dates for all pending documents</div>
+          )}
         </AccordionContent>
       </AccordionItem>
     </Accordion>

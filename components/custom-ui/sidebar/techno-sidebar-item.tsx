@@ -26,7 +26,7 @@ export default function TechnoSidebarItem({
 
   useEffect(() => {
     const checkScreenSize = () => {
-      setIsLargeScreen(window.innerWidth >= 1024);
+      setIsLargeScreen(window.innerWidth >= 1025);
     };
 
     checkScreenSize();
