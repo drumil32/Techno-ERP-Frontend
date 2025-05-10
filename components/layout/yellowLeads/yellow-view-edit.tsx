@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { CalendarIcon, Loader2, Pencil } from 'lucide-react';
+import { CalendarIcon, Loader2, Pencil, Save, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { Course, Gender, Locations, UserRoles } from '@/types/enum';
@@ -75,10 +75,19 @@ export default function YellowLeadViewEdit({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [changedFields, setChangedFields] = useState<Set<string>>(new Set());
   const { hasRole } = useAuthStore();
+
+  const [newRemark, setNewRemark] = useState('');
+  const [editingRemarkIndex, setEditingRemarkIndex] = useState<number | null>(null);
+  const [editRemarkValue, setEditRemarkValue] = useState('');
+
   useEffect(() => {
     if (data) {
-      setFormData(data);
-      setOriginalData(data);
+      const formattedData = {
+        ...data,
+        remarks: Array.isArray(data.remarks) ? data.remarks : data.remarks ? [data.remarks] : []
+      };
+      setFormData(formattedData);
+      setOriginalData(formattedData);
     }
   }, [data]);
 
@@ -251,11 +260,73 @@ export default function YellowLeadViewEdit({
       'leadTypeModifiedDate'
     ];
 
-    return allowedFields.some((field: any) => {
+    return allowedFields.some((field) => {
       const origValue = originalData[field] || '';
       const newValue = formData[field] || '';
+
+      if (field === 'remarks') {
+        const origRemarks = Array.isArray(originalData.remarks) ? originalData.remarks : [];
+        const newRemarks = Array.isArray(formData.remarks) ? formData.remarks : [];
+
+        if (origRemarks.length !== newRemarks.length) return true;
+        return origRemarks.some((remark, index) => remark !== newRemarks[index]);
+      }
+
       return origValue !== newValue;
     });
+  };
+
+  // Add remark
+  const handleAddRemark = () => {
+    if (!newRemark.trim()) return;
+
+    if (formData) {
+      const updatedRemarks = [...(formData.remarks || []), newRemark.trim()];
+      setFormData({
+        ...formData,
+        remarks: updatedRemarks
+      });
+      validateField('remarks', updatedRemarks);
+      setNewRemark('');
+    }
+  };
+
+  // Handle editing a remark
+  const startEditRemark = (index: number) => {
+    if (formData && formData.remarks && formData.remarks[index]) {
+      setEditingRemarkIndex(index);
+      setEditRemarkValue(formData.remarks[index]);
+    }
+  };
+
+  // Save edited remark
+  const saveEditedRemark = () => {
+    if (editingRemarkIndex === null || !formData) return;
+
+    const updatedRemarks = [...(formData.remarks || [])];
+    updatedRemarks[editingRemarkIndex] = editRemarkValue.trim();
+
+    setFormData({
+      ...formData,
+      remarks: updatedRemarks
+    });
+    validateField('remarks', updatedRemarks);
+    setEditingRemarkIndex(null);
+    setEditRemarkValue('');
+  };
+
+  // Delete remark from the list
+  const deleteRemark = (index: number) => {
+    if (!formData) return;
+
+    const updatedRemarks = [...(formData.remarks || [])];
+    updatedRemarks.splice(index, 1);
+
+    setFormData({
+      ...formData,
+      remarks: updatedRemarks
+    });
+    validateField('remarks', updatedRemarks);
   };
 
   const handleSubmit = async () => {
@@ -392,8 +463,7 @@ export default function YellowLeadViewEdit({
             <p>-</p>
           )}
         </div>
-        {
-          hasRole(UserRoles.LEAD_MARKETING) &&
+        {hasRole(UserRoles.LEAD_MARKETING) && (
           <div className="flex gap-2">
             <p className="w-1/4 text-[#666666]">Assigned To</p>
             <p>
@@ -401,7 +471,7 @@ export default function YellowLeadViewEdit({
                 '-'}
             </p>
           </div>
-        }
+        )}
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Follow-ups</p>
           <p>{formData.yellowLeadsFollowUpCount ?? '-'}</p>
@@ -429,10 +499,10 @@ export default function YellowLeadViewEdit({
   // Render edit view
   const EditView = (
     <>
-      <div className='flex flex-row gap-2 items-center'>
+      <div className="flex flex-row gap-2 items-center">
         <div className="flex flex-col gap-2 w-1/3">
           <EditLabel htmlFor="ltcDate" title={'LTC Date'} />
-          <p className='h-9'>{formatTimeStampView(data.leadTypeModifiedDate)}</p>
+          <p className="h-9">{formatTimeStampView(data.leadTypeModifiedDate)}</p>
         </div>
 
         <div className="space-y-2 w-2/3">
@@ -658,7 +728,7 @@ export default function YellowLeadViewEdit({
         </div>
       </div>
 
-      <div className="space-y-2">
+      {/* <div className="space-y-2">
         <EditLabel htmlFor="remarks" title={'Remarks'} />
         <textarea
           id="remarks"
@@ -668,9 +738,91 @@ export default function YellowLeadViewEdit({
           className="w-full min-h-20 px-3 py-2 border rounded-[5px]"
           placeholder="Enter remarks here"
         />
+      </div> */}
+
+      <div className="space-y-2 max-w-2xl mx-auto">
+        <EditLabel htmlFor="remarks" title={'Remarks'} />
+
+        <div className="space-y-3 mb-4">
+          {/* Add new remark */}
+          <div className="border rounded-md p-2 flex items-center gap-2">
+            <div className="bg-blue-100 px-3 py-1 rounded-md text-sm text-blue-600 min-w-24 flex justify-center">
+              Remark {(formData.remarks?.length ?? 0) + 1}:
+            </div>
+            <Input
+              placeholder="Add your remarks"
+              value={newRemark}
+              onChange={(e) => setNewRemark(e.target.value)}
+              className="rounded-md flex-1 border-none px-2 shadow-none"
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAddRemark}
+              disabled={!newRemark.trim()}
+            >
+              Add
+            </Button>
+          </div>
+
+          {/* Display existing remarks with edit options */}
+          {formData.remarks && formData.remarks.length > 0 ? (
+            [...formData.remarks].reverse().map((remark, reversedIndex) => {
+              const actualIndex = formData.remarks.length - 1 - reversedIndex;
+              return (
+                <div key={actualIndex} className="border rounded-md p-2 flex items-center gap-2">
+                  {editingRemarkIndex === actualIndex ? (
+                    <>
+                      <div className="bg-blue-100 px-3 py-1 rounded-md text-sm text-blue-600 min-w-24 flex justify-center">
+                        Remark {actualIndex + 1}:
+                      </div>
+                      <Input
+                        value={editRemarkValue}
+                        onChange={(e) => setEditRemarkValue(e.target.value)}
+                        className="rounded-md flex-1 border-none px-2 shadow-none"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={saveEditedRemark}
+                        disabled={!editRemarkValue.trim()}
+                      >
+                        <Save className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => setEditingRemarkIndex(null)}>
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="bg-blue-100 px-3 py-1 rounded-md text-sm text-blue-600 min-w-24 flex justify-center">
+                        Remark {actualIndex + 1 }:
+                      </div>
+                      <p className="flex-1 text-sm">{remark}</p>
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => startEditRemark(actualIndex)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => deleteRemark(actualIndex)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })
+          ) : (
+            <p className="text-gray-500 italic">No remarks added yet</p>
+          )}
+        </div>
       </div>
 
-      {hasRole(UserRoles.LEAD_MARKETING) &&
+      {hasRole(UserRoles.LEAD_MARKETING) && (
         <div className="space-y-2 w-full">
           <EditLabel htmlFor="assignedTo" title="Assigned To" />
           <Popover>
@@ -764,7 +916,7 @@ export default function YellowLeadViewEdit({
             </PopoverContent>
           </Popover>
         </div>
-      }
+      )}
     </>
   );
 

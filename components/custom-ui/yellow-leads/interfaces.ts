@@ -15,7 +15,7 @@ export interface YellowLead {
   footFall: boolean;
   finalConversion: FinalConversionStatus;
   yellowLeadsFollowUpCount:number;
-  remarks: string;
+  remarks: string[];
   createdAt: string; // ISO Date string
   updatedAt: string; // ISO Date string
   __v: number;
