@@ -19,7 +19,8 @@ interface Subject {
   subjectCode: string,
   instructorName: string,
   instructorId: string,
-  numberOfLectures: number
+  numberOfLectures: number,
+  disabled? : boolean
 }
 
 interface SubjectInformation {
@@ -123,6 +124,7 @@ export const SingleCoursePage = () => {
   console.log("Subject information is : ", subjects);
   subjects.forEach((subject, index) => {
     subject.serialNo = index + 1;
+    subject.disabled = !subject.instructorName?.trim();
   });
 
 
@@ -211,7 +213,14 @@ export const SingleCoursePage = () => {
     { accessorKey: 'serialNo', header: 'S. No' },
     { accessorKey: 'subjectName', header: 'Subject Name' },
     { accessorKey: 'subjectCode', header: 'Subject Code' },
-    { accessorKey: 'instructorName', header: 'Instructor' },
+    {
+      accessorKey: 'instructorName',
+      header: 'Instructor',
+      cell: ({ row }: any) => {
+        const instructor = row.original.instructorName;
+        return instructor?.trim() ? instructor : '--';
+      }
+    },    
     { accessorKey: 'numberOfLectures', header: 'No. of Lectures' },
     {
       id: 'actions',

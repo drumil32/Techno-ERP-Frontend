@@ -277,7 +277,12 @@ export default function TechnoDataTableAdvanced({
         {/* Edit Button, always on top */}
         <div className="flex items-center space-x-2 ml-auto" >
           {showEditButton && (
-            <Button variant="outline" className="btnLabelAdd h-8" onClick={handleEditToggle} disabled={addingRow || editing} >
+            <Button
+              variant="outline"
+              className="btnLabelAdd h-8"
+              onClick={handleEditToggle}
+              disabled={!data || data.length === 0 || addingRow || editing}
+            >
               <Edit2 className="mr-1 h-4 w-4" /> Edit
             </Button>
           )}
@@ -527,6 +532,7 @@ export default function TechnoDataTableAdvanced({
                       );
                     })}
                   </TableRow>
+
                 ))}
                 {/* Here */}
               </>
