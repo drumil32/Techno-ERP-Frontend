@@ -93,8 +93,6 @@ export default function LeadViewEdit({
   const { hasRole } = useAuthStore();
 
   const [newRemark, setNewRemark] = useState('');
-  const [editingRemarkIndex, setEditingRemarkIndex] = useState<number | null>(null);
-  const [editRemarkValue, setEditRemarkValue] = useState('');
 
   useEffect(() => {
     if (data) {
@@ -227,6 +225,14 @@ export default function LeadViewEdit({
     validateField(name, value);
   };
 
+  const handleExistingRemarkChange = (index: number, value: string) => {
+    if (!formData) return;
+    const updatedRemarks = [...formData.remarks];
+    updatedRemarks[index] = value;
+    setFormData((prev) => (prev ? { ...prev, remarks: updatedRemarks } : null));
+    validateField('remarks', updatedRemarks);
+  };
+
   const handleSelectChange = (name: string, value: string | string[]) => {
     setFormData((prev) => (prev ? { ...prev, [name]: value } : null));
     validateField(name, value);
@@ -246,59 +252,6 @@ export default function LeadViewEdit({
     setIsCalendarOpen(false);
   };
 
-  // Add remark
-  const handleAddRemark = () => {
-    if (!newRemark.trim()) return;
-
-    if (formData) {
-      const updatedRemarks = [...(formData.remarks || []), newRemark.trim()];
-      setFormData({
-        ...formData,
-        remarks: updatedRemarks
-      });
-      validateField('remarks', updatedRemarks);
-      setNewRemark('');
-    }
-  };
-
-  // Handle editing a remark
-  const startEditRemark = (index: number) => {
-    if (formData && formData.remarks && formData.remarks[index]) {
-      setEditingRemarkIndex(index);
-      setEditRemarkValue(formData.remarks[index]);
-    }
-  };
-
-  // Save edited remark
-  const saveEditedRemark = () => {
-    if (editingRemarkIndex === null || !formData) return;
-
-    const updatedRemarks = [...(formData.remarks || [])];
-    updatedRemarks[editingRemarkIndex] = editRemarkValue.trim();
-
-    setFormData({
-      ...formData,
-      remarks: updatedRemarks
-    });
-    validateField('remarks', updatedRemarks);
-    setEditingRemarkIndex(null);
-    setEditRemarkValue('');
-  };
-
-  // Delete remark from the list
-  const deleteRemark = (index: number) => {
-    if (!formData) return;
-
-    const updatedRemarks = [...(formData.remarks || [])];
-    updatedRemarks.splice(index, 1);
-
-    setFormData({
-      ...formData,
-      remarks: updatedRemarks
-    });
-    validateField('remarks', updatedRemarks);
-  };
-
   const parseDateString = (dateString?: string): Date | undefined => {
     if (!dateString) return undefined;
     try {
@@ -311,6 +264,7 @@ export default function LeadViewEdit({
 
   const hasChanges = () => {
     if (!formData || !originalData) return false;
+    if (newRemark) return true;
 
     const allowedFields = [
       'name',
@@ -380,6 +334,11 @@ export default function LeadViewEdit({
       const filteredData = Object.fromEntries(
         Object.entries(formData).filter(([key]) => allowedFields.includes(key))
       );
+
+      if (newRemark) {
+        filteredData.remarks.push(newRemark);
+        setNewRemark('');
+      }
 
       let { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
       toBeUpdatedData = removeNullValues(toBeUpdatedData);
@@ -576,9 +535,7 @@ export default function LeadViewEdit({
             <SelectContent>
               {Object.values(Gender).map((gender) => (
                 <SelectItem key={gender} value={gender}>
-                  <span className={inputStyle}>
-                  {toPascal(gender)}
-                  </span>
+                  <span className={inputStyle}>{toPascal(gender)}</span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -695,9 +652,7 @@ export default function LeadViewEdit({
             <SelectContent>
               {Array.from({ length: formData?.leadsFollowUpCount! + 2 }, (_, i) => (
                 <SelectItem key={i} value={i.toString()}>
-                  <span className='font-medium'>
-                  {i.toString().padStart(2, '0')}
-                  </span>
+                  <span className="font-medium">{i.toString().padStart(2, '0')}</span>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -719,84 +674,37 @@ export default function LeadViewEdit({
 
       <div className="space-y-2 max-w-2xl mx-auto">
         <EditLabel htmlFor="remarks" title={'Remarks'} />
-
-        <div className="space-y-3 mb-4">
-          {/* Add new remark */}
-          <div className="border rounded-md p-2 flex items-center gap-2">
-            <div className="bg-blue-100 px-3 py-1 rounded-md text-sm text-blue-600 min-w-24 flex justify-center">
-              Remark {(formData.remarks?.length ?? 0) + 1}:
-            </div>
-            <Input
-              placeholder="Add your remarks"
-              value={newRemark}
-              onChange={(e) => setNewRemark(e.target.value)}
-              className="rounded-md flex-1 border-none px-2 shadow-none"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleAddRemark}
-              disabled={!newRemark.trim()}
-            >
-              Add
-            </Button>
+        <div className="flex items-center gap-2 p-2 border border-gray-300 rounded-[5px]">
+          <div className="bg-blue-100 px-3 py-1 rounded-md text-sm text-blue-600 min-w-24 flex justify-center h-7">
+            Remark {(formData.remarks?.length ?? 0) + 1}:
           </div>
-
-          {/* Display existing remarks with edit options */}
-          {formData.remarks && formData.remarks.length > 0 ? (
-            [...formData.remarks].reverse().map((remark, reversedIndex) => {
-              const actualIndex = formData.remarks.length - 1 - reversedIndex;
-              return (
-                <div key={actualIndex} className="border rounded-md p-2 flex items-center gap-2">
-                  {editingRemarkIndex === actualIndex ? (
-                    <>
-                      <div className="bg-blue-100 px-3 py-1 rounded-md text-sm text-blue-600 min-w-24 flex justify-center">
-                        Remark {actualIndex + 1}:
-                      </div>
-                      <Input
-                        value={editRemarkValue}
-                        onChange={(e) => setEditRemarkValue(e.target.value)}
-                        className="rounded-md flex-1 border-none px-2 shadow-none"
-                      />
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={saveEditedRemark}
-                        disabled={!editRemarkValue.trim()}
-                      >
-                        <Save className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="sm" onClick={() => setEditingRemarkIndex(null)}>
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="bg-blue-100 px-3 py-1 rounded-md text-sm text-blue-600 min-w-24 flex justify-center">
-                        Remark {actualIndex + 1 }:
-                      </div>
-                      <p className="flex-1 text-sm">{remark}</p>
-                      <div className="flex gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => startEditRemark(actualIndex)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => deleteRemark(actualIndex)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              );
-            })
-          ) : (
-            <p className="text-gray-500 italic">No remarks added yet</p>
-          )}
+          <Input
+            placeholder="Add your remarks"
+            value={newRemark}
+            onChange={(e) => setNewRemark(e.target.value)}
+            className="rounded-md flex-1 border-none px-2 shadow-none font-medium"
+          />
         </div>
+        {formData.remarks && formData.remarks.length > 0 ? (
+          [...formData.remarks].reverse().map((remark, reversedIndex) => {
+            const actualIndex = formData.remarks.length - 1 - reversedIndex
+            return (
+              <div className="flex items-center gap-2 p-2 border border-gray-300 rounded-[5px]" key={actualIndex}>
+                <div className="bg-blue-100 px-3 py-1 rounded-md text-sm text-blue-600 min-w-24 flex justify-center h-7">
+                  Remark {actualIndex + 1}:
+                </div>
+                <Input
+                  placeholder="Add your remarks"
+                  value={formData.remarks[actualIndex] || ''}
+                  onChange={(e) => handleExistingRemarkChange(actualIndex, e.target.value)}
+                  className="rounded-md flex-1 border-none px-2 shadow-none font-medium"
+                />
+              </div>
+            );
+          })
+        ) : (
+          <p className="text-gray-500 italic">No remarks added yet</p>
+        )}
       </div>
 
       {hasRole(UserRoles.LEAD_MARKETING) && (
@@ -896,8 +804,10 @@ export default function LeadViewEdit({
       )}
 
       <div className="flex flex-col gap-2">
-        <EditLabel className="text-[#666666]" title='Last Modified Date'/>
-        <p className='font-medium'>{formatTimeStampView(formData.leadTypeModifiedDate) ?? 'Not Provided'}</p>
+        <EditLabel className="text-[#666666]" title="Last Modified Date" />
+        <p className="font-medium">
+          {formatTimeStampView(formData.leadTypeModifiedDate) ?? 'Not Provided'}
+        </p>
       </div>
     </>
   );
