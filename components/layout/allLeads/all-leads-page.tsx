@@ -724,19 +724,35 @@ function TableActionButton() {
       const response = await fetch(API_ENDPOINTS.downloadMarketingData, {
         method: 'GET',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
       });
-      const data = await response.json();
-      if (response.ok && data.SUCCESS) {
-        toast.success(data.MESSAGE || 'Marketing Data Downloaded Successfully');
-        setDownloadOpen(false);
-      } else {
-        throw new Error(data.ERROR || data.MESSAGE);
+  
+      if (!response.ok) {
+        try {
+          const errorData = await response.json();
+          throw new Error(errorData.ERROR || errorData.MESSAGE || 'Download failed');
+        } catch {
+          throw new Error('Download failed');
+        }
       }
+  
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+  
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'leads.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+  
+      toast.success('Marketing Data Downloaded Successfully');
+      setDownloadOpen(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Download failed');
     }
   };
+  
 
   const isUploadDisabled = !hasRole(UserRoles.LEAD_MARKETING);
   const isDownloadDisabled = !hasRole(UserRoles.EMPLOYEE_MARKETING) &&
