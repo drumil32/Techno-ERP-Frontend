@@ -678,7 +678,7 @@ export const SingleSubjectPage = () => {
         showPagination={false}
         selectedRowId={selectedRowId}
         setSelectedRowId={setSelectedRowId}
-        visibleRows={5}
+        visibleRows={lecturePlan.length + 2 < 5 ? lecturePlan.length + 3 : 7}
         showAddButton={true}
         showEditButton={true}
         addButtonPlacement={'bottom'}
@@ -725,7 +725,7 @@ export const SingleSubjectPage = () => {
         showPagination={false}
         selectedRowId={selectedRowId}
         setSelectedRowId={setSelectedRowId}
-        visibleRows={5}
+        visibleRows={practicalPlan.length + 2 < 5 ? practicalPlan.length + 3 : 7}
         showAddButton={true}
         showEditButton={true}
         addButtonPlacement={'bottom'}

@@ -95,7 +95,7 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
   });
   
   const instructors: Instructor[] = instructorsQuery.data as Instructor[] || [];
-  console.log("Instructors info : ", instructors)
+  // console.log("Instructors info : ", instructors)
   const instructorsInfo = formatInstructors(instructors);
 
   useEffect(() => {
@@ -198,7 +198,7 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
 
 
   const handleFormSubmit = (data: FormData) => {
-    console.log("Form Data:", data);
+    // console.log("Form Data:", data);
 
     // const matchedDepartment = departments.find(
     //   (dep) =>
@@ -224,7 +224,7 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
       semesterId: data.semesterId
     }
 
-    console.log("Created Request Object:", requestObject);
+    // console.log("Created Request Object:", requestObject);
 
     createSubjectMutation.mutate(requestObject);
   };
