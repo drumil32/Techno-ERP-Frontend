@@ -109,9 +109,21 @@ export const SingleSubjectPage = () => {
 
   const [materials, setMaterials] = useState([{}]);
   const [refreshKey, setRefreshKey] = useState(0);
-  const [search, setSearch] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  // const [search, setSearch] = useState('');
+  // const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  const [lectureSearch, setLectureSearch] = useState('');
+  const [practicalSearch, setPracticalSearch] = useState('');
+  const [debouncedLectureSearch, setDebouncedLectureSearch] = useState('');
+  const [debouncedPracticalSearch, setDebouncedPracticalSearch] = useState('');
+  const lectureSearchTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const practicalSearchTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [fullSchedule, setFullSchedule] = useState<ScheduleApiResponse | null>(null);
+  const [filteredLecturePlan, setFilteredLecturePlan] = useState<Plan[]>([]);
+  const [filteredPracticalPlan, setFilteredPracticalPlan] = useState<Plan[]>([]);
+
   const [showDocumentUploader, setShowDocumentUploader] = useState(false);
+
   const [deletePlanInfo, setDeletePlanInfo] = useState<{
     planId: string;
     type: 'LPlan' | 'PPlan';
@@ -144,8 +156,6 @@ export const SingleSubjectPage = () => {
   } | null>(null);
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-
-  const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleFileAccepted = (files: File[]) => {
     console.log('Accepted files:', files);
@@ -421,25 +431,42 @@ export const SingleSubjectPage = () => {
     }
   };
 
-  const handleSearch = (value: string) => {
-    setSearch(value);
+  const handleLectureSearch = (value: string) => {
+    setLectureSearch(value);
 
-    if (searchTimerRef.current) {
-      clearTimeout(searchTimerRef.current);
+    if (lectureSearchTimerRef.current) {
+      clearTimeout(lectureSearchTimerRef.current);
     }
 
-    searchTimerRef.current = setTimeout(() => {
-      setDebouncedSearch(value);
+    lectureSearchTimerRef.current = setTimeout(() => {
+      setDebouncedLectureSearch(value);
     }, 500);
   };
 
+  const handlePracticalSearch = (value: string) => {
+    setPracticalSearch(value);
+
+    if (practicalSearchTimerRef.current) {
+      clearTimeout(practicalSearchTimerRef.current);
+    }
+
+    practicalSearchTimerRef.current = setTimeout(() => {
+      setDebouncedPracticalSearch(value);
+    }, 500);
+  };
+
+
   useEffect(() => {
     return () => {
-      if (searchTimerRef.current) {
-        clearTimeout(searchTimerRef.current);
+      if (lectureSearchTimerRef.current) {
+        clearTimeout(lectureSearchTimerRef.current);
+      }
+      if (practicalSearchTimerRef.current) {
+        clearTimeout(practicalSearchTimerRef.current);
       }
     };
   }, []);
+
 
   const addLecturePlan = () => {
     console.log('Adding lecture plan!');
@@ -448,27 +475,36 @@ export const SingleSubjectPage = () => {
 
   const getQueryParams = () => {
     const params: { [key: string]: any } = {
-      courseId: courseId,
-      semesterId: semesterId,
-      subjectId: subjectId,
-      instructorId: instructorId,
-      search: debouncedSearch,
+      courseId,
+      semesterId,
+      subjectId,
+      instructorId,
       refreshKey
     };
-
     return params;
   };
 
   const filterParams = getQueryParams();
-  console.log('Filter params : ', filterParams);
+
   const subjectQuery = useQuery({
-    queryKey: ['scheduleInfo', filterParams, debouncedSearch],
+    queryKey: ['scheduleInfo', filterParams],
     queryFn: fetchSchedule,
     placeholderData: (previousData) => previousData,
-    enabled: true
+    enabled: true,
   });
 
+
   const scheduleResponse: ScheduleApiResponse = (subjectQuery.data as ScheduleApiResponse) || {};
+
+  useEffect(() => {
+    if (subjectQuery.isSuccess) {
+      setFullSchedule(subjectQuery.data as ScheduleApiResponse);
+    }
+  }, [subjectQuery.data]);
+
+
+  // setFullSchedule(scheduleResponse);
+
   console.log(scheduleResponse);
   let schedule = scheduleResponse?.schedule || [];
 
@@ -478,9 +514,37 @@ export const SingleSubjectPage = () => {
 
   console.log('Practical Plan : ', practicalPlan);
   console.log('Lecture Plan is : ', lecturePlan);
+  useEffect(() => {
+    if (fullSchedule) {
+      let schedule = fullSchedule.schedule || [];
+
+      const filteredLecturePlans = schedule?.lecturePlan?.filter((plan) =>
+        plan.topicName.toLowerCase().includes(debouncedLectureSearch.toLowerCase())
+      );
+
+      const filteredPracticalPlans = schedule?.practicalPlan?.filter((plan) =>
+        plan.topicName.toLowerCase().includes(debouncedPracticalSearch.toLowerCase())
+      );
+
+      setFilteredLecturePlan(filteredLecturePlans || []);
+      setFilteredPracticalPlan(filteredPracticalPlans || []);
+    }
+  }, [debouncedLectureSearch, debouncedPracticalSearch, fullSchedule]);
+
+  useEffect(() => {
+    return () => {
+      if (lectureSearchTimerRef.current) {
+        clearTimeout(lectureSearchTimerRef.current);
+      }
+      if (practicalSearchTimerRef.current) {
+        clearTimeout(practicalSearchTimerRef.current);
+      }
+    };
+  }, []);
+
   const documentMaterials = prepareSubjectMaterial(
-    lecturePlan,
-    practicalPlan,
+    filteredLecturePlan,
+    filteredPracticalPlan,
     additionalResources,
     courseId!,
     semesterId!,
@@ -489,12 +553,12 @@ export const SingleSubjectPage = () => {
   );
   console.log('Document Materials are : ', documentMaterials);
   // setMaterials(documentMaterials);
-  lecturePlan = (schedule?.lecturePlan || []).map((plan) => ({
+  const lecturePlanWithAttendance = filteredLecturePlan.map((plan) => ({
     ...plan,
     attendance: calculateAttendance(plan)
   }));
 
-  practicalPlan = (schedule?.practicalPlan || []).map((plan) => ({
+  const practicalPlanWithAttendance = filteredPracticalPlan.map((plan) => ({
     ...plan,
     attendance: calculateAttendance(plan)
   }));
@@ -670,10 +734,10 @@ export const SingleSubjectPage = () => {
 
       <TechnoDataTableAdvanced
         columns={getColumns('LPlan')}
-        data={lecturePlan}
+        data={lecturePlanWithAttendance}
         tableName="Lecture Plan"
-        onSearch={handleSearch}
-        searchTerm={search}
+        onSearch={handleLectureSearch}
+        searchTerm={lectureSearch}
         handleViewMore={handleViewMore}
         showPagination={false}
         selectedRowId={selectedRowId}
@@ -717,10 +781,10 @@ export const SingleSubjectPage = () => {
 
       <TechnoDataTableAdvanced
         columns={getColumns('PPlan')}
-        data={practicalPlan}
+        data={practicalPlanWithAttendance}
         tableName="Practical Plan"
-        onSearch={handleSearch}
-        searchTerm={search}
+        onSearch={handlePracticalSearch}
+        searchTerm={practicalSearch}
         handleViewMore={handleViewMore}
         showPagination={false}
         selectedRowId={selectedRowId}
