@@ -89,9 +89,6 @@ export default function AllLeadsPage() {
     if (column === 'dateView') {
       column = 'date';
     }
-    if (column === 'yellowLeadsFollowUpCount') {
-      column = 'yellowLeadsFollowUpCount';
-    }
 
     setSortState({
       ...sortState,

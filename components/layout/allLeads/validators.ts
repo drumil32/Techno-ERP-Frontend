@@ -15,6 +15,7 @@ export const leadMasterSchema = z.object({
   date: z.date(),
   source: z.nativeEnum(Marketing_Source).optional(),
   schoolName: z.string().optional(),
+  degree: z.string().optional(),
   name: z
     .string()
     .optional(),

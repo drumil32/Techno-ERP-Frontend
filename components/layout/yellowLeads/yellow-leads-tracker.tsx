@@ -62,9 +62,6 @@ export default function YellowLeadsTracker() {
     if (column === 'dateView') {
       column = 'date';
     }
-    if (column === 'dateView') {
-      column = 'date';
-    }
 
     setSortState({
       ...sortState,

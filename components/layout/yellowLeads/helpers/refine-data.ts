@@ -34,6 +34,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       courseView: lead.course ?? '-',
       footFall: lead.footFall,
       schoolName: lead.schoolName,
+      degree: lead.degree,
       finalConversion:
         FinalConversionStatus[lead.finalConversion as keyof typeof FinalConversionStatus] ??
         lead.finalConversion,
