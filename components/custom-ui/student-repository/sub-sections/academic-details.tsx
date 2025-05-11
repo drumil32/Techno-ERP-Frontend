@@ -1,5 +1,5 @@
 // React and third-party libraries
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FieldValues, UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -18,6 +18,8 @@ import { Check, Pencil } from 'lucide-react';
 // Utility functions and schemas
 import { handleNumericInputChange, toPascal } from '@/lib/utils';
 import { updateStudentDetailsRequestSchema } from '../helpers/schema';
+import { EducationLevel } from '@/types/enum';
+import { academicDetailsArraySchema } from '../../enquiry-form/schema/schema';
 
 interface AcademicDetailsFormPropInterface<T extends FieldValues = FieldValues> {
   form: UseFormReturn<z.infer<typeof updateStudentDetailsRequestSchema>>;
@@ -48,6 +50,44 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
       <div className="h-5"></div>
     </div>
   );
+
+    const prevValuesRef = useRef<z.infer<typeof academicDetailsArraySchema>>([]);
+  
+    const educationLevels = [EducationLevel.Tenth, EducationLevel.Twelfth, EducationLevel.Graduation];
+  
+    useEffect(() => {
+      const subscription = form.watch((values) => {
+        const prevValues = prevValuesRef.current;
+        
+        values.academicDetails?.forEach((entry, index) => {
+          if (entry) {
+            const allFilled =
+              (entry.schoolCollegeName &&
+                entry.universityBoardName &&
+                entry.passingYear &&
+                entry.percentageObtained &&
+                entry.subjects) ||
+              entry.subjects === undefined;
+  
+            const expectedLevel = educationLevels[index];
+  
+            if (
+              allFilled &&
+              entry.educationLevel !== expectedLevel &&
+              prevValues[index]?.educationLevel !== expectedLevel
+            ) {
+              form.setValue(`academicDetails.${index}.educationLevel`, expectedLevel);
+            }
+  
+            if (entry.educationLevel) {
+              prevValues[index] = entry as z.infer<typeof academicDetailsArraySchema>[number];
+            }
+          }
+        });
+      });
+  
+      return () => subscription.unsubscribe();
+    }, []);
 
   return (
     <Accordion type="single" collapsible defaultValue="address-details">

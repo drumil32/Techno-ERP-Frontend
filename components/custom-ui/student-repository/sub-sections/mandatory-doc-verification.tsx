@@ -24,6 +24,8 @@ import { Document, StudentData } from '../helpers/interface';
 import { PhysicalDocumentNoteStatus } from '../helpers/enum';
 import { updateStudentDocuments } from '../helpers/api';
 import { toast } from 'sonner';
+import { requestDateSchema } from '@/common/constants/schemas';
+import { formatDisplayDate } from '../../enquiry-form/stage-2/student-fees-form';
 
 interface DocumentVerificationProps {
   studentData: StudentData;
@@ -57,7 +59,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
       if (existingNotes?.length > 0) {
         const mappedDocs = existingNotes.map((note: any, index: number) => ({
           _id: note._id,
-          id: studentData._id,
+          id: `${index + 1}`,
           type: note.type || '',
           status: note.status || PhysicalDocumentNoteStatus.PENDING,
           dueBy: note.dueBy ? new Date(note.dueBy).toISOString() : undefined
@@ -96,11 +98,24 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
     }
   };
 
-  const updateFormValue = async (doc: Document) => {
-    // remove _id from the document object
-    const { _id, ...updatedDoc } = doc;
+  const handleStatusChange = async (docId: string, status: PhysicalDocumentNoteStatus) => {
+    const doc: Document | undefined = documents?.find((doc) => doc.id === docId);
 
-    const response = await updateStudentDocuments(updatedDoc);
+    const updatedDoc = { ...doc, status };
+
+    if (
+      updatedDoc.dueBy &&
+      !requestDateSchema.safeParse(updatedDoc.dueBy).success
+    ) {
+      updatedDoc.dueBy = formatDisplayDate(new Date(updatedDoc.dueBy)) ?? '';
+    }
+
+    const { _id, ...rest } = { ...updatedDoc, id: studentData._id };
+    const response = await updateStudentDocuments(rest);
+
+    setDocuments((prevDocs) =>
+      prevDocs.map((doc) => (doc.id === docId ? { ...doc, status } : doc))
+    );
 
     if (response) {
       toast.success('Documents updated successfully');
@@ -110,26 +125,46 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
     }
   };
 
-  const handleStatusChange = (docId: string, status: PhysicalDocumentNoteStatus) => {
+  const handleDueDateChange = async (docId: string, date: Date | undefined) => {
     const doc: Document | undefined = documents?.find((doc) => doc.id === docId);
 
-    const updatedDocs = documents.map((doc) => (doc.id === docId ? { ...doc, status } : doc));
+    if (!doc) return;
 
-    setDocuments(updatedDocs);
+    const formattedDate : string | undefined | null = date ? formatDisplayDate(date) : undefined;
 
-    if (doc) {
-      updateFormValue(doc);
+    const updatedDoc = { ...doc, dueBy: formattedDate };
+
+    if (
+      updatedDoc.dueBy &&
+      !requestDateSchema.safeParse(updatedDoc.dueBy).success
+    ) {
+      updatedDoc.dueBy = formatDisplayDate(new Date(updatedDoc.dueBy)) ?? '';
     }
-  };
+    
 
-  const handleDueDateChange = (docId: string, date: Date | undefined) => {
-    const doc: Document | undefined = documents?.find((doc) => doc.id === docId);
-    const updatedDocs = documents.map((doc) =>
-      doc.id === docId ? { ...doc, dueBy: date ? date.toISOString() : undefined } : doc
-    );
-    setDocuments(updatedDocs);
-    if (doc) {
-      updateFormValue(doc);
+    try {
+      const { _id, ...rest } = { ...updatedDoc, id: studentData._id };
+      const response = await updateStudentDocuments(rest);
+
+      console.log('formattedDate', formattedDate);
+
+      setDocuments((prevDocs) =>
+        prevDocs.map((doc) =>
+          doc.id === docId
+            ? { ...doc, dueBy: formattedDate ?? undefined }
+            : doc
+        )
+      );
+
+      if (response) {
+        toast.success('Documents updated successfully');
+      } else {
+        setError('Failed to update documents');
+        toast.error('Failed to update documents');
+      }
+    } catch (error) {
+      setError('Failed to update documents');
+      toast.error('Failed to update documents');
     }
   };
 
@@ -169,7 +204,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
         </AccordionTrigger>
         <AccordionContent className="p-6 bg-white rounded-[10px] space-y-8">
           {documents.map((doc) => (
-            <div key={doc.id} className="space-y-2">
+            <div key={doc._id} className="space-y-2">
               <div className="text-sm font-semibold text-gray-800">
                 {doc.type.replace(/_/g, ' ')}
               </div>
@@ -207,7 +242,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                         )}
                         disabled={doc.status !== PhysicalDocumentNoteStatus.PENDING}
                       >
-                        {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : 'Pick a due date'}
+                        {doc.dueBy ? formatDisplayDate(new Date(doc.dueBy)) : 'Pick a due date'}
                       </Button>
                     </PopoverTrigger>
                     {doc.status === PhysicalDocumentNoteStatus.PENDING && (
