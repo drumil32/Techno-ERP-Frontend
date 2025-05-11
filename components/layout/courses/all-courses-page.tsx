@@ -313,6 +313,8 @@ export default function AllCoursesPage() {
         onLimitChange={handleLimitChange}
         onSearch={handleSearch}
         searchTerm={search}
+        minVisibleRows={13}
+        maxVisibleRows = {10}
         totalEntries={totalEntries}
         handleViewMore={handleViewMore}
         selectedRowId={selectedRowId}

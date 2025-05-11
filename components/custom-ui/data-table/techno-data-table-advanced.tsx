@@ -101,7 +101,8 @@ export default function TechnoDataTableAdvanced({
   children,
   showAddButton = false,
   showEditButton = false,
-  visibleRows = 10,
+  minVisibleRows = 10,
+  maxVisibleRows = 10,
   addButtonPlacement = "top",
   addBtnLabel = "Add",
   addViaDialog = false,
@@ -325,7 +326,7 @@ export default function TechnoDataTableAdvanced({
         </div>
       </div>
 
-      <div className={`relative overflow-auto `} style={{ maxHeight: `${visibleRows * 39}px` }}>
+      <div className={`relative overflow-auto`} style={{ maxHeight: `${maxVisibleRows * 39}px`, minHeight: `${minVisibleRows * 39}px` }}>
         <Table className="w-full">
           <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg font-bolds sticky top-0 z-10">
             <TableRow>

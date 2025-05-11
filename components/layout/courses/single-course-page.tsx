@@ -266,7 +266,8 @@ export const SingleCoursePage = () => {
         setSelectedRowId={setSelectedRowId}
         showAddButton={true}
         showEditButton={false}
-        visibleRows={10}
+        minVisibleRows={13}
+        maxVisibleRows={10}
         addButtonPlacement={"top"}
         addBtnLabel={"Add a Subject"}
         addViaDialog={true}
