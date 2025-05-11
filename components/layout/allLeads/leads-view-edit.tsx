@@ -58,6 +58,7 @@ export interface LeadData {
   course?: string;
   assignedTo: string[];
   schoolName?: string;
+  degree?: string;
   leadsFollowUpCount?: number;
   leadType?: string;
   remarks: string[];
@@ -74,6 +75,7 @@ interface FormErrors {
   area?: string;
   nextDueDate?: string;
   schoolName?: string;
+  degree?: string;
   remarks?: string;
   city?: string;
 }
@@ -179,6 +181,7 @@ export default function LeadViewEdit({
         leadType: tempData.leadType,
         course: tempData.course,
         schoolName: tempData.schoolName,
+        degree: tempData.degree,
         leadsFollowUpCount: tempData.leadsFollowUpCount,
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate,
@@ -197,7 +200,6 @@ export default function LeadViewEdit({
         return newErrors;
       });
     } catch (error) {
-      console.log(error);
       if (error instanceof z.ZodError) {
         // Collect all field errors
         const newErrors: FormErrors = { ...errors };
@@ -275,6 +277,7 @@ export default function LeadViewEdit({
       'course',
       'leadType',
       'schoolName',
+      'degree',
       'assignedTo',
       'leadsFollowUpCount',
       'remarks',
@@ -323,6 +326,7 @@ export default function LeadViewEdit({
         'course',
         'leadType',
         'schoolName',
+        'degree',
         'assignedTo',
         'leadsFollowUpCount',
         'remarks',
@@ -658,16 +662,30 @@ export default function LeadViewEdit({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <EditLabel htmlFor="schoolName" title={'School/College Name'} />
-        <Input
-          id="schoolName"
-          name="schoolName"
-          value={formData.schoolName || ''}
-          onChange={handleChange}
-          className={inputStyle}
-        />
-        {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
+      <div className='flex gap-5'>
+        <div className="space-y-2">
+          <EditLabel htmlFor="schoolName" title={'School/College Name'} />
+          <Input
+            id="schoolName"
+            name="schoolName"
+            value={formData.schoolName || ''}
+            onChange={handleChange}
+            className={inputStyle}
+          />
+          {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <EditLabel htmlFor="degree" title={'Degree'} />
+          <Input
+            id="degree"
+            name="degree"
+            value={formData.degree || ''}
+            onChange={handleChange}
+            className={inputStyle}
+          />
+          {errors.degree && <p className="text-red-500 text-xs mt-1">{errors.degree}</p>}
+        </div>
       </div>
 
       <div className="space-y-2 max-w-2xl mx-auto">

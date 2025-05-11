@@ -54,6 +54,7 @@ interface FormErrors {
   area?: string;
   course?: string;
   schoolName?: string;
+  degree?: string;
   city?: string;
 }
 
@@ -109,6 +110,7 @@ export default function YellowLeadViewEdit({
         footFall: tempData.footFall,
         finalConversion: tempData.finalConversion,
         schoolName: tempData.schoolName,
+        degree: tempData.degree,
         yellowLeadsFollowUpCount: tempData.yellowLeadsFollowUpCount,
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate
@@ -116,7 +118,6 @@ export default function YellowLeadViewEdit({
       validationData = removeNullValues(validationData);
       const response = yellowLeadUpdateSchema.parse(validationData);
 
-      console.log(errors);
       setErrors((prevErrors: any) => {
         const newErrors = { ...prevErrors };
         delete newErrors[name];
@@ -262,6 +263,7 @@ export default function YellowLeadViewEdit({
       'assignedTo',
       'yellowLeadsFollowUpCount',
       'schoolName',
+      'degree',
       'remarks',
       'nextDueDate',
       'leadTypeModifiedDate'
@@ -309,6 +311,7 @@ export default function YellowLeadViewEdit({
         'course',
         'footFall',
         'schoolName',
+        'degree',
         'assignedTo',
         'finalConversion',
         'yellowLeadsFollowUpCount',
@@ -335,7 +338,6 @@ export default function YellowLeadViewEdit({
           newErrors[key] = err.message;
         });
         setErrors(newErrors);
-        console.log(errors);
         toast.error('Please fix the errors in the form');
         return;
       }
@@ -688,6 +690,17 @@ export default function YellowLeadViewEdit({
         </div>
       </div>
 
+      <div className="space-y-2 ">
+        <EditLabel htmlFor="degree" title={'Degree'} />
+        <Input
+          id="degree"
+          name="degree"
+          value={formData.degree || ''}
+          onChange={handleChange}
+          className={inputStyle}
+        />
+        {errors.degree && <p className="text-red-500 text-xs mt-1">{errors.degree}</p>}
+      </div>
       {/* Remarks Section */}
       <div className="space-y-2 max-w-2xl mx-auto">
         <EditLabel htmlFor="remarks" title={'Remarks'} />
