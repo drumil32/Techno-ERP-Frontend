@@ -5,12 +5,12 @@ import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import { use, useEffect, useRef, useState } from 'react';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
 import LeadViewEdit, { LeadData } from './leads-view-edit';
 import { Course, LeadType, Locations, UserRoles } from '@/types/enum';
 import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
-import { refineLeads, refineAnalytics } from './helpers/refine-data';
+import { refineLeads, refineAnalytics, formatTimeStampView } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
 1;
 import { toast } from 'sonner';
@@ -43,6 +43,7 @@ import {
 import { FaCircleExclamation } from 'react-icons/fa6';
 
 export default function AllLeadsPage() {
+  const queryClient = useQueryClient()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
@@ -323,6 +324,8 @@ export default function AllLeadsPage() {
             return;
           }
 
+          // Store the previous value to revert on failure
+          const previousValue = selectedType;
           setSelectedType(value);
 
           toastIdRef.current = toast.loading('Updating lead type...', {
@@ -366,6 +369,7 @@ export default function AllLeadsPage() {
               API_ENDPOINTS.updateLead,
               updatedData
             );
+
             toast.dismiss(toastIdRef.current);
 
             if (response) {
@@ -373,24 +377,59 @@ export default function AllLeadsPage() {
                 id: toastIdRef.current,
                 duration: 1500
               });
-              // setRefreshKey((prevKey) => prevKey + 1);
-            } else {
-              toast.error('Failed to update lead type', {
-                id: toastIdRef.current,
-                duration: 1500
-              });
-              setSelectedType(row.original.leadType);
+
+
+              const updateLeadCache = () => {
+                const queryCache = queryClient.getQueryCache();
+                const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
+
+                leadQueries.forEach(query => {
+                  queryClient.setQueryData(query.queryKey, (oldData: any) => {
+                    if (!oldData || !oldData.leads) return oldData;
+
+                    const newData = JSON.parse(JSON.stringify(oldData));
+
+                    const leadIndex = newData.leads.findIndex(
+                      (lead: any) => lead._id === response._id
+                    );
+
+                    if (leadIndex !== -1) {
+                      newData.leads[leadIndex] = {
+                        ...newData.leads[leadIndex],
+                        leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
+                        _leadType: response.leadType,
+                        leadsFollowUpCount: response.leadsFollowUpCount ?? newData.leads[leadIndex].leadsFollowUpCount,
+                        remarks: response.remarks || newData.leads[leadIndex].remarks,
+                        remarksView: response.remarks && response.remarks.length > 0
+                          ? response.remarks[response.remarks.length - 1]
+                          : newData.leads[leadIndex].remarksView,
+                        leadTypeModifiedDate: response.leadTypeModifiedDate ?? newData.leads[leadIndex].leadTypeModifiedDate,
+                        leadTypeModifiedDateView: formatTimeStampView(response.leadTypeModifiedDate) ??
+                          newData.leads[leadIndex].leadTypeModifiedDateView
+                      };
+                    }
+
+                    return newData;
+                  });
+                });
+
+              };
+
+              updateLeadCache();
             }
           } catch (error) {
+            toast.dismiss(toastIdRef.current);
             toast.error('Failed to update lead type', {
               id: toastIdRef.current,
-              duration: 1500
+              duration: 3000
             });
-            setSelectedType(row.original.leadType);
-          } finally {
-            toastIdRef.current = null;
+            console.error("Error updating lead:", error);
+
+            // Revert to previous value on error
+            setSelectedType(previousValue);
           }
-        };
+        }
+
 
         return (
           <LeadTypeSelect
@@ -597,20 +636,20 @@ export default function AllLeadsPage() {
       },
       ...(isRoleLeadMarketing
         ? [
-            {
-              filterKey: 'assignedTo',
-              label: 'Assigned To',
-              options: assignedToDropdownData.map((item: any) => {
-                return {
-                  label: item.name,
-                  id: item._id
-                };
-              }),
-              placeholder: 'assignee',
-              hasSearch: true,
-              multiSelect: true
-            }
-          ]
+          {
+            filterKey: 'assignedTo',
+            label: 'Assigned To',
+            options: assignedToDropdownData.map((item: any) => {
+              return {
+                label: item.name,
+                id: item._id
+              };
+            }),
+            placeholder: 'assignee',
+            hasSearch: true,
+            multiSelect: true
+          }
+        ]
         : [])
     ];
   };
@@ -671,7 +710,7 @@ export default function AllLeadsPage() {
           onClose={() => {
             setSelectedRowId(null);
             setIsDrawerOpen(false);
-            setRefreshKey((prev) => prev + 1);
+            // setRefreshKey((prev) => prev + 1);
           }}
         >
           {isDrawerOpen && editRow && (
