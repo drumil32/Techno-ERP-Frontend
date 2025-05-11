@@ -158,8 +158,22 @@ export default function AllCoursesPage() {
     setPage(1);
   };
 
+
+  const getQueryParams = () => {
+    const params: { [key: string]: any } = {
+      page,
+      limit,
+      search: debouncedSearch,
+      ...appliedFilters,
+      refreshKey
+    };
+    return params;
+  };
+
+  const filterParams = getQueryParams();
+
   const courseQuery = useQuery({
-    queryKey: ['courses', appliedFilters, debouncedSearch],
+    queryKey: ['courses', filterParams, appliedFilters, debouncedSearch],
     queryFn: fetchCourses,
     placeholderData: (previousData) => previousData,
     enabled: filtersReady,

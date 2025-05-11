@@ -403,7 +403,7 @@ export default function TechnoDataTableAdvanced({
 
                               const style = confirmationStatus[value as keyof typeof confirmationStatus];
                               return (
-                                <span className={`inline-block rounded-md px-3 py-1 text-sm font-medium ${style?.bgStyle} ${style?.textStyle}`}>
+                                <span className={`w-25 inline-block rounded-md px-3 py-1 text-sm font-medium ${style?.bgStyle} ${style?.textStyle}`}>
                                   {style?.name || value}
                                 </span>
                               );
@@ -433,7 +433,7 @@ export default function TechnoDataTableAdvanced({
                                       showYearMonthDropdowns
                                       className="w-[200px]"
                                     />
-                                    {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>}
+                                    {/* {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>} */}
                                   </div>
                                 );
                               }
@@ -441,7 +441,7 @@ export default function TechnoDataTableAdvanced({
                                 <div className="flex flex-col items-center">
                                   <input
                                     type="text"
-                                    className={`border rounded px-2 py-1 text-sm w-3/4 ${errorMsg ? 'border-red-500' : ''}`}
+                                    className={`bg-white border rounded px-2 py-1 text-sm w-3/4 ${errorMsg ? 'border border-red-500' : ''}`}
                                     value={value ?? ''}
                                     onChange={(e) => {
                                       const newValue = e.target.value;
@@ -529,7 +529,7 @@ export default function TechnoDataTableAdvanced({
                                       setBatchValidationErrors(updatedErrors);
                                     }}
                                   />
-                                  {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>}
+                                  {/* {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>} */}
                                 </div>
 
                               );
@@ -597,7 +597,7 @@ export default function TechnoDataTableAdvanced({
                             showYearMonthDropdowns
                             className="w-[200px]"
                           />
-                          {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>}
+                          {/* {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>} */}
                         </div>
                       </TableCell>
                     );
@@ -607,7 +607,9 @@ export default function TechnoDataTableAdvanced({
                       <TableCell key={idx} className="h-[39px]">
                         <div className="flex flex-col items-center">
                           <Input
-                            className={`editable-cell px-2 py-2 ${validationErrors[columnId] ? 'border-red-500' : ''}`}
+                             className={`bg-white editable-cell px-2 py-2 border rounded-md ${
+                              validationErrors[columnId] ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'
+                            }`}
                             value={newRow[columnId] || ''}
                             onChange={(e) => {
                               const newValue = e.target.value;
@@ -694,9 +696,9 @@ export default function TechnoDataTableAdvanced({
                               setValidationErrors(newErrors);
                             }}
                           />
-                          {validationErrors[columnId] && (
+                          {/* {validationErrors[columnId] && (
                             <span className="text-xs text-red-500">{validationErrors[columnId]}</span>
-                          )}
+                          )} */}
                         </div>
                       </TableCell>
                     );
@@ -779,6 +781,7 @@ export default function TechnoDataTableAdvanced({
                     setAddingRow(false);
                     setNewRow({});
                   } else {
+                    setBatchValidationErrors([]);
                     setEditing(false);
                   }
                 }}
@@ -818,7 +821,7 @@ export default function TechnoDataTableAdvanced({
             <span>Rows per page:</span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className='cursor-pointer'>
+                <Button variant="outline" size="sm" className="cursor-pointer">
                   {pageSize} <ChevronDown className="ml-1" />
                 </Button>
               </DropdownMenuTrigger>
@@ -849,7 +852,8 @@ export default function TechnoDataTableAdvanced({
               size="sm"
               onClick={() => onPageChange(1)}
               disabled={currentPage === 1}
-              className='cursor-pointer'
+              aria-label="Go to first page"
+              className="cursor-pointer"
             >
               <ChevronsLeft />
             </Button>
@@ -858,19 +862,21 @@ export default function TechnoDataTableAdvanced({
               size="sm"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className='cursor-pointer'
+              aria-label="Go to previous page"
+              className="cursor-pointer"
             >
               <ChevronLeft />
             </Button>
             {currentPage > 1 && <span>1 ..</span>}
-            <span>{currentPage}</span>
+            <span className="underline">{currentPage}</span>
             {currentPage < totalPages && <span>..{totalPages}</span>}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className='cursor-pointer'
+              aria-label="Go to next page"
+              className="cursor-pointer"
             >
               <ChevronRight />
             </Button>
@@ -879,7 +885,8 @@ export default function TechnoDataTableAdvanced({
               size="sm"
               onClick={() => onPageChange(totalPages)}
               disabled={currentPage === totalPages}
-              className='cursor-pointer'
+              aria-label="Go to last page"
+              className="cursor-pointer"
             >
               <ChevronsRight />
             </Button>
