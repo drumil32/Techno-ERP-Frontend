@@ -27,9 +27,9 @@ import DocumentVerificationSection from './sub-sections/mandatory-doc-verificati
 // API
 import { fetchStudent } from './helpers/api';
 import { getPersonalDetailsFormData } from './helpers/helper';
+import AllDocumentsTab from './tabs/all-documents-tab';
 
 const SingleStudentRepositoryPage: React.FC = () => {
-  
   const { id } = useParams<{ id: string }>();
   const { headerActiveItem } = useMoreDetailsHeaderContext();
   const [studentData, setStudentData] = React.useState<StudentData | null>(null);
@@ -114,9 +114,7 @@ const SingleStudentRepositoryPage: React.FC = () => {
       headerActiveItem === HEADER_ITEMS[StudentRepositoryTabs.ALL_DOCUMENTS].title &&
       studentData
     ) {
-      return (
-        <DocumentVerificationSection studentData={studentData} setStudentData={setStudentData} />
-      );
+      return <AllDocumentsTab studentData={studentData} setStudentData={setStudentData} />;
     }
 
     return null;
@@ -130,7 +128,7 @@ const SingleStudentRepositoryPage: React.FC = () => {
       </div>
 
       {/* Student Profile View */}
-      {studentData && <StudentProfileView studentData={studentData}/>}
+      {studentData && <StudentProfileView studentData={studentData} />}
 
       {/* Tabs Navigation */}
       <MoreDetailsHeader headerItems={HEADER_ITEMS} />

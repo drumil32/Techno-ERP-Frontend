@@ -138,7 +138,7 @@ export default function StudentRepositoryPage() {
         label: 'Academic Year',
         options: academicYearOptions,
         hasSearch: true,
-        multiSelect: true
+        multiSelect: false
       }
     ];
   };

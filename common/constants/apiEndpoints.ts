@@ -105,6 +105,7 @@ export const API_ENDPOINTS = {
   getSingleStudent: (id: string) => `${API_DOMAIN}/student/repo/${id}`,
   updateStudentRepository: `${API_DOMAIN}/student/repo/student-details`,
   updateStudentDocuments: `${API_DOMAIN}/student/repo/student-physical-document`,
+  updateDocument: `${API_DOMAIN}/student/repo/document`,
 
   
   //Finance

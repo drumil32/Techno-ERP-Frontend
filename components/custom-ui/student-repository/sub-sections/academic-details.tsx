@@ -779,35 +779,26 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                     )}
                   </div>
 
-                  {isEditing ? (
                     <FormField
                       key="entranceExamDetails.qualified"
                       control={form.control}
                       name="entranceExamDetails.qualified"
                       render={({ field }) => (
-                        <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                            Qualified
-                          </FormLabel>
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={(checked) => field.onChange(checked)}
-                              className="h-4 w-4"
-                            />
-                          </FormControl>
-                          <div className="h-[20px]">
-                            <FormMessage className="text-[11px]" />
-                          </div>
-                        </FormItem>
+                      <FormItem className={`${commonFormItemClass} col-span-1`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        Qualified
+                        </FormLabel>
+                        <FormControl>
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(checked) => field.onChange(checked)}
+                          className="h-4 w-4 border border-black"
+                          disabled={!isEditing}
+                        />
+                        </FormControl>
+                      </FormItem>
                       )}
                     />
-                  ) : (
-                    <DisplayField
-                      label="Qualified"
-                      value={form.getValues('entranceExamDetails.qualified')?.toString() || null}
-                    />
-                  )}
                 </div>
               </div>
             </div>

@@ -1,109 +1,79 @@
-'use client';
-
-import { format, isBefore, parseISO, startOfDay } from 'date-fns';
-import { useCallback, useRef, useState, DragEvent, ChangeEvent, useEffect } from 'react';
-import { uploadDocumentAPI } from './helpers/apiRequest'; // Assuming this exists
-import { DocumentType } from '@/types/enum'; // Assuming this exists
+import React, { ChangeEvent, DragEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { StudentData } from './helpers/interface';
+import { DocumentType } from '@/types/enum';
+import { getReadableDocumentName } from '../enquiry-form/stage-3/documents-section/helpers/mapperFunction';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
-  Calendar as CalendarIcon,
-  CheckCircle2,
+  UploadCloud,
   FileText,
   LinkIcon,
-  Loader2,
-  Upload,
-  UploadCloud,
   X,
-  XCircle
+  CheckCircle2,
+  Loader2,
+  XCircle,
+  CalendarIcon,
+  Upload
 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { getReadableDocumentName } from './helpers/mapperFunction';
-import { DatePicker } from '@/components/ui/date-picker';
+import { format, isBefore, parseISO, startOfDay } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
-interface SingleEnquiryUploadDocumentProps {
-  enquiryId: string;
+import {
+  formatFileSize,
+  getFilenameFromUrl
+} from '../enquiry-form/stage-3/documents-section/single-document-form';
+import { updateDocument } from './helpers/api';
+
+interface SingleDocumentUploadProps {
+  studentData: StudentData;
   documentType: DocumentType;
-  existingDocument?: EnquiryDocument;
-  acceptedFileTypes?: string;
-  onUploadSuccess?: (response: any) => void;
-  onUploadError?: (error: any) => void;
-  isViewable?: boolean;
 }
 
-export interface EnquiryDocument {
-  _id: string;
-  type: string;
-  fileUrl: string;
-  dueBy: string;
-}
-
-export function getFilenameFromUrl(url: string): string {
-  if (!url) {
-    return '';
-  }
-  try {
-    const parsedUrl = new URL(url);
-    const pathname = parsedUrl.pathname;
-    return decodeURIComponent(pathname.substring(pathname.lastIndexOf('/') + 1));
-  } catch (e) {
-    const parts = url.split('/');
-    return parts[parts.length - 1] || 'unknown_file';
-  }
-}
-
-export function formatFileSize(bytes: number, si = false, dp = 1) {
-  const thresh = si ? 1000 : 1024;
-  if (Math.abs(bytes) < thresh) return bytes + ' B';
-  const units = si
-    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
-  let u = -1;
-  const r = 10 ** dp;
-  do {
-    bytes /= thresh;
-    ++u;
-  } while (Math.round(Math.abs(bytes) * r) / r >= thresh && u < units.length - 1);
-  return bytes.toFixed(dp) + ' ' + units[u];
-}
-
-export const SingleEnquiryUploadDocument = ({
-  enquiryId,
-  documentType,
-  existingDocument,
-  acceptedFileTypes = '.pdf,.jpeg,.jpg,.png',
-  onUploadSuccess,
-  onUploadError,
-  isViewable
-}: SingleEnquiryUploadDocumentProps) => {
+const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
+  studentData,
+  documentType
+}) => {
+  const existingDocument = studentData?.studentInfo?.documents?.find(
+    (doc) => doc.type === documentType
+  );
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const [dueDate, setDueDate] = useState<Date | undefined>(() => {
     if (existingDocument?.dueBy) {
       try {
-        const parsedDate = parseISO(existingDocument.dueBy);
-        return parsedDate;
-      } catch (e) {
-        console.error('Error parsing due date:', existingDocument.dueBy, e);
-        return undefined;
+        return parseISO(existingDocument.dueBy);
+      } catch (error) {
+        console.error('Error parsing due date:', existingDocument.dueBy, error);
       }
     }
     return undefined;
   });
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [isDragging, setIsDragging] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const uniqueInputId = `file-upload-${documentType.toString().replace(/_/g, '-')}-${enquiryId}`;
+
+  const existingFilename = existingDocument ? getFilenameFromUrl(existingDocument.fileUrl) : '';
+
+  const displayExistingDocument = existingDocument && !selectedFile;
+
+  const existingDueDateFormatted = existingDocument?.dueBy
+    ? format(parseISO(existingDocument.dueBy), 'MMM dd, yyyy')
+    : 'No due date set';
+
+  const uniqueInputId = `file-upload-${documentType.toString().replace(/_/g, '-')}-${studentData._id}`;
 
   const resetFileInput = useCallback(() => {
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
   }, []);
+
+  const acceptedFileTypes = '.pdf,.jpeg,.jpg,.png';
 
   useEffect(() => {
     setSelectedFile(null);
@@ -187,6 +157,26 @@ export const SingleEnquiryUploadDocument = ({
     }
   };
 
+
+
+  const useUpdateDocument = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+      mutationFn: updateDocument,
+      onSuccess: (data: any) => {
+        const updatedDocuments = data?.studentInfo?.documents;
+        queryClient.invalidateQueries({ queryKey: ['student'] });
+      },
+      onError: (error) => {
+        console.error('Update failed:', error);
+      }
+    });
+  };
+
+  // Inside your component
+  const { mutateAsync: updateDocumentMutation } = useUpdateDocument();
+
   const handleUpload = async () => {
     if (!selectedFile && !dueDate) {
       setStatus({ type: 'error', message: 'Please select a file and a due date.' });
@@ -203,7 +193,7 @@ export const SingleEnquiryUploadDocument = ({
 
     try {
       const formDataPayload = new FormData();
-      formDataPayload.append('id', enquiryId);
+      formDataPayload.append('id', studentData._id);
       formDataPayload.append('type', documentType);
       if (selectedFile) {
         formDataPayload.append('document', selectedFile);
@@ -214,21 +204,8 @@ export const SingleEnquiryUploadDocument = ({
         formDataPayload.append('dueBy', formatedDate);
       }
 
-      const response: any = await uploadDocumentAPI(formDataPayload);
+      await updateDocumentMutation(formDataPayload);
 
-      const updatedDocuments = response?.documents;
-
-      if (onUploadSuccess && Array.isArray(updatedDocuments)) {
-        console.log('Calling onUploadSuccess with updated documents array.');
-        onUploadSuccess(updatedDocuments);
-        setSelectedFile(null);
-        resetFileInput();
-      } else if (onUploadSuccess) {
-        console.error(
-          'Upload successful, but response.documents is not an array or missing:',
-          response
-        );
-      }
       setStatus({
         type: 'success',
         message: `${getReadableDocumentName(documentType)} uploaded successfully!`
@@ -256,7 +233,6 @@ export const SingleEnquiryUploadDocument = ({
         errorMessage = error.ERROR;
       }
       setStatus({ type: 'error', message: errorMessage });
-      if (onUploadError) onUploadError(error);
     } finally {
       setIsLoading(false);
     }
@@ -265,82 +241,76 @@ export const SingleEnquiryUploadDocument = ({
   const canUpload =
     !isLoading && (!!selectedFile || (!!dueDate && !isBefore(dueDate, startOfDay(new Date()))));
 
-  const displayExistingDocument = existingDocument && !selectedFile;
-  const existingFilename = existingDocument ? getFilenameFromUrl(existingDocument.fileUrl) : '';
-  const existingDueDateFormatted = existingDocument?.dueBy
-    ? format(parseISO(existingDocument.dueBy), 'MMM dd, yyyy')
-    : 'No due date set';
-
   return (
-    <div className="w-2/3 py-3 border-b border-gray-200 last:border-b-0">
-      <div className="flex items-start min-w-max gap-10 mb-4">
-        <div className="flex items-center gap-2 min-w-[120px]">
-          <Label className="text-sm font-semibold text-gray-800 whitespace-nowrap">
-            {getReadableDocumentName(documentType)}
-          </Label>
-          {existingDocument && (
-            <svg
-              className="h-4 w-4 flex-shrink-0"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+    <>
+      <div className="w-2/3 py-3 border-b border-gray-200 last:border-b-0">
+        <div className="flex items-start min-w-max gap-10 mb-4">
+          <div className="flex items-center gap-2 min-w-[120px]">
+            <Label className="text-sm font-semibold text-gray-800 whitespace-nowrap">
+              {getReadableDocumentName(documentType)}
+            </Label>
+            {existingDocument && (
+              <svg
+                className="h-4 w-4 flex-shrink-0"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                  fill="#22C55E"
+                />
+                <path
+                  d="M8 12L11 15L16 9"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </div>
+
+          {displayExistingDocument && (
+            <motion.a
+              href={existingDocument.fileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 max-w-max"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              transition={{ duration: 0.1 }}
             >
-              <path
-                d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
-                fill="#22C55E"
-              />
-              <path
-                d="M8 12L11 15L16 9"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+              <div className="bg-[#4E2ECC]/5 border border-[#4E2ECC]/30 rounded-lg p-3 hover:border-[#4E2ECC]/50 transition-colors group">
+                <div className="flex items-center justify-between gap-3 w-full">
+                  <div className="flex w-max items-center gap-3 flex-1 min-w-0">
+                    <motion.div
+                      className="bg-[#4E2ECC]/10 p-2 rounded group-hover:bg-[#4E2ECC]/20 transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <FileText className="h-4 w-4 text-[#4E2ECC] flex-shrink-0" />
+                    </motion.div>
+                    <div className="min-w-0">
+                      <p className="block text-sm font-medium text-[#4E2ECC] group-hover:underline truncate">
+                        {existingFilename}
+                      </p>
+                      <span className="text-xs w-max text-gray-600">
+                        Due: {existingDueDateFormatted}
+                      </span>
+                    </div>
+                  </div>
+                  <motion.div
+                    className="text-[#4E2ECC] hover:text-[#4E2ECC]/80 p-2 rounded-full hover:bg-[#4E2ECC]/10 flex-shrink-0"
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    <LinkIcon className="h-4 w-4" />
+                  </motion.div>
+                </div>
+              </div>
+            </motion.a>
           )}
         </div>
 
-        {displayExistingDocument && (
-          <motion.a
-            href={existingDocument.fileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 max-w-max"
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-            transition={{ duration: 0.1 }}
-          >
-            <div className="bg-[#4E2ECC]/5 border border-[#4E2ECC]/30 rounded-lg p-3 hover:border-[#4E2ECC]/50 transition-colors group">
-              <div className="flex items-center justify-between gap-3 w-full">
-                <div className="flex w-max items-center gap-3 flex-1 min-w-0">
-                  <motion.div
-                    className="bg-[#4E2ECC]/10 p-2 rounded group-hover:bg-[#4E2ECC]/20 transition-colors"
-                    whileHover={{ scale: 1.05 }}
-                  >
-                    <FileText className="h-4 w-4 text-[#4E2ECC] flex-shrink-0" />
-                  </motion.div>
-                  <div className="min-w-0">
-                    <p className="block text-sm font-medium text-[#4E2ECC] group-hover:underline truncate">
-                      {existingFilename}
-                    </p>
-                    <span className="text-xs w-max text-gray-600">
-                      Due: {existingDueDateFormatted}
-                    </span>
-                  </div>
-                </div>
-                <motion.div
-                  className="text-[#4E2ECC] hover:text-[#4E2ECC]/80 p-2 rounded-full hover:bg-[#4E2ECC]/10 flex-shrink-0"
-                  whileHover={{ scale: 1.1 }}
-                >
-                  <LinkIcon className="h-4 w-4" />
-                </motion.div>
-              </div>
-            </div>
-          </motion.a>
-        )}
-      </div>
-
-      {!isViewable && (
         <>
           <div className="flex flex-col sm:flex-row justify-between items-start gap-3 w-full">
             <div className="">
@@ -525,7 +495,9 @@ export const SingleEnquiryUploadDocument = ({
             </motion.div>
           )}
         </>
-      )}
-    </div>
+      </div>
+    </>
   );
 };
+
+export default SingleDocumentUpload;

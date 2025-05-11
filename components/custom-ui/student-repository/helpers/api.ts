@@ -44,3 +44,13 @@ export const updateStudentDocuments = async (data: any) => {
 
   return res;
 }
+
+export const updateDocument = async (data: any) => {
+  const res = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateDocument, data);
+
+  if (!res) {
+    throw new Error('Failed to update documents');
+  }
+
+  return res;
+}

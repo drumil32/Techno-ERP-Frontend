@@ -58,7 +58,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ stud
           id: `${index + 1}`,
           type: note.type || '',
           status: note.status || PhysicalDocumentNoteStatus.PENDING,
-          dueBy: note.dueBy ? new Date(note.dueBy) : undefined
+          dueBy: note.dueBy ? new Date(note.dueBy).toISOString() : undefined
         }));
 
         setDocuments(mappedDocs);
@@ -80,7 +80,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ stud
           id: `${index + 1}`,
           type: docName,
           status: PhysicalDocumentNoteStatus.PENDING,
-          dueBy: undefined
+          dueBy: undefined 
         }));
         setDocuments(initialDocs);
       } else {
@@ -125,7 +125,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ stud
 
   const handleDueDateChange = (docId: string, date: Date | undefined) => {
     const doc: Document | undefined = documents?.find((doc) => doc.id === docId);
-    const updatedDocs = documents.map((doc) => (doc.id === docId ? { ...doc, dueBy: date } : doc));
+    const updatedDocs = documents.map((doc) => (doc.id === docId ? { ...doc, dueBy: date ? date.toISOString() : undefined } : doc));
     setDocuments(updatedDocs);
     if (doc) {
       updateFormValue(doc);
@@ -213,7 +213,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ stud
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={doc.dueBy}
+                          selected={doc.dueBy ? new Date(doc.dueBy) : undefined}
                           onSelect={(date) => handleDueDateChange(doc.id, date)}
                           disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                           initialFocus

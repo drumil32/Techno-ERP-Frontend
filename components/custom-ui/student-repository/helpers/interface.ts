@@ -77,6 +77,13 @@ export interface StudentData {
   transactionHistory: any[];
 }
 
+export interface EntranceExamDetails {
+  nameOfExamination?: string;
+  rollNumber?: string;
+  rank?: number;
+  qualified?: boolean;
+}
+
 export interface StudentInfo {
   universityId: string;
   photoNo: number;
@@ -96,7 +103,7 @@ export interface StudentInfo {
   address: Address;
   academicDetails: any[];
   documents: DocumentWithFileUrl[];
-  physicalDocumentNote: any[];
+  physicalDocumentNote: Document[];
   gender: Gender;
   admittedThrough: AdmissionMode;
   _id: string;
@@ -108,6 +115,7 @@ export interface StudentInfo {
   stateOfDomicile?: string;
   areaType?: string;
   nationality?: string;
+  entranceExamDetails?: EntranceExamDetails;
 }
 
 // Address Interfaces
@@ -195,10 +203,11 @@ export interface Document {
   id: string;
   type: string;
   status: PhysicalDocumentNoteStatus;
-  dueBy?: Date;
+  dueBy?: string;
 }
 
 export interface DocumentWithFileUrl {
+  dueBy: string;
   type: string;
   fileUrl: string;
   _id: string;

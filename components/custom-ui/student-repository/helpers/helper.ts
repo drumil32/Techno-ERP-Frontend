@@ -64,6 +64,7 @@ export const getPersonalDetailsFormData = (data: StudentData) => {
       country: data.studentInfo.address?.country as Countries
     },
     reference: data.studentInfo.reference as AdmissionReference,
+    entranceExamDetails: data?.studentInfo?.entranceExamDetails,
   };
   return formData;
 };
