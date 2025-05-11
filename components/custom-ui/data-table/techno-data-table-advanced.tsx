@@ -53,6 +53,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { SimpleDatePicker } from '@/components/ui/simple-date-picker';
 import { formatDateForAPI } from '../filter/techno-filter';
 import { isValid, parse } from 'date-fns';
+import clsx from 'clsx';
 
 const confirmationStatus: Record<LectureConfirmation, { name: string; textStyle: string; bgStyle: string }> = {
   [LectureConfirmation.TO_BE_DONE]: {
@@ -100,7 +101,8 @@ export default function TechnoDataTableAdvanced({
   children,
   showAddButton = false,
   showEditButton = false,
-  visibleRows = 10,
+  minVisibleRows = 10,
+  maxVisibleRows = 10,
   addButtonPlacement = "top",
   addBtnLabel = "Add",
   addViaDialog = false,
@@ -109,7 +111,7 @@ export default function TechnoDataTableAdvanced({
   handleBatchEdit
 }: any) {
 
-  console.log("Columns are : ", columns)
+  // console.log("Columns are : ", columns)
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -121,10 +123,10 @@ export default function TechnoDataTableAdvanced({
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [batchValidationErrors, setBatchValidationErrors] = useState<Record<string, string>[]>([]);
 
-  console.log("New Row : ", newRow);
-  console.log("Edited Data : ", editedData);
-  console.log("Adding Row : ", addingRow);
-  console.log("Editing : ", editing);
+  // console.log("New Row : ", newRow);
+  // console.log("Edited Data : ", editedData);
+  // console.log("Adding Row : ", addingRow);
+  // console.log("Editing : ", editing);
 
 
   const validateAllEditedRows = (rows: any[]): boolean => {
@@ -164,7 +166,7 @@ export default function TechnoDataTableAdvanced({
 
   const validateRow = (row: any): boolean => {
     try {
-      console.log("Row to be validated : ", row);
+      // console.log("Row to be validated : ", row);
       if (row.unit)
         row.unit = parseInt(row.unit);
       if (row.lectureNumber)
@@ -176,7 +178,7 @@ export default function TechnoDataTableAdvanced({
       if (row.absent)
         row.absent = parseInt(row.absent);
       const validation = scheduleSchema.parse(row);
-      console.log("Validation result : ", validation);
+      // console.log("Validation result : ", validation);
       setValidationErrors({});
       return true;
     }
@@ -189,7 +191,7 @@ export default function TechnoDataTableAdvanced({
             errors[key] = e.message;
           }
         });
-        console.log("Errors are : ", errors);
+        // console.log("Errors are : ", errors);
         setValidationErrors(errors);
       }
       return false;
@@ -276,7 +278,12 @@ export default function TechnoDataTableAdvanced({
         {/* Edit Button, always on top */}
         <div className="flex items-center space-x-2 ml-auto" >
           {showEditButton && (
-            <Button variant="outline" className="btnLabelAdd h-8" onClick={handleEditToggle} disabled={addingRow || editing} >
+            <Button
+              variant="outline"
+              className="btnLabelAdd h-8"
+              onClick={handleEditToggle}
+              disabled={!data || data.length === 0 || addingRow || editing}
+            >
               <Edit2 className="mr-1 h-4 w-4" /> Edit
             </Button>
           )}
@@ -310,23 +317,25 @@ export default function TechnoDataTableAdvanced({
             </span>
           </div>
 
-          <Button variant="outline" className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
+          <Button variant="outline" disabled className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
             <span className="font-inter font-medium text-[12px]">Upload</span>
           </Button>
-          <Button className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
+          <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
             <span className="font-inter font-semibold text-[12px]">Download</span>
           </Button>
         </div>
       </div>
 
-      <div className={`relative overflow-auto min-h-[580px]`} style={{ minHeight: `${visibleRows * 39 + 40}px` }}>
+      <div className={`relative overflow-auto`} style={{ maxHeight: `${maxVisibleRows * 39}px`, minHeight: `${minVisibleRows * 39}px`}}>
         <Table className="w-full">
-          <TableHeader className="bg-[#F7F7F7] sticky top-0">
+          <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg font-bolds sticky top-0 z-10">
             <TableRow>
               {columns.map((column: any, idx: number) => (
-                <TableHead key={idx} className="text-center font-light h-10">
-                  {column.header}
-                </TableHead>
+                <TableHead
+                  key={idx}
+                  className={clsx('text-[#5B31D1] font-semibold h-10 text-center')}
+
+                > {column.header}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
@@ -336,13 +345,17 @@ export default function TechnoDataTableAdvanced({
                 {table.getRowModel().rows.map((row: any, rowIndex: number) => (
                   <TableRow
                     key={row.id}
-                    //Here there was bg-gray-100 for selected Row
-                    className={`h-[39px] cursor-pointer ${selectedRowId === row.id ? '' : ''}`}
                     onClick={() => {
-                      setSelectedRowId(row.id);
-                      handleViewMore?.(row.original);
+                      if (!row.original.disabled) {
+                        setSelectedRowId(row.id);
+                        handleViewMore(row.original);
+                      }
                     }}
+                    className={`h-[39px] ${row.original.disabled
+                        ? 'bg-gray-100 cursor-not-allowed  opacity-50'
+                        : 'cursor-pointer'}`}
                   >
+
                     {row.getVisibleCells().map((cell: any) => {
                       // const isExcluded = nonClickableColumns.includes(cell.column.id);
                       return (
@@ -390,7 +403,7 @@ export default function TechnoDataTableAdvanced({
 
                               const style = confirmationStatus[value as keyof typeof confirmationStatus];
                               return (
-                                <span className={`inline-block rounded-md px-3 py-1 text-sm font-medium ${style?.bgStyle} ${style?.textStyle}`}>
+                                <span className={`w-25 inline-block rounded-md px-3 py-1 text-sm font-medium ${style?.bgStyle} ${style?.textStyle}`}>
                                   {style?.name || value}
                                 </span>
                               );
@@ -407,7 +420,7 @@ export default function TechnoDataTableAdvanced({
                                     <SimpleDatePicker
                                       value={parsedDate ? formatDateForAPI(parsedDate) : undefined}
                                       onChange={(newDateStr: string | undefined) => {
-                                        console.log("New Date is:", newDateStr);
+                                        // console.log("New Date is:", newDateStr);
                                         handleEditedChange(rowIndex, columnId, newDateStr);
                                         setBatchValidationErrors((prev) => {
                                           const updated = [...prev];
@@ -420,7 +433,7 @@ export default function TechnoDataTableAdvanced({
                                       showYearMonthDropdowns
                                       className="w-[200px]"
                                     />
-                                    {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>}
+                                    {/* {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>} */}
                                   </div>
                                 );
                               }
@@ -428,14 +441,23 @@ export default function TechnoDataTableAdvanced({
                                 <div className="flex flex-col items-center">
                                   <input
                                     type="text"
-                                    className={`border rounded px-2 py-1 text-sm w-3/4 ${errorMsg ? 'border-red-500' : ''}`}
+                                    className={`bg-white border rounded px-2 py-1 text-sm w-3/4 ${errorMsg ? 'border border-red-500' : ''}`}
                                     value={value ?? ''}
                                     onChange={(e) => {
                                       const newValue = e.target.value;
+                                      const numericFields = ['classStrength', 'attendance', 'absent', 'unitNumber', 'lectureNumber'];
+                                      const isNumeric = /^\d*$/.test(newValue); 
+                                
+                                      if (numericFields.includes(columnId) && !isNumeric) {
+                                        return;
+                                      }
+                                
                                       const updatedErrors = [...batchValidationErrors];
                                       if (!updatedErrors[rowIndex]) updatedErrors[rowIndex] = {};
-
+                                     
                                       const row = (table.getRowModel().rows[rowIndex]?.original ?? {}) as AttendanceRow;
+                                      
+                            
                                       const updatedRow = { ...row, [columnId]: newValue };
 
                                       const classStrength = parseInt(
@@ -456,13 +478,7 @@ export default function TechnoDataTableAdvanced({
 
                                       updatedErrors[rowIndex][columnId] = '';
 
-                                      const numericFields = ['classStrength', 'attendance', 'absent'];
-
-                                      if (numericFields.includes(columnId)) {
-                                        if (!/^\d*$/.test(newValue)) {
-                                          updatedErrors[rowIndex][columnId] = 'Only numeric values allowed';
-                                        }
-                                      }
+                            
                                       if (columnId === 'classStrength') {
                                         if (!isValidNumber(classStrength)) {
                                           updatedErrors[rowIndex][columnId] = 'Class strength must be a non-negative number';
@@ -513,7 +529,7 @@ export default function TechnoDataTableAdvanced({
                                       setBatchValidationErrors(updatedErrors);
                                     }}
                                   />
-                                  {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>}
+                                  {/* {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>} */}
                                 </div>
 
                               );
@@ -524,6 +540,7 @@ export default function TechnoDataTableAdvanced({
                       );
                     })}
                   </TableRow>
+
                 ))}
                 {/* Here */}
               </>
@@ -532,7 +549,7 @@ export default function TechnoDataTableAdvanced({
               <TableRow className="h-[39px] cursor-pointer">
                 {columns.map((column: any, idx: number) => {
                   const columnId = column.accessorKey || column.id;
-                  console.log("Here, column Id : ", columnId);
+                  // console.log("Here, column Id : ", columnId);
                   if (columnId === 'actions') {
                     return (
                       <TableCell key={idx} className="h-[39px] text-center">
@@ -571,7 +588,7 @@ export default function TechnoDataTableAdvanced({
                           <SimpleDatePicker
                             value={parsedDate ? formatDateForAPI(parsedDate) : undefined}
                             onChange={(newDateStr: string | undefined) => {
-                              console.log('Selected date:', newDateStr);
+                              // console.log('Selected date:', newDateStr);
                               handleNewRowChange(columnId, newDateStr);
                               setValidationErrors((prev) => ({ ...prev, [columnId]: '' }));
                             }}
@@ -580,7 +597,7 @@ export default function TechnoDataTableAdvanced({
                             showYearMonthDropdowns
                             className="w-[200px]"
                           />
-                          {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>}
+                          {/* {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>} */}
                         </div>
                       </TableCell>
                     );
@@ -590,10 +607,17 @@ export default function TechnoDataTableAdvanced({
                       <TableCell key={idx} className="h-[39px]">
                         <div className="flex flex-col items-center">
                           <Input
-                            className={`editable-cell px-2 py-2 ${validationErrors[columnId] ? 'border-red-500' : ''}`}
+                             className={`bg-white editable-cell px-2 py-2 border rounded-md ${
+                              validationErrors[columnId] ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'
+                            }`}
                             value={newRow[columnId] || ''}
                             onChange={(e) => {
                               const newValue = e.target.value;
+                              const numericOnlyFields = ['classStrength', 'attendance', 'unitNumber', 'lectureNumber', 'absent'];
+                              if (numericOnlyFields.includes(columnId) && !/^\d*$/.test(newValue)) {
+                                return; // Do not update value if not numeric
+                              }
+
                               const updatedRow = { ...newRow, [columnId]: newValue };
                               const newErrors = { ...validationErrors };
 
@@ -672,9 +696,9 @@ export default function TechnoDataTableAdvanced({
                               setValidationErrors(newErrors);
                             }}
                           />
-                          {validationErrors[columnId] && (
+                          {/* {validationErrors[columnId] && (
                             <span className="text-xs text-red-500">{validationErrors[columnId]}</span>
-                          )}
+                          )} */}
                         </div>
                       </TableCell>
                     );
@@ -730,7 +754,7 @@ export default function TechnoDataTableAdvanced({
                 <AddMoreDataBtn onClick={() => {
                   if (addingRow) {
                     const isValid = validateRow(newRow);
-                    console.log("Is valid : ", isValid);
+                    // console.log("Is valid : ", isValid);
                     if (isValid) {
                       onSaveNewRow?.(newRow);
                       data.push(newRow);
@@ -739,7 +763,7 @@ export default function TechnoDataTableAdvanced({
                     }
                   }
                   else {
-                    console.log("Updated data : ", editedData);
+                    // console.log("Updated data : ", editedData);
                     const isValid = validateAllEditedRows(editedData);
                     if (isValid) {
                       handleBatchEdit?.(editedData);
@@ -757,6 +781,7 @@ export default function TechnoDataTableAdvanced({
                     setAddingRow(false);
                     setNewRow({});
                   } else {
+                    setBatchValidationErrors([]);
                     setEditing(false);
                   }
                 }}
@@ -796,7 +821,7 @@ export default function TechnoDataTableAdvanced({
             <span>Rows per page:</span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className='cursor-pointer'>
+                <Button variant="outline" size="sm" className="cursor-pointer">
                   {pageSize} <ChevronDown className="ml-1" />
                 </Button>
               </DropdownMenuTrigger>
@@ -827,7 +852,8 @@ export default function TechnoDataTableAdvanced({
               size="sm"
               onClick={() => onPageChange(1)}
               disabled={currentPage === 1}
-              className='cursor-pointer'
+              aria-label="Go to first page"
+              className="cursor-pointer"
             >
               <ChevronsLeft />
             </Button>
@@ -836,19 +862,21 @@ export default function TechnoDataTableAdvanced({
               size="sm"
               onClick={() => onPageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className='cursor-pointer'
+              aria-label="Go to previous page"
+              className="cursor-pointer"
             >
               <ChevronLeft />
             </Button>
             {currentPage > 1 && <span>1 ..</span>}
-            <span>{currentPage}</span>
+            <span className="underline">{currentPage}</span>
             {currentPage < totalPages && <span>..{totalPages}</span>}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className='cursor-pointer'
+              aria-label="Go to next page"
+              className="cursor-pointer"
             >
               <ChevronRight />
             </Button>
@@ -857,7 +885,8 @@ export default function TechnoDataTableAdvanced({
               size="sm"
               onClick={() => onPageChange(totalPages)}
               disabled={currentPage === totalPages}
-              className='cursor-pointer'
+              aria-label="Go to last page"
+              className="cursor-pointer"
             >
               <ChevronsRight />
             </Button>
