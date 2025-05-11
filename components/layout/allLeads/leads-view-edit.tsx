@@ -424,8 +424,8 @@ export default function LeadViewEdit({
                   assignedToView: assignedToView,
                   assignedToName: assignedToName,
                   updatedAt: new Date(response.updatedAt).toLocaleString(),
-
-
+                  nextDueDate: response.nextDueDate,
+                  nextDueDateView: response.nextDueDate ? formatDateView(response.nextDueDate) : '-',
                   leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
                   _leadType: response.leadType,
                   leadsFollowUpCount: response.leadsFollowUpCount ?? newData.leads[leadIndex].leadsFollowUpCount,
