@@ -4,12 +4,11 @@ import {
   AreaType,
   BloodGroup,
   Category,
-  CourseYear,
   Gender,
   Religion,
   StatesOfIndia
 } from '@/types/enum';
-import { string, z } from 'zod';
+import { z } from 'zod';
 import {
   academicDetailsArraySchema,
   entranceExamDetailSchema,
@@ -33,9 +32,10 @@ export const updateStudentDetailsRequestSchema = z
       .regex(/^[A-Za-z\s]+$/, 'Father Name must only contain alphabets and spaces')
       .optional(),
     fatherPhoneNumber: contactNumberSchema,
-    fatherOccupation: z.string({ required_error: 'Father occupation is required' })
-    .regex(/^[A-Za-z\s]+$/, 'Father occupation must only contain alphabets and spaces')
-    .optional(),
+    fatherOccupation: z
+      .string({ required_error: 'Father occupation is required' })
+      .regex(/^[A-Za-z\s]+$/, 'Father occupation must only contain alphabets and spaces')
+      .optional(),
 
     motherName: z
       .string({ required_error: "Mother's Name is required" })

@@ -19,10 +19,8 @@ import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { FilterData, FilterOption, StudentListData, StudentListItem } from './helpers/interface';
 
 // Enum imports
-import { CourseYear } from '@/types/enum';
 import { fetchStudents } from './helpers/api';
 import { refineStudents } from './helpers/refine-data';
-import { Response } from '@/lib/apiClient';
 import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
 import { getCurrentAcademicYear } from '@/lib/getCurrentAcademicYear';
 import { toast } from 'sonner';
@@ -48,12 +46,12 @@ export default function StudentRepositoryPage() {
   const router = useRouter();
   const { filters, updateFilter } = useTechnoFilterContext();
 
-  // Course Dropdown 
+  // Course Dropdown
   const coursesDropdownQuery = useQuery({
     queryKey: ['courses'],
     queryFn: courseDropdown,
     placeholderData: (previousData) => previousData,
-    enabled: true,
+    enabled: true
   });
 
   const courses = Array.isArray(coursesDropdownQuery.data) ? coursesDropdownQuery.data : [];

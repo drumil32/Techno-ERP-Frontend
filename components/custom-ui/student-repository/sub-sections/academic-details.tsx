@@ -18,7 +18,6 @@ import { Check, Pencil } from 'lucide-react';
 // Utility functions and schemas
 import { handleNumericInputChange, toPascal } from '@/lib/utils';
 import { updateStudentDetailsRequestSchema } from '../helpers/schema';
-import TagInput from '../../enquiry-form/stage-1/tag-input';
 
 interface AcademicDetailsFormPropInterface<T extends FieldValues = FieldValues> {
   form: UseFormReturn<z.infer<typeof updateStudentDetailsRequestSchema>>;
@@ -779,26 +778,26 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                     )}
                   </div>
 
-                    <FormField
-                      key="entranceExamDetails.qualified"
-                      control={form.control}
-                      name="entranceExamDetails.qualified"
-                      render={({ field }) => (
+                  <FormField
+                    key="entranceExamDetails.qualified"
+                    control={form.control}
+                    name="entranceExamDetails.qualified"
+                    render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
-                        Qualified
+                          Qualified
                         </FormLabel>
                         <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={(checked) => field.onChange(checked)}
-                          className="h-4 w-4 border border-black"
-                          disabled={!isEditing}
-                        />
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={(checked) => field.onChange(checked)}
+                            className="h-4 w-4 border border-black"
+                            disabled={!isEditing}
+                          />
                         </FormControl>
                       </FormItem>
-                      )}
-                    />
+                    )}
+                  />
                 </div>
               </div>
             </div>

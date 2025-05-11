@@ -77,7 +77,7 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
               {isEditing ? (
                 <span
                   onClick={(e) => {
-                    e.stopPropagation(); 
+                    e.stopPropagation();
                     handleSave();
                     toggleEdit();
                   }}
@@ -89,7 +89,7 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
               ) : (
                 <span
                   onClick={(e) => {
-                    e.stopPropagation(); 
+                    e.stopPropagation();
                     toggleEdit();
                   }}
                   className="flex items-center"

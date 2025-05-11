@@ -157,8 +157,6 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
     }
   };
 
-
-
   const useUpdateDocument = () => {
     const queryClient = useQueryClient();
 

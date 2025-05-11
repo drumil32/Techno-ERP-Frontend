@@ -14,7 +14,6 @@ import { StudentRepositoryTabs } from './helpers/enum';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { removeNullValues } from '@/lib/utils';
 import { updateStudentDetailsRequestSchema } from './helpers/schema';
-import { AreaType, BloodGroup, Countries, Gender, Religion, StatesOfIndia } from '@/types/enum';
 
 // Components
 import MoreDetailsHeader from './more-details-header/more-details-header';
@@ -22,7 +21,6 @@ import { useMoreDetailsHeaderContext } from './more-details-header/more-details-
 import StudentDetailsTab from './tabs/student-details-tab';
 import AcademicDetailsTab from './tabs/academic-details-tab';
 import StudentProfileView from './student-profile-view';
-import DocumentVerificationSection from './sub-sections/mandatory-doc-verification';
 
 // API
 import { fetchStudent } from './helpers/api';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DocumentVerificationSection from '../sub-sections/mandatory-doc-verification';
 import { StudentData } from '../helpers/interface';
 import SingleDocumentUpload from '../single-document-upload';
@@ -16,15 +16,9 @@ const AllDocumentsTab: React.FC<AllDocumentsTabProps> = ({ studentData, setStude
 
       <div className="bg-white p-4 rounded-lg">
         <h2 className="text-lg font-semibold mb-4">Upload Documents</h2>
-        <SingleDocumentUpload
-          studentData={studentData}
-          documentType={DocumentType.PHOTO}
-        />
+        <SingleDocumentUpload studentData={studentData} documentType={DocumentType.PHOTO} />
 
-        <SingleDocumentUpload
-          studentData={studentData}
-          documentType={DocumentType.SIGNATURE}
-        />
+        <SingleDocumentUpload studentData={studentData} documentType={DocumentType.SIGNATURE} />
       </div>
     </div>
   );

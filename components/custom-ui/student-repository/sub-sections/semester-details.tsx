@@ -1,6 +1,6 @@
 // React and React Hook Form imports
-import React, { useState } from 'react';
-import { FieldValues, UseFormReturn } from 'react-hook-form';
+import React from 'react';
+import { FieldValues } from 'react-hook-form';
 
 // UI component imports
 import {

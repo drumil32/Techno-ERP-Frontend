@@ -30,7 +30,10 @@ interface DocumentVerificationProps {
   setStudentData: (data: StudentData) => void;
 }
 
-const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ studentData, setStudentData }) => {
+const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
+  studentData,
+  setStudentData
+}) => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,10 +55,9 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ stud
       setError(null);
 
       if (existingNotes?.length > 0) {
-
         const mappedDocs = existingNotes.map((note: any, index: number) => ({
           _id: note._id,
-          id: `${index + 1}`,
+          id: studentData._id,
           type: note.type || '',
           status: note.status || PhysicalDocumentNoteStatus.PENDING,
           dueBy: note.dueBy ? new Date(note.dueBy).toISOString() : undefined
@@ -64,7 +66,6 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ stud
         setDocuments(mappedDocs);
         setInitialized(true);
         return;
-
       }
 
       const response = await axios.get(
@@ -76,11 +77,11 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ stud
 
       if (docList.length > 0) {
         const initialDocs: Document[] = docList.map((docName, index) => ({
-          _id: '', 
+          _id: '',
           id: `${index + 1}`,
           type: docName,
           status: PhysicalDocumentNoteStatus.PENDING,
-          dueBy: undefined 
+          dueBy: undefined
         }));
         setDocuments(initialDocs);
       } else {
@@ -96,8 +97,10 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ stud
   };
 
   const updateFormValue = async (doc: Document) => {
-    
-    const response = await updateStudentDocuments(doc);
+    // remove _id from the document object
+    const { _id, ...updatedDoc } = doc;
+
+    const response = await updateStudentDocuments(updatedDoc);
 
     if (response) {
       toast.success('Documents updated successfully');
@@ -108,24 +111,22 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({ stud
   };
 
   const handleStatusChange = (docId: string, status: PhysicalDocumentNoteStatus) => {
-    
     const doc: Document | undefined = documents?.find((doc) => doc.id === docId);
 
-    const updatedDocs = documents.map((doc) =>
-      doc.id === docId ? { ...doc, status } : doc
-    );
+    const updatedDocs = documents.map((doc) => (doc.id === docId ? { ...doc, status } : doc));
 
     setDocuments(updatedDocs);
 
     if (doc) {
       updateFormValue(doc);
     }
-
   };
 
   const handleDueDateChange = (docId: string, date: Date | undefined) => {
     const doc: Document | undefined = documents?.find((doc) => doc.id === docId);
-    const updatedDocs = documents.map((doc) => (doc.id === docId ? { ...doc, dueBy: date ? date.toISOString() : undefined } : doc));
+    const updatedDocs = documents.map((doc) =>
+      doc.id === docId ? { ...doc, dueBy: date ? date.toISOString() : undefined } : doc
+    );
     setDocuments(updatedDocs);
     if (doc) {
       updateFormValue(doc);

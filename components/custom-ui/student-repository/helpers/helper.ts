@@ -1,4 +1,12 @@
-import { AdmissionReference, AreaType, BloodGroup, Countries, Gender, Religion, StatesOfIndia } from '@/types/enum';
+import {
+  AdmissionReference,
+  AreaType,
+  BloodGroup,
+  Countries,
+  Gender,
+  Religion,
+  StatesOfIndia
+} from '@/types/enum';
 import { StudentData } from './interface';
 
 export const getDisplayFields = (formData: Record<string, any>) => {
@@ -64,7 +72,7 @@ export const getPersonalDetailsFormData = (data: StudentData) => {
       country: data.studentInfo.address?.country as Countries
     },
     reference: data.studentInfo.reference as AdmissionReference,
-    entranceExamDetails: data?.studentInfo?.entranceExamDetails,
+    entranceExamDetails: data?.studentInfo?.entranceExamDetails
   };
   return formData;
 };

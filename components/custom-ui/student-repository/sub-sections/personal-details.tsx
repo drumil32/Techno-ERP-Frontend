@@ -25,14 +25,11 @@ import { Check, Pencil } from 'lucide-react';
 
 // Utility and helper imports
 import { AreaType, BloodGroup, Category, Gender, Religion, StatesOfIndia } from '@/types/enum';
-import { filterBySchema, toPascal } from '@/lib/utils';
+import { toPascal } from '@/lib/utils';
 import { Nationality } from '../../enquiry-form/schema/schema';
-import { updateStudent } from '../helpers/api';
-import { formatDisplayDate } from '../../enquiry-form/stage-2/student-fees-form';
 import { updateStudentDetailsRequestSchema } from '../helpers/schema';
 import { DisplayField } from '../display-field';
 import { z } from 'zod';
-import { toast } from 'sonner';
 import { getDisplayFields } from '../helpers/helper';
 
 const formSchema = updateStudentDetailsRequestSchema.extend({

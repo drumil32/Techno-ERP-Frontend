@@ -6,14 +6,10 @@ import { StudentData } from '../helpers/interface';
 interface AcademicDetailsTabProps {
   studentData: StudentData;
 }
-const AcademicDetailsTab: React.FC<AcademicDetailsTabProps> = ({
-  studentData,
-}) => {
+const AcademicDetailsTab: React.FC<AcademicDetailsTabProps> = ({ studentData }) => {
   return (
     <>
-      <CurrentAcademicDetailsSection
-        studentData={studentData}
-      />
+      <CurrentAcademicDetailsSection studentData={studentData} />
       <SemesterDetailsSection studentData={studentData} />
     </>
   );

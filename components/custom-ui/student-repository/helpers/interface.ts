@@ -1,6 +1,14 @@
 // Enums and Imports
-import { AdmissionMode, Category, CourseYear, FeeSchedule, FeeStatus, FeeType, Gender } from "@/types/enum";
-import { PhysicalDocumentNoteStatus } from "./enum";
+import {
+  AdmissionMode,
+  Category,
+  CourseYear,
+  FeeSchedule,
+  FeeStatus,
+  FeeType,
+  Gender
+} from '@/types/enum';
+import { PhysicalDocumentNoteStatus } from './enum';
 
 // Table and UI-related Interfaces
 // These interfaces are used for table columns and filters in the UI
@@ -41,7 +49,7 @@ export interface StudentListItem {
   currentYear: number;
   currentSemester: number;
   currentAcademicYear: string;
-  universityId: string; 
+  universityId: string;
   studentName: string;
   studentPhoneNumber: string;
   fatherName: string;
