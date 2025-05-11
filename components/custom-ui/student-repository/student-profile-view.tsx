@@ -27,7 +27,7 @@ const InfoField = ({ label, value }: FieldDefinition) => (
  * Displays student profile picture and identification
  */
 const ProfilePicSection = ({ name, id, image }: { name: string; id: string; image: string }) => (
-  <div className="bg-white rounded-lg p-4 flex flex-col items-center gap-2">
+  <div className="bg-white rounded-lg p-4 flex flex-col items-center justify-center gap-2">
     <div className="relative w-24 h-24 overflow-hidden">
       <Image
         src={image || '/images/default-profile.png'}

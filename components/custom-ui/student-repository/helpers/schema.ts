@@ -1,5 +1,6 @@
 import { addressSchema, contactNumberSchema, requestDateSchema } from '@/common/constants/schemas';
 import {
+  AdmissionReference,
   AreaType,
   BloodGroup,
   Category,
@@ -51,7 +52,7 @@ export const updateStudentDetailsRequestSchema = z
 
     religion: z.nativeEnum(Religion).optional(),
     category: z.nativeEnum(Category),
-
+    reference: z.nativeEnum(AdmissionReference),
     bloodGroup: z.nativeEnum(BloodGroup).optional(),
     aadharNumber: z
       .string()

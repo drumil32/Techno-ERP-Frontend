@@ -11,26 +11,60 @@ import { Subject } from "./helpers/interface"
 const getSubjectMetrics = (subject: Subject) => {
   // Handle attendance calculation
   const attendance = subject?.attendance || []
-  const totalClasses = attendance.length
-  const attended = attendance.filter(Boolean).length
+  
+  let totalClasses = 0
+  let attended = 0
+  
+  attendance.forEach(attendanceRecord => {
+
+    if (typeof attendanceRecord.totalLectureAttendance === 'number' && 
+        typeof attendanceRecord.totalPracticalAttendance === 'number') {
+      totalClasses = (attendanceRecord.totalLectureAttendance + attendanceRecord.totalPracticalAttendance)
+      attended = (attendanceRecord.totalLectureAttendance + attendanceRecord.totalPracticalAttendance)
+    }
+    
+  })
   
   // Check if student has taken any exams
   const hasExams = subject?.exams && subject.exams.length > 0
   
   // Calculate marks only if exams were taken
-  const theoryMarks = hasExams ? subject.exams
-    .flatMap(exam => exam.theory || [])
-    .reduce((sum, item) => sum + (Number(item.marks) || 0), 0) || 0 : null
-    
-  const practicalMarks = hasExams ? subject.exams
-    .flatMap(exam => exam.practical || [])
-    .reduce((sum, item) => sum + (Number(item.marks) || 0), 0) || 0 : null
+  let theoryMarks = 0
+  let practicalMarks = 0
+  let totalPossibleMarks = 0
+  
+  if (hasExams) {
+    subject.exams.forEach(exam => {
+
+      // Add theory marks
+      if (exam.theory && Array.isArray(exam.theory)) {
+        theoryMarks += exam.theory.reduce((sum, item) => sum + (Number(item.marks) || 0), 0)
+      }
+      
+      // Add practical marks
+      if (exam.practical && Array.isArray(exam.practical)) {
+        practicalMarks += exam.practical.reduce((sum, item) => sum + (Number(item.marks) || 0), 0)
+      }
+      
+      // Consider the totalMarks field for each exam
+      if (typeof exam.totalMarks === 'number') {
+        totalPossibleMarks += exam.totalMarks
+      } else {
+        // If totalMarks not provided, estimate based on max theory + practical
+        // Default to 100 if we have no better information
+        totalPossibleMarks += 100
+      }
+    })
+  }
     
   // Final marks depend on exam existence
   const finalMarks = hasExams ? (theoryMarks || 0) + (practicalMarks || 0) : null
   
   // Calculate percentages and results
-  const percentageScore = hasExams && finalMarks !== null ? Math.round((finalMarks / 100) * 100) : null
+  const percentageScore = hasExams && finalMarks !== null && totalPossibleMarks > 0 
+    ? Math.round((finalMarks / totalPossibleMarks) * 100) 
+    : null
+    
   const attendancePercentage = totalClasses > 0 ? Math.round((attended / totalClasses) * 100) : 0
   const result = !hasExams ? "Pending" : (percentageScore !== null && percentageScore >= 40) ? "Pass" : "Fail"
 
@@ -40,6 +74,7 @@ const getSubjectMetrics = (subject: Subject) => {
     theoryMarks,
     practicalMarks,
     finalMarks,
+    totalPossibleMarks,
     attendancePercentage,
     percentageScore,
     result
@@ -57,6 +92,7 @@ const calculateTotals = (subjects: Subject[]) => {
       theory: 0,
       practical: 0,
       finalMarks: 0,
+      totalPossibleMarks: 0
     }
   }
   
@@ -66,9 +102,10 @@ const calculateTotals = (subjects: Subject[]) => {
         const metrics = getSubjectMetrics(subj)
         acc.classes += metrics.totalClasses
         acc.attendance += metrics.attended
-        acc.theory += metrics.theoryMarks || 0 // Handle null values
-        acc.practical += metrics.practicalMarks || 0 // Handle null values
-        acc.finalMarks += metrics.finalMarks || 0 // Handle null values
+        acc.theory += metrics.theoryMarks || 0 
+        acc.practical += metrics.practicalMarks || 0 
+        acc.finalMarks += metrics.finalMarks || 0 
+        acc.totalPossibleMarks += metrics.totalPossibleMarks || 0 
       }
       return acc
     },
@@ -78,6 +115,7 @@ const calculateTotals = (subjects: Subject[]) => {
       theory: 0,
       practical: 0,
       finalMarks: 0,
+      totalPossibleMarks: 0
     }
   )
 }
@@ -149,10 +187,9 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
     ? Math.round((totals.attendance / totals.classes) * 100) 
     : null
     
-  // Calculate total score percentage only for subjects with exams
-  const subjectsWithExams = safeSubjects.filter(s => s?.exams && s.exams.length > 0).length
-  const totalPercentageScore = subjectsWithExams > 0 
-    ? Math.round((totals.finalMarks / (subjectsWithExams * 100)) * 100) 
+  // Calculate total score percentage considering the totalPossibleMarks
+  const totalPercentageScore = totals.totalPossibleMarks > 0 
+    ? Math.round((totals.finalMarks / totals.totalPossibleMarks) * 100) 
     : null
 
   return (
@@ -171,6 +208,7 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
                 <TableHead className="font-medium text-right">Theory</TableHead>
                 <TableHead className="font-medium text-right">Practical</TableHead>
                 <TableHead className="font-medium text-right">Final Marks</TableHead>
+                <TableHead className="font-medium text-right">Total Possible</TableHead>
                 <TableHead className="font-medium text-right">Percentage Score</TableHead>
                 <TableHead className="font-medium">Result</TableHead>
               </TableRow>
@@ -185,6 +223,7 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
                   theoryMarks,
                   practicalMarks,
                   finalMarks,
+                  totalPossibleMarks,
                   attendancePercentage,
                   percentageScore,
                   result
@@ -203,6 +242,7 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
                     <TableCell className="text-right">{renderSafe(theoryMarks, { zeroAsPlaceholder: true })}</TableCell>
                     <TableCell className="text-right">{renderSafe(practicalMarks, { zeroAsPlaceholder: true })}</TableCell>
                     <TableCell className="text-right">{renderSafe(finalMarks, { zeroAsPlaceholder: true })}</TableCell>
+                    <TableCell className="text-right">{renderSafe(totalPossibleMarks, { zeroAsPlaceholder: true })}</TableCell>
                     <TableCell className="text-right">
                       {renderSafe(percentageScore, { suffix: "%", decimals: 0, zeroAsPlaceholder: true })}
                     </TableCell>
@@ -237,6 +277,7 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
                 <TableCell className="text-right font-medium">{renderSafe(totals.theory, { zeroAsPlaceholder: true })}</TableCell>
                 <TableCell className="text-right font-medium">{renderSafe(totals.practical, { zeroAsPlaceholder: true })}</TableCell>
                 <TableCell className="text-right font-medium">{renderSafe(totals.finalMarks, { zeroAsPlaceholder: true })}</TableCell>
+                <TableCell className="text-right font-medium">{renderSafe(totals.totalPossibleMarks, { zeroAsPlaceholder: true })}</TableCell>
                 <TableCell className="text-right font-medium">{renderSafe(totalPercentageScore, { suffix: "%", decimals: 0, zeroAsPlaceholder: true })}</TableCell>
                 <TableCell>
                   {totalPercentageScore === null ? (

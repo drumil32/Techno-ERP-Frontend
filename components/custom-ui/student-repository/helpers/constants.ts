@@ -41,6 +41,4 @@ export const YearMap = [
   "Fourth",
   "Fifth",
   "Sixth",
-  "Seventh",
-  "Eighth",
 ]

@@ -1,6 +1,9 @@
+// Enums and Imports
 import { AdmissionMode, Category, CourseYear, FeeSchedule, FeeStatus, FeeType, Gender } from "@/types/enum";
 import { PhysicalDocumentNoteStatus } from "./enum";
 
+// Table and UI-related Interfaces
+// These interfaces are used for table columns and filters in the UI
 export interface ColumnMeta {
   align?: string;
 }
@@ -25,17 +28,13 @@ export interface FilterData {
   isDateFilter?: boolean;
 }
 
-export interface FieldDefinition {
-  label: string;
-  value?: string | number | boolean;
-}
-
+// Student List and Pagination Interfaces
+// These interfaces are used for listing students and handling pagination
 export interface StudentListData {
   students: StudentListItem[];
   pagination: Pagination;
 }
 
-// Reuse only what's present in the response
 export interface StudentListItem {
   _id: string;
   courseName: string;
@@ -56,6 +55,8 @@ export interface Pagination {
   totalPages: number;
 }
 
+// Detailed Student Data Interfaces
+// These interfaces represent detailed information about a student
 export interface StudentData {
   _id: string;
   studentInfo: StudentInfo;
@@ -109,6 +110,8 @@ export interface StudentInfo {
   nationality?: string;
 }
 
+// Address Interfaces
+// These interfaces represent address-related data
 export interface Address {
   addressLine1: string;
   addressLine2: string;
@@ -119,6 +122,8 @@ export interface Address {
   _id: string;
 }
 
+// Semester and Subject Interfaces
+// These interfaces represent semester and subject-related data
 export interface Semester {
   semesterId: string;
   semesterNumber: number;
@@ -127,6 +132,30 @@ export interface Semester {
   subjects: Subject[];
   fees: Fees;
   _id: string;
+}
+
+export interface Subject {
+  subjectId: string;
+  subjectName: string;
+  subjectCode: string;
+  attendance: Attendance[];
+  exams: Exam[];
+  instructor: string[];
+  _id: string;
+}
+
+// Attendance and Exam Interfaces
+// These interfaces represent attendance and exam-related data
+export interface Attendance {
+  lecturePlan?: BaseAttendance[];
+  practicalPlan?: BaseAttendance[];
+  totalLectureAttendance?: number;
+  totalPracticalAttendance?: number;
+}
+
+export interface BaseAttendance {
+  id?: string;
+  attended?: boolean;
 }
 
 export interface Exam {
@@ -140,28 +169,8 @@ export interface BaseExam {
   marks?: number;
 }
 
-export interface BaseAttendance {
-  id?: string;
-  attended?: boolean;
-}
-
-export interface Attendance {
-  lecturePlan?: BaseAttendance[];
-  practicalPlan?: BaseAttendance[];
-  totalLectureAttendance?: number;
-  totalPracticalAttendance?: number;
-}
-
-export interface Subject {
-  subjectId: string;
-  subjectName: string;
-  subjectCode: string;
-  attendance: Attendance[];
-  exams: Exam[];
-  instructor: string[];
-  _id: string;
-}
-
+// Fee-related Interfaces
+// These interfaces represent fee-related data
 export interface Fees {
   details: FeeDetail[];
   paidAmount: number;
@@ -179,6 +188,8 @@ export interface FeeDetail {
   _id: string;
 }
 
+// Document Interfaces
+// These interfaces represent document-related data
 export interface Document {
   _id: string;
   id: string;
@@ -191,4 +202,11 @@ export interface DocumentWithFileUrl {
   type: string;
   fileUrl: string;
   _id: string;
+}
+
+// Miscellaneous Interfaces
+// These interfaces represent other reusable data structures
+export interface FieldDefinition {
+  label: string;
+  value?: string | number | boolean;
 }
