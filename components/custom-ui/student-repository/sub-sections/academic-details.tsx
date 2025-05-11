@@ -270,7 +270,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                             Subjects
                           </FormLabel>
                           <FormControl>
-                            <TagInput value={field.value || []} onChange={field.onChange} />
+                            <Input
+                              {...field}
+                              value={field.value ?? ''}
+                              className={commonFieldClass}
+                              placeholder="Enter subjects"
+                            />
                           </FormControl>
                           <div className="h-[20px]">
                             <FormMessage className="text-[11px]" />
@@ -457,7 +462,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                             Subjects
                           </FormLabel>
                           <FormControl>
-                            <TagInput value={field.value || []} onChange={field.onChange} />
+                            <Input
+                              {...field}
+                              value={field.value ?? ''}
+                              className={commonFieldClass}
+                              placeholder="Enter subjects"
+                            />
                           </FormControl>
                           <div className="h-[20px]">
                             <FormMessage className="text-[11px]" />
@@ -644,7 +654,12 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                             Subjects
                           </FormLabel>
                           <FormControl>
-                            <TagInput value={field.value || []} onChange={field.onChange} />
+                            <Input
+                              {...field}
+                              value={field.value ?? ''}
+                              className={commonFieldClass}
+                              placeholder="Enter subjects"
+                            />
                           </FormControl>
                           <div className="h-[20px]">
                             <FormMessage className="text-[11px]" />

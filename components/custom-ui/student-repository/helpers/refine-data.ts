@@ -1,5 +1,6 @@
 import { formatYearRange } from "@/lib/utils";
 import { StudentListData } from "./interface";
+import { YearMap } from "./constants";
 
 export const refineStudents = (data: StudentListData): StudentListData => {
     console.log('Refining students data:', data);
@@ -15,6 +16,10 @@ export const refineStudents = (data: StudentListData): StudentListData => {
         currentSemester: student.currentSemester,
         currentAcademicYear: formatYearRange(student.currentAcademicYear),
         currentYear: Math.ceil(student.currentSemester / 2),
+        courseYear: (() => {
+            const currentYear = Math.ceil(student.currentSemester / 2);
+            return YearMap[currentYear - 1] || "Unknown";
+        })(),
     }));
     
     return {

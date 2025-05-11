@@ -26,7 +26,7 @@ import { Response } from '@/lib/apiClient';
 import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
 import { getCurrentAcademicYear } from '@/lib/getCurrentAcademicYear';
 import { toast } from 'sonner';
-import { columns } from './helpers/constants';
+import { columns, YearMap } from './helpers/constants';
 
 export default function StudentRepositoryPage() {
   // State Management
@@ -129,7 +129,7 @@ export default function StudentRepositoryPage() {
       {
         filterKey: 'courseYear',
         label: 'Course Year',
-        options: Object.values(CourseYear),
+        options: YearMap,
         hasSearch: true,
         multiSelect: true
       },

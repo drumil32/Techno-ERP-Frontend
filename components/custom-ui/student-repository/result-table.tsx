@@ -4,23 +4,35 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Subject } from "./helpers/interface"
 
+/**
+ * Calculate metrics for a single subject
+ * Returns all calculated metrics with special handling for no-exam cases
+ */
 const getSubjectMetrics = (subject: Subject) => {
-  const attendance = subject.attendance ?? []
+  // Handle attendance calculation
+  const attendance = subject?.attendance || []
   const totalClasses = attendance.length
   const attended = attendance.filter(Boolean).length
-
-  const theoryMarks = subject?.exams
-    ?.flatMap(exam => exam.theory ?? [])
-    ?.reduce((sum, item) => sum + (item.marks ?? 0), 0)
-
-  const practicalMarks = subject?.exams
-    ?.flatMap(exam => exam.practical ?? [])
-    ?.reduce((sum, item) => sum + (item.marks ?? 0), 0)
-
-  const finalMarks = theoryMarks + practicalMarks
-  const percentageScore = Math.round((finalMarks / 100) * 100) // Adjust if total is not 100
+  
+  // Check if student has taken any exams
+  const hasExams = subject?.exams && subject.exams.length > 0
+  
+  // Calculate marks only if exams were taken
+  const theoryMarks = hasExams ? subject.exams
+    .flatMap(exam => exam.theory || [])
+    .reduce((sum, item) => sum + (Number(item.marks) || 0), 0) || 0 : null
+    
+  const practicalMarks = hasExams ? subject.exams
+    .flatMap(exam => exam.practical || [])
+    .reduce((sum, item) => sum + (Number(item.marks) || 0), 0) || 0 : null
+    
+  // Final marks depend on exam existence
+  const finalMarks = hasExams ? (theoryMarks || 0) + (practicalMarks || 0) : null
+  
+  // Calculate percentages and results
+  const percentageScore = hasExams && finalMarks !== null ? Math.round((finalMarks / 100) * 100) : null
   const attendancePercentage = totalClasses > 0 ? Math.round((attended / totalClasses) * 100) : 0
-  const result = percentageScore >= 40 ? "Pass" : "Fail"
+  const result = !hasExams ? "Pending" : (percentageScore !== null && percentageScore >= 40) ? "Pass" : "Fail"
 
   return {
     totalClasses,
@@ -34,16 +46,30 @@ const getSubjectMetrics = (subject: Subject) => {
   }
 }
 
-
+/**
+ * Calculate totals across all subjects
+ */
 const calculateTotals = (subjects: Subject[]) => {
+  if (!subjects || subjects.length === 0) {
+    return {
+      classes: 0,
+      attendance: 0,
+      theory: 0,
+      practical: 0,
+      finalMarks: 0,
+    }
+  }
+  
   return subjects.reduce(
-    (acc, subj) => {
-      const metrics = getSubjectMetrics(subj)
-      acc.classes += metrics.totalClasses
-      acc.attendance += metrics.attended
-      acc.theory += metrics.theoryMarks
-      acc.practical += metrics.practicalMarks
-      acc.finalMarks += metrics.finalMarks
+    (acc: any, subj: Subject | null) => {
+      if (subj) {
+        const metrics = getSubjectMetrics(subj)
+        acc.classes += metrics.totalClasses
+        acc.attendance += metrics.attended
+        acc.theory += metrics.theoryMarks || 0 // Handle null values
+        acc.practical += metrics.practicalMarks || 0 // Handle null values
+        acc.finalMarks += metrics.finalMarks || 0 // Handle null values
+      }
       return acc
     },
     {
@@ -56,33 +82,78 @@ const calculateTotals = (subjects: Subject[]) => {
   )
 }
 
-const renderSafe = (
-  value: number | string | null | undefined,
-  opts: { suffix?: string; decimals?: number } = {}
-): string => {
-  if (value === null || value === undefined) return "-";
+/**
+ * Options for rendering values safely
+ */
+interface RenderSafeOptions {
+  /** Number of decimal places to display */
+  decimals?: number;
+  /** Suffix to append to the value (e.g., "%") */
+  suffix?: string;
+  /** Custom placeholder for null/undefined values */
+  placeholder?: string;
+  /** Whether zero values should be shown as placeholder */
+  zeroAsPlaceholder?: boolean;
+}
 
-  const num = typeof value === "string" ? Number(value) : value;
+/**
+ * Safely renders values with consistent formatting
+ * Handles null, undefined, NaN cases with placeholders
+ */
+const renderSafe = (value: any, opts: RenderSafeOptions = {}): string => {
+  const placeholder = opts.placeholder || "--";
+  
+  // If value is null, undefined, NaN, or empty string, return placeholder
+  if (value === null || value === undefined || value === "" || 
+      (typeof value === "number" && isNaN(value))) {
+    return placeholder;
+  }
+  
+  // Special case: treat zero as placeholder if requested
+  if (opts.zeroAsPlaceholder && (value === 0 || value === "0")) {
+    return placeholder;
+  }
 
-  if (typeof num === "number" && !isNaN(num)) {
+  // Format number with optional decimal places and suffix
+  const num = typeof value === "number" ? value : Number(value);
+  
+  if (!isNaN(num)) {
     const formattedNum = opts.decimals !== undefined ? num.toFixed(opts.decimals) : num;
     return `${formattedNum}${opts.suffix || ""}`;
   }
 
-  return "-";
-};
-
-
-interface ResultsTableProps {
-  subjects: Subject[]
+  // Return as string for non-numeric values
+  return String(value);
 }
 
-export default function ResultsTable({ subjects }: ResultsTableProps) {
+/**
+ * Props for ResultsTable component
+ */
+interface ResultsTableProps {
+  subjects: Subject[];
+}
 
-  const totals = calculateTotals(subjects)
-  const totalAttendancePercentage = totals.classes > 0 ? Math.round((totals.attendance / totals.classes) * 100) : 0
-  const totalPercentageScore =
-    subjects.length > 0 ? Math.round((totals.finalMarks / (subjects.length * 100)) * 100) : 0
+/**
+ * ResultsTable component displays academic performance in a tabular format
+ * Handles edge cases like missing data and no-exam scenarios
+ */
+export default function ResultsTable({ subjects }: ResultsTableProps) {
+  // Ensure subjects is always an array
+  const safeSubjects = Array.isArray(subjects) ? subjects : []
+  
+  // Calculate totals and percentages
+  const totals = calculateTotals(safeSubjects)
+  
+  // Calculate attendance percentage only if classes were held
+  const totalAttendancePercentage = totals.classes > 0 
+    ? Math.round((totals.attendance / totals.classes) * 100) 
+    : null
+    
+  // Calculate total score percentage only for subjects with exams
+  const subjectsWithExams = safeSubjects.filter(s => s?.exams && s.exams.length > 0).length
+  const totalPercentageScore = subjectsWithExams > 0 
+    ? Math.round((totals.finalMarks / (subjectsWithExams * 100)) * 100) 
+    : null
 
   return (
     <div className="space-y-4">
@@ -105,7 +176,9 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {subjects.map(subject => {
+              {safeSubjects.map((subject, index) => {
+                if (!subject) return null;
+                
                 const {
                   totalClasses,
                   attended,
@@ -118,20 +191,20 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
                 } = getSubjectMetrics(subject)
 
                 return (
-                  <TableRow key={subject._id}>
-                    <TableCell className="font-medium">{subject.subjectCode}</TableCell>
-                    <TableCell className="text-right">{subject?.instructor?.join(", ") || ''}</TableCell>
-                    <TableCell className="text-right">{subject.subjectId}</TableCell>
+                  <TableRow key={subject._id || `subject-${index}`}>
+                    <TableCell className="font-medium">{subject.subjectName || "--"}</TableCell>
+                    <TableCell className="text-right">{subject.subjectCode || "--"}</TableCell>
+                    <TableCell className="text-right">{subject?.instructor?.join(", ") || "--"}</TableCell>
                     <TableCell className="text-right">{renderSafe(totalClasses)}</TableCell>
                     <TableCell className="text-right">{renderSafe(attended)}</TableCell>
                     <TableCell className="text-right">
-                      {renderSafe(attendancePercentage, { suffix: "%", decimals: 2 })}
+                      {renderSafe(attendancePercentage, { suffix: "%", decimals: 0 })}
                     </TableCell>
-                    <TableCell className="text-right">{renderSafe(theoryMarks)}</TableCell>
-                    <TableCell className="text-right">{renderSafe(practicalMarks)}</TableCell>
-                    <TableCell className="text-right">{renderSafe(finalMarks)}</TableCell>
+                    <TableCell className="text-right">{renderSafe(theoryMarks, { zeroAsPlaceholder: true })}</TableCell>
+                    <TableCell className="text-right">{renderSafe(practicalMarks, { zeroAsPlaceholder: true })}</TableCell>
+                    <TableCell className="text-right">{renderSafe(finalMarks, { zeroAsPlaceholder: true })}</TableCell>
                     <TableCell className="text-right">
-                      {renderSafe(percentageScore, { suffix: "%", decimals: 2 })}
+                      {renderSafe(percentageScore, { suffix: "%", decimals: 0, zeroAsPlaceholder: true })}
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -139,7 +212,9 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
                         className={`${
                           result === "Pass"
                             ? "bg-green-100 text-green-800 hover:bg-green-100"
-                            : "bg-red-100 text-red-800 hover:bg-red-100"
+                            : result === "Fail"
+                            ? "bg-red-100 text-red-800 hover:bg-red-100"
+                            : "bg-gray-100 text-gray-800 hover:bg-gray-100"
                         }`}
                       >
                         {result}
@@ -147,23 +222,38 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
                     </TableCell>
                   </TableRow>
                 );
-                
               })}
+
+              {/* Summary row */}
               <TableRow className="border-t-2">
                 <TableCell className="font-medium">Total</TableCell>
-                <TableCell className="text-right font-medium">-</TableCell>
-                <TableCell className="text-right font-medium">-</TableCell>
-                <TableCell className="text-right font-medium">{totals.classes}</TableCell>
-                <TableCell className="text-right font-medium">{totals.attendance}</TableCell>
-                <TableCell className="text-right font-medium">{totalAttendancePercentage}%</TableCell>
-                <TableCell className="text-right font-medium">{totals.theory}</TableCell>
-                <TableCell className="text-right font-medium">{totals.practical}</TableCell>
-                <TableCell className="text-right font-medium">{totals.finalMarks}</TableCell>
-                <TableCell className="text-right font-medium">{totalPercentageScore}%</TableCell>
+                <TableCell className="text-right font-medium">--</TableCell>
+                <TableCell className="text-right font-medium">--</TableCell>
+                <TableCell className="text-right font-medium">{renderSafe(totals.classes)}</TableCell>
+                <TableCell className="text-right font-medium">{renderSafe(totals.attendance)}</TableCell>
+                <TableCell className="text-right font-medium">
+                  {renderSafe(totalAttendancePercentage, { suffix: "%", decimals: 0 })}
+                </TableCell>
+                <TableCell className="text-right font-medium">{renderSafe(totals.theory, { zeroAsPlaceholder: true })}</TableCell>
+                <TableCell className="text-right font-medium">{renderSafe(totals.practical, { zeroAsPlaceholder: true })}</TableCell>
+                <TableCell className="text-right font-medium">{renderSafe(totals.finalMarks, { zeroAsPlaceholder: true })}</TableCell>
+                <TableCell className="text-right font-medium">{renderSafe(totalPercentageScore, { suffix: "%", decimals: 0, zeroAsPlaceholder: true })}</TableCell>
                 <TableCell>
-                  <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">
-                    Pass
-                  </Badge>
+                  {totalPercentageScore === null ? (
+                    <Badge variant="outline" className="bg-gray-100 text-gray-800 hover:bg-gray-100">
+                      Pending
+                    </Badge>
+                  ) : (
+                    <Badge 
+                      variant="outline" 
+                      className={totalPercentageScore >= 40 
+                        ? "bg-green-100 text-green-800 hover:bg-green-100"
+                        : "bg-red-100 text-red-800 hover:bg-red-100"
+                      }
+                    >
+                      {totalPercentageScore >= 40 ? "Pass" : "Fail"}
+                    </Badge>
+                  )}
                 </TableCell>
               </TableRow>
             </TableBody>

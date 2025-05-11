@@ -29,7 +29,18 @@ export const columns: Column[] = [
   { accessorKey: 'fatherName', header: 'Father Name' },
   { accessorKey: 'fatherPhoneNumber', header: 'Father\'s Phone Number', meta: { align: 'center' } },
   { accessorKey: 'courseName', header: 'Course', meta: { align: 'center' } },
-  { accessorKey: 'currentYear', header: 'Current Year', meta: { align: 'center' } },
+  { accessorKey: 'courseYear', header: 'Course Year', meta: { align: 'center' } },
   { accessorKey: 'currentSemester', header: 'Semester', meta: { align: 'center' } },
   { accessorKey: 'currentAcademicYear', header: 'Academic Year', meta: { align: 'center' } },
 ];
+
+export const YearMap = [
+  "First",
+  "Second",
+  "Third",
+  "Fourth",
+  "Fifth",
+  "Sixth",
+  "Seventh",
+  "Eighth",
+]
