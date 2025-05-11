@@ -445,10 +445,19 @@ export default function TechnoDataTableAdvanced({
                                     value={value ?? ''}
                                     onChange={(e) => {
                                       const newValue = e.target.value;
+                                      const numericFields = ['classStrength', 'attendance', 'absent', 'unitNumber', 'lectureNumber'];
+                                      const isNumeric = /^\d*$/.test(newValue); 
+                                
+                                      if (numericFields.includes(columnId) && !isNumeric) {
+                                        return;
+                                      }
+                                
                                       const updatedErrors = [...batchValidationErrors];
                                       if (!updatedErrors[rowIndex]) updatedErrors[rowIndex] = {};
-
+                                     
                                       const row = (table.getRowModel().rows[rowIndex]?.original ?? {}) as AttendanceRow;
+                                      
+                            
                                       const updatedRow = { ...row, [columnId]: newValue };
 
                                       const classStrength = parseInt(
@@ -469,13 +478,7 @@ export default function TechnoDataTableAdvanced({
 
                                       updatedErrors[rowIndex][columnId] = '';
 
-                                      const numericFields = ['classStrength', 'attendance', 'absent'];
-
-                                      if (numericFields.includes(columnId)) {
-                                        if (!/^\d*$/.test(newValue)) {
-                                          updatedErrors[rowIndex][columnId] = 'Only numeric values allowed';
-                                        }
-                                      }
+                            
                                       if (columnId === 'classStrength') {
                                         if (!isValidNumber(classStrength)) {
                                           updatedErrors[rowIndex][columnId] = 'Class strength must be a non-negative number';
@@ -608,6 +611,11 @@ export default function TechnoDataTableAdvanced({
                             value={newRow[columnId] || ''}
                             onChange={(e) => {
                               const newValue = e.target.value;
+                              const numericOnlyFields = ['classStrength', 'attendance', 'unitNumber', 'lectureNumber', 'absent'];
+                              if (numericOnlyFields.includes(columnId) && !/^\d*$/.test(newValue)) {
+                                return; // Do not update value if not numeric
+                              }
+
                               const updatedRow = { ...newRow, [columnId]: newValue };
                               const newErrors = { ...validationErrors };
 
