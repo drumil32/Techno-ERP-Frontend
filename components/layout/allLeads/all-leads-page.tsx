@@ -376,7 +376,7 @@ export default function AllLeadsPage() {
                 id: toastIdRef.current,
                 duration: 1500
               });
-              setRefreshKey((prevKey) => prevKey + 1);
+              // setRefreshKey((prevKey) => prevKey + 1);
             } else {
               toast.error('Failed to update lead type', {
                 id: toastIdRef.current,
