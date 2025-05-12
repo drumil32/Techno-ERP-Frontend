@@ -219,6 +219,7 @@ export default function AllLeadsPage() {
     queryKey: ['leads', filterParams, appliedFilters, debouncedSearch],
     queryFn: fetchLeads,
     placeholderData: (previousData) => previousData,
+    refetchOnWindowFocus: false,
     enabled: true
   });
 
@@ -444,7 +445,9 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'remarksView',
       header: 'Remarks',
-      meta: { maxWidth: 130 }
+      meta: {
+        maxWidth: isRoleLeadMarketing ? 130 : 230
+      }
     },
 
     {

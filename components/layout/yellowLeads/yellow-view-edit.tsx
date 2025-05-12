@@ -549,13 +549,13 @@ export default function YellowLeadViewEdit({
   // Render edit view
   const EditView = (
     <>
-      <div className="flex flex-row gap-2 items-center">
-        <div className="flex flex-col gap-2 w-1/3">
+      <div className="flex flex-row gap-5 items-center">
+        <div className="flex flex-col gap-2 w-1/2">
           <EditLabel htmlFor="ltcDate" title={'LTC Date'} />
           <p className="h-9 font-medium">{formatTimeStampView(data.leadTypeModifiedDate)}</p>
         </div>
 
-        <div className="space-y-2 w-2/3">
+        <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="name" title={'Name'} />
           <Input
             id="name"
@@ -569,7 +569,7 @@ export default function YellowLeadViewEdit({
       </div>
 
       <div className="flex gap-5">
-        <div className="space-y-2">
+        <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="phoneNumber" title={'Phone number'} />
           <Input
             id="phoneNumber"
@@ -581,7 +581,7 @@ export default function YellowLeadViewEdit({
           {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="altPhoneNumber" title={'Alt Phone number'} />
           <Input
             id="altPhoneNumber"
@@ -747,15 +747,15 @@ export default function YellowLeadViewEdit({
       </div>
       <div className="flex gap-5">
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="schoolName" title={'School/College Name'} />
-          <Input
-            id="schoolName"
-            name="schoolName"
-            value={formData.schoolName || ''}
-            onChange={handleChange}
-            className={inputStyle}
-          />
-          {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
+        <EditLabel htmlFor="degree" title={'Degree'} />
+        <Input
+          id="degree"
+          name="degree"
+          value={formData.degree || ''}
+          onChange={handleChange}
+          className={inputStyle}
+        />
+        {errors.degree && <p className="text-red-500 text-xs mt-1">{errors.degree}</p>}
         </div>
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="finalConversion" title={'Final Conversion'} />
@@ -779,15 +779,15 @@ export default function YellowLeadViewEdit({
       </div>
 
       <div className="space-y-2 ">
-        <EditLabel htmlFor="degree" title={'Degree'} />
-        <Input
-          id="degree"
-          name="degree"
-          value={formData.degree || ''}
-          onChange={handleChange}
-          className={inputStyle}
-        />
-        {errors.degree && <p className="text-red-500 text-xs mt-1">{errors.degree}</p>}
+          <EditLabel htmlFor="schoolName" title={'School/College Name'} />
+          <Input
+            id="schoolName"
+            name="schoolName"
+            value={formData.schoolName || ''}
+            onChange={handleChange}
+            className={inputStyle}
+          />
+          {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
       </div>
       {/* Remarks Section */}
       <div className="space-y-2 max-w-2xl mx-auto">

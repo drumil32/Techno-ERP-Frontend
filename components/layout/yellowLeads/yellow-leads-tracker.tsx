@@ -157,6 +157,7 @@ export default function YellowLeadsTracker() {
     queryKey: ['leads', filterParams, appliedFilters, debouncedSearch],
     queryFn: fetchYellowLeads,
     placeholderData: (previousData) => previousData,
+    refetchOnWindowFocus: false,
     enabled: true
   });
 
@@ -275,7 +276,7 @@ export default function YellowLeadsTracker() {
           };
 
           try {
-            const response = await apiRequest(
+            const response: any = await apiRequest(
               API_METHODS.PUT,
               API_ENDPOINTS.updateYellowLead,
               updatedData
@@ -285,7 +286,35 @@ export default function YellowLeadsTracker() {
 
             if (response) {
               toast.success('Footfall updated!', { duration: 1500 });
-              setRefreshKey((prevKey) => prevKey + 1);
+              const updateLeadCache = () => {
+                const queryCache = queryClient.getQueryCache();
+                const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
+
+                leadQueries.forEach(query => {
+                  queryClient.setQueryData(query.queryKey, (oldData: any) => {
+                    if (!oldData || !oldData.yellowLeads) return oldData;
+
+                    const newData = JSON.parse(JSON.stringify(oldData));
+
+                    const leadIndex = newData.yellowLeads.findIndex(
+                      (lead: any) => lead._id === response._id
+                    );
+
+                    if (leadIndex !== -1) {
+                      newData.yellowLeads[leadIndex] = {
+                        ...newData.yellowLeads[leadIndex],
+                        footFall: response.footFall,
+                        finalConversion: response.finalConversion
+                      };
+                    }
+                    return newData;
+                  });
+                });
+
+              };
+
+              updateLeadCache();
+              // setRefreshKey((prevKey) => prevKey + 1);
             } else {
               toast.error('Update failed!', { duration: 1500 });
               setSelectedStatus(previousValue);

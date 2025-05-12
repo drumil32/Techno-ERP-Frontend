@@ -4,12 +4,12 @@ import { ChevronDown, Check } from 'lucide-react';
 import { LeadType, LeadTypeMapper } from '@/types/enum';
 
 export const typeStyles: Record<LeadType, string> = {
-  [LeadType.LEFT_OVER]: 'bg-[#FFE3CB] text-[#E06C06]',
-  [LeadType.NOT_INTERESTED]: 'bg-[#FFD0D6] text-[#E22339]',
+  [LeadType.LEFT_OVER]: 'bg-[#FFC492] text-[#743D1B]',
+  [LeadType.NOT_INTERESTED]: 'bg-[#FFA2AE] text-[#961322]',
   [LeadType.ACTIVE]: 'bg-[#FFD60A] text-[#685701]',
-  [LeadType.COURSE_UNAVAILABLE]: 'bg-[#CECECE] text-[#696969]',
+  [LeadType.COURSE_UNAVAILABLE]: 'bg-[#00B8B0] text-[#FFFFFF]',
   [LeadType.NEUTRAL]: 'bg-[#C8E4FF] text-[#006ED8]',
-  [LeadType.DID_NOT_PICK]: 'bg-[#ECD0FA] text-[#8D2CBE]',
+  [LeadType.DID_NOT_PICK]: 'bg-[#F2D0A6] text-[#6D5822]',
   [LeadType.INVALID]: 'bg-black text-[#FFFFFF]'
 };
 
