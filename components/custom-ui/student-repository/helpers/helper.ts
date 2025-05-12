@@ -3,6 +3,7 @@ import {
   AreaType,
   BloodGroup,
   Countries,
+  EducationLevel,
   Gender,
   Religion,
   StatesOfIndia
@@ -16,6 +17,7 @@ export const getDisplayFields = (formData: Record<string, any>) => {
     { label: 'Email ID', value: formData.emailId },
     { label: 'Student ID', value: formData.studentID },
     { label: 'Form No.', value: formData.formNo },
+    { label: 'Lurn/ Pre-registration No', value: formData.lurnRegistrationNo },
     { label: "Father's Name", value: formData.fatherName },
     { label: "Father's Phone Number", value: formData.fatherPhoneNumber },
     { label: "Father's Occupation", value: formData.fatherOccupation },
@@ -72,7 +74,8 @@ export const getPersonalDetailsFormData = (data: StudentData) => {
       country: data.studentInfo.address?.country as Countries
     },
     reference: data.studentInfo.reference as AdmissionReference,
-    entranceExamDetails: data?.studentInfo?.entranceExamDetails
+    entranceExamDetails: data?.studentInfo?.entranceExamDetails,
+    lurnRegistrationNo: data.studentInfo.lurnRegistrationNo,
   };
   return formData;
 };

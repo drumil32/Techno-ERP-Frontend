@@ -34,7 +34,8 @@ import { getDisplayFields } from '../helpers/helper';
 
 const formSchema = updateStudentDetailsRequestSchema.extend({
   studentID: z.string().optional(),
-  formNo: z.string().optional()
+  formNo: z.string().optional(),
+  lurnRegistrationNo: z.string().optional(),
 });
 interface PersonalDetailsFormProps<T extends FieldValues = FieldValues> {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -227,6 +228,33 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                             value={field.value ?? ''}
                             className={commonFieldClass}
                             placeholder="Enter the form number"
+                          />
+                        </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  {/* Lurn/ Pre-registration No */}
+                  <FormField
+                    disabled={true}
+                    key="lurnRegistrationNo"
+                    control={form.control}
+                    name="lurnRegistrationNo"
+                    render={({ field }) => (
+                      <FormItem className={`${commonFormItemClass}`}>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Lurn/ Pre-registration No
+                          <span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            type="text"
+                            {...field}
+                            value={field.value ?? ''}
+                            className={commonFieldClass}
+                            placeholder="Enter the Lurn/ Pre-registration No"
                           />
                         </FormControl>
                         <div className="h-[20px]">
@@ -446,7 +474,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     control={form.control}
                     name="religion"
                     render={({ field }) => (
-                      <FormItem className={`${commonFormItemClass} col-span-1`}>
+                      <FormItem className={`${commonFormItemClass} col-start-1`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                           Religion
                         </FormLabel>
@@ -510,7 +538,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     control={form.control}
                     name="bloodGroup"
                     render={({ field }) => (
-                      <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
+                      <FormItem className={`${commonFormItemClass} col-start-1`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                           Blood Group
                         </FormLabel>
@@ -564,7 +592,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     control={form.control}
                     name="stateOfDomicile"
                     render={({ field }) => (
-                      <FormItem className={`${commonFormItemClass} col-span-1`}>
+                      <FormItem className={`${commonFormItemClass} col-start-1`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                           State Of Domicile
                         </FormLabel>

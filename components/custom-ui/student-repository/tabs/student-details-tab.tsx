@@ -42,7 +42,10 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
     if (filteredData.academicDetails) {
       const filteredAcademicDetails: IAcademicDetailArraySchema =
         filteredData.academicDetails.filter((entry: IAcademicDetailSchema) => {
+
           if (!entry) return false;
+
+          entry = removeNullValues(entry);
 
           // Only look at the fields we care about for "emptiness"
           const { schoolCollegeName, universityBoardName, passingYear, percentageObtained } = entry;

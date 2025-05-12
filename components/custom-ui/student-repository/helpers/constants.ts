@@ -1,12 +1,8 @@
-import { SITE_MAP } from '@/common/constants/frontendRouting';
-import { StudentRepositoryTabs } from './enum';
 import { Column } from './interface';
 
-
-
 export const columns: Column[] = [
-  { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
-  { accessorKey: 'universityId', header: 'Student ID', meta: { align: 'center' } },
+  { accessorKey: 'id', header: 'S. No' },
+  { accessorKey: 'universityId', header: 'Student ID' },
   { accessorKey: 'studentName', header: 'Student Name' },
   {
     accessorKey: 'studentPhoneNumber',
@@ -14,11 +10,11 @@ export const columns: Column[] = [
     meta: { align: 'center' }
   },
   { accessorKey: 'fatherName', header: 'Father Name' },
-  { accessorKey: 'fatherPhoneNumber', header: "Father's Phone Number", meta: { align: 'center' } },
-  { accessorKey: 'courseName', header: 'Course', meta: { align: 'center' } },
-  { accessorKey: 'courseYear', header: 'Course Year', meta: { align: 'center' } },
-  { accessorKey: 'currentSemester', header: 'Semester', meta: { align: 'center' } },
-  { accessorKey: 'currentAcademicYear', header: 'Academic Year', meta: { align: 'center' } }
+  { accessorKey: 'fatherPhoneNumber', header: "Father's Phone Number" },
+  { accessorKey: 'courseName', header: 'Course' },
+  { accessorKey: 'courseYear', header: 'Course Year' },
+  { accessorKey: 'currentSemester', header: 'Semester' },
+  { accessorKey: 'currentAcademicYear', header: 'Academic Year' }
 ];
 
 export const YearMap = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth'];
