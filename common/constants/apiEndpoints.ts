@@ -1,4 +1,5 @@
 import { DropDownType } from '@/types/enum';
+
 export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
 
 export const API_ENDPOINTS = {
@@ -97,6 +98,16 @@ export const API_ENDPOINTS = {
   deletePlan: `${API_DOMAIN}/course/subject/schedule/plan`,
   deleteFileUsingURL: `${API_DOMAIN}/course/subject/schedule/delete-file`,
 
+
+  //Student Repository
+
+  getStudentRepository: `${API_DOMAIN}/student/repo/search`,
+  getSingleStudent: (id: string) => `${API_DOMAIN}/student/repo/${id}`,
+  updateStudentRepository: `${API_DOMAIN}/student/repo/student-details`,
+  updateStudentDocuments: `${API_DOMAIN}/student/repo/student-physical-document`,
+  updateDocument: `${API_DOMAIN}/student/repo/document`,
+
+  
   //Finance
   getStudentActiveDues: `${API_DOMAIN}/student/fees/active-dues`,
   getStudentFeeInformation: (student_id: string) => `${API_DOMAIN}/student/fees/fee-information/${student_id}`,

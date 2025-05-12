@@ -450,6 +450,18 @@ export enum CollegeNames {
   'TCL' = 'TCL'
 }
 
+export enum CourseYear {
+  FIRST = 'First',
+  SECOND = 'Second',
+  THIRD = 'Third',
+  FOURTH = 'Fourth'
+}
+
+export enum FeeSchedule {
+  ONETIME = "ONETIME",
+  HALF_YEARLY = "HALF_YEARLY",
+  YEARLY = "YEARLY"
+}
 export enum FeesPaidStatus {
   DUE = 'DUE',
   PAID = 'PAID',

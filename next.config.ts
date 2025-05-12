@@ -1,6 +1,9 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  images: {
+    domains: ['erp-development.s3.amazonaws.com'],
+  },
   async headers() {
     return [
       {

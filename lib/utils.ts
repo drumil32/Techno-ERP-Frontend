@@ -7,20 +7,21 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function toPascal(title: string) {
+export function toPascal(title: unknown) {
+  if (typeof title !== 'string' || !title.trim()) return '';
+
   if (!title.includes('_')) {
     return title[0].toUpperCase() + title.slice(1).toLowerCase();
   }
-  var words = title.split('_');
-  var convertedTitle = '';
-  words.forEach((word) => {
-    let formatedWord = word[0].toUpperCase() + word.slice(1).toLowerCase();
-    convertedTitle += formatedWord;
-    convertedTitle += ' ';
-  });
+
+  const words = title.split('_');
+  const convertedTitle = words
+    .map(word => word[0].toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 
   return convertedTitle;
 }
+
 
 export function filterBySchema<T extends ZodObject<any>>(
   schema: T,
@@ -120,3 +121,15 @@ export const parseDateFromAPI = (dateString: string | undefined): Date | undefin
     parsed.getFullYear() === Number(year);
   return isExact ? parsed : undefined;
 };
+
+export const getOrdinalSuffix = (num: number): string => {
+  const suffixes = ['th', 'st', 'nd', 'rd'];
+  const value = num % 100;
+  return num + (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0]);
+}
+
+export function formatYearRange(yearRange: string): string {
+  const [startYear, endYear] = yearRange.split('-');
+  if (!startYear || !endYear) return yearRange;
+  return `${startYear}-${endYear.slice(-2)}`;
+}
