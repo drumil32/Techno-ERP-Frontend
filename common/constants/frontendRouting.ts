@@ -30,8 +30,7 @@ export const SITE_MAP = {
   },
   STUDENT_REPOSITORY: {
     DEFAULT: '/c/student-repository',
-    SINGLE_STUDENT: (id: string, stage:string) => `/c/student-repository/${id}/${stage}`,
-    
+    SINGLE_STUDENT: (universityId : string, stage:string, studentId : string) => `/c/student-repository/${universityId}/${stage}?studentId=${studentId}`,  
   },
   FACULTY: {
     DEFAULT: '/c/faculty'

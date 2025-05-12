@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams, usePathname, useSearchParams } from 'next/navigation';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { StudentRepositoryTabs } from '../helpers/enum';
 
@@ -9,7 +9,9 @@ const MoreDetailsHeaderContext = createContext<any>(null);
 
 export function MoreDetailsHeaderProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { id, tabName } = useParams();
+  const { universityId, tabName } = useParams();
+  const searchParams = useSearchParams();
+  const studentId = searchParams.get('studentId');
   const [headerActiveItem, setHeaderActiveItem] = useState<string | null>(null);
 
   useEffect(() => {
@@ -18,7 +20,11 @@ export function MoreDetailsHeaderProvider({ children }: { children: React.ReactN
       if (
         validStages.includes(tabName as StudentRepositoryTabs) &&
         pathname.includes(
-          SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id as string, tabName as string)
+          SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(
+            universityId as string,
+            tabName as string,
+            studentId as string
+          )
         )
       ) {
         setHeaderActiveItem(typeof tabName === 'string' ? tabName : null);

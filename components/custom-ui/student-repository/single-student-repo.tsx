@@ -3,7 +3,7 @@
 // External dependencies
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -28,28 +28,11 @@ import { getPersonalDetailsFormData } from './helpers/helper';
 import AllDocumentsTab from './tabs/all-documents-tab';
 
 const SingleStudentRepositoryPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+  const { universityId } = useParams<{ universityId: string }>();
+  const searchParams = useSearchParams();
+  const studentId = searchParams.get('studentId');
   const { headerActiveItem } = useMoreDetailsHeaderContext();
   const [studentData, setStudentData] = React.useState<StudentData | null>(null);
-
-  const HEADER_ITEMS = {
-    [StudentRepositoryTabs.STUDENT_DETAILS]: {
-      title: 'Student Details',
-      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, 'student-details')
-    },
-    [StudentRepositoryTabs.ACADEMIC_DETAILS]: {
-      title: 'Academic Details',
-      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, 'academic-details')
-    },
-    [StudentRepositoryTabs.ALL_DOCUMENTS]: {
-      title: 'All Documents',
-      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, 'all-documents')
-    },
-    [StudentRepositoryTabs.OFFICE_DETAILS]: {
-      title: 'Office Details',
-      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(id, 'office-details')
-    }
-  };
 
   // Form initialization for personal details
   const personalDetailsForm = useForm<z.infer<typeof updateStudentDetailsRequestSchema>>({
@@ -57,11 +40,46 @@ const SingleStudentRepositoryPage: React.FC = () => {
     mode: 'all'
   });
 
+  const HEADER_ITEMS = {
+    [StudentRepositoryTabs.STUDENT_DETAILS]: {
+      title: 'Student Details',
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(
+        universityId,
+        'student-details',
+        studentId || ''
+      )
+    },
+    [StudentRepositoryTabs.ACADEMIC_DETAILS]: {
+      title: 'Academic Details',
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(
+        universityId,
+        'academic-details',
+        studentId || ''
+      )
+    },
+    [StudentRepositoryTabs.ALL_DOCUMENTS]: {
+      title: 'All Documents',
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(
+        universityId,
+        'all-documents',
+        studentId || ''
+      )
+    },
+    [StudentRepositoryTabs.OFFICE_DETAILS]: {
+      title: 'Office Details',
+      route: SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(
+        universityId,
+        'office-details',
+        studentId || ''
+      )
+    }
+  };
+
   // Fetch student data
   const studentQuery = useQuery({
-    queryKey: ['student', id],
-    queryFn: () => fetchStudent(id),
-    enabled: !!id
+    queryKey: ['student', studentId],
+    queryFn: () => fetchStudent(studentId || ''),
+    enabled: !!studentId
   });
 
   // Process student data when it's available

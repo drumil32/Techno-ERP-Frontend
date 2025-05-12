@@ -20,6 +20,11 @@ export const fetchStudents = async (params: any) => {
 };
 
 export const fetchStudent = async (id: string) => {
+
+  if (!id) {
+    throw new Error('Student ID is required');
+  }
+
   const res = await apiRequest<StudentData>(API_METHODS.GET, API_ENDPOINTS.getSingleStudent(id));
 
   if (!res) {

@@ -58,8 +58,8 @@ export default function StudentRepositoryPage() {
 
   // Handle Navigation to Single Student Page
   const handleViewMore = (row: StudentListItem) => {
-    if (row && row._id) {
-      router.push(SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(row._id, 'student-details'));
+    if (row && row._id && row.universityId) {
+      router.push(SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(row.universityId, 'student-details', row._id));
     }
   };
 

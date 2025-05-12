@@ -24,6 +24,8 @@ const SingleSemesterDetailsSection: React.FC<SingleSemesterDetailsFormPropInterf
   semesterNo,
   semester
 }) => {
+  const hasSubjects = semester?.subjects && semester.subjects.length > 0;
+
   return (
     <Accordion
       type="single"
@@ -39,7 +41,13 @@ const SingleSemesterDetailsSection: React.FC<SingleSemesterDetailsFormPropInterf
           </AccordionTrigger>
 
           <AccordionContent>
-            <ResultsTable subjects={semester?.subjects || []} />
+            {hasSubjects ? (
+              <ResultsTable subjects={semester?.subjects || []} />
+            ) : (
+              <div className="w-full bg-white p-4 rounded-md border">
+                <p>There is no record for this semester</p>
+              </div>
+            )}
           </AccordionContent>
         </div>
       </AccordionItem>
