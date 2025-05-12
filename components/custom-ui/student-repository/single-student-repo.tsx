@@ -109,11 +109,12 @@ const SingleStudentRepositoryPage: React.FC = () => {
     if (!headerActiveItem) return null;
 
     if (headerActiveItem === HEADER_ITEMS[StudentRepositoryTabs.STUDENT_DETAILS].title) {
-      return (
+      return studentData && (
         <StudentDetailsTab
           personalDetailsForm={personalDetailsForm}
           commonFormItemClass={commonFormItemClass}
           commonFieldClass={commonFieldClass}
+          studentData={studentData}
           setStudentData={setStudentData}
         />
       );

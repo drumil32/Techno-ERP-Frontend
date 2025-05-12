@@ -17,17 +17,20 @@ import {
   IAcademicDetailArraySchema,
   IAcademicDetailSchema
 } from '../../enquiry-form/schema/schema';
+import { useSearchParams } from 'next/navigation';
 
 interface StudentDetailsTabProps {
   personalDetailsForm: UseFormReturn<z.infer<typeof updateStudentDetailsRequestSchema>>;
   commonFieldClass: string;
   commonFormItemClass: string;
+  studentData: StudentData;
   setStudentData: (data: any) => void;
 }
 const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
   personalDetailsForm,
   commonFieldClass,
   commonFormItemClass,
+  studentData,
   setStudentData
 }) => {
   const handleSave = async () => {
@@ -95,6 +98,7 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
       }
 
       setNestedErrors(validationResult.error.format());
+      personalDetailsForm.reset(getPersonalDetailsFormData(studentData));
       throw new Error('Validation failed');
     }
 
@@ -106,6 +110,7 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
       personalDetailsForm.reset(filteredResponse);
       toast.success('Student data updated successfully');
     } else {
+      personalDetailsForm.reset(getPersonalDetailsFormData(studentData));
       toast.error('Failed to update student data');
     }
   };
