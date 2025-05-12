@@ -68,6 +68,13 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   const telecallers: UserRoleInterface[] = Array.isArray(results[0].data) ? results[0].data : [];
   const counsellors: UserRoleInterface[] = Array.isArray(results[1].data) ? results[1].data : [];
 
+  useEffect(() => {
+    console.log('Telecallers:', telecallers);
+    console.log('Counsellors:', counsellors);
+    console.log('Form Values:', form.getValues());
+    console.log('Form Errors:', form.formState.errors);
+  }, [form]);
+
   return (
     <Accordion type="single" collapsible defaultValue="student-details">
       <AccordionItem value="student-details">

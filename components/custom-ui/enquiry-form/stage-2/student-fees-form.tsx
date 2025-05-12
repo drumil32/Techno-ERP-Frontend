@@ -54,6 +54,7 @@ import { MultiSelectPopoverCheckbox } from '../../common/multi-select-popover-ch
 import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
 import Loading from '@/app/loading';
 import FilledByCollegeSection from '../stage-1/filled-by-college-section';
+import clsx from 'clsx';
 
 export const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -266,8 +267,6 @@ export const StudentFeesForm = () => {
 
       console.log(enquiryData);
 
-      const initialCollegeRemarks: string = enquiryData?.remarks;
-
       initialOtherFees = Object.values(FeeType)
         .filter((ft) => ft !== FeeType.SEM1FEE)
         .map((feeType) => {
@@ -303,6 +302,7 @@ export const StudentFeesForm = () => {
         initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
       }
 
+      console.log('enquiryData', enquiryData);
       form.reset({
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,
@@ -311,7 +311,7 @@ export const StudentFeesForm = () => {
         reference: enquiryData.reference,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
-        remarks: initialCollegeRemarks,
+        remarks: enquiryData.remarks,
         confirmationCheck: form.getValues().confirmationCheck || false
       });
     } else if (error) {
@@ -678,10 +678,10 @@ export const StudentFeesForm = () => {
                   <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Fees Details</div>
                   <div className="text-right">Schedule</div>
                   <div className="text-right">Fees</div>
+                  <div className="text-right">Discount</div>
                   <div className="text-right">Final Fees</div>
-                  <div className="text-right">Applicable Discount</div>
                   <div className="text-right">Fees Deposited</div>
-                  <div className="text-right">Fees due in 1st Sem</div>
+                  <div className="text-right">Fees Due</div>
                 </div>
 
                 {otherFeesFields.map((field, index) => {
@@ -694,7 +694,8 @@ export const StudentFeesForm = () => {
                   const totalFee = originalFeeData?.amount;
                   const finalFee = otherFeesWatched?.[index]?.finalFee;
                   const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
-                  const discountValue = calculateDiscountPercentage(totalFee, finalFee);
+                  const discountValue =
+                    finalFee != undefined ? calculateDiscountPercentage(totalFee, finalFee) : '-';
                   const discountDisplay =
                     typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
                   const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
@@ -716,6 +717,9 @@ export const StudentFeesForm = () => {
                         {formatCurrency(totalFee)}
                       </div>
 
+                      <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
+                        <p className="ml-auto">{discountDisplay}</p>
+                      </div>
                       <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
                         <FormField
                           control={form.control}
@@ -735,6 +739,14 @@ export const StudentFeesForm = () => {
                                       formField.onChange(value === '' ? undefined : Number(value));
                                     }
                                   }}
+                                  onFocus={(e) => {
+                                    e.target.placeholder = '';
+                                  }}
+                                  onBlur={(e) => {
+                                    if (!e.target.value) {
+                                      e.target.placeholder = 'Enter fees';
+                                    }
+                                  }}
                                   value={formField.value ?? ''}
                                 />
                               </FormControl>
@@ -744,10 +756,6 @@ export const StudentFeesForm = () => {
                             </FormItem>
                           )}
                         />
-                      </div>
-
-                      <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
-                        <p className="ml-auto">{discountDisplay}</p>
                       </div>
 
                       <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
@@ -769,6 +777,14 @@ export const StudentFeesForm = () => {
                                       formField.onChange(value === '' ? undefined : Number(value));
                                     }
                                   }}
+                                  onFocus={(e) => {
+                                    e.target.placeholder = '';
+                                  }}
+                                  onBlur={(e) => {
+                                    if (!e.target.value) {
+                                      e.target.placeholder = 'Enter fees';
+                                    }
+                                  }}
                                   value={formField.value ?? ''}
                                 />
                               </FormControl>
@@ -780,7 +796,12 @@ export const StudentFeesForm = () => {
                         />
                       </div>
 
-                      <div className="flex items-center justify-end text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
+                      <div
+                        className={clsx(
+                          'flex items-center justify-end text-[12px] sm:text-sm h-9 sm:h-11 rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1',
+                          { 'text-red-500': remainingFee < 0 }
+                        )}
+                      >
                         {formatCurrency(remainingFee)}
                       </div>
                     </div>
@@ -796,13 +817,13 @@ export const StudentFeesForm = () => {
                     {formatCurrency(otherFeesTotals.totalOriginal)}
                   </div>
                   <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
-                    {formatCurrency(otherFeesTotals.totalFinal)}
-                  </div>
-                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {calculateDiscountPercentage(
                       otherFeesTotals.totalOriginal,
                       otherFeesTotals.totalFinal
                     ) + '%'}
+                  </div>
+                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
+                    {formatCurrency(otherFeesTotals.totalFinal)}
                   </div>
                   <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {formatCurrency(otherFeesTotals.totalDeposited)}
@@ -851,25 +872,28 @@ export const StudentFeesForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="lg:w-2/3 w-full">
+              <div className="lg:w-max w-full">
                 <div className="space-y-3 sm:space-y-4">
                   <div className="grid bg-[#F7F7F7] rounded-[5px] text-[#4E4E4E] p-3 sm:p-5 grid-cols-1 xs:grid-cols-2 sm:grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mb-2 pb-1 border-b">
                     <div className="font-medium text-[12px] sm:text-sm text-gray-600">Semester</div>
                     <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-right">
                       Fees
                     </div>
-                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-center">
-                      Final Fees
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-right">
+                      Discount
                     </div>
-                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-center">
-                      Applicable Discount
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-right">
+                      Final Fees
                     </div>
                   </div>
 
                   {semFields.map((field, index) => {
                     const originalFeeAmount = semWiseFeesData[index];
                     const finalFee = semWiseFeesWatched?.[index]?.finalFee;
-                    const discountValue = calculateDiscountPercentage(originalFeeAmount, finalFee);
+                    const discountValue =
+                      finalFee != undefined
+                        ? calculateDiscountPercentage(originalFeeAmount, finalFee)
+                        : '-';
                     const discountDisplay =
                       typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
                     return (
@@ -882,6 +906,9 @@ export const StudentFeesForm = () => {
                           {formatCurrency(originalFeeAmount)}
                         </div>
 
+                        <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11 rounded-md px-2">
+                          <p className="ml-auto">{discountDisplay}</p>
+                        </div>
                         <FormField
                           control={form.control}
                           name={`semWiseFees.${index}.finalFee`}
@@ -900,17 +927,25 @@ export const StudentFeesForm = () => {
                                       formField.onChange(value === '' ? undefined : Number(value));
                                     }
                                   }}
-                                  value={formField.value ?? ''}
+                                  onFocus={(e) => {
+                                    e.target.placeholder = '';
+                                  }}
+                                  onBlur={(e) => {
+                                    if (!e.target.value) {
+                                      e.target.placeholder = 'Enter fees';
+                                    }
+                                  }}
+                                  value={
+                                    index === 0
+                                      ? (form.getValues('otherFees')[index].finalFee ?? '')
+                                      : (formField.value ?? '')
+                                  }
                                 />
                               </FormControl>
                               <FormMessage className="text-[10px] sm:text-xs mt-1" />
                             </FormItem>
                           )}
                         />
-
-                        <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2">
-                          <p className="ml-auto">{discountDisplay}</p>
-                        </div>
                       </div>
                     );
                   })}
@@ -978,6 +1013,7 @@ export const StudentFeesForm = () => {
             </AccordionContent>
           </AccordionItem>
         </Accordion> */}
+
         <FilledByCollegeSection
           commonFieldClass=""
           commonFormItemClass=""

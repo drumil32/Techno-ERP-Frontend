@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { FaCircleExclamation } from 'react-icons/fa6';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 interface EnquiryFormFooterProps {
   form: UseFormReturn<any>;
@@ -37,11 +38,13 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   const [isSubmitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [isDraftDialogOpen, setDraftDialogOpen] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
-
+  const router = useRouter();
   async function handleSubmitClick() {
     try {
       const result = await onSubmit();
       if (result !== false) {
+        toast.success('Enquiry got confirmed successfully');
+        router.push('/c/admissions/');
         setSubmitDialogOpen(false);
       }
     } catch {
@@ -70,7 +73,11 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
         <DialogTrigger asChild>
           <Button type="button" variant="outline" disabled={isSavingDraft}>
             <span className="font-inter font-semibold text-[12px]">
-            {isSavingDraft ? 'Saving...' : draftSaved || draftExists ? 'Update Draft' : 'Save Draft'}
+              {isSavingDraft
+                ? 'Saving...'
+                : draftSaved || draftExists
+                  ? 'Update Draft'
+                  : 'Save Draft'}
             </span>
           </Button>
         </DialogTrigger>

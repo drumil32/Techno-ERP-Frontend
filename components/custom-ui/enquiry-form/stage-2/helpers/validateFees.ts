@@ -89,8 +89,8 @@ export const validateCustomFeeLogic = (
       if (typeof finalFee !== 'number' || isNaN(finalFee)) {
         // If deposit exists but final fee is invalid/missing
         setError(depositField, {
-          type: 'manual_dependency',
-          message: `Final fee required`
+          type: 'manual_dependency'
+          // message: `Final fee required`
         });
         isOverallValid = false;
       } else if (feesDeposited > finalFee) {

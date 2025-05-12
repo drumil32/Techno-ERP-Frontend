@@ -16,7 +16,7 @@ import { IAcademicDetailArraySchema, IAcademicDetailSchema } from '../schema/sch
 interface EnquiryFormFooterProps {
   saveDraft: () => Promise<boolean | void>;
   form: UseFormReturn<any>;
-  onSubmit: () => void;
+  onSubmit: () => Promise<boolean | void>;
   isSavingDraft?: boolean;
   confirmationChecked?: boolean;
   draftExists?: boolean;
@@ -41,7 +41,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     }
   }, []);
 
-  function handleSubmitClick() {
+  async function handleSubmitClick() {
     const currentValues = form.getValues();
 
     if (currentValues.academicDetails) {
@@ -67,10 +67,10 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
       form.setValue('academicDetails', filteredAcademicDetails);
     }
 
-    setTimeout(() => {
-      form.handleSubmit(onSubmit)();
+    const result = await onSubmit();
+    if (result === true) {
       setSubmitDialogOpen(false);
-    }, 0);
+    }
   }
 
   async function handleDialogSaveDraft() {
@@ -92,7 +92,11 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
         <DialogTrigger asChild>
           <Button type="button" variant="outline" disabled={isSavingDraft}>
             <span className="font-inter font-semibold text-[12px]">
-                {isSavingDraft ? 'Saving...' : draftSaved || draftExists ? 'Update Draft' : 'Save Draft'}
+              {isSavingDraft
+                ? 'Saving...'
+                : draftSaved || draftExists
+                  ? 'Update Draft'
+                  : 'Save Draft'}
             </span>
           </Button>
         </DialogTrigger>
@@ -143,7 +147,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           </DialogHeader>
           <div className="flex gap-2 items-center text-left">
             <FaCircleExclamation className="text-yellow-500 w-8 h-8" />
-            <span>Please reverify all details again before submitting.</span>
+            <span>Please reverify all details again before saving.</span>
           </div>
           <DialogFooter>
             <DialogClose asChild>

@@ -241,33 +241,35 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                       {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : '-'}
                     </div>
                   ) : (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            'ml-5 w-[200px] justify-start text-left font-normal',
-                            !doc.dueBy && 'text-muted-foreground',
-                            doc.status !== PhysicalDocumentNoteStatus.PENDING &&
-                              'cursor-not-allowed opacity-60'
-                          )}
-                          disabled={doc.status !== PhysicalDocumentNoteStatus.PENDING}
-                        >
-                          {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : 'Pick a due date'}
-                        </Button>
-                      </PopoverTrigger>
-                      {doc.status === PhysicalDocumentNoteStatus.PENDING && (
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={doc.dueBy}
-                            onSelect={(date) => handleDueDateChange(doc.id, date)}
-                            disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      )}
-                    </Popover>
+                    doc.status === PhysicalDocumentNoteStatus.PENDING && (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              'ml-5 w-[200px] justify-start text-left font-normal',
+                              !doc.dueBy && 'text-muted-foreground',
+                              doc.status !== PhysicalDocumentNoteStatus.PENDING &&
+                                'cursor-not-allowed opacity-60'
+                            )}
+                            disabled={doc.status !== PhysicalDocumentNoteStatus.PENDING}
+                          >
+                            {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : 'Pick a due date'}
+                          </Button>
+                        </PopoverTrigger>
+                        {doc.status === PhysicalDocumentNoteStatus.PENDING && (
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={doc.dueBy}
+                              onSelect={(date) => handleDueDateChange(doc.id, date)}
+                              disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        )}
+                      </Popover>
+                    )
                   )}
                 </div>
               </div>

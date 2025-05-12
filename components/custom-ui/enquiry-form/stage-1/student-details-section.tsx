@@ -162,7 +162,7 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Student Phone Number
+                      Student's Phone Number
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>

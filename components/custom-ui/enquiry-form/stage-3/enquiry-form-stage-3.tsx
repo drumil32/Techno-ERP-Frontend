@@ -287,7 +287,6 @@ const EnquiryFormStage3 = () => {
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
-
           <MoreDetailsSection
             form={form}
             isViewable={isViewable}
@@ -296,7 +295,6 @@ const EnquiryFormStage3 = () => {
             enquiryDocuments={currentDocuments}
             setCurrentDocuments={setCurrentDocuments}
           />
-
           {/* Address details */}
           <AddressDetailsSectionStage3
             form={form}
@@ -304,7 +302,6 @@ const EnquiryFormStage3 = () => {
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
-
           {/* Academic Details */}
           <AcademicDetailsSectionStage3
             isViewable={isViewable}
@@ -317,19 +314,16 @@ const EnquiryFormStage3 = () => {
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
-
           <DocumentVerificationSection
             documentVerificationStatus={documentVerificationStatus}
             onValidationChange={setIsDocumentVerificationValid}
             form={form}
             isViewable={isViewable}
           />
-
           {/* <AllDocuments
             enquiryDocuments={currentDocuments}
             setCurrentDocuments={setCurrentDocuments}
           /> */}
-
           {!isViewable && <ConfirmationSection form={form} />}
           <OfficeUseSection
             form={form}
@@ -337,7 +331,7 @@ const EnquiryFormStage3 = () => {
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
-          <ScholarshipDetailsSection form={form} />
+          {/* <ScholarshipDetailsSection form={form} /> Removed as of now */}
           {!isViewable && (
             <>
               {' '}
