@@ -359,7 +359,7 @@ export default function AllLeadsPage() {
           } = row.original;
 
           const updatedData = {
-            ...cleanedRow,
+            _id: row.original._id,
             leadType: value
           };
 

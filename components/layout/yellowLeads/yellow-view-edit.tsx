@@ -26,7 +26,7 @@ import FinalConversionTag from './final-conversion-tag';
 import FootFallTag from './foot-fall-tag';
 import { yellowLeadUpdateSchema } from '../allLeads/validators';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { removeNullValues, toPascal } from '@/lib/utils';
 import { cityDropdown, fixCourseDropdown } from '../admin-tracker/helpers/fetch-data';
 import { formatDateView, formatTimeStampView } from '../allLeads/helpers/refine-data';
@@ -68,6 +68,7 @@ export default function YellowLeadViewEdit({
   setSelectedRowId,
   setRefreshKey
 }: any) {
+  const queryClient = useQueryClient()
   const [formData, setFormData] = useState<YellowLead | null>(null);
   const [originalData, setOriginalData] = useState<YellowLead | null>(null);
   // const [isEditing, toggleIsEditing] = useState(false);
@@ -354,16 +355,103 @@ export default function YellowLeadViewEdit({
         // response.footFall =formData.footFall;
         setFormData(response as YellowLead);
         toast.success('Updated Lead Successfully');
+
+        const updateLeadCache = () => {
+          const queryCache = queryClient.getQueryCache();
+          const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
+
+          leadQueries.forEach(query => {
+            queryClient.setQueryData(query.queryKey, (oldData: any) => {
+              if (!oldData || !oldData.yellowLeads) return oldData;
+
+              const newData = JSON.parse(JSON.stringify(oldData));
+
+              const leadIndex = newData.yellowLeads.findIndex(
+                (lead: any) => lead._id === response._id
+              );
+
+              const assignedToUsers = Array.isArray(response.assignedTo)
+                ? response.assignedTo
+                  .map((id: string) => assignedToDropdownData?.find((user: any) => user._id === id))
+                  .filter(Boolean)
+                : [];
+
+              let assignedToName = 'N/A';
+              let assignedToView = '-';
+
+              if (assignedToUsers.length > 0) {
+                assignedToName = assignedToUsers[0].name;
+                assignedToView = assignedToUsers[0].name;
+
+                if (assignedToUsers.length > 1) {
+                  assignedToName += ` +${assignedToUsers.length - 1}`;
+                  assignedToView += ` +${assignedToUsers.length - 1}`;
+                }
+              }
+
+
+              if (leadIndex !== -1) {
+                newData.yellowLeads[leadIndex] = {
+                  ...newData.yellowLeads[leadIndex],
+
+                  name: response.name,
+                  phoneNumber: response.phoneNumber,
+                  altPhoneNumber: response.altPhoneNumber,
+                  altPhoneNumberView: response.altPhoneNumber ?? '-',
+                  email: response.email,
+                  gender: response.gender,
+                  genderView: toPascal(response.gender),
+                  city: response.city,
+                  cityView: !response.city || response.city === '' ? '-' : response.city,
+                  area: response.area,
+                  areaView: !response.area || response.area === '' ? '-' : response.area,
+                  course: response.course,
+                  courseView: response.course ?? '-',
+                  footFall: response.footFall,
+                  finalConversion:
+                    FinalConversionStatus[response.finalConversion as keyof typeof FinalConversionStatus] ??
+                    response.finalConversion,
+                  assignedTo: response.assignedTo,
+                  assignedToName: assignedToName,
+                  yellowLeadsFollowUpCount: response.yellowLeadsFollowUpCount,
+                  schoolName: response.schoolName,
+                  degree: response.degree,
+                  remarks: response.remarks || newData.leads[leadIndex].remarks,
+                  remarksView: response.remarks && response.remarks.length > 0
+                    ? response.remarks[response.remarks.length - 1]
+                    : newData.leads[leadIndex].remarksView,
+                  nextDueDate: response.nextDueDate,
+                  nextDueDateView: response.nextDueDate ? formatDateView(response.nextDueDate) : '-',
+                  leadTypeModifiedDate: response.leadTypeModifiedDate ?? newData.leads[leadIndex].leadTypeModifiedDate,
+                  leadTypeModifiedDateView: formatTimeStampView(response.leadTypeModifiedDate) ??
+                    newData.leads[leadIndex].leadTypeModifiedDateView,
+
+                  updatedAt: new Date(response.updatedAt).toLocaleString(),
+
+                };
+              }
+
+              return newData;
+            });
+          });
+
+
+
+        }
+
+        updateLeadCache()
+
         setOriginalData(formData);
       } else {
         setFormData(originalData);
       }
-      setRefreshKey((prev: number) => prev + 1);
+      // setRefreshKey((prev: number) => prev + 1);
       setSelectedRowId(null);
       setIsDrawerOpen(false);
       // toggleIsEditing(false);
       setErrors({});
     } catch (err) {
+      console.log(err)
       console.error('Error updating lead:', err);
       toast.error('An error occurred while updating the lead');
     } finally {

@@ -8,7 +8,7 @@ import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
 import {
   fetchAssignedToDropdown,
@@ -39,7 +39,9 @@ import Loading from '@/app/loading';
 import { FilterData } from '@/components/custom-ui/filter/type';
 import useAuthStore from '@/stores/auth-store';
 import { FinalConversionStatus, UserRoles } from '@/types/enum';
+
 export default function YellowLeadsTracker() {
+  const queryClient = useQueryClient()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
@@ -390,8 +392,37 @@ export default function YellowLeadsTracker() {
           );
 
           if (response) {
+            const updateLeadCache = () => {
+              const queryCache = queryClient.getQueryCache();
+              const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
+
+              leadQueries.forEach(query => {
+                queryClient.setQueryData(query.queryKey, (oldData: any) => {
+                  if (!oldData || !oldData.yellowLeads) return oldData;
+
+                  const newData = JSON.parse(JSON.stringify(oldData));
+
+                  const leadIndex = newData.yellowLeads.findIndex(
+                    (lead: any) => lead._id === response._id
+                  );
+
+                  if (leadIndex !== -1) {
+                    newData.yellowLeads[leadIndex] = {
+                      ...newData.yellowLeads[leadIndex],
+                      finalConversion: response.finalConversion
+                    };
+                  }
+                  return newData;
+                });
+              });
+
+            };
+
+            updateLeadCache();
+
+
             toast.success('Final conversion updated successfully');
-            setRefreshKey((prevKey) => prevKey + 1);
+            // setRefreshKey((prevKey) => prevKey + 1);
           } else {
             if (
               row.original.finalConversion === FinalConversionStatus.UNCONFIRMED &&
@@ -611,7 +642,6 @@ export default function YellowLeadsTracker() {
           onClose={() => {
             setSelectedRowId(null);
             setIsDrawerOpen(false);
-            setRefreshKey((prev) => prev + 1);
           }}
         >
           {isDrawerOpen && editRow && (

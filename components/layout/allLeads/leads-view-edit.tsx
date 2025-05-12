@@ -387,7 +387,6 @@ export default function LeadViewEdit({
                   .filter(Boolean)
                 : [];
 
-              // Create assignedToName string
               let assignedToName = 'N/A';
               let assignedToView = '-';
 
@@ -408,8 +407,10 @@ export default function LeadViewEdit({
 
                   name: response.name,
                   source: response.source,
+                  email: response.email,
                   sourceView: response.source ?? '-',
                   schoolName: response.schoolName,
+                  degree: response.degree,
                   phoneNumber: response.phoneNumber,
                   altPhoneNumber: response.altPhoneNumber,
                   altPhoneNumberView: response.altPhoneNumber ?? '-',
@@ -421,6 +422,7 @@ export default function LeadViewEdit({
                   areaView: !response.area || response.area === '' ? '-' : response.area,
                   course: response.course,
                   courseView: response.course ?? '-',
+                  assignedTo: response.assignedTo,
                   assignedToView: assignedToView,
                   assignedToName: assignedToName,
                   updatedAt: new Date(response.updatedAt).toLocaleString(),
@@ -902,7 +904,7 @@ export default function LeadViewEdit({
       )}
 
       <div className="flex flex-col gap-2">
-        <EditLabel className="text-[#666666]" title="Last Modified Date" />
+        <EditLabel className="text-[#666666]" title="Lead Modified Date" />
         <p className="font-medium">
           {formatTimeStampView(formData.leadTypeModifiedDate) ?? 'Not Provided'}
         </p>
