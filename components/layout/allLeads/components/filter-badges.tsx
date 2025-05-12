@@ -15,9 +15,10 @@ interface FilterBadgesProps {
   onFilterRemove: (filterKey: string) => void;
   assignedToData?: any[];
   appliedFilters: Record<string, any>;
+  crossVisible?: boolean
 }
 
-const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: FilterBadgesProps) => {
+const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters, crossVisible = true }: FilterBadgesProps) => {
   const [badges, setBadges] = useState<BadgeData[]>([]);
 
   const getAssignedToLabel = (id: string) => {
@@ -143,7 +144,9 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters }: Filter
         >
           <Badge variant="secondary" className="py-1 px-2 flex items-center gap-1 cursor-pointer">
             <span className="font-medium">{badge.label}:</span> {badge.value}
-            <X size={16} className="ml-1 cursor-pointer" />
+            {crossVisible && (
+              <X size={16} className="ml-1 cursor-pointer" />
+            )}
           </Badge>
         </div>
       ))}

@@ -15,12 +15,14 @@ interface TechnoFilterGroupsProps {
   filters: FilterConfig[];
   handleFilters: () => void;
   clearFilters: () => void;
+  clearFiltersVisible? : boolean;
 }
 
 export default function TechnoFiltersGroup({
   filters,
   handleFilters,
-  clearFilters
+  clearFilters,
+  clearFiltersVisible = true
 }: TechnoFilterGroupsProps) {
   return (
     <div className="flex flex-wrap gap-4">
@@ -37,7 +39,11 @@ export default function TechnoFiltersGroup({
           applyFilters={handleFilters}
         />
       ))}
-      <Button className=' cursor-pointer ' onClick={clearFilters}>Clear Filters</Button>
+      {clearFiltersVisible && (
+        <Button className="cursor-pointer" onClick={clearFilters}>
+          Clear Filters
+        </Button>
+      )}
     </div>
   );
 }

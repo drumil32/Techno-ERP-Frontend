@@ -30,8 +30,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
   const refinedLeads = data.leads?.map((lead: any, index: number) => {
     const assignedToUsers = Array.isArray(lead.assignedTo)
       ? lead.assignedTo
-          .map((id: string) => assignedToDropdownData?.find((user: any) => user._id === id))
-          .filter(Boolean)
+        .map((id: string) => assignedToDropdownData?.find((user: any) => user._id === id))
+        .filter(Boolean)
       : [];
 
     // Create assignedToName string
@@ -47,6 +47,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
         assignedToView += ` +${assignedToUsers.length - 1}`;
       }
     }
+    const originalLeadTypeKey = lead._leadType || lead.leadType;
 
     return {
       _id: lead._id,
@@ -68,10 +69,11 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       course: lead.course,
       courseView: lead.course ?? '-',
       leadType: LeadType[lead.leadType as keyof typeof LeadType] ?? lead.leadType,
-      _leadType: lead.leadType,
+      _leadType: originalLeadTypeKey,
       source: lead.source,
       sourceView: lead.source ?? '-',
       assignedTo: lead.assignedTo,
+      degree: lead.degree,
       schoolName: lead.schoolName,
       assignedToView: assignedToView,
       assignedToName: assignedToName,
@@ -81,7 +83,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: new Date(lead.updatedAt).toLocaleString(),
       remarks: lead.remarks,
-      remarksView: lead.remarks[lead.remarks.length-1] ?? '-',
+      remarksView: lead.remarks[lead.remarks.length - 1] ?? '-',
       leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'N/A',
       leadTypeModifiedDateView: formatTimeStampView(lead.leadTypeModifiedDate) ?? 'N/A'
     };

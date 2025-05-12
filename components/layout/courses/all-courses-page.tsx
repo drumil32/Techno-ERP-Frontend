@@ -158,8 +158,22 @@ export default function AllCoursesPage() {
     setPage(1);
   };
 
+
+  const getQueryParams = () => {
+    const params: { [key: string]: any } = {
+      page,
+      limit,
+      search: debouncedSearch,
+      ...appliedFilters,
+      refreshKey
+    };
+    return params;
+  };
+
+  const filterParams = getQueryParams();
+
   const courseQuery = useQuery({
-    queryKey: ['courses', appliedFilters, debouncedSearch],
+    queryKey: ['courses', filterParams, appliedFilters, debouncedSearch],
     queryFn: fetchCourses,
     placeholderData: (previousData) => previousData,
     enabled: filtersReady,
@@ -294,6 +308,7 @@ export default function AllCoursesPage() {
             filters={getFiltersData()}
             handleFilters={applyFilter}
             clearFilters={clearFilters}
+            clearFiltersVisible = {false}
           />
           
           <CreateCourseDialog />
@@ -312,6 +327,8 @@ export default function AllCoursesPage() {
         onLimitChange={handleLimitChange}
         onSearch={handleSearch}
         searchTerm={search}
+        minVisibleRows={13}
+        maxVisibleRows = {10}
         totalEntries={totalEntries}
         handleViewMore={handleViewMore}
         selectedRowId={selectedRowId}
@@ -320,6 +337,7 @@ export default function AllCoursesPage() {
          <FilterBadges
             onFilterRemove={handleFilterRemove}
             appliedFilters={appliedFilters}
+            crossVisible = {false}
           />
       </TechnoDataTableAdvanced>
     </>

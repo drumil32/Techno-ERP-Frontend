@@ -22,7 +22,7 @@ import { toast } from 'sonner';
 import { removeNullValues, toPascal } from '@/lib/utils';
 import { updateLeadRequestSchema } from './validators';
 import z from 'zod';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchAssignedToDropdown } from './helpers/fetch-data';
 import {
   cityDropdown,
@@ -58,6 +58,7 @@ export interface LeadData {
   course?: string;
   assignedTo: string[];
   schoolName?: string;
+  degree?: string;
   leadsFollowUpCount?: number;
   leadType?: string;
   remarks: string[];
@@ -74,6 +75,7 @@ interface FormErrors {
   area?: string;
   nextDueDate?: string;
   schoolName?: string;
+  degree?: string;
   remarks?: string;
   city?: string;
 }
@@ -84,6 +86,7 @@ export default function LeadViewEdit({
   setSelectedRowId,
   setRefreshKey
 }: any) {
+  const queryClient = useQueryClient()
   const [formData, setFormData] = useState<LeadData | null>(null);
   const [originalData, setOriginalData] = useState<LeadData | null>(null);
   // const [isEditing, toggleIsEditing] = useState(false);
@@ -179,6 +182,7 @@ export default function LeadViewEdit({
         leadType: tempData.leadType,
         course: tempData.course,
         schoolName: tempData.schoolName,
+        degree: tempData.degree,
         leadsFollowUpCount: tempData.leadsFollowUpCount,
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate,
@@ -197,7 +201,6 @@ export default function LeadViewEdit({
         return newErrors;
       });
     } catch (error) {
-      console.log(error);
       if (error instanceof z.ZodError) {
         // Collect all field errors
         const newErrors: FormErrors = { ...errors };
@@ -275,6 +278,7 @@ export default function LeadViewEdit({
       'course',
       'leadType',
       'schoolName',
+      'degree',
       'assignedTo',
       'leadsFollowUpCount',
       'remarks',
@@ -323,6 +327,7 @@ export default function LeadViewEdit({
         'course',
         'leadType',
         'schoolName',
+        'degree',
         'assignedTo',
         'leadsFollowUpCount',
         'remarks',
@@ -361,11 +366,92 @@ export default function LeadViewEdit({
         toast.success('Updated Lead Successfully');
         setFormData(response);
         setOriginalData(formData);
+
+        const updateLeadCache = () => {
+          const queryCache = queryClient.getQueryCache();
+          const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
+
+          leadQueries.forEach(query => {
+            queryClient.setQueryData(query.queryKey, (oldData: any) => {
+              if (!oldData || !oldData.leads) return oldData;
+
+              const newData = JSON.parse(JSON.stringify(oldData));
+
+              const leadIndex = newData.leads.findIndex(
+                (lead: any) => lead._id === response._id
+              );
+
+              const assignedToUsers = Array.isArray(response.assignedTo)
+                ? response.assignedTo
+                  .map((id: string) => assignedToDropdownData?.find((user: any) => user._id === id))
+                  .filter(Boolean)
+                : [];
+
+              // Create assignedToName string
+              let assignedToName = 'N/A';
+              let assignedToView = '-';
+
+              if (assignedToUsers.length > 0) {
+                assignedToName = assignedToUsers[0].name;
+                assignedToView = assignedToUsers[0].name;
+
+                if (assignedToUsers.length > 1) {
+                  assignedToName += ` +${assignedToUsers.length - 1}`;
+                  assignedToView += ` +${assignedToUsers.length - 1}`;
+                }
+              }
+
+
+              if (leadIndex !== -1) {
+                newData.leads[leadIndex] = {
+                  ...newData.leads[leadIndex],
+
+                  name: response.name,
+                  source: response.source,
+                  sourceView: response.source ?? '-',
+                  schoolName: response.schoolName,
+                  phoneNumber: response.phoneNumber,
+                  altPhoneNumber: response.altPhoneNumber,
+                  altPhoneNumberView: response.altPhoneNumber ?? '-',
+                  gender: response.gender,
+                  genderView: toPascal(response.gender),
+                  city: response.city,
+                  cityView: !response.city || response.city === '' ? '-' : response.city,
+                  area: response.area,
+                  areaView: !response.area || response.area === '' ? '-' : response.area,
+                  course: response.course,
+                  courseView: response.course ?? '-',
+                  assignedToView: assignedToView,
+                  assignedToName: assignedToName,
+                  updatedAt: new Date(response.updatedAt).toLocaleString(),
+                  nextDueDate: response.nextDueDate,
+                  nextDueDateView: response.nextDueDate ? formatDateView(response.nextDueDate) : '-',
+                  leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
+                  _leadType: response.leadType,
+                  leadsFollowUpCount: response.leadsFollowUpCount ?? newData.leads[leadIndex].leadsFollowUpCount,
+                  remarks: response.remarks || newData.leads[leadIndex].remarks,
+                  remarksView: response.remarks && response.remarks.length > 0
+                    ? response.remarks[response.remarks.length - 1]
+                    : newData.leads[leadIndex].remarksView,
+                  leadTypeModifiedDate: response.leadTypeModifiedDate ?? newData.leads[leadIndex].leadTypeModifiedDate,
+                  leadTypeModifiedDateView: formatTimeStampView(response.leadTypeModifiedDate) ??
+                    newData.leads[leadIndex].leadTypeModifiedDateView
+                };
+              }
+
+              return newData;
+            });
+          });
+
+        };
+
+        updateLeadCache();
+
       } else {
         setFormData(originalData);
       }
       setSelectedRowId(null);
-      setRefreshKey((prev: number) => prev + 1);
+      // setRefreshKey((prev: number) => prev + 1);
       setIsDrawerOpen(false);
       // toggleIsEditing(false);
       setErrors({});
@@ -658,16 +744,30 @@ export default function LeadViewEdit({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <EditLabel htmlFor="schoolName" title={'School/College Name'} />
-        <Input
-          id="schoolName"
-          name="schoolName"
-          value={formData.schoolName || ''}
-          onChange={handleChange}
-          className={inputStyle}
-        />
-        {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
+      <div className='flex gap-5'>
+        <div className="space-y-2">
+          <EditLabel htmlFor="schoolName" title={'School/College Name'} />
+          <Input
+            id="schoolName"
+            name="schoolName"
+            value={formData.schoolName || ''}
+            onChange={handleChange}
+            className={inputStyle}
+          />
+          {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <EditLabel htmlFor="degree" title={'Degree'} />
+          <Input
+            id="degree"
+            name="degree"
+            value={formData.degree || ''}
+            onChange={handleChange}
+            className={inputStyle}
+          />
+          {errors.degree && <p className="text-red-500 text-xs mt-1">{errors.degree}</p>}
+        </div>
       </div>
 
       <div className="space-y-2 max-w-2xl mx-auto">
