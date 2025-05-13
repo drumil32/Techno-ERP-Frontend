@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { useParams } from "next/navigation";
 import { recordPayment } from "../helpers/fetch-data";
-import { getFeeActionLable, getTransactionTypeLable } from "@/lib/enumDisplayMapper";
+import { getFeeActionLabel, getTransactionTypeLabel } from "@/lib/enumDisplayMapper";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -158,7 +158,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                           <SelectContent className="text-md">
                             {Object.values(FeeActions).map((action) => (
                               <SelectItem key={action} value={action}>
-                                {getFeeActionLable(action)}
+                                {getFeeActionLabel(action)}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -183,7 +183,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                           <SelectContent className="text-md">
                             {Object.values(TransactionTypes).map((type) => (
                               <SelectItem key={type} value={type}>
-                                {getTransactionTypeLable(type)}
+                                {getTransactionTypeLabel(type)}
                               </SelectItem>
                             ))}
                           </SelectContent>
