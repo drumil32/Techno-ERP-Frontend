@@ -442,14 +442,15 @@ export default function YellowLeadViewEdit({
         updateLeadCache()
 
         setOriginalData(formData);
+        // setRefreshKey((prev: number) => prev + 1);
+        setSelectedRowId(null);
+        setIsDrawerOpen(false);
+        // toggleIsEditing(false);
+        setErrors({});
       } else {
         setFormData(originalData);
       }
-      // setRefreshKey((prev: number) => prev + 1);
-      setSelectedRowId(null);
-      setIsDrawerOpen(false);
-      // toggleIsEditing(false);
-      setErrors({});
+
     } catch (err) {
       console.log(err)
       console.error('Error updating lead:', err);
@@ -747,20 +748,20 @@ export default function YellowLeadViewEdit({
       </div>
       <div className="flex gap-5">
         <div className="space-y-2 w-1/2">
-        <EditLabel htmlFor="degree" title={'Degree'} />
-        <Input
-          id="degree"
-          name="degree"
-          value={formData.degree || ''}
-          onChange={handleChange}
-          className={inputStyle}
-        />
-        {errors.degree && <p className="text-red-500 text-xs mt-1">{errors.degree}</p>}
+          <EditLabel htmlFor="degree" title={'Degree'} />
+          <Input
+            id="degree"
+            name="degree"
+            value={formData.degree || ''}
+            onChange={handleChange}
+            className={inputStyle}
+          />
+          {errors.degree && <p className="text-red-500 text-xs mt-1">{errors.degree}</p>}
         </div>
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="finalConversion" title={'Final Conversion'} />
           <Select
-            disabled={!formData.footFall}
+            // disabled={!formData.footFall}
             defaultValue={String(formData.finalConversion) as FinalConversionStatus}
             onValueChange={(value) => handleSelectChange('finalConversion', value)}
           >
@@ -779,15 +780,15 @@ export default function YellowLeadViewEdit({
       </div>
 
       <div className="space-y-2 ">
-          <EditLabel htmlFor="schoolName" title={'School/College Name'} />
-          <Input
-            id="schoolName"
-            name="schoolName"
-            value={formData.schoolName || ''}
-            onChange={handleChange}
-            className={inputStyle}
-          />
-          {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
+        <EditLabel htmlFor="schoolName" title={'School/College Name'} />
+        <Input
+          id="schoolName"
+          name="schoolName"
+          value={formData.schoolName || ''}
+          onChange={handleChange}
+          className={inputStyle}
+        />
+        {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
       </div>
       {/* Remarks Section */}
       <div className="space-y-2 max-w-2xl mx-auto">
