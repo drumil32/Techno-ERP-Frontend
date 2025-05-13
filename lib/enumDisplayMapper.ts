@@ -25,7 +25,7 @@ export function getScheduleLabel(schedule: FinanceFeeSchedule): string {
   return map[schedule] ?? schedule;
 }
 
-export function getFeeActionLable(feeAction: FeeActions): string {
+export function getFeeActionLabel(feeAction: FeeActions): string {
   const map: Record<string, string> = {
     [FeeActions.DEPOSIT]: 'Fee Deposit',
     [FeeActions.REFUND]: 'Fee Refund'

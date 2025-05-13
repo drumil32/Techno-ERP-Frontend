@@ -304,7 +304,8 @@ export default function YellowLeadsTracker() {
                       newData.yellowLeads[leadIndex] = {
                         ...newData.yellowLeads[leadIndex],
                         footFall: response.footFall,
-                        finalConversion: response.finalConversion
+                        finalConversion: response.finalConversion,
+                        updatedAt: response.updatedAt,
                       };
                     }
                     return newData;
@@ -331,11 +332,11 @@ export default function YellowLeadsTracker() {
     },
 
     {
-      accessorKey: 'yellowLeadsFollowUpCount',
+      accessorKey: 'followUpCount',
       meta: { align: 'center' },
       header: 'Follow Ups',
       cell: ({ row }: any) => {
-        const [selectedValue, setSelectedValue] = useState(row.original.yellowLeadsFollowUpCount);
+        const [selectedValue, setSelectedValue] = useState(row.original.followUpCount);
         const toastIdRef = useRef<string | number | null>(null);
 
         const handleDropdownChange = async (newValue: number) => {
@@ -348,7 +349,7 @@ export default function YellowLeadsTracker() {
 
           const filteredData = {
             _id: row.original._id,
-            yellowLeadsFollowUpCount: newValue
+            followUpCount: newValue
           };
 
           try {
@@ -363,7 +364,36 @@ export default function YellowLeadsTracker() {
                 id: toastIdRef.current,
                 duration: 1500
               });
-              setRefreshKey((prevKey) => prevKey + 1);
+              const updateLeadCache = () => {
+                const queryCache = queryClient.getQueryCache();
+                const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
+
+                leadQueries.forEach(query => {
+                  queryClient.setQueryData(query.queryKey, (oldData: any) => {
+                    if (!oldData || !oldData.yellowLeads) return oldData;
+
+                    const newData = JSON.parse(JSON.stringify(oldData));
+
+                    const leadIndex = newData.yellowLeads.findIndex(
+                      (lead: any) => lead._id === response._id
+                    );
+
+                    if (leadIndex !== -1) {
+                      newData.yellowLeads[leadIndex] = {
+                        ...newData.yellowLeads[leadIndex],
+                        followUpCount: response.followUpCount,
+                        updatedAt: response.updatedAt,
+                      };
+                    }
+                    return newData;
+                  });
+                });
+
+              };
+
+              updateLeadCache();
+
+              // setRefreshKey((prevKey) => prevKey + 1);
             } else {
               toast.error('Failed to update follow-up count', {
                 id: toastIdRef.current,
@@ -438,7 +468,8 @@ export default function YellowLeadsTracker() {
                   if (leadIndex !== -1) {
                     newData.yellowLeads[leadIndex] = {
                       ...newData.yellowLeads[leadIndex],
-                      finalConversion: response.finalConversion
+                      finalConversion: response.finalConversion,
+                      updatedAt: response.updatedAt
                     };
                   }
                   return newData;

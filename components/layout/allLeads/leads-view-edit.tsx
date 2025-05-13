@@ -59,10 +59,11 @@ export interface LeadData {
   assignedTo: string[];
   schoolName?: string;
   degree?: string;
-  leadsFollowUpCount?: number;
+  followUpCount?: number;
   leadType?: string;
   remarks: string[];
   nextDueDate?: string;
+  updatedAt: string;
   [key: string]: any;
 }
 
@@ -183,7 +184,7 @@ export default function LeadViewEdit({
         course: tempData.course,
         schoolName: tempData.schoolName,
         degree: tempData.degree,
-        leadsFollowUpCount: tempData.leadsFollowUpCount,
+        followUpCount: tempData.followUpCount,
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate,
         assignedTo: tempData.assignedTo,
@@ -280,7 +281,7 @@ export default function LeadViewEdit({
       'schoolName',
       'degree',
       'assignedTo',
-      'leadsFollowUpCount',
+      'followUpCount',
       'remarks',
       'nextDueDate'
     ];
@@ -329,7 +330,7 @@ export default function LeadViewEdit({
         'schoolName',
         'degree',
         'assignedTo',
-        'leadsFollowUpCount',
+        'followUpCount',
         'remarks',
         'nextDueDate'
       ];
@@ -425,12 +426,12 @@ export default function LeadViewEdit({
                   assignedTo: response.assignedTo,
                   assignedToView: assignedToView,
                   assignedToName: assignedToName,
-                  updatedAt: new Date(response.updatedAt).toLocaleString(),
+                  updatedAt: response.updatedAt,
                   nextDueDate: response.nextDueDate,
                   nextDueDateView: response.nextDueDate ? formatDateView(response.nextDueDate) : '-',
                   leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
                   _leadType: response.leadType,
-                  leadsFollowUpCount: response.leadsFollowUpCount ?? newData.leads[leadIndex].leadsFollowUpCount,
+                  followUpCount: response.followUpCount ?? newData.leads[leadIndex].followUpCount,
                   remarks: response.remarks || newData.leads[leadIndex].remarks,
                   remarksView: response.remarks && response.remarks.length > 0
                     ? response.remarks[response.remarks.length - 1]
@@ -522,7 +523,7 @@ export default function LeadViewEdit({
         )}
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Follow-ups</p>
-          <p>{formData.leadsFollowUpCount ?? '-'}</p>
+          <p>{formData.followUpCount ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">School Name</p>
@@ -725,18 +726,18 @@ export default function LeadViewEdit({
         </div>
 
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="leadsFollowUpCount" title={'Follow-up Count'} />
+          <EditLabel htmlFor="followUpCount" title={'Follow-up Count'} />
           <Select
-            defaultValue={formData.leadsFollowUpCount?.toString() || ''}
+            defaultValue={formData.followUpCount?.toString() || ''}
             onValueChange={(value) =>
-              handleFollowUpCountChange('leadsFollowUpCount', Number(value))
+              handleFollowUpCountChange('followUpCount', Number(value))
             }
           >
-            <SelectTrigger id="leadsFollowUpCount" className="w-full rounded-[5px]">
+            <SelectTrigger id="followUpCount" className="w-full rounded-[5px]">
               <SelectValue placeholder="Select follow-up count" />
             </SelectTrigger>
             <SelectContent>
-              {Array.from({ length: formData?.leadsFollowUpCount! + 2 }, (_, i) => (
+              {Array.from({ length: formData?.followUpCount! + 2 }, (_, i) => (
                 <SelectItem key={i} value={i.toString()}>
                   <span className="font-medium">{i.toString().padStart(2, '0')}</span>
                 </SelectItem>
@@ -906,7 +907,7 @@ export default function LeadViewEdit({
       <div className="flex flex-col gap-2">
         <EditLabel className="text-[#666666]" title="Lead Modified Date" />
         <p className="font-medium">
-          {formatTimeStampView(formData.leadTypeModifiedDate) ?? 'Not Provided'}
+          {formatTimeStampView(formData.updatedAt) ?? 'Not Provided'}
         </p>
       </div>
     </>

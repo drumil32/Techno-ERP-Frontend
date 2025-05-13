@@ -41,6 +41,7 @@ import {
   DialogClose
 } from '@/components/ui/dialog';
 import { FaCircleExclamation } from 'react-icons/fa6';
+import { format } from 'date-fns';
 
 export default function AllLeadsPage() {
   const queryClient = useQueryClient()
@@ -399,14 +400,10 @@ export default function AllLeadsPage() {
                         ...newData.leads[leadIndex],
                         leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
                         _leadType: response.leadType,
-                        leadsFollowUpCount: response.leadsFollowUpCount ?? newData.leads[leadIndex].leadsFollowUpCount,
-                        remarks: response.remarks || newData.leads[leadIndex].remarks,
-                        remarksView: response.remarks && response.remarks.length > 0
-                          ? response.remarks[response.remarks.length - 1]
-                          : newData.leads[leadIndex].remarksView,
                         leadTypeModifiedDate: response.leadTypeModifiedDate ?? newData.leads[leadIndex].leadTypeModifiedDate,
                         leadTypeModifiedDateView: formatTimeStampView(response.leadTypeModifiedDate) ??
-                          newData.leads[leadIndex].leadTypeModifiedDateView
+                          newData.leads[leadIndex].leadTypeModifiedDateView,
+                        updatedAt: response.updatedAt
                       };
                     }
 
@@ -451,11 +448,11 @@ export default function AllLeadsPage() {
     },
 
     {
-      accessorKey: 'leadsFollowUpCount',
+      accessorKey: 'followUpCount',
       header: 'Follow Ups',
       meta: { align: 'center' },
       cell: ({ row }: any) => {
-        const [selectedValue, setSelectedValue] = useState(row.original.leadsFollowUpCount);
+        const [selectedValue, setSelectedValue] = useState(row.original.followUpCount);
         const toastIdRef = useRef<string | number | null>(null);
 
         const handleDropdownChange = async (newValue: number) => {
@@ -468,7 +465,7 @@ export default function AllLeadsPage() {
 
           const filteredData = {
             ...row.original,
-            leadsFollowUpCount: newValue
+            followUpCount: newValue
           };
 
           const {
@@ -509,7 +506,36 @@ export default function AllLeadsPage() {
                 id: toastIdRef.current,
                 duration: 3000
               });
-              setRefreshKey((prevKey) => prevKey + 1);
+
+              const updateLeadCache = () => {
+                const queryCache = queryClient.getQueryCache();
+                const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
+
+                leadQueries.forEach(query => {
+                  queryClient.setQueryData(query.queryKey, (oldData: any) => {
+                    if (!oldData || !oldData.leads) return oldData;
+
+                    const newData = JSON.parse(JSON.stringify(oldData));
+
+                    const leadIndex = newData.leads.findIndex(
+                      (lead: any) => lead._id === response._id
+                    );
+
+                    if (leadIndex !== -1) {
+                      newData.leads[leadIndex] = {
+                        ...newData.leads[leadIndex],
+                        followUpCount: response.followUpCount ?? newData.leads[leadIndex].followUpCount,
+                        updatedAt: response.updatedAt,
+                      };
+                    }
+
+                    return newData;
+                  });
+                });
+
+              }
+              updateLeadCache()
+              // setRefreshKey((prevKey) => prevKey + 1);
             } else {
               toast.error('Failed to update follow-up count', {
                 id: toastIdRef.current,
@@ -732,7 +758,7 @@ export default function AllLeadsPage() {
 }
 
 function TableActionButton() {
-  const { hasRole } = useAuthStore();
+  const authStore = useAuthStore();
   const [uploadOpen, setUploadOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
 
@@ -776,7 +802,9 @@ function TableActionButton() {
 
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'leads.xlsx';
+      const userName = authStore.user?.name ?? 'user';
+      const dateStr = format(new Date(), 'dd-MM-yyyy');
+      a.download = `${userName}-${dateStr}.xlsx`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -789,9 +817,9 @@ function TableActionButton() {
     }
   };
 
-  const isUploadDisabled = !hasRole(UserRoles.LEAD_MARKETING);
+  const isUploadDisabled = !authStore.hasRole(UserRoles.LEAD_MARKETING);
   const isDownloadDisabled =
-    !hasRole(UserRoles.EMPLOYEE_MARKETING) && !hasRole(UserRoles.LEAD_MARKETING);
+    !authStore.hasRole(UserRoles.EMPLOYEE_MARKETING) && !authStore.hasRole(UserRoles.LEAD_MARKETING);
 
   return (
     <>
