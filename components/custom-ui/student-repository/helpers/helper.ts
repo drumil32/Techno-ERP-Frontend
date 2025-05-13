@@ -40,6 +40,33 @@ export const getDisplayFields = (formData: Record<string, any>) => {
 };
 
 export const getPersonalDetailsFormData = (data: StudentData) => {
+  // Create a fixed-size array for academic details
+  const academicDetailsArray = new Array(3).fill(null);
+
+  // Map academic details to their correct positions based on education level
+  if (data.studentInfo.academicDetails) {
+    data.studentInfo.academicDetails.forEach((detail) => {
+      if (!detail) return;
+
+      let index = -1;
+      switch (detail.educationLevel) {
+        case EducationLevel.Tenth:
+          index = 0;
+          break;
+        case EducationLevel.Twelfth:
+          index = 1;
+          break;
+        case EducationLevel.Graduation:
+          index = 2;
+          break;
+      }
+
+      if (index !== -1) {
+        academicDetailsArray[index] = detail;
+      }
+    });
+  }
+
   const formData = {
     id: data._id,
     studentID: data.studentInfo.universityId,
@@ -62,7 +89,7 @@ export const getPersonalDetailsFormData = (data: StudentData) => {
     bloodGroup: data.studentInfo.bloodGroup as BloodGroup,
     aadharNumber: data.studentInfo.aadharNumber,
     gender: data.studentInfo.gender as Gender,
-    academicDetails: data.studentInfo.academicDetails,
+    academicDetails: academicDetailsArray,
     address: {
       addressLine1: data.studentInfo.address?.addressLine1 || '',
       addressLine2: data.studentInfo.address?.addressLine2 || '',
