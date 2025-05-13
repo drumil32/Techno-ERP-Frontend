@@ -27,7 +27,7 @@ const InfoField = ({ label, value }: FieldDefinition) => (
  * Displays student profile picture and identification
  */
 const ProfilePicSection = ({ name, id, image }: { name: string; id: string; image: string }) => (
-  <div className="bg-white rounded-lg p-4 flex flex-col items-center justify-center gap-2">
+  <div className="bg-white rounded-lg py-4 px-6 flex flex-col items-center justify-center gap-2">
     <div className="relative w-24 h-24 overflow-hidden">
       <Image
         src={image || '/images/default-profile.png'}
@@ -55,16 +55,14 @@ const StudentProfileView = ({ studentData }: { studentData: StudentData }) => {
   // Define fields to display
   const studentDisplayFields: FieldDefinition[] = [
     { label: 'Student Name', value: studentInfo?.studentName },
-    { label: "Father's Name", value: studentInfo?.fatherName },
-    { label: 'Course Code', value: courseCode },
     { label: 'Student ID', value: studentInfo?.universityId },
+    { label: "Father's Name", value: studentInfo?.fatherName },
     { label: "Student's Phone Number", value: studentInfo?.studentPhoneNumber },
     { label: "Father's Phone Number", value: studentInfo?.fatherPhoneNumber },
-    {
-      label: 'Course Year',
-      value: currentAcademicYear ? formatYearRange(currentAcademicYear) : undefined
-    },
+    { label: 'Course Code', value: courseCode },
+    { label: 'Course Year', value: currentAcademicYear ? formatYearRange(currentAcademicYear) : undefined },
     { label: 'Semester', value: currentSemester },
+    { label: 'Form No.', value: studentInfo?.formNo },
     { label: 'Lurn/Pre-registration No.', value: studentInfo?.lurnRegistrationNo }
   ];
 

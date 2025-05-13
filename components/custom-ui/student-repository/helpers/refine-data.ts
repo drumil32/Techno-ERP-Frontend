@@ -6,7 +6,7 @@ export const refineStudents = (data: StudentListData): StudentListData => {
   console.log('Refining students data:', data);
   const refinedStudents = data.students.map((student, index) => ({
     _id: student._id,
-    id: index + 1,
+    id: (data.pagination.page - 1) * data.pagination.limit + index + 1,
     universityId: student.universityId,
     studentName: student.studentName,
     studentPhoneNumber: student.studentPhoneNumber,

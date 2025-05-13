@@ -213,20 +213,19 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
     <div className="space-y-4">
       <div className="rounded-md border overflow-hidden">
         <div className="overflow-x-auto">
-          <Table>
+          <Table className='bg-white'>
             <TableHeader>
               <TableRow className="bg-gray-50">
                 <TableHead className="font-medium">Subject</TableHead>
-                <TableHead className="font-medium text-right">Subject Code</TableHead>
-                <TableHead className="font-medium text-right">Instructor</TableHead>
-                <TableHead className="font-medium text-right">No. of Classes</TableHead>
-                <TableHead className="font-medium text-right">Attendance</TableHead>
-                <TableHead className="font-medium text-right">Attendance %</TableHead>
-                <TableHead className="font-medium text-right">Theory</TableHead>
-                <TableHead className="font-medium text-right">Practical</TableHead>
-                <TableHead className="font-medium text-right">Final Marks</TableHead>
-                <TableHead className="font-medium text-right">Total Possible</TableHead>
-                <TableHead className="font-medium text-right">Percentage Score</TableHead>
+                <TableHead className="font-medium text-left">Subject Code</TableHead>
+                <TableHead className="font-medium text-left">Instructor</TableHead>
+                <TableHead className="font-medium text-left">No. of Classes</TableHead>
+                <TableHead className="font-medium text-left">Attendance</TableHead>
+                <TableHead className="font-medium text-left">Attendance %</TableHead>
+                <TableHead className="font-medium text-left">Theory</TableHead>
+                <TableHead className="font-medium text-left">Practical</TableHead>
+                <TableHead className="font-medium text-left">Final Marks</TableHead>
+                <TableHead className="font-medium text-left">Percentage Score</TableHead>
                 <TableHead className="font-medium">Result</TableHead>
               </TableRow>
             </TableHeader>
@@ -249,28 +248,25 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
                 return (
                   <TableRow key={subject._id || `subject-${index}`}>
                     <TableCell className="font-medium">{subject.subjectName || '--'}</TableCell>
-                    <TableCell className="text-right">{subject.subjectCode || '--'}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-left">{subject.subjectCode || '--'}</TableCell>
+                    <TableCell className="text-left">
                       {subject?.instructor?.join(', ') || '--'}
                     </TableCell>
-                    <TableCell className="text-right">{renderSafe(totalClasses)}</TableCell>
-                    <TableCell className="text-right">{renderSafe(attended)}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-left">{renderSafe(totalClasses)}</TableCell>
+                    <TableCell className="text-left">{renderSafe(attended)}</TableCell>
+                    <TableCell className="text-left">
                       {renderSafe(attendancePercentage, { suffix: '%', decimals: 0 })}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-left">
                       {renderSafe(theoryMarks, { zeroAsPlaceholder: true })}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-left">
                       {renderSafe(practicalMarks, { zeroAsPlaceholder: true })}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-left">
                       {renderSafe(finalMarks, { zeroAsPlaceholder: true })}
                     </TableCell>
-                    <TableCell className="text-right">
-                      {renderSafe(totalPossibleMarks, { zeroAsPlaceholder: true })}
-                    </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-left">
                       {renderSafe(percentageScore, {
                         suffix: '%',
                         decimals: 0,
@@ -298,30 +294,27 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
               {/* Summary row */}
               <TableRow className="border-t-2">
                 <TableCell className="font-medium">Total</TableCell>
-                <TableCell className="text-right font-medium">--</TableCell>
-                <TableCell className="text-right font-medium">--</TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-left font-medium">--</TableCell>
+                <TableCell className="text-left font-medium">--</TableCell>
+                <TableCell className="text-left font-medium">
                   {renderSafe(totals.classes)}
                 </TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-left font-medium">
                   {renderSafe(totals.attendance)}
                 </TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-left font-medium">
                   {renderSafe(totalAttendancePercentage, { suffix: '%', decimals: 0 })}
                 </TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-left font-medium">
                   {renderSafe(totals.theory, { zeroAsPlaceholder: true })}
                 </TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-left font-medium">
                   {renderSafe(totals.practical, { zeroAsPlaceholder: true })}
                 </TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-left font-medium">
                   {renderSafe(totals.finalMarks, { zeroAsPlaceholder: true })}
                 </TableCell>
-                <TableCell className="text-right font-medium">
-                  {renderSafe(totals.totalPossibleMarks, { zeroAsPlaceholder: true })}
-                </TableCell>
-                <TableCell className="text-right font-medium">
+                <TableCell className="text-left font-medium">
                   {renderSafe(totalPercentageScore, {
                     suffix: '%',
                     decimals: 0,

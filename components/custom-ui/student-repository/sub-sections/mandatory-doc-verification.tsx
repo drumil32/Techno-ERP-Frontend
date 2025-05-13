@@ -16,7 +16,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { CheckCircle2, CheckCircle, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useState, useEffect } from 'react';
-import { format } from 'date-fns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import axios from 'axios';
 import { API_DOMAIN } from '@/common/constants/apiEndpoints';
@@ -24,7 +23,6 @@ import { Document, StudentData } from '../helpers/interface';
 import { PhysicalDocumentNoteStatus } from '../helpers/enum';
 import { updateStudentDocuments } from '../helpers/api';
 import { toast } from 'sonner';
-import { requestDateSchema } from '@/common/constants/schemas';
 import { formatDisplayDate } from '../../enquiry-form/stage-2/student-fees-form';
 
 interface DocumentVerificationProps {
@@ -62,7 +60,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
           id: `${index + 1}`,
           type: note.type || '',
           status: note.status || PhysicalDocumentNoteStatus.PENDING,
-          dueBy: note.dueBy ? new Date(note.dueBy).toISOString() : undefined
+          dueBy: note.dueBy ? note.dueBy : undefined
         }));
 
         setDocuments(mappedDocs);
@@ -98,62 +96,30 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
     }
   };
 
+  useEffect(() => {
+    console.log('Documents dueBy field and type:');
+    documents.forEach((doc) => {
+      console.log(`dueBy: ${doc.dueBy}, type: ${typeof doc.dueBy}`);
+    });
+  }, [documents]);
+
   const handleStatusChange = async (docId: string, status: PhysicalDocumentNoteStatus) => {
     const doc: Document | undefined = documents?.find((doc) => doc.id === docId);
 
     const updatedDoc = { ...doc, status };
 
-    if (
-      updatedDoc.dueBy &&
-      !requestDateSchema.safeParse(updatedDoc.dueBy).success
-    ) {
-      updatedDoc.dueBy = formatDisplayDate(new Date(updatedDoc.dueBy)) ?? '';
-    }
-
-    const { _id, ...rest } = { ...updatedDoc, id: studentData._id };
-    const response = await updateStudentDocuments(rest);
-
-    setDocuments((prevDocs) =>
-      prevDocs.map((doc) => (doc.id === docId ? { ...doc, status } : doc))
-    );
-
-    if (response) {
-      toast.success('Documents updated successfully');
-    } else {
-      setError('Failed to update documents');
-      toast.error('Failed to update documents');
-    }
-  };
-
-  const handleDueDateChange = async (docId: string, date: Date | undefined) => {
-    const doc: Document | undefined = documents?.find((doc) => doc.id === docId);
-
-    if (!doc) return;
-
-    const formattedDate : string | undefined | null = date ? formatDisplayDate(date) : undefined;
-
-    const updatedDoc = { ...doc, dueBy: formattedDate };
-
-    if (
-      updatedDoc.dueBy &&
-      !requestDateSchema.safeParse(updatedDoc.dueBy).success
-    ) {
-      updatedDoc.dueBy = formatDisplayDate(new Date(updatedDoc.dueBy)) ?? '';
-    }
-    
-
     try {
       const { _id, ...rest } = { ...updatedDoc, id: studentData._id };
-      const response = await updateStudentDocuments(rest);
 
-      console.log('formattedDate', formattedDate);
+      const data = {
+        ...rest,
+        dueBy: formatDateForDisplay(updatedDoc.dueBy)
+      }
+
+      const response = await updateStudentDocuments(data);
 
       setDocuments((prevDocs) =>
-        prevDocs.map((doc) =>
-          doc.id === docId
-            ? { ...doc, dueBy: formattedDate ?? undefined }
-            : doc
-        )
+        prevDocs.map((doc) => (doc.id === docId ? { ...doc, status } : doc))
       );
 
       if (response) {
@@ -163,6 +129,44 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
         toast.error('Failed to update documents');
       }
     } catch (error) {
+      setError('Failed to update documents');
+      toast.error('Failed to update documents');
+    }
+  };
+
+  const handleDueDateChange = async (docId: string, date: Date | undefined) => {
+    try {
+      const docIndex = documents.findIndex((doc) => doc.id === docId);
+      if (docIndex === -1) return;
+
+      // First update local state to reflect change immediately in UI
+      const updatedDocuments = [...documents];
+      updatedDocuments[docIndex] = {
+        ...updatedDocuments[docIndex],
+        dueBy: date || undefined
+      };
+      setDocuments(updatedDocuments);
+
+      // Prepare document for API
+      const { _id, ...rest } = {
+        ...updatedDocuments[docIndex],
+        id: studentData._id,
+        dueBy: formatDateForDisplay(date)
+      };
+
+      const response = await updateStudentDocuments(rest);
+
+      if (response) {
+        toast.success('Documents updated successfully');
+      } else {
+        // Revert on error
+        setDocuments(documents);
+        setError('Failed to update documents');
+        toast.error('Failed to update documents');
+      }
+    } catch (error) {
+      // Revert on error
+      setDocuments(documents);
       setError('Failed to update documents');
       toast.error('Failed to update documents');
     }
@@ -179,6 +183,13 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
       default:
         return null;
     }
+  };
+
+  // Helper function to format date for display
+  const formatDateForDisplay = (date: Date | string | undefined): string | undefined => {
+    if (!date) return undefined;
+    const dateObj = date instanceof Date ? date : new Date(date);
+    return formatDisplayDate(dateObj) || undefined;
   };
 
   if (loading) return <div className="py-4 text-gray-500">Loading document verification...</div>;
@@ -204,7 +215,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
         </AccordionTrigger>
         <AccordionContent className="p-6 bg-white rounded-[10px] space-y-8">
           {documents.map((doc) => (
-            <div key={doc._id} className="space-y-2">
+            <div key={doc.id} className="space-y-2">
               <div className="text-sm font-semibold text-gray-800">
                 {doc.type.replace(/_/g, ' ')}
               </div>
@@ -242,14 +253,14 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                         )}
                         disabled={doc.status !== PhysicalDocumentNoteStatus.PENDING}
                       >
-                        {doc.dueBy ? formatDisplayDate(new Date(doc.dueBy)) : 'Pick a due date'}
+                        {doc.dueBy ? formatDateForDisplay(doc.dueBy) : 'Pick a due date'}
                       </Button>
                     </PopoverTrigger>
                     {doc.status === PhysicalDocumentNoteStatus.PENDING && (
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={doc.dueBy ? new Date(doc.dueBy) : undefined}
+                          selected={doc.dueBy}
                           onSelect={(date) => handleDueDateChange(doc.id, date)}
                           disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                           initialFocus

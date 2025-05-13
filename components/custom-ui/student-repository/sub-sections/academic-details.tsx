@@ -58,7 +58,6 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
     useEffect(() => {
       const subscription = form.watch((values) => {
         const prevValues = prevValuesRef.current;
-        
         values.academicDetails?.forEach((entry, index) => {
           if (entry) {
             const allFilled =

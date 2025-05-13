@@ -25,16 +25,19 @@ import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown
 import { getCurrentAcademicYear } from '@/lib/getCurrentAcademicYear';
 import { toast } from 'sonner';
 import { columns, YearMap } from './helpers/constants';
+import TechnoDataTableAdvanced from '../data-table/techno-data-table-advanced';
 
 export default function StudentRepositoryPage() {
   // State Management
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-  const [page, setPage] = useState(1);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
-  const [limit, setLimit] = useState(20);
+
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
 
@@ -58,8 +61,10 @@ export default function StudentRepositoryPage() {
 
   // Handle Navigation to Single Student Page
   const handleViewMore = (row: StudentListItem) => {
-    if (row && row._id) {
-      router.push(SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(row._id, 'student-details'));
+    if (row && row._id && row.universityId) {
+      router.push(
+        SITE_MAP.STUDENT_REPOSITORY.SINGLE_STUDENT(row.universityId, 'student-details', row._id)
+      );
     }
   };
 
@@ -150,20 +155,16 @@ export default function StudentRepositoryPage() {
   };
 
   const clearFilters = () => {
-    getFilterConfigurations().forEach((filter) => {
-      if (filter?.filterKey === 'date' || filter?.isDateFilter) {
-        //
-        const dateKeys: string[] = []; // Add date keys here
-        dateKeys.forEach((key) => updateFilter(key, undefined));
-      } else {
-        updateFilter(filter.filterKey, undefined);
-      }
-    });
-
-    setAppliedFilters({});
     currentFiltersRef.current = {};
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
+
+    updateFilter('course', undefined);
+    updateFilter('courseYear', undefined);
+
+    const academicYearList = generateAcademicYearDropdown();
+    const currentAcademicYear = academicYearList[5];
+    updateFilter('academicYear', currentAcademicYear);
   };
 
   const handleFilterRemove = (filterKey: string) => {
@@ -188,7 +189,7 @@ export default function StudentRepositoryPage() {
   // ---
 
   const studentListQuery = useQuery({
-    queryKey: ['students', appliedFilters, debouncedSearch],
+    queryKey: ['students', appliedFilters, debouncedSearch, filterParams],
     queryFn: () => fetchStudents(filterParams),
     placeholderData: (previousData) => previousData,
     refetchOnWindowFocus: false,
@@ -200,7 +201,6 @@ export default function StudentRepositoryPage() {
     : { students: [], pagination: { total: 0, page: 0, limit: 0, totalPages: 0 } };
 
   useEffect(() => {
-    console.log('Students data:', studentsData);
     if (studentsData) {
       setTotalPages(studentsData.pagination.totalPages);
       setTotalEntries(studentsData.pagination.total);
@@ -283,25 +283,26 @@ export default function StudentRepositoryPage() {
       />
 
       {studentsData && (
-        <TechnoDataTable
-          selectedRowId={selectedRowId}
-          setSelectedRowId={setSelectedRowId}
+        <TechnoDataTableAdvanced
           columns={columns}
           data={studentsData.students}
           tableName="Student Records"
           currentPage={page}
           totalPages={totalPages}
+          pageLimit={limit}
           onPageChange={handlePageChange}
           onLimitChange={handleLimitChange}
-          pageLimit={limit}
           onSearch={handleSearch}
           searchTerm={search}
-          showPagination={true}
-          handleViewMore={handleViewMore}
+          minVisibleRows={13}
+          maxVisibleRows={10}
           totalEntries={totalEntries}
+          handleViewMore={handleViewMore}
+          selectedRowId={selectedRowId}
+          setSelectedRowId={setSelectedRowId}
         >
           <FilterBadges onFilterRemove={handleFilterRemove} appliedFilters={appliedFilters} />
-        </TechnoDataTable>
+        </TechnoDataTableAdvanced>
       )}
     </div>
   );
