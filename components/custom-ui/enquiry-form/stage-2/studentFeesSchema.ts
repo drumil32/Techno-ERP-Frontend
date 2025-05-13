@@ -4,33 +4,27 @@ import { AdmissionReference, FeeStatus, FeeType } from '@/types/enum';
 
 export const otherFeesSchema = z.object({
   type: z.nativeEnum(FeeType),
-  feeAmount: z.number().min(0, 'Fee amount must be greater than 0').optional().nullable(),
-  finalFee: z.number().min(0, 'Final fees must be non-negative').optional().nullable(),
-  feesDepositedTOA: z.number().min(0, 'Fees deposited must be non-negative').optional().nullable(),
+  feeAmount: z.number().min(0, '').optional().nullable(),
+  finalFee: z.number().min(0, '').optional().nullable(),
+  feesDepositedTOA: z.number().min(0, '').optional().nullable(),
   remarks: z.string().optional().nullable()
 });
 
 export const requiredOtherFeesSchema = otherFeesSchema
   .extend({
-    feesDepositedTOA: z
-      .number({ required_error: 'Deposit amount is required.' })
-      .min(0, 'Fees deposited must be non-negative'),
-    finalFee: z
-      .number({ required_error: 'Final Fee is required.' })
-      .min(0, 'Final fees must be non-negative')
+    feesDepositedTOA: z.number({ required_error: '' }).min(0, ''),
+    finalFee: z.number({ required_error: '' }).min(0, '')
   })
   .omit({ feeAmount: true });
 
 export const singleSemSchema = z.object({
-  feeAmount: z.number().min(0, 'Fee amount must be greater than 0'),
-  finalFee: z.number().min(0, 'Final fees must be non-negative').optional().nullable()
+  feeAmount: z.number().min(0, ''),
+  finalFee: z.number().min(0, '').optional().nullable()
 });
 
 export const requiredSingleSemSchema = singleSemSchema
   .extend({
-    finalFee: z
-      .number({ required_error: 'Final Fee is required.' })
-      .min(0, 'Final fees must be non-negative')
+    finalFee: z.number({ required_error: '' }).min(0, '')
   })
   .omit({ feeAmount: true });
 

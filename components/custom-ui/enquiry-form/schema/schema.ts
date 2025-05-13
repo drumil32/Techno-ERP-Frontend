@@ -48,7 +48,12 @@ export const academicDetailBaseSchema = z.object({
     // Keep regex for when value is present
     // .regex(/^[A-Za-z\s]+$/, 'University/Board Name must only contain alphabets and spaces')
     .optional(),
-  passingYear: z.number().int().optional(), // Keep refinements for when value is present
+  passingYear: z
+    .number()
+    .int()
+    .refine((year) => year.toString().length === 4, {
+      message: 'Passing Year must be a valid 4-digit year'
+    }), // Keep refinements for when value is present
   percentageObtained: z.number().optional(), // Keep refinements for when value is present
   subjects: z
     .string()
@@ -193,16 +198,16 @@ export enum Nationality {
   NRI = 'NRI',
   PIO = 'PIO',
   OCI = 'OCI',
-  FOREIGN_NATIONAL = 'FOREIGN_NATIONAL',
-  BHUTANESE = 'BHUTANESE',
-  NEPALESE = 'NEPALESE',
-  AFGHAN = 'AFGHAN',
-  BANGLADESHI = 'BANGLADESHI',
-  PAKISTANI = 'PAKISTANI',
-  SRI_LANKAN = 'SRI_LANKAN',
-  MALDIVIAN = 'MALDIVIAN',
-  TIBETAN_REFUGEE = 'TIBETAN_REFUGEE',
-  STATELESS = 'STATELESS'
+  FOREIGN_NATIONAL = 'FOREIGN_NATIONAL'
+  // BHUTANESE = 'BHUTANESE',
+  // NEPALESE = 'NEPALESE',
+  // AFGHAN = 'AFGHAN',
+  // BANGLADESHI = 'BANGLADESHI',
+  // PAKISTANI = 'PAKISTANI',
+  // SRI_LANKAN = 'SRI_LANKAN',
+  // MALDIVIAN = 'MALDIVIAN',
+  // TIBETAN_REFUGEE = 'TIBETAN_REFUGEE',
+  // STATELESS = 'STATELESS'
 }
 
 export const enquiryStep1RequestSchema = enquirySchema

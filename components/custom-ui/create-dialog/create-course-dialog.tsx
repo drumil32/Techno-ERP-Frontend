@@ -15,10 +15,10 @@ import { toast } from 'sonner';
 import { z } from 'zod';
 import { AddMoreDataBtn } from '../add-more-data-btn/add-data-btn';
 import { BookOpen, FolderPlus } from 'lucide-react';
-import { CustomDropdown } from '../custom-dropdown/custom-dropdown';
 import { parseAcademicYear } from '@/lib/parseAcademicYear';
 import { useRouter } from 'next/navigation';
 import { queryClient } from '@/lib/queryClient';
+import { CustomDropdown } from '../custom-dropdown/custom-dropdown';
 
 const academicYears = generateAcademicYearDropdown();
 
@@ -31,6 +31,9 @@ interface DepartmentMetaData {
 
 const createCourseSchema = z.object({
   collegeName: z.nativeEnum(CollegeNames, { required_error: 'College Name is required' }),
+  courseFullName: z
+    .string({ required_error: 'Course Full Name is Required' })
+    .nonempty('Course Full Name is Required.'),
   courseName: z
     .string({ required_error: 'Course Name is Required' })
     .nonempty('Course Name is Required.'),
@@ -58,6 +61,7 @@ const createCourseSchema = z.object({
 type FormData = z.infer<typeof createCourseSchema>;
 
 export const CreateCourseDialog = () => {
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const {
     control,
@@ -139,6 +143,7 @@ export const CreateCourseDialog = () => {
   useEffect(() => {
     if (departmentName && departments) {
       const selectedDepartment = departments.find((dep) => dep.departmentName === departmentName);
+      // console.log("Department selected : ", selectedDepartment);
       if (selectedDepartment) {
         setValue('departmentHOD', selectedDepartment.departmentHOD);
       }
@@ -179,6 +184,7 @@ export const CreateCourseDialog = () => {
     const requestObject = {
       courseName: data.courseName,
       courseCode: data.courseCode,
+      courseFullName: data.courseFullName,
       collegeName: data.collegeName,
       departmentMetaDataId: matchedDepartment?.departmentMetaDataId,
       startingYear: parseAcademicYear(data.academicYear),
@@ -206,7 +212,7 @@ export const CreateCourseDialog = () => {
           label={'Create New Course'}
           btnClassName="bg-white"
           onClick={() => {
-            console.log('Clicked button of creating new course');
+            // console.log('Clicked button of creating new course');
           }}
         ></AddMoreDataBtn>
       </Dialog.Trigger>
@@ -233,15 +239,38 @@ export const CreateCourseDialog = () => {
                 control={control}
                 render={({ field }) => (
                   <CustomDropdown
+                    id="collegeName"
                     options={Object.values(CollegeNames)}
-                    selected={field.value || ''}
-                    onChange={(val) => field.onChange(val)}
+                    selected={field.value ?? ''}
+                    onChange={(val: any) => field.onChange(val)}
                     placeholder="Select the college name"
+                    isOpen={openDropdownId === "collegeName"}
+                    setOpenDropdownId={setOpenDropdownId}
                   />
                 )}
               />
               {errors.collegeName && (
                 <p className="text-red-500 text-sm">{errors.collegeName.message}</p>
+              )}
+            </div>
+
+            {/* Course Full Name */}
+            <div className="space-y-1">
+              <label className="form-field-label font-inter space-y-3">Course Full Name</label>
+              <Controller
+                name="courseFullName"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    placeholder="Enter the course Full Name"
+                    className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${!field.value ? 'form-field-input-init-text' : ''
+                      }`}
+                  />
+                )}
+              />
+              {errors.courseFullName && (
+                <p className="text-red-500 text-sm">{errors.courseFullName.message}</p>
               )}
             </div>
 
@@ -255,10 +284,9 @@ export const CreateCourseDialog = () => {
                   render={({ field }) => (
                     <input
                       {...field}
-                      placeholder="Enter the full course name"
-                      className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${
-                        !field.value ? 'form-field-input-init-text' : ''
-                      }`}
+                      placeholder="Enter the course name"
+                      className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${!field.value ? 'form-field-input-init-text' : ''
+                        }`}
                     />
                   )}
                 />
@@ -294,9 +322,12 @@ export const CreateCourseDialog = () => {
                   control={control}
                   render={({ field }) => (
                     <CustomDropdown
+                      id="academicYear"
+                      isOpen={openDropdownId === "academicYear"}
+                      setOpenDropdownId={setOpenDropdownId}
                       options={academicYears}
-                      selected={field.value || ''}
-                      onChange={(val) => field.onChange(val)}
+                      selected={field.value ?? ''}
+                      onChange={(val: any) => field.onChange(val)}
                       placeholder="Select academic year"
                     />
                   )}
@@ -313,9 +344,12 @@ export const CreateCourseDialog = () => {
                   control={control}
                   render={({ field }) => (
                     <CustomDropdown
+                      id="totalSemesters"
+                      isOpen={openDropdownId === "totalSemesters"}
+                      setOpenDropdownId={setOpenDropdownId}
                       options={[...Array(12)].map((_, i) => (i + 1).toString())}
-                      selected={field.value?.toString() || ''}
-                      onChange={(val) => field.onChange(Number(val))}
+                      selected={field.value?.toString() ?? ''}
+                      onChange={(val: any) => field.onChange(Number(val))}
                       placeholder="Select no. of semesters"
                     />
                   )}
@@ -332,15 +366,21 @@ export const CreateCourseDialog = () => {
               <Controller
                 name="departmentName"
                 control={control}
-                render={({ field }) => (
-                  <CustomDropdown
-                    options={departments.map((dep) => dep.departmentName)}
-                    selected={field.value || ''}
-                    onChange={(val) => field.onChange(val)}
-                    placeholder="Enter/Select the department name"
-                  />
-                )}
+                render={({ field }) => {
+                  return (
+                    <CustomDropdown
+                      id="departmentName"
+                      isOpen={openDropdownId === "departmentName"}
+                      setOpenDropdownId={setOpenDropdownId}
+                      options={departments.map((dep) => dep.departmentName)}
+                      selected={field.value ?? ''}
+                      onChange={(val: any) => field.onChange(val)}
+                      placeholder="Enter/Select the department name"
+                    />
+                  );
+                }}
               />
+
               {errors.departmentName && (
                 <p className="text-red-500 text-sm">{errors.departmentName.message}</p>
               )}
@@ -354,11 +394,10 @@ export const CreateCourseDialog = () => {
                 control={control}
                 render={({ field }) => (
                   <input
-                    {...field}
+                    {...field ?? ""}
                     placeholder="Enter the HOD name"
-                    className={`p-3 form-field-input-text border rounded-md w-full ${
-                      !field.value ? 'form-field-input-init-text' : ''
-                    }`}
+                    className={`disabled p-3 form-field-input-text border rounded-md w-full ${!field.value ? 'form-field-input-init-text' : ''
+                      }`}
                     disabled
                   />
                 )}

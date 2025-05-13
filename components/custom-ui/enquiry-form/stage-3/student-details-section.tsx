@@ -440,6 +440,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 name="dateOfBirth"
                 label="Date of Birth"
                 disabled={isViewable}
+                formItemClassName={`${commonFormItemClass} border-none`}
                 placeholder="Select Date of Birth"
                 showYearMonthDropdowns={true}
                 labelClassName="font-inter font-normal text-[12px] text-[#666666]"

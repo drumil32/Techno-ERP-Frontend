@@ -40,12 +40,14 @@ type DocumentVerificationProps = {
   form: UseFormReturn<any>;
   isViewable?: boolean;
   onValidationChange?: (isValid: boolean) => void;
+  documentVerificationStatus?: boolean;
 };
 
 const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
   form,
   isViewable,
-  onValidationChange
+  onValidationChange,
+  documentVerificationStatus
 }) => {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
@@ -239,33 +241,35 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                       {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : '-'}
                     </div>
                   ) : (
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            'ml-5 w-[200px] justify-start text-left font-normal',
-                            !doc.dueBy && 'text-muted-foreground',
-                            doc.status !== PhysicalDocumentNoteStatus.PENDING &&
-                              'cursor-not-allowed opacity-60'
-                          )}
-                          disabled={doc.status !== PhysicalDocumentNoteStatus.PENDING}
-                        >
-                          {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : 'Pick a due date'}
-                        </Button>
-                      </PopoverTrigger>
-                      {doc.status === PhysicalDocumentNoteStatus.PENDING && (
-                        <PopoverContent className="w-auto p-0">
-                          <Calendar
-                            mode="single"
-                            selected={doc.dueBy}
-                            onSelect={(date) => handleDueDateChange(doc.id, date)}
-                            disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      )}
-                    </Popover>
+                    doc.status === PhysicalDocumentNoteStatus.PENDING && (
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              'ml-5 w-[200px] justify-start text-left font-normal',
+                              !doc.dueBy && 'text-muted-foreground',
+                              doc.status !== PhysicalDocumentNoteStatus.PENDING &&
+                                'cursor-not-allowed opacity-60'
+                            )}
+                            disabled={doc.status !== PhysicalDocumentNoteStatus.PENDING}
+                          >
+                            {doc.dueBy ? format(doc.dueBy, 'dd/MM/yyyy') : 'Pick a due date'}
+                          </Button>
+                        </PopoverTrigger>
+                        {doc.status === PhysicalDocumentNoteStatus.PENDING && (
+                          <PopoverContent className="w-auto p-0">
+                            <Calendar
+                              mode="single"
+                              selected={doc.dueBy}
+                              onSelect={(date) => handleDueDateChange(doc.id, date)}
+                              disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        )}
+                      </Popover>
+                    )
                   )}
                 </div>
               </div>
@@ -277,7 +281,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                 )} */}
             </div>
           ))}
-          {!isValid && !isViewable && isTouched && (
+          {!documentVerificationStatus && (
             <div className="text-red-500 text-sm">Set due dates for all pending documents</div>
           )}
         </AccordionContent>

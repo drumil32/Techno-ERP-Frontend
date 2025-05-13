@@ -10,7 +10,7 @@ export default function ShowStudentData({ data }: { data: Admission }) {
           <div className="w-1/2 ">{data?.studentName}</div>
         </div>
         <div className="flex">
-          <div className="w-1/2 text-gray-600">Student's Phone Number</div>
+          <div className="w-1/2 text-gray-600">Phone Number</div>
           <div className="w-1/2">{data?.studentPhoneNumber}</div>
         </div>
         <div className="flex">

@@ -44,9 +44,10 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { getTransactionTypeLable } from '@/lib/enumDisplayMapper';
+import { getTransactionTypeLabel } from '@/lib/enumDisplayMapper';
 import { Loader } from 'lucide-react';
 import Loading from '@/app/loading';
+import { clsx } from 'clsx';
 
 const FinanceOfficeForm = () => {
   const params = useParams();
@@ -356,9 +357,9 @@ const FinanceOfficeForm = () => {
         transactionType: transactionTypeRef.current
       });
 
+      console.log('I am there my dear friend', response);
+
       if (!response) {
-        transactionTypeRef.current = '';
-        setTransactionType('');
         return false;
       }
 
@@ -395,10 +396,10 @@ const FinanceOfficeForm = () => {
                   <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Fees Details</div>
                   <div className="text-right">Schedule</div>
                   <div className="text-right">Fees</div>
+                  <div className="text-right">Discount</div>
                   <div className="text-right">Final Fees</div>
-                  <div className="text-right">Applicable Discount</div>
                   <div className="text-right">Fees Deposited</div>
-                  <div className="text-right">Fees due in 1st Sem</div>
+                  <div className="text-right">Fees Due</div>
                 </div>
 
                 {otherFeesFields.map((field, index) => {
@@ -411,7 +412,8 @@ const FinanceOfficeForm = () => {
                   const totalFee = originalFeeData?.amount;
                   const finalFee = otherFeesWatched?.[index]?.finalFee;
                   const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
-                  const discountValue = calculateDiscountPercentage(totalFee, finalFee);
+                  const discountValue =
+                    finalFee != undefined ? calculateDiscountPercentage(totalFee, finalFee) : '-';
                   const discountDisplay =
                     typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
                   const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
@@ -429,10 +431,27 @@ const FinanceOfficeForm = () => {
                         {scheduleFeeMapper(feeType)}
                       </div>
 
-                      <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
-                        {formatCurrency(totalFee)}
-                      </div>
+                      {feeType !== FeeType.TRANSPORT && feeType !== FeeType.HOSTEL ? (
+                        <>
+                          <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
+                            {formatCurrency(totalFee)}
+                          </div>
 
+                          <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
+                            <p className="ml-auto">{discountDisplay}</p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
+                            {}
+                          </div>
+
+                          <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
+                            <p className="ml-auto">{}</p>
+                          </div>
+                        </>
+                      )}
                       <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
                         <FormField
                           control={form.control}
@@ -448,8 +467,16 @@ const FinanceOfficeForm = () => {
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    if (value === '' || /^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    if (/^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? null : Number(value));
+                                    }
+                                  }}
+                                  onFocus={(e) => {
+                                    e.target.placeholder = '';
+                                  }}
+                                  onBlur={(e) => {
+                                    if (!e.target.value) {
+                                      e.target.placeholder = 'Enter fees';
                                     }
                                   }}
                                   value={formField.value ?? ''}
@@ -463,10 +490,6 @@ const FinanceOfficeForm = () => {
                         />
                       </div>
 
-                      <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
-                        <p className="ml-auto">{discountDisplay}</p>
-                      </div>
-
                       <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
                         <FormField
                           control={form.control}
@@ -476,17 +499,21 @@ const FinanceOfficeForm = () => {
                               <FormControl>
                                 <Input
                                   type="text"
-                                  min="0"
                                   placeholder="Enter fees"
-                                  {...formField}
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
+                                  value={formField.value || ''}
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    if (value === '' || /^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    if (/^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? null : Number(value));
                                     }
                                   }}
-                                  value={formField.value ?? ''}
+                                  onFocus={(e) => (e.target.placeholder = '')}
+                                  onBlur={(e) => {
+                                    if (!e.target.value) {
+                                      e.target.placeholder = 'Enter fees';
+                                    }
+                                  }}
                                 />
                               </FormControl>
                               {/* <div className="h-[20px] sm:h-[45px]"> */}
@@ -497,7 +524,12 @@ const FinanceOfficeForm = () => {
                         />
                       </div>
 
-                      <div className="flex items-center justify-end text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
+                      <div
+                        className={clsx(
+                          'flex items-center justify-end text-[12px] sm:text-sm h-9 sm:h-11 rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1',
+                          { 'text-red-500': remainingFee < 0 }
+                        )}
+                      >
                         {formatCurrency(remainingFee)}
                       </div>
                     </div>
@@ -513,13 +545,13 @@ const FinanceOfficeForm = () => {
                     {formatCurrency(otherFeesTotals.totalOriginal)}
                   </div>
                   <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
-                    {formatCurrency(otherFeesTotals.totalFinal)}
-                  </div>
-                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {calculateDiscountPercentage(
                       otherFeesTotals.totalOriginal,
                       otherFeesTotals.totalFinal
                     ) + '%'}
+                  </div>
+                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
+                    {formatCurrency(otherFeesTotals.totalFinal)}
                   </div>
                   <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
                     {formatCurrency(otherFeesTotals.totalDeposited)}
@@ -567,25 +599,28 @@ const FinanceOfficeForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-full lg:w-2/3">
+              <div className="w-full lg:w-max">
                 <div className="space-y-3 sm:space-y-4">
                   <div className="grid bg-[#F7F7F7] rounded-[5px] text-[#4E4E4E] p-3 sm:p-5 grid-cols-1 xs:grid-cols-2 sm:grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mb-2 pb-1 border-b">
                     <div className="font-medium text-[12px] sm:text-sm text-gray-600">Semester</div>
                     <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-right">
                       Fees
                     </div>
-                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-center">
-                      Final Fees
-                    </div>
-                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-center">
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-right">
                       Applicable Discount
+                    </div>
+                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-right">
+                      Final Fees
                     </div>
                   </div>
 
                   {semFields.map((field, index) => {
                     const originalFeeAmount = semWiseFeesData[index];
                     const finalFee = semWiseFeesWatched?.[index]?.finalFee;
-                    const discountValue = calculateDiscountPercentage(originalFeeAmount, finalFee);
+                    const discountValue =
+                      finalFee != undefined
+                        ? calculateDiscountPercentage(originalFeeAmount, finalFee)
+                        : '-';
                     const discountDisplay =
                       typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
                     return (
@@ -596,6 +631,10 @@ const FinanceOfficeForm = () => {
                         <div className="pt-2 text-[12px] sm:text-sm">Semester {index + 1}</div>
                         <div className="pt-2 text-[12px] sm:text-sm text-right">
                           {formatCurrency(originalFeeAmount)}
+                        </div>
+
+                        <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2">
+                          <p className="ml-auto">{discountDisplay}</p>
                         </div>
 
                         <FormField
@@ -612,21 +651,29 @@ const FinanceOfficeForm = () => {
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    if (value === '' || /^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    if (/^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? null : Number(value));
                                     }
                                   }}
-                                  value={formField.value ?? ''}
+                                  onFocus={(e) => {
+                                    e.target.placeholder = '';
+                                  }}
+                                  onBlur={(e) => {
+                                    if (!e.target.value) {
+                                      e.target.placeholder = 'Enter fees';
+                                    }
+                                  }}
+                                  value={
+                                    index === 0
+                                      ? (form.getValues('otherFees')[index].finalFee ?? '')
+                                      : (formField.value ?? '')
+                                  }
                                 />
                               </FormControl>
                               <FormMessage className="text-[10px] sm:text-xs mt-1" />
                             </FormItem>
                           )}
                         />
-
-                        <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11 border border-input rounded-md px-2">
-                          <p className="ml-auto">{discountDisplay}</p>
-                        </div>
                       </div>
                     );
                   })}
@@ -685,7 +732,7 @@ function FinalFeeSaveDialog({ studentData, otherFeesWatched, onTransactionTypeCh
 
   return (
     <div className="flex flex-col w-full max-w-md">
-      <h2 className="text-lg font-semibold mb-4">Final Fee Submission</h2>
+      <h2 className="text-lg font-semibold mb-4"> Total Fee Amount For Sem1 </h2>
 
       <div className="w-full space-y-4 text-left">
         <div className="grid grid-cols-2 gap-2">
@@ -708,7 +755,7 @@ function FinalFeeSaveDialog({ studentData, otherFeesWatched, onTransactionTypeCh
             <SelectContent className="text-md">
               {Object.values(TransactionTypes).map((type) => (
                 <SelectItem key={type} value={type}>
-                  {getTransactionTypeLable(type)}
+                  {getTransactionTypeLabel(type)}
                 </SelectItem>
               ))}
             </SelectContent>

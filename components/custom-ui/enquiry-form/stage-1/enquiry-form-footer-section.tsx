@@ -16,7 +16,7 @@ import { IAcademicDetailArraySchema, IAcademicDetailSchema } from '../schema/sch
 interface EnquiryFormFooterProps {
   saveDraft: () => Promise<boolean | void>;
   form: UseFormReturn<any>;
-  onSubmit: () => void;
+  onSubmit: () => Promise<boolean | void>;
   isSavingDraft?: boolean;
   confirmationChecked?: boolean;
   draftExists?: boolean;
@@ -40,23 +40,37 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
       sessionStorage.removeItem('draftSaved');
     }
   }, []);
-  function handleSubmitClick() {
+
+  async function handleSubmitClick() {
     const currentValues = form.getValues();
 
     if (currentValues.academicDetails) {
       const filteredAcademicDetails: IAcademicDetailArraySchema =
         currentValues.academicDetails.filter((entry: IAcademicDetailSchema) => {
           if (!entry) return false;
-          return Object.values(entry).some((value) => value !== undefined);
+
+          // Only look at the fields we care about for "emptiness"
+          const { schoolCollegeName, universityBoardName, passingYear, percentageObtained } = entry;
+
+          // If ALL are empty/undefined/null/blank, skip the row
+          const isAllEmpty =
+            !schoolCollegeName &&
+            !universityBoardName &&
+            (passingYear === undefined || passingYear === null) &&
+            (percentageObtained === undefined || percentageObtained === null);
+
+          return !isAllEmpty; // keep if at least one is filled
         });
+
+      console.log('Filtered Academic Details:', filteredAcademicDetails);
 
       form.setValue('academicDetails', filteredAcademicDetails);
     }
 
-    setTimeout(() => {
-      form.handleSubmit(onSubmit)();
+    const result = await onSubmit();
+    if (result === true) {
       setSubmitDialogOpen(false);
-    }, 0);
+    }
   }
 
   async function handleDialogSaveDraft() {
@@ -80,11 +94,9 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             <span className="font-inter font-semibold text-[12px]">
               {isSavingDraft
                 ? 'Saving...'
-                : draftSaved
-                  ? 'Draft Saved!'
-                  : draftExists
-                    ? 'Update Draft'
-                    : 'Save Draft'}
+                : draftSaved || draftExists
+                  ? 'Update Draft'
+                  : 'Save Draft'}
             </span>
           </Button>
         </DialogTrigger>
@@ -135,7 +147,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           </DialogHeader>
           <div className="flex gap-2 items-center text-left">
             <FaCircleExclamation className="text-yellow-500 w-8 h-8" />
-            <span>Please reverify all details again before submitting.</span>
+            <span>Please reverify all details again before saving.</span>
           </div>
           <DialogFooter>
             <DialogClose asChild>

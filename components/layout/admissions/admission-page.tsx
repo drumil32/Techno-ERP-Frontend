@@ -43,7 +43,6 @@ export default function AdmissionsLandingPage() {
     { accessorKey: 'studentPhoneNumber', header: 'Phone Number' },
     { accessorKey: 'genderDisplay', header: 'Gender' },
     { accessorKey: 'district', header: 'District' },
-    { accessorKey: 'course', header: 'Course' },
     {
       accessorKey: 'applicationStatus',
       header: 'Application Status',
@@ -54,8 +53,9 @@ export default function AdmissionsLandingPage() {
       }
     },
 
-    { accessorKey: 'fatherPhoneNumber', header: 'Father P No.' },
-    { accessorKey: 'motherPhoneNumber', header: 'Mother P No.' },
+    { accessorKey: 'fatherPhoneNumber', header: "Father's Number" },
+    { accessorKey: 'motherPhoneNumber', header: "Mother's Number" },
+    { accessorKey: 'course', header: 'Course' },
     {
       id: 'actions',
       header: 'Actions',
@@ -141,7 +141,7 @@ export default function AdmissionsLandingPage() {
         setSelectedRowId={setSelectedRowId}
         columns={columns}
         data={admissionsData}
-        tableName="Ongoing Admissions"
+        tableName="Ongoing Applications"
         currentPage={1}
         totalPages={1}
         pageLimit={10}

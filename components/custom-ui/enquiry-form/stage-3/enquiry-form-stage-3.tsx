@@ -55,6 +55,7 @@ const EnquiryFormStage3 = () => {
   const [refreshKey, setRefreshKey] = useState(0);
   const router = useRouter();
   const [isDocumentVerificationValid, setIsDocumentVerificationValid] = useState(false);
+  const [documentVerificationStatus, setDocumentVerificationStatus] = useState(true);
   const { data, isError, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ['enquiryFormData', id, refreshKey],
     queryFn: () => getEnquiry(id ? id : ''),
@@ -188,7 +189,35 @@ const EnquiryFormStage3 = () => {
 
       if (!isDocumentVerificationValid) {
         toast.error('Please ensure you complete document verification first');
+        setDocumentVerificationStatus(false);
         return false;
+      }
+
+      const validation = enquiryStep3UpdateRequestSchema.safeParse(rest);
+      if (!validation.success) {
+        const errors = validation.error.format();
+        form.setError('root', {
+          type: 'manual',
+          message: 'Validation failed. Please check the form fields.'
+        });
+
+        function setNestedErrors(errorObj: any, path = '') {
+          Object.entries(errorObj).forEach(([key, value]) => {
+            if (key === '_errors') {
+              if (Array.isArray(value) && value.length > 0) {
+                form.setError(path as keyof typeof values, {
+                  type: 'manual',
+                  message: value[0] || 'Invalid value'
+                });
+              }
+            } else if (typeof value === 'object' && value !== null) {
+              setNestedErrors(value, path ? `${path}.${key}` : key);
+            }
+          });
+        }
+
+        setNestedErrors(errors);
+        throw new Error('Validation failed');
       }
 
       const enquiry: any = await updateEnquiryStep3(rest);
@@ -285,7 +314,6 @@ const EnquiryFormStage3 = () => {
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
-
           <MoreDetailsSection
             form={form}
             isViewable={isViewable}
@@ -294,7 +322,6 @@ const EnquiryFormStage3 = () => {
             enquiryDocuments={currentDocuments}
             setCurrentDocuments={setCurrentDocuments}
           />
-
           {/* Address details */}
           <AddressDetailsSectionStage3
             form={form}
@@ -302,7 +329,6 @@ const EnquiryFormStage3 = () => {
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
-
           {/* Academic Details */}
           <AcademicDetailsSectionStage3
             isViewable={isViewable}
@@ -315,18 +341,16 @@ const EnquiryFormStage3 = () => {
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
-
           <DocumentVerificationSection
+            documentVerificationStatus={documentVerificationStatus}
             onValidationChange={setIsDocumentVerificationValid}
             form={form}
             isViewable={isViewable}
           />
-
           {/* <AllDocuments
             enquiryDocuments={currentDocuments}
             setCurrentDocuments={setCurrentDocuments}
           /> */}
-
           {!isViewable && <ConfirmationSection form={form} />}
           <OfficeUseSection
             form={form}
@@ -334,7 +358,7 @@ const EnquiryFormStage3 = () => {
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
-          <ScholarshipDetailsSection form={form} />
+          {/* <ScholarshipDetailsSection form={form} /> Removed as of now */}
           {!isViewable && (
             <>
               {' '}

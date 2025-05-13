@@ -74,24 +74,7 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
           </AccordionTrigger>
 
           <AccordionContent className="p-6 bg-white rounded-[10px]">
-            <div className="w-2/3 grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-x-8 gap-y-4">
-              <MultiSelectPopoverCheckbox
-                form={form}
-                name="counsellor"
-                label="Counsellor’s Name"
-                options={counsellors}
-                placeholder="Select Counsellor's Name"
-                className="col-span-1"
-              />
-
-              <MultiSelectPopoverCheckbox
-                form={form}
-                name="telecaller"
-                label="Telecaller’s Name"
-                options={telecallers}
-                placeholder="Select Telecaller's Name"
-                className="col-span-1"
-              />
+            <div className="w-full grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-x-8 gap-y-1">
               <FormField
                 key="reference"
                 control={form.control}
@@ -122,6 +105,47 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
                     </FormControl>
                     <div className="h-[20px]">
                       <FormMessage className="text-[11px]" />
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <MultiSelectPopoverCheckbox
+                form={form}
+                name="counsellor"
+                label="Counsellor’s Name"
+                options={counsellors}
+                placeholder="Select Counsellor's Name"
+                className="col-span-1"
+              />
+
+              <MultiSelectPopoverCheckbox
+                form={form}
+                name="telecaller"
+                label="Telecaller’s Name"
+                options={telecallers}
+                placeholder="Select Telecaller's Name"
+                className="col-span-1"
+              />
+
+              <FormField
+                control={form.control}
+                name="remarks"
+                render={({ field }) => (
+                  <FormItem className="col-span-3">
+                    <FormLabel className="font-inter font-normal text-sm text-gray-600">
+                      Remarks
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Optional"
+                        className="resize-none text-sm "
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <div className="h-5">
+                      <FormMessage className="text-xs" />
                     </div>
                   </FormItem>
                 )}

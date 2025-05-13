@@ -153,13 +153,12 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="address.pincode"
                 render={({ field }) => (
-                  <FormItem className={commonFormItemClass}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                  <FormItem className={`${commonFormItemClass} col-start-1 col-span-1`}>
+                    <FormLabel className="font-inter font-normal col-span-1 text-[12px] text-[#666666] gap-x-1">
                       Pincode
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
@@ -183,7 +182,7 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                 control={form.control}
                 name="address.district"
                 render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass}`}>
+                  <FormItem className={`${commonFormItemClass} col-start-2 col-span-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full gap-x-1">
                       District
                       <span className="text-red-500 pl-0">*</span>
@@ -210,12 +209,11 @@ const AddressDetailsSectionStage3: React.FC<AddressDetailsSectionInterface> = ({
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="address.state"
                 render={({ field }) => (
-                  <FormItem className={commonFormItemClass}>
+                  <FormItem className={`{commonFormItemClass} col-start-1 col-span-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                       State
                       <span className="text-red-500 pl-0">*</span>

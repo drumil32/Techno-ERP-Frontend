@@ -239,6 +239,32 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       }
     }
 
+    const validation = enquiryStep1RequestSchema.safeParse(rest);
+    if (!validation.success) {
+      toast.error('Validation failed. Please check the form fields.');
+      form.setError('root', {
+        type: 'manual',
+        message: 'Validation failed. Please check the form fields.'
+      });
+
+      function setNestedErrors(errorObj: any, path = '') {
+        Object.entries(errorObj).forEach(([key, value]) => {
+          if (key === '_errors') {
+            if (Array.isArray(value) && value.length > 0) {
+              form.setError(path as keyof typeof values, {
+                type: 'manual',
+                message: value[0] || 'Invalid value'
+              });
+            }
+          } else if (typeof value === 'object' && value !== null) {
+            setNestedErrors(value, path ? `${path}.${key}` : key);
+          }
+        });
+      }
+
+      setNestedErrors(validation.error.format());
+      throw new Error('Validation failed');
+    }
     const enquiry: any = await createEnquiry(rest);
 
     // const response = await updateEnquiryStatus({
