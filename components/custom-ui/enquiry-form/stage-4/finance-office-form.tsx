@@ -357,9 +357,9 @@ const FinanceOfficeForm = () => {
         transactionType: transactionTypeRef.current
       });
 
+      console.log('I am there my dear friend', response);
+
       if (!response) {
-        transactionTypeRef.current = '';
-        setTransactionType('');
         return false;
       }
 
@@ -431,13 +431,27 @@ const FinanceOfficeForm = () => {
                         {scheduleFeeMapper(feeType)}
                       </div>
 
-                      <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
-                        {formatCurrency(totalFee)}
-                      </div>
+                      {feeType !== FeeType.TRANSPORT && feeType !== FeeType.HOSTEL ? (
+                        <>
+                          <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
+                            {formatCurrency(totalFee)}
+                          </div>
 
-                      <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
-                        <p className="ml-auto">{discountDisplay}</p>
-                      </div>
+                          <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
+                            <p className="ml-auto">{discountDisplay}</p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
+                            {}
+                          </div>
+
+                          <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
+                            <p className="ml-auto">{}</p>
+                          </div>
+                        </>
+                      )}
                       <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
                         <FormField
                           control={form.control}
@@ -453,8 +467,8 @@ const FinanceOfficeForm = () => {
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    if (value === '' || /^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    if (/^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? null : Number(value));
                                     }
                                   }}
                                   onFocus={(e) => {
@@ -485,25 +499,21 @@ const FinanceOfficeForm = () => {
                               <FormControl>
                                 <Input
                                   type="text"
-                                  min="0"
                                   placeholder="Enter fees"
-                                  {...formField}
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
+                                  value={formField.value || ''}
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    if (value === '' || /^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    if (/^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? null : Number(value));
                                     }
                                   }}
-                                  onFocus={(e) => {
-                                    e.target.placeholder = '';
-                                  }}
+                                  onFocus={(e) => (e.target.placeholder = '')}
                                   onBlur={(e) => {
                                     if (!e.target.value) {
                                       e.target.placeholder = 'Enter fees';
                                     }
                                   }}
-                                  value={formField.value ?? ''}
                                 />
                               </FormControl>
                               {/* <div className="h-[20px] sm:h-[45px]"> */}
@@ -641,8 +651,8 @@ const FinanceOfficeForm = () => {
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    if (value === '' || /^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    if (/^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? null : Number(value));
                                     }
                                   }}
                                   onFocus={(e) => {
@@ -653,7 +663,11 @@ const FinanceOfficeForm = () => {
                                       e.target.placeholder = 'Enter fees';
                                     }
                                   }}
-                                  value={formField.value ?? ''}
+                                  value={
+                                    index === 0
+                                      ? (form.getValues('otherFees')[index].finalFee ?? '')
+                                      : (formField.value ?? '')
+                                  }
                                 />
                               </FormControl>
                               <FormMessage className="text-[10px] sm:text-xs mt-1" />

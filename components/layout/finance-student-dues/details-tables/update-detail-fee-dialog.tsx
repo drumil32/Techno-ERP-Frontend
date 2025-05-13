@@ -1,32 +1,40 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import * as Dialog from '@radix-ui/react-dialog';
-import { useQueryClient } from "@tanstack/react-query"
-import { SquarePen } from "lucide-react";
-import { useParams } from "next/navigation"
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { getFinanceFeeTypeLabel } from "@/lib/enumDisplayMapper"
-import { updateFeeBreakUp } from "../helpers/fetch-data";
-import { toast } from "sonner";
-import { SemesterBreakUp } from "@/types/finance";
+import { useQueryClient } from '@tanstack/react-query';
+import { SquarePen } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import { getFinanceFeeTypeLabel } from '@/lib/enumDisplayMapper';
+import { updateFeeBreakUp } from '../helpers/fetch-data';
+import { toast } from 'sonner';
+import { SemesterBreakUp } from '@/types/finance';
 
 const feeSchema = z.object({
-  amount: z.coerce.number({
-    required_error: "Amount is required",
-    invalid_type_error: "Amount must be a number",
-  })
-    .refine(val => val !== 0, {
-      message: "Amount cannot be zero or empty"
+  amount: z.coerce
+    .number({
+      required_error: '',
+      invalid_type_error: ''
     })
-    .refine(val => val !== null && val !== undefined, {
-      message: "Amount is required"
+    .refine((val) => val !== 0, {
+      message: ''
     })
-})
+    .refine((val) => val !== null && val !== undefined, {
+      message: ''
+    })
+});
 
 type FormData = z.infer<typeof feeSchema>;
 
@@ -36,14 +44,14 @@ export default function UpdateFeeDetailDialog({
   semesterId,
   feeDetail
 }: {
-  studentName: string,
-  semesterNumber: number,
-  semesterId: string,
-  feeDetail: SemesterBreakUp["details"][number]
+  studentName: string;
+  semesterNumber: number;
+  semesterId: string;
+  feeDetail: SemesterBreakUp['details'][number];
 }) {
   const [open, setOpen] = useState(false);
   const [adjustmentAmount, setAdjustmentAmount] = useState<number>(0);
-  const [validationError, setValidationError] = useState<string>("");
+  const [validationError, setValidationError] = useState<string>('');
   const params = useParams();
   const studentId = params.studentDuesId as string;
   const queryClient = useQueryClient();
@@ -57,7 +65,7 @@ export default function UpdateFeeDetailDialog({
 
   const handleDialogClose = () => {
     setAdjustmentAmount(0);
-    setValidationError("");
+    setValidationError('');
     form.reset();
     setOpen(false);
   };
@@ -67,7 +75,7 @@ export default function UpdateFeeDetailDialog({
 
     // Check if updated final fee would be negative
     if (updatedFinalFee < 0) {
-      setValidationError("Updated final fee cannot be negative");
+      setValidationError('Updated final fee cannot be negative');
       return;
     }
 
@@ -79,15 +87,14 @@ export default function UpdateFeeDetailDialog({
     };
 
     try {
-
-      await updateFeeBreakUp(payload)
-      toast.success(`${getFinanceFeeTypeLabel(feeDetail.feeCategory)} is updated for ${studentName}.`);
+      await updateFeeBreakUp(payload);
+      toast.success(
+        `${getFinanceFeeTypeLabel(feeDetail.feeCategory)} is updated for ${studentName}.`
+      );
       handleDialogClose();
+    } catch (error) {
+      toast.error('Failed to record payment. Please try again.');
     }
-    catch (error) {
-      toast.error("Failed to record payment. Please try again.");
-    }
-
 
     handleDialogClose();
 
@@ -102,9 +109,9 @@ export default function UpdateFeeDetailDialog({
 
     // Clear validation error if input is valid
     if (feeDetail.finalFee + value >= 0) {
-      setValidationError("");
+      setValidationError('');
     } else {
-      setValidationError("Updated final fee cannot be negative");
+      setValidationError('Updated final fee cannot be negative');
     }
   };
 
@@ -124,7 +131,10 @@ export default function UpdateFeeDetailDialog({
               <SquarePen className="w-5 h-5 text-gray-500" />
               Edit Fee Breakup
             </Dialog.Title>
-            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold cursor-pointer" onClick={handleDialogClose}>
+            <Dialog.Close
+              className="text-gray-500 hover:text-black text-xl font-bold cursor-pointer"
+              onClick={handleDialogClose}
+            >
               &times;
             </Dialog.Close>
           </div>
@@ -132,7 +142,12 @@ export default function UpdateFeeDetailDialog({
           <div className="space-y-4">
             <div className="mb-5 space-y-2">
               <h3 className="font-medium text-lg">Semester {semesterNumber}</h3>
-              <p className="text-gray-600">Fee Category: <span className="text-gray-900">{getFinanceFeeTypeLabel(feeDetail.feeCategory)}</span></p>
+              <p className="text-gray-600">
+                Fee Category:{' '}
+                <span className="text-gray-900">
+                  {getFinanceFeeTypeLabel(feeDetail.feeCategory)}
+                </span>
+              </p>
             </div>
 
             <Form {...form}>
@@ -156,9 +171,9 @@ export default function UpdateFeeDetailDialog({
                       type="text"
                       value={`₹ ${(feeDetail.finalFee + adjustmentAmount).toLocaleString()}`}
                       disabled
-                      className={`bg-gray-50 ${(feeDetail.finalFee + adjustmentAmount) < 0 ? 'border-red-500 text-red-500' : ''}`}
+                      className={`bg-gray-50 ${feeDetail.finalFee + adjustmentAmount < 0 ? 'border-red-500 text-red-500' : ''}`}
                     />
-                    {(feeDetail.finalFee + adjustmentAmount) < 0 && (
+                    {feeDetail.finalFee + adjustmentAmount < 0 && (
                       <p className="text-red-500 text-sm mt-1">Updated fee cannot be negative</p>
                     )}
                   </div>
@@ -182,23 +197,21 @@ export default function UpdateFeeDetailDialog({
                           className={validationError ? 'border-red-500' : ''}
                         />
                       </FormControl>
-                      {validationError && <p className="text-red-500 text-sm mt-1">{validationError}</p>}
+                      {validationError && (
+                        <p className="text-red-500 text-sm mt-1">{validationError}</p>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
                 <div className="flex justify-end gap-3 mt-6">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={handleDialogClose}
-                  >
+                  <Button type="button" variant="outline" onClick={handleDialogClose}>
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    disabled={!!validationError || (feeDetail.finalFee + adjustmentAmount) < 0}
+                    disabled={!!validationError || feeDetail.finalFee + adjustmentAmount < 0}
                   >
                     Save Changes
                   </Button>

@@ -126,7 +126,6 @@ export const StudentFeesForm = () => {
     queryKey: ['enquireFormData', enquiry_id], // Remove dataUpdated dependency
     queryFn: () => (enquiry_id ? getEnquiry(enquiry_id) : Promise.reject('Enquiry ID is null')),
     enabled: !!enquiry_id,
-    // Add this to ensure the query refetches when invalidated
     refetchOnWindowFocus: false,
     staleTime: 0
   });
@@ -713,13 +712,27 @@ export const StudentFeesForm = () => {
                         {scheduleFeeMapper(feeType)}
                       </div>
 
-                      <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
-                        {formatCurrency(totalFee)}
-                      </div>
+                      {feeType !== FeeType.TRANSPORT && feeType !== FeeType.HOSTEL ? (
+                        <>
+                          <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
+                            {formatCurrency(totalFee)}
+                          </div>
 
-                      <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
-                        <p className="ml-auto">{discountDisplay}</p>
-                      </div>
+                          <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
+                            <p className="ml-auto">{discountDisplay}</p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
+                            {}
+                          </div>
+
+                          <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
+                            <p className="ml-auto">{}</p>
+                          </div>
+                        </>
+                      )}
                       <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
                         <FormField
                           control={form.control}
@@ -735,8 +748,8 @@ export const StudentFeesForm = () => {
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    if (value === '' || /^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    if (/^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? null : Number(value));
                                     }
                                   }}
                                   onFocus={(e) => {
@@ -773,8 +786,8 @@ export const StudentFeesForm = () => {
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    if (value === '' || /^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    if (/^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? null : Number(value));
                                     }
                                   }}
                                   onFocus={(e) => {
@@ -923,8 +936,8 @@ export const StudentFeesForm = () => {
                                   className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
                                   onChange={(e) => {
                                     const value = e.target.value;
-                                    if (value === '' || /^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? undefined : Number(value));
+                                    if (/^[0-9]*$/.test(value)) {
+                                      formField.onChange(value === '' ? null : Number(value));
                                     }
                                   }}
                                   onFocus={(e) => {

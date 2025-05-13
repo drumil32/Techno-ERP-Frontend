@@ -1,24 +1,37 @@
-import { Button } from "@/components/ui/button";
-import { FeeBreakupResponse, SemesterBreakUp } from "@/types/finance";
-import { Pencil } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { FeeBreakupResponse, SemesterBreakUp } from '@/types/finance';
+import { Pencil } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { z } from "zod";
+import { Label } from '@/components/ui/label';
+import { useState } from 'react';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
+import { z } from 'zod';
 
 // Zod schema for validation
 const feeSchema = z.object({
-  finalFees: z.number().positive("Fee must be greater than 0").optional()
+  finalFees: z.number().positive('').optional()
 });
 
-export default function EditFeeBreakupDialogue({ studentName, feesBreakup, semesterNumber, onSave }: {
-  studentName: string | undefined,
-  feesBreakup: SemesterBreakUp["details"] | undefined,
-  semesterNumber: number,
-  onSave?: (updatedBreakup: any) => void
+export default function EditFeeBreakupDialogue({
+  studentName,
+  feesBreakup,
+  semesterNumber,
+  onSave
+}: {
+  studentName: string | undefined;
+  feesBreakup: SemesterBreakUp['details'] | undefined;
+  semesterNumber: number;
+  onSave?: (updatedBreakup: any) => void;
 }) {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [open, setOpen] = useState(false);
@@ -47,7 +60,7 @@ export default function EditFeeBreakupDialogue({ studentName, feesBreakup, semes
       delete newErrors[category];
       setErrors(newErrors);
 
-      if (value === "") {
+      if (value === '') {
         // Handle empty input as null (no edit)
         const newEditedFees = { ...editedFees };
         delete newEditedFees[category]; // Remove from edits if empty
@@ -69,7 +82,7 @@ export default function EditFeeBreakupDialogue({ studentName, feesBreakup, semes
       if (error instanceof z.ZodError) {
         setErrors({
           ...errors,
-          [category]: error.errors[0]?.message || "Invalid value"
+          [category]: error.errors[0]?.message || 'Invalid value'
         });
       }
     }
@@ -84,7 +97,7 @@ export default function EditFeeBreakupDialogue({ studentName, feesBreakup, semes
     // Prepare payload with only the edited values
     const updatedBreakup = {
       semester: semesterNumber,
-      breakup: feesBreakup?.map(item => {
+      breakup: feesBreakup?.map((item) => {
         const editedFee = editedFees[item.feeCategory];
         if (editedFee !== undefined) {
           return {
@@ -96,7 +109,7 @@ export default function EditFeeBreakupDialogue({ studentName, feesBreakup, semes
       })
     };
 
-    console.log("Updated Breakup:", updatedBreakup);
+    console.log('Updated Breakup:', updatedBreakup);
 
     if (onSave) {
       onSave(updatedBreakup);
@@ -133,7 +146,10 @@ export default function EditFeeBreakupDialogue({ studentName, feesBreakup, semes
               <Pencil className="w-5 h-5 text-gray-500" />
               &nbsp;Edit Fees Breakup
             </Dialog.Title>
-            <Dialog.Close className="text-gray-500 z-40 hover:text-black text-xl font-bold !cursor-pointer" onClick={handleDiscard}>
+            <Dialog.Close
+              className="text-gray-500 z-40 hover:text-black text-xl font-bold !cursor-pointer"
+              onClick={handleDiscard}
+            >
               &times;
             </Dialog.Close>
           </div>
@@ -158,13 +174,15 @@ export default function EditFeeBreakupDialogue({ studentName, feesBreakup, semes
                       <Input
                         className="w-24 text-right"
                         type="number"
-                        defaultValue={item.finalFee !== null ? item.finalFee : ""}
+                        defaultValue={item.finalFee !== null ? item.finalFee : ''}
                         onChange={(e) => handleInputChange(item.feeCategory, e.target.value)}
                         placeholder="—"
                         prefix="₹"
                       />
                       {errors[item.feeCategory] && (
-                        <span className="text-red-500 text-xs mt-1">{errors[item.feeCategory]}</span>
+                        <span className="text-red-500 text-xs mt-1">
+                          {errors[item.feeCategory]}
+                        </span>
                       )}
                     </div>
                   </TableCell>
@@ -173,8 +191,12 @@ export default function EditFeeBreakupDialogue({ studentName, feesBreakup, semes
             </TableBody>
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={2} className="font-medium">Total</TableCell>
-                <TableCell className="text-right font-medium">₹{calculateTotal().toLocaleString()}</TableCell>
+                <TableCell colSpan={2} className="font-medium">
+                  Total
+                </TableCell>
+                <TableCell className="text-right font-medium">
+                  ₹{calculateTotal().toLocaleString()}
+                </TableCell>
               </TableRow>
             </TableFooter>
           </Table>

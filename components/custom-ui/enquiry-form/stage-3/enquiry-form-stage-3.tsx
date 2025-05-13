@@ -193,6 +193,33 @@ const EnquiryFormStage3 = () => {
         return false;
       }
 
+      const validation = enquiryStep3UpdateRequestSchema.safeParse(rest);
+      if (!validation.success) {
+        const errors = validation.error.format();
+        form.setError('root', {
+          type: 'manual',
+          message: 'Validation failed. Please check the form fields.'
+        });
+
+        function setNestedErrors(errorObj: any, path = '') {
+          Object.entries(errorObj).forEach(([key, value]) => {
+            if (key === '_errors') {
+              if (Array.isArray(value) && value.length > 0) {
+                form.setError(path as keyof typeof values, {
+                  type: 'manual',
+                  message: value[0] || 'Invalid value'
+                });
+              }
+            } else if (typeof value === 'object' && value !== null) {
+              setNestedErrors(value, path ? `${path}.${key}` : key);
+            }
+          });
+        }
+
+        setNestedErrors(errors);
+        throw new Error('Validation failed');
+      }
+
       const enquiry: any = await updateEnquiryStep3(rest);
       if (!enquiry) {
         toast.error('Failed to update enquiry');

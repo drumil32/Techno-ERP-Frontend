@@ -1,5 +1,12 @@
 import { z } from 'zod';
-import { Course, FinalConversionStatus, Gender, LeadType, Locations, Marketing_Source } from '@/types/enum';
+import {
+  Course,
+  FinalConversionStatus,
+  Gender,
+  LeadType,
+  Locations,
+  Marketing_Source
+} from '@/types/enum';
 
 export const objectIdSchema = z.string();
 
@@ -16,9 +23,7 @@ export const leadMasterSchema = z.object({
   source: z.nativeEnum(Marketing_Source).optional(),
   schoolName: z.string().optional(),
   degree: z.string().optional(),
-  name: z
-    .string()
-    .optional(),
+  name: z.string().optional(),
   phoneNumber: contactNumberSchema,
   altPhoneNumber: contactNumberSchema.optional(),
   email: z.string().email('Invalid Email Format').optional(),
@@ -35,7 +40,7 @@ export const leadMasterSchema = z.object({
     .nativeEnum(FinalConversionStatus)
     .optional()
     .default(FinalConversionStatus.NO_FOOTFALL),
-    remarks: z.array(z.string()).optional(),
+  remarks: z.array(z.string()).optional(),
   leadsFollowUpCount: z.number().optional().default(0),
   yellowLeadsFollowUpCount: z.number().optional().default(0)
 });
