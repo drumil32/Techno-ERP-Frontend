@@ -112,7 +112,7 @@ export default function YellowLeadViewEdit({
         finalConversion: tempData.finalConversion,
         schoolName: tempData.schoolName,
         degree: tempData.degree,
-        yellowLeadsFollowUpCount: tempData.yellowLeadsFollowUpCount,
+        followUpCount: tempData.followUpCount,
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate
       };
@@ -262,7 +262,7 @@ export default function YellowLeadViewEdit({
       'footFall',
       'finalConversion',
       'assignedTo',
-      'yellowLeadsFollowUpCount',
+      'followUpCount',
       'schoolName',
       'degree',
       'remarks',
@@ -315,7 +315,7 @@ export default function YellowLeadViewEdit({
         'degree',
         'assignedTo',
         'finalConversion',
-        'yellowLeadsFollowUpCount',
+        'followUpCount',
         'remarks',
         'nextDueDate',
         'leadTypeModifiedDate'
@@ -413,7 +413,7 @@ export default function YellowLeadViewEdit({
                     response.finalConversion,
                   assignedTo: response.assignedTo,
                   assignedToName: assignedToName,
-                  yellowLeadsFollowUpCount: response.yellowLeadsFollowUpCount,
+                  followUpCount: response.followUpCount,
                   schoolName: response.schoolName,
                   degree: response.degree,
                   remarks: response.remarks || newData.leads[leadIndex].remarks,
@@ -426,7 +426,7 @@ export default function YellowLeadViewEdit({
                   leadTypeModifiedDateView: formatTimeStampView(response.leadTypeModifiedDate) ??
                     newData.leads[leadIndex].leadTypeModifiedDateView,
 
-                  updatedAt: new Date(response.updatedAt).toLocaleString(),
+                  updatedAt: response.updatedAt ?? 'N/A',
 
                 };
               }
@@ -522,7 +522,7 @@ export default function YellowLeadViewEdit({
         )}
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Follow-ups</p>
-          <p>{formData.yellowLeadsFollowUpCount ?? '-'}</p>
+          <p>{formData.followUpCount ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4.5 text-[#666666]">Final Conversion</p>
@@ -725,18 +725,18 @@ export default function YellowLeadViewEdit({
         </div>
 
         <div className="space-y-2 w-1/2">
-          <EditLabel htmlFor="yellowLeadsFollowUpCount" title={'Follow-ups'} />
+          <EditLabel htmlFor="followUpCount" title={'Follow-ups'} />
           <Select
-            defaultValue={formData.yellowLeadsFollowUpCount?.toString() || ''}
+            defaultValue={formData.followUpCount?.toString() || ''}
             onValueChange={(value) =>
-              handleFollowUpCountChange('yellowLeadsFollowUpCount', Number(value))
+              handleFollowUpCountChange('followUpCount', Number(value))
             }
           >
-            <SelectTrigger id="yellowLeadsFollowUpCount" className="w-full">
+            <SelectTrigger id="followUpCount" className="w-full">
               <SelectValue placeholder="Select follow-up count" />
             </SelectTrigger>
             <SelectContent>
-              {Array.from({ length: formData.yellowLeadsFollowUpCount + 2 }, (_, i) => (
+              {Array.from({ length: formData.followUpCount + 2 }, (_, i) => (
                 <SelectItem key={i} value={i.toString()}>
                   <span className="font-medium">{i.toString().padStart(2, '0')}</span>
                 </SelectItem>

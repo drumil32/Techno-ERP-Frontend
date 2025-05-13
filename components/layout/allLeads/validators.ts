@@ -35,9 +35,8 @@ export const leadMasterSchema = z.object({
     .nativeEnum(FinalConversionStatus)
     .optional()
     .default(FinalConversionStatus.NO_FOOTFALL),
-    remarks: z.array(z.string()).optional(),
-  leadsFollowUpCount: z.number().optional().default(0),
-  yellowLeadsFollowUpCount: z.number().optional().default(0)
+  remarks: z.array(z.string()).optional(),
+  followUpCount: z.number().optional().default(0),
 });
 
 export const leadSchema = leadMasterSchema
@@ -45,12 +44,11 @@ export const leadSchema = leadMasterSchema
     finalConversion: true,
     remarks: true,
     footFall: true,
-    yellowLeadsFollowUpCount: true
   })
   .strict();
 
 export const yellowLeadSchema = leadMasterSchema
-  .omit({ leadType: true, leadsFollowUpCount: true })
+  .omit({ leadType: true })
   .strict();
 
 export const leadRequestSchema = leadSchema.extend({

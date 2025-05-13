@@ -38,7 +38,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       finalConversion:
         FinalConversionStatus[lead.finalConversion as keyof typeof FinalConversionStatus] ??
         lead.finalConversion,
-      yellowLeadsFollowUpCount: lead.yellowLeadsFollowUpCount,
+      followUpCount: lead.followUpCount,
       remarks: lead.remarks,
       remarksView: lead.remarks[lead.remarks.length-1] ?? '-',
       date: lead.date,
@@ -47,7 +47,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       nextDueDate: lead.nextDueDate,
       nextDueDateView: formatDateView(lead.nextDueDate) ?? '-',
       createdAt: new Date(lead.createdAt).toLocaleString(),
-      updatedAt: new Date(lead.updatedAt).toLocaleString()
+      updatedAt: lead.updatedAt ?? 'N/A',
     };
   });
   return {
