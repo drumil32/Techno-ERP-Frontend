@@ -36,10 +36,6 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
   const handleSave = async () => {
     let data = personalDetailsForm.getValues();
 
-    if (data.dateOfBirth && !requestDateSchema.safeParse(data.dateOfBirth).success) {
-      data.dateOfBirth = formatDisplayDate(new Date(data.dateOfBirth)) ?? '';
-    }
-
     const filteredData = filterBySchema(updateStudentDetailsRequestSchema, data);
 
     if (filteredData.academicDetails) {
@@ -63,7 +59,6 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
           return !isAllEmpty; // keep if at least one is filled
         });
 
-      console.log('Filtered Academic Details:', filteredAcademicDetails);
       filteredData.academicDetails = filteredAcademicDetails;
       personalDetailsForm.setValue('academicDetails', filteredAcademicDetails);
     }
@@ -72,8 +67,6 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
 
     // if form contains errors, then show toast error
     const validationResult = updateStudentDetailsRequestSchema.safeParse(cleanedData);
-
-    console.log('Validation Result:', validationResult);
 
     if (!validationResult.success) {
       toast.error('Validation failed. Please check the form fields.');

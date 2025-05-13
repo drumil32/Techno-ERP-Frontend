@@ -28,8 +28,6 @@ export const getDisplayFields = (formData: Record<string, any>) => {
     {
       label: 'Date of Birth',
       value: formData.dateOfBirth
-        ? new Date(formData.dateOfBirth).toLocaleDateString('en-GB')
-        : null
     },
     { label: 'Religion', value: formData.religion },
     { label: 'Category', value: formData.category },
@@ -75,7 +73,7 @@ export const getPersonalDetailsFormData = (data: StudentData) => {
     },
     reference: data.studentInfo.reference as AdmissionReference,
     entranceExamDetails: data?.studentInfo?.entranceExamDetails,
-    lurnRegistrationNo: data.studentInfo.lurnRegistrationNo,
+    lurnRegistrationNo: data.studentInfo.lurnRegistrationNo
   };
   return formData;
 };

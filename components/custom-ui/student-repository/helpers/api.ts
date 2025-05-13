@@ -10,8 +10,6 @@ export const fetchStudents = async (params: any) => {
     params
   );
 
-  console.log('Response from fetchStudents:', res);
-
   if (!res) {
     throw new Error('Failed to fetch students');
   }
@@ -20,7 +18,6 @@ export const fetchStudents = async (params: any) => {
 };
 
 export const fetchStudent = async (id: string) => {
-
   if (!id) {
     throw new Error('Student ID is required');
   }

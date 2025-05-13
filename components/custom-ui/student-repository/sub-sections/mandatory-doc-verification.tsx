@@ -44,7 +44,6 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
 
   useEffect(() => {
     if (!initialized && course) {
-      console.log(initialized, course);
       initializeDocuments(course);
     }
   }, [initialized, course, existingNotes]);
@@ -96,13 +95,6 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
     }
   };
 
-  useEffect(() => {
-    console.log('Documents dueBy field and type:');
-    documents.forEach((doc) => {
-      console.log(`dueBy: ${doc.dueBy}, type: ${typeof doc.dueBy}`);
-    });
-  }, [documents]);
-
   const handleStatusChange = async (docId: string, status: PhysicalDocumentNoteStatus) => {
     const doc: Document | undefined = documents?.find((doc) => doc.id === docId);
 
@@ -114,7 +106,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
       const data = {
         ...rest,
         dueBy: formatDateForDisplay(updatedDoc.dueBy)
-      }
+      };
 
       const response = await updateStudentDocuments(data);
 
