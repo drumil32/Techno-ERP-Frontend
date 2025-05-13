@@ -548,13 +548,13 @@ export default function LeadViewEdit({
 
   const EditView = (
     <>
-      <div className="flex gap-2 items-center">
-        <div className="flex flex-col gap-2 w-1/3">
+      <div className="flex gap-5 items-center">
+        <div className="flex flex-col gap-2 w-1/2">
           <EditLabel htmlFor="name" title={'Date'} />
           <p className="h-9 font-medium">{formatDateView(data.date)}</p>
         </div>
 
-        <div className="space-y-2 w-2/3">
+        <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="name" title={'Name'} />
           <Input
             id="name"
@@ -568,7 +568,7 @@ export default function LeadViewEdit({
       </div>
 
       <div className="flex gap-5">
-        <div className="space-y-2">
+        <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="phoneNumber" title={'Phone number'} />
           <Input
             id="phoneNumber"
@@ -580,7 +580,7 @@ export default function LeadViewEdit({
           {errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="altPhoneNumber" title={'Alt Phone number'} />
           <Input
             id="altPhoneNumber"
@@ -630,7 +630,7 @@ export default function LeadViewEdit({
       </div>
 
       <div className="flex gap-5 h-max w-full items-end">
-        <div className="space-y-2 flex-1">
+        <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="area" title={'Area'} />
           <Input
             id="area"
@@ -643,7 +643,7 @@ export default function LeadViewEdit({
           {errors.area && <p className="text-red-500 text-xs mt-1">{errors.area}</p>}
         </div>
 
-        <div className="space-y-2 flex-1">
+        <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="city" title={'City'} />
           <MultiSelectCustomDropdown
             form={formData}
@@ -747,7 +747,7 @@ export default function LeadViewEdit({
       </div>
 
       <div className='flex gap-5'>
-        <div className="space-y-2">
+        <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="schoolName" title={'School/College Name'} />
           <Input
             id="schoolName"
@@ -759,7 +759,7 @@ export default function LeadViewEdit({
           {errors.schoolName && <p className="text-red-500 text-xs mt-1">{errors.schoolName}</p>}
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="degree" title={'Degree'} />
           <Input
             id="degree"

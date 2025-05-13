@@ -5,7 +5,7 @@ import { FinalConversionStatus, FinalConversionStatusMapper } from '@/types/enum
 
 export const conversionStyles: Record<FinalConversionStatus, string> = {
   [FinalConversionStatus.UNCONFIRMED]: 'bg-pink-100 text-pink-700',
-  [FinalConversionStatus.CONVERTED]: 'bg-green-100 text-green-700',
+  [FinalConversionStatus.CONVERTED]: 'bg-[#8CFF8C] text-[#0D6C0D]',
   [FinalConversionStatus.NOT_INTERESTED]: 'bg-red-100 text-red-700',
   [FinalConversionStatus.NO_FOOTFALL]: 'bg-yellow-100 text-orange-700'
 };
