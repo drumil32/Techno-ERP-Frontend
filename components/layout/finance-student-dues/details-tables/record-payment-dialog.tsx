@@ -51,7 +51,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function RecordPaymentDialog({ studentDetails }: { studentDetails: StudentDetails | undefined }) {
   const param = useParams()
-  const studentDuesId = param.studentDuesId as string
+  const studentId = param.studentId as string
 
   const queryClient = useQueryClient()
 
@@ -69,7 +69,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
 
   const handleRecordPayment = async (values: FormValues) => {
     const payload = {
-      studentId: studentDuesId,
+      studentId: studentId,
       feeAction: feesActionMapping[values.feesAction],
       txnType: transactionTypeMapping[values.transactionType],
       amount: values.amount,
@@ -89,7 +89,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
       setOpen(false);
       form.reset();
       queryClient.invalidateQueries({
-        queryKey: ['studentFeesInfomation', studentDuesId]
+        queryKey: ['studentFeesInformation', studentId]
       });
     } catch (error) {
     }

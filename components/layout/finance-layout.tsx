@@ -5,7 +5,6 @@ import { useSidebarContext } from "../custom-ui/sidebar/sidebar-context";
 import { useEffect } from "react";
 import { SIDEBAR_ITEMS } from "@/common/constants/sidebarItems";
 import TechnoTopHeader from "../custom-ui/top-header/techno-top-header";
-import TechnoBreadCrumb from "../custom-ui/breadcrump/techno-breadcrumb";
 
 const HEADER_ITEMS = {
     STUDENT_DUES: { title: 'Student Dues', route: SITE_MAP.FINANCE.STUDENT_DUES },
@@ -23,7 +22,6 @@ export function FinanceLayout({ children }: { children: React.ReactNode }) {
         <>
             <TechnoTopHeader headerItems={HEADER_ITEMS} />
             <div className="flex flex-col px-4 gap-4">
-                <TechnoBreadCrumb />
                 {children}
             </div>
         </>

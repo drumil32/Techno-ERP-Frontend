@@ -107,7 +107,7 @@ export const API_ENDPOINTS = {
   updateStudentDocuments: `${API_DOMAIN}/student/repo/student-physical-document`,
   updateDocument: `${API_DOMAIN}/student/repo/document`,
 
-  
+
   //Finance
   getStudentActiveDues: `${API_DOMAIN}/student/fees/active-dues`,
   getStudentFeeInformation: (student_id: string) => `${API_DOMAIN}/student/fees/fee-information/${student_id}`,
@@ -115,4 +115,7 @@ export const API_ENDPOINTS = {
   recordPayment: `${API_DOMAIN}/student/fees/record-payment`,
   updateFeeBreakup: `${API_DOMAIN}/student/fees/fee-breakup`,
   fetchFeeBreakUpHistory: `${API_DOMAIN}/student/fees/fee-update-history`,
+
+  getCourseDues: `${API_DOMAIN}/course/fetch-dues`,
+  updateCourseDues: `${API_DOMAIN}/course/dues`,
 };

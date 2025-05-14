@@ -1,4 +1,4 @@
-import { Course, FeeActions, FeesPaidStatus, FinanceFeeSchedule, FinanceFeeType, TransactionTypes } from "./enum";
+import { Course, CourseYear, FeeActions, FeesPaidStatus, FinanceFeeSchedule, FinanceFeeType, TransactionTypes } from "./enum";
 
 export interface StudentDue {
   _id: string;
@@ -11,6 +11,7 @@ export interface StudentDue {
   fatherName: string;
   fatherPhoneNumber: string;
   courseYear: number;
+  totalDueAmount: number;
 }
 
 export interface StudentDuesApiResponse {
@@ -87,11 +88,6 @@ export interface FeeHistoryResponse {
   feeUpdateHistory: FeeHistoryItemType[]
 }
 
-// ------------------------------------------------------------
-// TEMP
-// ------------------------------------------------------------
-
-// For the top student/course details section
 export interface StudentDetails {
   studentName: string;
   studentID: string;
@@ -100,6 +96,7 @@ export interface StudentDetails {
   course: string;
   HOD: string;
   extraBalance?: number;
+  universityId?: string;
 }
 
 // For a single row in the Semester-wise Fees table
@@ -165,23 +162,59 @@ export interface FeeBreakupResponse {
 
 // Course Dues
 
-export interface CourseDue {
-  _id: string;
-  sno?: number;
-  course: string;
-  courseYear: string;
-  numberOfStudents: number;
-  totalDue: number;
-  courseHead: string;
-  courseHeadContact: string;
-  // academicYear: string;
-  // college: string;
+// export interface CourseDue {
+//   _id: string;
+//   sno?: number;
+//   course: string;
+//   courseYear: string;
+//   numberOfStudents: number;
+//   totalDue: number;
+//   courseHead: string;
+//   courseHeadContact: string;
+//   // academicYear: string;
+//   // college: string;
+// }
+
+// export interface CourseDuesApiResponse {
+//   courseDues: CourseDue[];
+//   total: number;
+//   totalPages: number;
+//   currentPage: number;
+//   limit: number;
+// }
+
+// Final
+
+export interface CourseDuesRequest {
+  date: string;
+  college: string;
 }
 
-export interface CourseDuesApiResponse {
-  courseDues: CourseDue[];
-  total: number;
-  totalPages: number;
-  currentPage: number;
-  limit: number;
+export interface CourseDues {
+  _id: string;
+  courseCode: Course;
+  courseName: string;
+  academicYear: string;
+  date : string;
+  departmentHODName: string;
+  departmentHODEmail: string;
+  dues: CourseDueItem[];
+}
+
+export interface CourseDueItem {
+  _id: string;
+  courseYear: CourseYear; // "FIRST | SECOND | THIRD | FOURTH"
+  totalDue: number;
+  dueStudentCount: number;
+}
+
+export interface CourseDueTableItem {
+  sno: number;
+  courseName: string;
+  courseCode: string;
+  courseYear: string;
+  dueStudentCount: number;
+  totalDue: number;
+  departmentHODName: string;
+  departmentHODEmail: string;
 }
