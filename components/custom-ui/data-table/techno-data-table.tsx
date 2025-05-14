@@ -44,6 +44,7 @@ import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import Loading from '@/app/loading';
+import { cn } from '@/lib/utils';
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends unknown, TValue> {
@@ -109,6 +110,7 @@ export default function TechnoDataTable({
   showPagination = true,
   tableActionButton,
   searchBarPlaceholder = 'Search here',
+  tableStyles = '',
   children
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -253,7 +255,7 @@ export default function TechnoDataTable({
           ref={tableContainerRef}
           className="min-h-[580px] h-[240px] overflow-auto custom-scrollbar relative"
         >
-          <Table ref={tableRef} className="w-full">
+          <Table ref={tableRef} className={cn("w-full", tableStyles)}>
             <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg font-bolds sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="h-10">
@@ -295,7 +297,7 @@ export default function TechnoDataTable({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody className="[&_tr]:h-[39px]">
+            <TableBody className="[&_tr]:h-12">
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row: any) => (
                   <TableRow
