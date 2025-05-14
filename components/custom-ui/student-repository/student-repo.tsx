@@ -300,6 +300,7 @@ export default function StudentRepositoryPage() {
           handleViewMore={handleViewMore}
           selectedRowId={selectedRowId}
           setSelectedRowId={setSelectedRowId}
+          rowHeight={50}
         >
           <FilterBadges onFilterRemove={handleFilterRemove} appliedFilters={appliedFilters} />
         </TechnoDataTableAdvanced>

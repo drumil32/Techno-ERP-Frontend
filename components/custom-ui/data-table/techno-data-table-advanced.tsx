@@ -108,7 +108,8 @@ export default function TechnoDataTableAdvanced({
   addViaDialog = false,
   onAddClick,
   onSaveNewRow,
-  handleBatchEdit
+  handleBatchEdit,
+  rowHeight = 39
 }: any) {
 
   // console.log("Columns are : ", columns)
@@ -334,12 +335,12 @@ export default function TechnoDataTableAdvanced({
                 <TableHead
                   key={idx}
                   className={clsx('text-[#5B31D1] font-semibold h-10 text-center')}
-
+                  
                 > {column.header}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
-          <TableBody className="[&_tr]:h-[39px]">
+          <TableBody className={`[&_tr]:h-[${rowHeight}px]`}>
             {table.getRowModel().rows.length > 0 && (
               <>
                 {table.getRowModel().rows.map((row: any, rowIndex: number) => (
@@ -351,7 +352,7 @@ export default function TechnoDataTableAdvanced({
                         handleViewMore(row.original);
                       }
                     }}
-                    className={`h-[39px] ${row.original.disabled
+                    className={`h-[${rowHeight}px] ${row.original.disabled
                         ? 'bg-gray-100 cursor-not-allowed  opacity-50'
                         : 'cursor-pointer'}`}
                   >
@@ -361,7 +362,7 @@ export default function TechnoDataTableAdvanced({
                       return (
                         <TableCell
                           key={cell.id}
-                          className={`h-[39px] w-[20px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-' ? 'text-center w-[40px] max-w-[400px] truncate' : 'text-center'}`}
+                          className={`h-[${rowHeight}px] w-[20px] py-2 ${cell.column.columnDef.header === 'Remarks' && cell.getValue() !== '-' ? 'text-center w-[40px] max-w-[400px] truncate' : 'text-center'}`}
                           onClick={(e) => {
                             // if (isExcluded) e.stopPropagation();
                           }}
@@ -546,13 +547,13 @@ export default function TechnoDataTableAdvanced({
               </>
             )}
             {!addViaDialog && addingRow && (
-              <TableRow className="h-[39px] cursor-pointer">
+              <TableRow className={`h-[${rowHeight}px] cursor-pointer`}>
                 {columns.map((column: any, idx: number) => {
                   const columnId = column.accessorKey || column.id;
                   // console.log("Here, column Id : ", columnId);
                   if (columnId === 'actions') {
                     return (
-                      <TableCell key={idx} className="h-[39px] text-center">
+                      <TableCell key={idx} className={`h-[${rowHeight}px] text-center`}>
                         <div className="flex justify-center items-center gap-2">
                           <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
                             <Trash2 size={20} className="text-gray-400" />
@@ -568,7 +569,7 @@ export default function TechnoDataTableAdvanced({
                   else if (columnId === 'confirmation') {
                     const defaultValue = newRow[columnId] ?? `${LectureConfirmation.TO_BE_DONE}`; // adjust the default key if needed
                     return (
-                      <TableCell key={idx} className="h-[39px] text-center">
+                      <TableCell key={idx} className={`h-[${rowHeight}px] text-center`}>
                         <CustomStyledDropdown
                           value={defaultValue}
                           onChange={(newValue) => handleNewRowChange(columnId, newValue)}
@@ -583,7 +584,7 @@ export default function TechnoDataTableAdvanced({
                     const parsedDate = parseDateFromAPI(newRow[columnId]);
 
                     return (
-                      <TableCell key={idx} className="h-[39px] text-center">
+                      <TableCell key={idx} className={`h-[${rowHeight}px] text-center`}>
                         <div className="flex flex-col items-center">
                           <SimpleDatePicker
                             value={parsedDate ? formatDateForAPI(parsedDate) : undefined}
@@ -604,7 +605,7 @@ export default function TechnoDataTableAdvanced({
                   }
                   else {
                     return (
-                      <TableCell key={idx} className="h-[39px]">
+                      <TableCell key={idx} className={`h-[${rowHeight}px]`}>
                         <div className="flex flex-col items-center">
                           <Input
                              className={`bg-white editable-cell px-2 py-2 border rounded-md ${
