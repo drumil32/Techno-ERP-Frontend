@@ -28,6 +28,7 @@ import { getPersonalDetailsFormData } from './helpers/helper';
 import AllDocumentsTab from './tabs/all-documents-tab';
 
 const SingleStudentRepositoryPage: React.FC = () => {
+  
   const { universityId } = useParams<{ universityId: string }>();
   const searchParams = useSearchParams();
   const studentId = searchParams.get('studentId');
@@ -87,9 +88,6 @@ const SingleStudentRepositoryPage: React.FC = () => {
     if (!studentQuery.data) return;
 
     const cleanedData: StudentData = removeNullValues(studentQuery.data);
-    cleanedData.studentInfo.dateOfBirth = new Date(
-      cleanedData.studentInfo.dateOfBirth
-    ).toISOString();
 
     setStudentData(cleanedData);
 

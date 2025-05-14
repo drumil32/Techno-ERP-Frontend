@@ -30,6 +30,12 @@ interface DocumentVerificationProps {
   setStudentData: (data: StudentData) => void;
 }
 
+export const formatDateForDisplay = (date: Date | string | undefined): string | undefined => {
+  if (!date) return undefined;
+  const dateObj = date instanceof Date ? date : new Date(date);
+  return formatDisplayDate(dateObj) || undefined;
+};
+
 const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
   studentData,
   setStudentData
@@ -38,13 +44,13 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
+  const [changedDocId, setChangedDocId] = useState<string | null>(null);
 
   const course = studentData?.courseName;
   const existingNotes = studentData?.studentInfo?.physicalDocumentNote;
 
   useEffect(() => {
     if (!initialized && course) {
-      console.log(initialized, course);
       initializeDocuments(course);
     }
   }, [initialized, course, existingNotes]);
@@ -96,81 +102,61 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
     }
   };
 
+  const handleStatusChange = (docId: string, status: PhysicalDocumentNoteStatus) => {
+    setDocuments((prevDocs) =>
+      prevDocs.map((doc) => (doc.id === docId ? { ...doc, status } : doc))
+    );
+    setChangedDocId(docId);
+  };
+
+  const handleDueDateChange = (docId: string, date: string | undefined) => {
+    const docIndex = documents.findIndex((doc) => doc.id === docId);
+    if (docIndex === -1) return;
+
+    const updatedDocuments = [...documents];
+    updatedDocuments[docIndex] = {
+      ...updatedDocuments[docIndex],
+      dueBy: date || undefined
+    };
+
+    setDocuments(updatedDocuments);
+    setChangedDocId(docId);
+  };
+
   useEffect(() => {
-    console.log('Documents dueBy field and type:');
-    documents.forEach((doc) => {
-      console.log(`dueBy: ${doc.dueBy}, type: ${typeof doc.dueBy}`);
-    });
-  }, [documents]);
+    const updateDocumentsOnServer = async () => {
+      if (!changedDocId) return;
+      
+      try {
+        const changedDoc = documents.find((doc) => doc.id === changedDocId);
+        if (!changedDoc) return;
 
-  const handleStatusChange = async (docId: string, status: PhysicalDocumentNoteStatus) => {
-    const doc: Document | undefined = documents?.find((doc) => doc.id === docId);
+        const { _id, ...rest } = {
+          ...changedDoc,
+          id: studentData._id,
+          dueBy: changedDoc.dueBy
+        };
 
-    const updatedDoc = { ...doc, status };
+        const response = await updateStudentDocuments(rest);
 
-    try {
-      const { _id, ...rest } = { ...updatedDoc, id: studentData._id };
-
-      const data = {
-        ...rest,
-        dueBy: formatDateForDisplay(updatedDoc.dueBy)
-      }
-
-      const response = await updateStudentDocuments(data);
-
-      setDocuments((prevDocs) =>
-        prevDocs.map((doc) => (doc.id === docId ? { ...doc, status } : doc))
-      );
-
-      if (response) {
-        toast.success('Documents updated successfully');
-      } else {
+        if (response) {
+          toast.success('Documents updated successfully');
+        } else {
+          setError('Failed to update documents');
+          toast.error('Failed to update documents');
+        }
+      } catch (error) {
         setError('Failed to update documents');
         toast.error('Failed to update documents');
+      } finally {
+        setChangedDocId(null);
       }
-    } catch (error) {
-      setError('Failed to update documents');
-      toast.error('Failed to update documents');
+    };
+
+    if (documents.length > 0 && changedDocId) {
+      updateDocumentsOnServer();
     }
-  };
-
-  const handleDueDateChange = async (docId: string, date: Date | undefined) => {
-    try {
-      const docIndex = documents.findIndex((doc) => doc.id === docId);
-      if (docIndex === -1) return;
-
-      // First update local state to reflect change immediately in UI
-      const updatedDocuments = [...documents];
-      updatedDocuments[docIndex] = {
-        ...updatedDocuments[docIndex],
-        dueBy: date || undefined
-      };
-      setDocuments(updatedDocuments);
-
-      // Prepare document for API
-      const { _id, ...rest } = {
-        ...updatedDocuments[docIndex],
-        id: studentData._id,
-        dueBy: formatDateForDisplay(date)
-      };
-
-      const response = await updateStudentDocuments(rest);
-
-      if (response) {
-        toast.success('Documents updated successfully');
-      } else {
-        // Revert on error
-        setDocuments(documents);
-        setError('Failed to update documents');
-        toast.error('Failed to update documents');
-      }
-    } catch (error) {
-      // Revert on error
-      setDocuments(documents);
-      setError('Failed to update documents');
-      toast.error('Failed to update documents');
-    }
-  };
+  }, [documents, studentData._id, changedDocId]);
 
   const getStatusIcon = (status: PhysicalDocumentNoteStatus) => {
     switch (status) {
@@ -183,13 +169,6 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
       default:
         return null;
     }
-  };
-
-  // Helper function to format date for display
-  const formatDateForDisplay = (date: Date | string | undefined): string | undefined => {
-    if (!date) return undefined;
-    const dateObj = date instanceof Date ? date : new Date(date);
-    return formatDisplayDate(dateObj) || undefined;
   };
 
   if (loading) return <div className="py-4 text-gray-500">Loading document verification...</div>;
@@ -253,15 +232,15 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                         )}
                         disabled={doc.status !== PhysicalDocumentNoteStatus.PENDING}
                       >
-                        {doc.dueBy ? formatDateForDisplay(doc.dueBy) : 'Pick a due date'}
+                        {doc.dueBy ? doc.dueBy : 'Pick a due date'}
                       </Button>
                     </PopoverTrigger>
                     {doc.status === PhysicalDocumentNoteStatus.PENDING && (
                       <PopoverContent className="w-auto p-0">
                         <Calendar
                           mode="single"
-                          selected={doc.dueBy}
-                          onSelect={(date) => handleDueDateChange(doc.id, date)}
+                          selected={doc.dueBy ? new Date(doc.dueBy) : undefined}
+                          onSelect={(date) => handleDueDateChange(doc.id, formatDateForDisplay(date))}
                           disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
                           initialFocus
                         />

@@ -211,7 +211,7 @@ export interface Document {
   id: string;
   type: string;
   status: PhysicalDocumentNoteStatus;
-  dueBy?: Date;
+  dueBy?: string;
 }
 
 export interface DocumentWithFileUrl {
