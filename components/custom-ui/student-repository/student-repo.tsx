@@ -122,7 +122,7 @@ export default function StudentRepositoryPage() {
 
     return [
       {
-        filterKey: 'course',
+        filterKey: 'courseCode',
         label: 'Course',
         options: courses.map((item: Course) => {
           return {
@@ -131,7 +131,7 @@ export default function StudentRepositoryPage() {
           };
         }),
         hasSearch: true,
-        multiSelect: true
+        multiSelect: false
       },
       {
         filterKey: 'courseYear',
