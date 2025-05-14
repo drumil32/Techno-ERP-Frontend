@@ -68,3 +68,8 @@ export const updateDocument = async (data: any) => {
 
   return res;
 };
+
+export const courseDropdown = async () => {
+  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchFixCourseCodesDropdown);
+  return result;
+};
