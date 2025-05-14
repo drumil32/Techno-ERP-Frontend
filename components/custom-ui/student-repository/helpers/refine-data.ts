@@ -3,7 +3,6 @@ import { StudentListData } from './interface';
 import { YearMap } from './constants';
 
 export const refineStudents = (data: StudentListData): StudentListData => {
-  console.log('Refining students data:', data);
   const refinedStudents = data.students.map((student, index) => ({
     _id: student._id,
     id: (data.pagination.page - 1) * data.pagination.limit + index + 1,

@@ -4,7 +4,7 @@ import { FeesPaidStatus } from "@/types/enum";
 const feespaidStyle: Record<FeesPaidStatus, string> = {
   [FeesPaidStatus.PAID]: 'bg-green-100 text-green-700',
   [FeesPaidStatus.DUE]: 'bg-rose-100 text-rose-700',
-  [FeesPaidStatus.NOT_PROVIDED]: 'bg-gray-100 text-gray-700', 
+  [FeesPaidStatus.NOT_PROVIDED]: 'bg-gray-100 text-gray-700',
 };
 
 interface FeesPaidTagProps {

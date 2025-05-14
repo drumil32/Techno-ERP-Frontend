@@ -27,6 +27,7 @@ import {
   getFilenameFromUrl
 } from '../enquiry-form/stage-3/documents-section/single-document-form';
 import { updateDocument } from './helpers/api';
+import { formatDateForDisplay } from './sub-sections/mandatory-doc-verification';
 
 interface SingleDocumentUploadProps {
   studentData: StudentData;
@@ -44,16 +45,7 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [status, setStatus] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [dueDate, setDueDate] = useState<Date | undefined>(() => {
-    if (existingDocument?.dueBy) {
-      try {
-        return parseISO(existingDocument.dueBy);
-      } catch (error) {
-        console.error('Error parsing due date:', existingDocument.dueBy, error);
-      }
-    }
-    return undefined;
-  });
+  const [dueDate, setDueDate] = useState<string | undefined>();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -61,9 +53,7 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
 
   const displayExistingDocument = existingDocument && !selectedFile;
 
-  const existingDueDateFormatted = existingDocument?.dueBy
-    ? format(parseISO(existingDocument.dueBy), 'MMM dd, yyyy')
-    : 'No due date set';
+  const existingDueDateFormatted = existingDocument?.dueBy || 'No due date set';
 
   const uniqueInputId = `file-upload-${documentType.toString().replace(/_/g, '-')}-${studentData._id}`;
 
@@ -73,11 +63,11 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
     }
   }, []);
 
-  const acceptedFileTypes = '.pdf,.jpeg,.jpg,.png';
+  const acceptedFileTypes = '.jpeg,.jpg,.png';
 
   useEffect(() => {
     setSelectedFile(null);
-    setDueDate(existingDocument?.dueBy ? parseISO(existingDocument.dueBy) : undefined);
+    setDueDate(existingDocument?.dueBy || undefined);
     setStatus(null);
     resetFileInput();
   }, [existingDocument, resetFileInput]);
@@ -148,12 +138,13 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
   );
 
   const handleDueDateSelect = (date: Date | undefined) => {
+    const formattedDate = formatDateForDisplay(date);
     setStatus(null);
     if (date && isBefore(date, startOfDay(new Date()))) {
       setStatus({ type: 'error', message: 'Due date cannot be in the past.' });
-      setDueDate(date);
+      setDueDate(formattedDate);
     } else {
-      setDueDate(date);
+      setDueDate(formattedDate);
     }
   };
 
@@ -181,9 +172,15 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
       return;
     }
 
-    if (dueDate && isBefore(dueDate, startOfDay(new Date()))) {
-      setStatus({ type: 'error', message: 'Due date cannot be in the past.' });
-      return;
+    if (dueDate) {
+      
+      const dueDateObj = new Date(dueDate); 
+      const today = startOfDay(new Date());
+      
+      if (isBefore(dueDateObj, today)) {
+        setStatus({ type: 'error', message: 'Due date cannot be in the past.' });
+        return;
+      }
     }
 
     setIsLoading(true);
@@ -196,10 +193,8 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
       if (selectedFile) {
         formDataPayload.append('document', selectedFile);
       }
-
       if (dueDate) {
-        const formatedDate = format(dueDate, 'dd/MM/yyyy');
-        formDataPayload.append('dueBy', formatedDate);
+        formDataPayload.append('dueBy', dueDate);
       }
 
       await updateDocumentMutation(formDataPayload);
@@ -341,7 +336,7 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
                           </span>
                           {existingDocument && <span className="font-medium"> to add/replace</span>}
                         </p>
-                        <p className="text-[11px] text-gray-500">PDF, JPG, PNG supported</p>
+                        <p className="text-[11px] text-gray-500">JPG, PNG supported</p>
                       </div>
                     </div>
                     <Input
@@ -429,7 +424,7 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {dueDate ? (
-                        format(dueDate, 'dd/MM/yy')
+                        <span>{dueDate}</span>
                       ) : (
                         <span className="text-xs">Pick Due Date</span>
                       )}
@@ -438,7 +433,7 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
                   <PopoverContent className="w-auto p-0">
                     <Calendar
                       mode="single"
-                      selected={dueDate}
+                      selected={dueDate ? new Date(dueDate) : undefined}
                       onSelect={handleDueDateSelect}
                       initialFocus
                       disabled={isLoading || ((date) => isBefore(date, startOfDay(new Date())))}

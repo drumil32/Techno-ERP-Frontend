@@ -19,7 +19,7 @@ import { Check, Pencil } from 'lucide-react';
 import { handleNumericInputChange, toPascal } from '@/lib/utils';
 import { updateStudentDetailsRequestSchema } from '../helpers/schema';
 import { EducationLevel } from '@/types/enum';
-import { academicDetailsArraySchema } from '../../enquiry-form/schema/schema';
+import { academicDetailsArraySchema, academicDetailSchema } from '../../enquiry-form/schema/schema';
 
 interface AcademicDetailsFormPropInterface<T extends FieldValues = FieldValues> {
   form: UseFormReturn<z.infer<typeof updateStudentDetailsRequestSchema>>;
@@ -51,42 +51,40 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
     </div>
   );
 
-    const prevValuesRef = useRef<z.infer<typeof academicDetailsArraySchema>>([]);
-  
-    const educationLevels = [EducationLevel.Tenth, EducationLevel.Twelfth, EducationLevel.Graduation];
-  
-    useEffect(() => {
-      const subscription = form.watch((values) => {
-        const prevValues = prevValuesRef.current;
-        values.academicDetails?.forEach((entry, index) => {
-          if (entry) {
-            const allFilled =
-              (entry.schoolCollegeName &&
-                entry.universityBoardName &&
-                entry.passingYear &&
-                entry.percentageObtained &&
-                entry.subjects) ||
-              entry.subjects === undefined;
-  
-            const expectedLevel = educationLevels[index];
-  
-            if (
-              allFilled &&
-              entry.educationLevel !== expectedLevel &&
-              prevValues[index]?.educationLevel !== expectedLevel
-            ) {
-              form.setValue(`academicDetails.${index}.educationLevel`, expectedLevel);
-            }
-  
-            if (entry.educationLevel) {
-              prevValues[index] = entry as z.infer<typeof academicDetailsArraySchema>[number];
-            }
+  const prevValuesRef = useRef<z.infer<typeof academicDetailsArraySchema>>([]);
+
+  const educationLevels = [EducationLevel.Tenth, EducationLevel.Twelfth, EducationLevel.Graduation];
+
+  useEffect(() => {
+
+    // Set initial education levels
+    educationLevels.forEach((level, index) => {
+      if (!form.getValues().academicDetails?.[index]?.educationLevel) {
+        form.setValue(`academicDetails.${index}.educationLevel`, level);
+      }
+    });
+
+    const subscription = form.watch((values) => {
+      const academicDetails = values.academicDetails;
+      if (!academicDetails) return;
+
+      academicDetails.forEach((entry, index) => {
+        if (entry) {
+          const expectedLevel = educationLevels[index];
+          
+          // Always ensure education level matches index position
+          if (entry.educationLevel !== expectedLevel) {
+            form.setValue(`academicDetails.${index}.educationLevel`, expectedLevel, {
+              shouldValidate: true,
+              shouldDirty: true
+            });
           }
-        });
+        }
       });
-  
-      return () => subscription.unsubscribe();
-    }, []);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   return (
     <Accordion type="single" collapsible defaultValue="address-details">
@@ -151,7 +149,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                           <FormControl>
                             <Input
                               {...field}
-                              value={field.value !== undefined ? String(field.value) : ''}
+                              value={field.value || ''}
                               className={commonFieldClass}
                               placeholder="Enter school/college Name"
                             />

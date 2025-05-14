@@ -1,35 +1,45 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import TechnoPageHeading from '@/components/custom-ui/page-heading/techno-page-heading';
 import { Button } from '@/components/ui/button';
 import { LuDownload } from 'react-icons/lu';
-import { CourseDue, CourseDuesApiResponse } from '@/types/finance';
-import { fetchCourseDuesMock } from './helpers/course-dues-mock-api';
+import { CourseDues, CourseDueTableItem } from '@/types/finance';
 import { Label } from '@/components/ui/label';
 import { CollegeNames } from '@/types/enum';
-import TechnoFilter from '@/components/custom-ui/filter/techno-filter';
-import {
-  useTechnoFilterContext
-} from '@/components/custom-ui/filter/filter-context';
+import { useTechnoFilterContext } from '@/components/custom-ui/filter/filter-context';
 import { useRouter } from 'next/navigation';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { addDays, format } from 'date-fns';
+import { fetchCourseDues } from './helpers/fetch-data';
+import { convertForTableView } from './helpers/convertToTableData';
+import { getCurrentAcademicYear } from '@/lib/getCurrentAcademicYear';
+import TechnoBreadCrumb from '@/components/custom-ui/breadcrump/techno-breadcrumb';
+import AdvancedTechnoBreadcrumb from '@/components/custom-ui/breadcrump/advanced-techno-breadcrumb';
+import Loading from '@/app/c/marketing/loading';
 
 const collegeOptions = [
-  { id: "ALL", label: "All" },
+  { id: 'ALL', label: 'All' },
   ...Object.values(CollegeNames).map((college) => ({
     id: college,
     label: college
   }))
-]
-  ;
+];
 export default function CourseDuesDetails() {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
-  const [college, setSelectedCollege] = useState("ALL")
-  const collegeDropdownData = collegeOptions
+  const today = new Date();
+  const yesterday = format(addDays(today, -1), 'dd/MM/yyyy');
+  const [collegeName, setSelectedCollege] = useState('ALL');
+  const collegeDropdownData = collegeOptions;
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -44,20 +54,17 @@ export default function CourseDuesDetails() {
 
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Handle pagination
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
     }
   };
 
-  // Handle limit change
   const handleLimitChange = (newLimit: number) => {
     setLimit(newLimit);
     setPage(1);
   };
 
-  // Handle search with debounce
   const handleSearch = (value: string) => {
     setSearch(value);
     if (searchTimerRef.current) {
@@ -69,7 +76,6 @@ export default function CourseDuesDetails() {
     }, 500);
   };
 
-  // Clean up timer on unmount
   useEffect(() => {
     return () => {
       if (searchTimerRef.current) {
@@ -78,40 +84,38 @@ export default function CourseDuesDetails() {
     };
   }, []);
 
-  // Prepare query parameters
   const getQueryParams = () => {
     return {
-      page,
-      limit,
-      search: debouncedSearch,
-      sortBy: sortState.sortBy,
-      orderBy: sortState.orderBy
+      // page,
+      // limit,
+      // search: debouncedSearch,
+      // sortBy: sortState.sortBy,
+      // orderBy: sortState.orderBy
+      collegeName,
+      date: yesterday
+      // date: format(today, 'dd/MM/yyyy')
     };
   };
 
   const queryParams = getQueryParams();
 
-  // Use React Query to fetch data
-  const courseDuesQuery = useQuery<CourseDuesApiResponse, Error>({
+  const courseDuesQuery = useQuery<CourseDues[], Error>({
     queryKey: ['courseDues', queryParams],
-    queryFn: fetchCourseDuesMock,
+    queryFn: (context) => fetchCourseDues(context as QueryFunctionContext<readonly [string, any]>),
     placeholderData: (previousData) => previousData
   });
 
-  // This is already updated in the previous modification
-
-  // Update pagination state when data changes
   useEffect(() => {
     if (courseDuesQuery.data) {
-      setTotalPages(courseDuesQuery.data.totalPages);
-      setTotalEntries(courseDuesQuery.data.total);
+      // setTotalPages(courseDuesQuery.data.totalPages);
+      // setTotalEntries(courseDuesQuery.data.total);
     }
   }, [courseDuesQuery.data]);
 
   // Prepare table state
   const isLoading = courseDuesQuery.isLoading || courseDuesQuery.isFetching;
   const isError = courseDuesQuery.isError;
-  const tableData = courseDuesQuery.data?.courseDues ?? [];
+  const tableData = convertForTableView(courseDuesQuery.data ?? []);
 
   // Error handling
   if (isError) {
@@ -121,53 +125,52 @@ export default function CourseDuesDetails() {
   // Define table columns
   const columns = [
     { accessorKey: 'sno', header: 'S. No' },
-    { accessorKey: 'course', header: 'Course' },
+    { accessorKey: 'courseName', header: 'Course' },
     { accessorKey: 'courseYear', header: 'Course Year' },
-    { accessorKey: 'numberOfStudents', header: 'No of Students' },
+    { accessorKey: 'dueStudentCount', header: 'No of Students' },
     {
       accessorKey: 'totalDue',
       header: 'Total Due',
-      cell: ({ row }: any) => {
-        const amount = parseFloat(row.original.totalDue);
-        return new Intl.NumberFormat('en-IN', {
-          style: 'currency',
-          currency: 'INR',
-          minimumFractionDigits: 0
-        }).format(amount);
-      }
+      cell: ({ row }: any) => <span>{`₹ ${row.original.totalDue.toLocaleString()}`}</span>
     },
-    { accessorKey: 'courseHead', header: 'Course Head' },
-    { accessorKey: 'courseHeadContact', header: 'Course Head Contact' }
+    { accessorKey: 'departmentHODName', header: 'Course Head' },
+    { accessorKey: 'departmentHODEmail', header: 'Course Head Contact' }
   ];
 
-  const { filters, updateFilter } = useTechnoFilterContext();
+  // const { filters, updateFilter } = useTechnoFilterContext();
 
-  const handleViewMore = (courseDueData: CourseDue) => {
+  const handleViewMore = (courseDueData: CourseDueTableItem) => {
     router.push(
-      SITE_MAP.FINANCE.SELECTED_COURSE_DUES(courseDueData.course, courseDueData.courseYear)
+      SITE_MAP.FINANCE.SELECTED_COURSE_DUES(courseDueData.courseCode, courseDueData.courseYear)
     );
   };
 
-
   const handleCollegeChange = (value: string) => {
-    setSelectedCollege(value)
-  }
+    setSelectedCollege(value);
+  };
+
+  const breadcrumbItems = [
+    { title: 'Finance', route: SITE_MAP.FINANCE.DEFAULT },
+    { title: 'Course Dues', route: SITE_MAP.FINANCE.COURSE_DUES }
+  ];
 
   return (
     <>
+      <AdvancedTechnoBreadcrumb items={breadcrumbItems} />
+
       <TechnoPageHeading title="All Course Dues" />
 
       <div className="w-full flex flex-row px-4 py-5 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
         <div className="flex w-1/5">
           <Label className="text-[#666666] w-1/3">Update Date</Label>
-          <Label>20/04/25</Label>
+          <Label>{yesterday}</Label>
         </div>
         <div className="flex w-1/5">
           <Label className="text-[#666666] w-1/3">College</Label>
 
           <span>
-            <div className='flex items-center gap-4'>
-              <Select value={college.toString()} onValueChange={handleCollegeChange}>
+            <div className="flex items-center gap-4">
+              <Select value={collegeName.toString()} onValueChange={handleCollegeChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Academic Year" />
                 </SelectTrigger>
@@ -184,7 +187,7 @@ export default function CourseDuesDetails() {
         </div>
         <div className="flex w-1/5">
           <Label className="text-[#666666] w-1/3">Academic Year</Label>
-          <Label>2025-26</Label>
+          <Label>{getCurrentAcademicYear()}</Label>
         </div>
       </div>
 
@@ -194,26 +197,30 @@ export default function CourseDuesDetails() {
         </div>
       )}
 
-      <TechnoDataTable
-        selectedRowId={selectedRowId}
-        setSelectedRowId={setSelectedRowId}
-        columns={columns}
-        data={tableData}
-        tableName="Course Dues"
-        tableActionButton={<CourseTableActionButton />}
-        currentPage={page}
-        totalPages={totalPages}
-        pageLimit={limit}
-        totalEntries={totalEntries}
-        onPageChange={handlePageChange}
-        onLimitChange={handleLimitChange}
-        onSearch={handleSearch}
-        searchTerm={search}
-        isLoading={isLoading}
-        handleViewMore={handleViewMore}
-        headerStyles={"text-[#5B31D1] bg-[#F7F4FF]"}
-        tableStyles={"w-3/5"}
-      />
+      {isLoading && <Loading />}
+      {!isLoading && !isError && (
+        <TechnoDataTable
+          selectedRowId={selectedRowId}
+          setSelectedRowId={setSelectedRowId}
+          columns={columns}
+          data={tableData}
+          showPagination={false}
+          tableName="Course Dues"
+          tableActionButton={<CourseTableActionButton />}
+          currentPage={page}
+          totalPages={totalPages}
+          pageLimit={limit}
+          totalEntries={totalEntries}
+          onPageChange={handlePageChange}
+          onLimitChange={handleLimitChange}
+          onSearch={handleSearch}
+          searchTerm={search}
+          isLoading={isLoading}
+          handleViewMore={handleViewMore}
+          headerStyles={'text-[#5B31D1] bg-[#F7F4FF]'}
+          tableStyles={'w-3/5'}
+        />
+      )}
     </>
   );
 }
