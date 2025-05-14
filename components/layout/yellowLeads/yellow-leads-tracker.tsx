@@ -330,6 +330,7 @@ export default function YellowLeadsTracker() {
         return <FootFallSelect value={selectedStatus} onChange={handleFootfallChange} />;
       }
     },
+    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } },
 
     {
       accessorKey: 'followUpCount',
@@ -485,7 +486,7 @@ export default function YellowLeadsTracker() {
             // setRefreshKey((prevKey) => prevKey + 1);
           } else {
             if (
-              row.original.finalConversion === FinalConversionStatus.UNCONFIRMED &&
+              row.original.finalConversion === FinalConversionStatus.NEUTRAL &&
               newValue === FinalConversionStatus.NO_FOOTFALL
             ) {
             } else {
@@ -503,7 +504,6 @@ export default function YellowLeadsTracker() {
         );
       }
     },
-    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } },
 
     ...(
       isRoleLeadMarketing

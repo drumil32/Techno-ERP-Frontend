@@ -167,7 +167,6 @@ export default function SelectedCourseDuesDetails() {
           isLoading={isLoading}
           handleViewMore={handleViewMore}
           headerStyles={'text-[#5B31D1] bg-[#F7F4FF]'}
-          tableStyles={'w-4/5'}
         />
       )}
     </>

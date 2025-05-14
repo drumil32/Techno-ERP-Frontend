@@ -92,8 +92,8 @@ export default function CourseDuesDetails() {
       // sortBy: sortState.sortBy,
       // orderBy: sortState.orderBy
       collegeName,
-      date: yesterday
-      // date: format(today, 'dd/MM/yyyy')
+      // date: yesterday
+      date: format(today, 'dd/MM/yyyy')
     };
   };
 
@@ -218,7 +218,6 @@ export default function CourseDuesDetails() {
           isLoading={isLoading}
           handleViewMore={handleViewMore}
           headerStyles={'text-[#5B31D1] bg-[#F7F4FF]'}
-          tableStyles={'w-3/5'}
         />
       )}
     </>
