@@ -440,6 +440,7 @@ export default function YellowLeadViewEdit({
         }
 
         updateLeadCache()
+        queryClient.invalidateQueries({queryKey: ['leadsAnalytics']});
 
         setOriginalData(formData);
         // setRefreshKey((prev: number) => prev + 1);

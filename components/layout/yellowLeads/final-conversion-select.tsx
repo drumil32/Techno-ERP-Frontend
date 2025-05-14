@@ -82,7 +82,7 @@ export default function FinalConversionSelect({
           !isDisable && setIsOpen((prev) => !prev);
         }}
         disabled={isDisable}
-        className={`w-[140px] mx-auto flex items-center justify-between gap-2 rounded-md text-sm font-medium px-3 py-1 ${conversionStyles[value]} ${
+        className={`w-[155px] mx-auto flex items-center justify-between gap-2 rounded-md text-sm font-medium px-3 py-1 ${conversionStyles[value]} ${
           isDisable
             ? 'opacity-50 cursor-not-allowed'
             : 'hover:opacity-90 hover:border-slate-500 border border-transparent'
@@ -103,7 +103,7 @@ export default function FinalConversionSelect({
               top: dropdownStyles.top,
               left: dropdownStyles.left,
               width: dropdownStyles.width,
-              minWidth: '140px'
+              minWidth: '155px'
             }}
             onClick={(e) => e.stopPropagation()}
           >

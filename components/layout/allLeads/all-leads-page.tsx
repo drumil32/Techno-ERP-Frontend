@@ -414,6 +414,7 @@ export default function AllLeadsPage() {
               };
 
               updateLeadCache();
+              queryClient.invalidateQueries({queryKey: ['leadsAnalytics']});
             }
           } catch (error) {
             toast.dismiss(toastIdRef.current);

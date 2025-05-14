@@ -96,8 +96,8 @@ export const refineAnalytics = (analytics: YellowLeadAnalytics) => {
     {
       heading: String(analytics.unconfirmed ?? ''),
       subheading: calculatePercentage(analytics.unconfirmed ?? 0),
-      title: 'Unconfirmed',
-      color: 'text-[#D40072]'
+      title: 'Neutral',
+      color: 'text-[#006ED8]'
     },
     {
       heading: String(analytics.deadLeadCount ?? ''),

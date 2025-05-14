@@ -449,6 +449,7 @@ export default function LeadViewEdit({
         };
 
         updateLeadCache();
+        queryClient.invalidateQueries({queryKey: ['leadsAnalytics']});
 
       } else {
         setFormData(originalData);

@@ -241,13 +241,13 @@ const AdminTracker = () => {
     'footFall',
     {
       footFall: 'Footfall',
-      unconfirmed: 'Unconfirmed',
+      unconfirmed: 'Neutral',
       dead: 'Dead Data',
       admissions: 'Admissions'
     },
     {
       footFall: 'text-[#000000]',
-      unconfirmed: 'text-[#E06C06]',
+      unconfirmed: 'text-[#006ED8]',
       dead: 'text-[#A67B0A]',
       admissions: 'text-[#0EA80E]'
     }
