@@ -69,7 +69,7 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
       >
         <AccordionItem value="office-use-section" className="border-b-0">
           <AccordionTrigger className="w-full items-center">
-            <h3 className="font-inter text-[16px] font-semibold"> For Office purpose only </h3>
+            <h3 className="font-inter text-[16px] font-semibold"> To be filled by college </h3>
             <hr className="flex-1 border-t border-[#DADADA] ml-2" />
           </AccordionTrigger>
 

@@ -13,24 +13,29 @@ export const SITE_MAP = {
     ADMIN_TRACKER: '/c/marketing/admin-tracker'
   },
   ADMISSIONS: {
-    DEFAULT: '/c/admissions',
-    FORM_STAGE_1: (id: string) => `/c/admissions/application-process/${id}/step_1`,
-    FORM_STAGE_2: (id: string) => `/c/admissions/application-process/${id}/step_2`,
-    FORM_STAGE_3: (id: string) => `/c/admissions/application-process/${id}/step_3`,
-    FORM_STAGE_4: (id: string) => `/c/admissions/application-process/${id}/step_4`,
-    GO_TO_ENQUIRY: (id: string, stage: string) => `/c/admissions/application-process/${id}/${stage}`
+    DEFAULT: '/c/admissions/application-process',
+    RECENT_ADMISSIONS: '/c/admissions/recent-admissions',
+    CREATE_ADMISSION: '/c/admissions/application-process/new',
+    FORM_STAGE_1: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_1`,
+    FORM_STAGE_2: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_2`,
+    FORM_STAGE_3: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_3`,
+    FORM_STAGE_4: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_4`,
+    GO_TO_ENQUIRY: (id: string, stage: string) =>
+      `/c/admissions/application-process/ongoing/${id}/${stage}`
   },
   FINANCE: {
     DEFAULT: '/c/finance/student-dues',
     STUDENT_DUES: '/c/finance/student-dues',
-    STUDENT_DUES_ID: (id:string) => `/c/finance/student-dues/${id}`,
+    STUDENT_DUES_ID: (id: string) => `/c/finance/student-dues/${id}`,
     COURSE_DUES: '/c/finance/course-dues',
-    SELECTED_COURSE_DUES: (course: string, year:string) => `/c/finance/course-dues/${course}/${year}`,
-    OVERALL_DUES: '/c/finance/overall-dues',
+    SELECTED_COURSE_DUES: (course: string, year: string) =>
+      `/c/finance/course-dues/${course}/${year}`,
+    OVERALL_DUES: '/c/finance/overall-dues'
   },
   STUDENT_REPOSITORY: {
     DEFAULT: '/c/student-repository',
-    SINGLE_STUDENT: (universityId : string, stage:string, studentId : string) => `/c/student-repository/${universityId}/${stage}?studentId=${studentId}`,  
+    SINGLE_STUDENT: (universityId: string, stage: string, studentId: string) =>
+      `/c/student-repository/${universityId}/${stage}?studentId=${studentId}`
   },
   FACULTY: {
     DEFAULT: '/c/faculty'

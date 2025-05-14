@@ -128,6 +128,40 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                 defaultSelectedDate={new Date()}
                 labelClassName="font-inter font-normal text-[12px] text-[#666666]"
               />
+              <FormField
+                key="course"
+                control={form.control}
+                name="course"
+                render={({ field }) => (
+                  <FormItem className={`${commonFormItemClass} `}>
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                      Course
+                      <span className="text-red-500 pl-0">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={isViewable}
+                      >
+                        <SelectTrigger className={`${commonFieldClass} w-full`}>
+                          <SelectValue className="text-[#9D9D9D]" placeholder="Select course" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(courses).map((course) => (
+                            <SelectItem key={course.courseCode} value={course.courseCode}>
+                              {course.courseName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 key="studentName"
@@ -439,41 +473,6 @@ const StudentDetailsSection: React.FC<StudentDetailsFormPropInterface> = ({
                           {Object.values(Gender).map((gender) => (
                             <SelectItem key={gender} value={gender}>
                               {toPascal(gender)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <div className="h-[20px]">
-                      <FormMessage className="text-[11px]" />
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                key="course"
-                control={form.control}
-                name="course"
-                render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass} col-start-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Course
-                      <span className="text-red-500 pl-0">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={isViewable}
-                      >
-                        <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue className="text-[#9D9D9D]" placeholder="Select course" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.values(courses).map((course) => (
-                            <SelectItem key={course.courseCode} value={course.courseCode}>
-                              {course.courseName}
                             </SelectItem>
                           ))}
                         </SelectContent>

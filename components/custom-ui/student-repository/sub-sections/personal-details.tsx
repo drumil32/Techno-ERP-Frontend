@@ -35,7 +35,7 @@ import { getDisplayFields } from '../helpers/helper';
 const formSchema = updateStudentDetailsRequestSchema.extend({
   studentID: z.string().optional(),
   formNo: z.string().optional(),
-  lurnRegistrationNo: z.string().optional(),
+  lurnRegistrationNo: z.string().optional()
 });
 interface PersonalDetailsFormProps<T extends FieldValues = FieldValues> {
   form: UseFormReturn<z.infer<typeof formSchema>>;
@@ -449,22 +449,12 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                       </FormItem>
                     )}
                   />
+
                   {/* Date of Birth */}
                   <DatePicker
                     control={form.control}
                     name="dateOfBirth"
                     label="Date of Birth"
-                    placeholder="Select Date of Birth"
-                    formItemClassName={commonFormItemClass}
-                    showYearMonthDropdowns={true}
-                    labelClassName="font-inter font-normal text-[12px] text-[#666666]"
-                    calendarProps={{
-                      disabled: (date) => {
-                        const today = new Date();
-                        return date >= new Date(today.setHours(0, 0, 0, 0));
-                      }
-                    }}
-                    defaultMonth={new Date(new Date().getFullYear() - 10, 0, 1)}
                     isRequired={true}
                   />
 

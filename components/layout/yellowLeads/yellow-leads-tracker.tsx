@@ -490,14 +490,13 @@ export default function YellowLeadsTracker() {
               newValue === FinalConversionStatus.NO_FOOTFALL
             ) {
             } else {
-              toast.error('Failed to update final conversion');
             }
           }
         };
 
         return (
           <FinalConversionSelect
-            isDisable={!row.original.footFall}
+            // isDisable={!row.original.footFall}
             value={value}
             onChange={handleChange}
           />
