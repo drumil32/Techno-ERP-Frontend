@@ -14,7 +14,8 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
       data-slot="breadcrumb-list"
       className={cn(
         'text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5',
-        className
+        className,
+        "text-lg flex items-center"
       )}
       {...props}
     />
@@ -56,7 +57,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<'span'>) {
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cn('text-foreground font-normal', className)}
+      className={cn('text-foreground font-normal', className, 'text-primary font-bold')}
       {...props}
     />
   );

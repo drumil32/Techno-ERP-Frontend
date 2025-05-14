@@ -20,10 +20,10 @@ type ExtendedTransaction = Transaction & {
 
 export default function AllTransactionsDetails({
   transactionHistory,
-  studentDuesId
+  studentId
 }: {
   transactionHistory: Transaction[];
-  studentDuesId: string;
+  studentId: string;
 }) {
   const extendedTransactionHistory: ExtendedTransaction[] = transactionHistory.map(
     (item, index) => {

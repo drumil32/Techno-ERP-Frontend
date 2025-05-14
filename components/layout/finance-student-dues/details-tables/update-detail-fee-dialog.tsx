@@ -53,7 +53,7 @@ export default function UpdateFeeDetailDialog({
   const [adjustmentAmount, setAdjustmentAmount] = useState<number>(0);
   const [validationError, setValidationError] = useState<string>('');
   const params = useParams();
-  const studentId = params.studentDuesId as string;
+  const studentId = params.studentId as string;
   const queryClient = useQueryClient();
 
   const form = useForm<FormData>({
@@ -99,7 +99,7 @@ export default function UpdateFeeDetailDialog({
     handleDialogClose();
 
     queryClient.invalidateQueries({
-      queryKey: ['studentFeesInfomation', studentId]
+      queryKey: ['studentFeesInformation', studentId]
     });
   };
 
