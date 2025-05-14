@@ -351,18 +351,17 @@ const EnquiryFormStage3 = () => {
             enquiryDocuments={currentDocuments}
             setCurrentDocuments={setCurrentDocuments}
           /> */}
-          {!isViewable && <ConfirmationSection form={form} />}
           <OfficeUseSection
             form={form}
             isViewable={isViewable}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
+          {!isViewable && <ConfirmationSection form={form} />}
           {/* <ScholarshipDetailsSection form={form} /> Removed as of now */}
           {!isViewable && (
             <>
-              {' '}
-              <ConfirmationCheckBoxStage3 form={form} />
+              <ConfirmationCheckBoxStage3 form={form} />{' '}
               <EnquiryFormFooter
                 form={form}
                 onSubmit={onSubmit}

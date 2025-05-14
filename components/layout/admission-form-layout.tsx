@@ -11,6 +11,7 @@ import { usePathname } from 'next/navigation';
 import { ADMISSION_STEPS } from '@/common/constants/admissionSteps';
 import { AdmissionStepper } from '@/components/custom-ui/stepper/admission-stepper';
 import { getEnquiry } from '../custom-ui/enquiry-form/stage-1/enquiry-form-api';
+import PremiumBreadCrumb from '../custom-ui/breadcrump/premium-breadcrumb';
 
 const HEADER_ITEMS = {
   APPLICATION_PROCESS: { title: 'Application Process', route: SITE_MAP.ADMISSIONS.DEFAULT }
@@ -44,11 +45,12 @@ export default function AdmissionFormLayout({ children }: { children: React.Reac
       }
     };
 
-    // console.log(pathname);
-    if (pathname === '/c/admissions/application-process/new/step_1') {
+    console.log(pathname);
+    if (pathname === SITE_MAP.ADMISSIONS.CREATE_ADMISSION) {
       setStatus('step_1');
       return;
     }
+
     fetchStatus();
   }, [id]);
 
@@ -58,7 +60,7 @@ export default function AdmissionFormLayout({ children }: { children: React.Reac
     <>
       <TechnoTopHeader headerItems={HEADER_ITEMS} />
       <div className="flex flex-col px-4 py-4 gap-6">
-        <TechnoBreadCrumb rootUrl="/c/admissions" />
+        <PremiumBreadCrumb rootUrl={SITE_MAP.ADMISSIONS.DEFAULT} />
         <div className="flex items-center">
           <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">
             Admission Application Process

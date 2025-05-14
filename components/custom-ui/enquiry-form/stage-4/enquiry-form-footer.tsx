@@ -13,6 +13,7 @@ import {
 import { FaCircleExclamation } from 'react-icons/fa6';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 interface EnquiryFormFooterProps {
   form: UseFormReturn<any>;
@@ -44,7 +45,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
       const result = await onSubmit();
       if (result !== false) {
         toast.success('Enquiry got confirmed successfully');
-        router.push('/c/admissions/');
+        router.push(SITE_MAP.ADMISSIONS.DEFAULT);
         setSubmitDialogOpen(false);
       }
     } catch {

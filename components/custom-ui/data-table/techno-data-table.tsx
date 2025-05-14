@@ -191,18 +191,19 @@ export default function TechnoDataTable({
     }
   };
 
-  const nonClickableColumns = [
-    'actions',
-    'leadType',
-    'footFall',
-    'finalConversion',
-  ];
+  const nonClickableColumns = ['actions', 'leadType', 'footFall', 'finalConversion'];
 
   if (!table.getRowModel().rows) {
     return <Loading />;
   }
 
-  const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate', 'leadsFollowUpCount', 'yellowLeadsFollowUpCount'];
+  const sortableColumns = [
+    'dateView',
+    'nextDueDateView',
+    'leadTypeModifiedDate',
+    'leadsFollowUpCount',
+    'yellowLeadsFollowUpCount'
+  ];
 
   return (
     <div className="w-full mb-10 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -295,7 +296,7 @@ export default function TechnoDataTable({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody className="[&_tr]:h-[39px]">
+            <TableBody className="[&_tr]:h-[50px]">
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row: any) => (
                   <TableRow

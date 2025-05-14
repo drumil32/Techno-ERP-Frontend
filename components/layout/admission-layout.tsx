@@ -8,23 +8,20 @@ import { useSidebarContext } from '../custom-ui/sidebar/sidebar-context';
 import { SIDEBAR_ITEMS } from '@/common/constants/sidebarItems';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import Loading from '@/app/loading';
+import CourseBreadCrumb from '../custom-ui/breadcrump/course-breadcrumb';
+import PremiumBreadCrumb from '../custom-ui/breadcrump/premium-breadcrumb';
 
 const HEADER_ITEMS = {
-  APPLICATION_PROCESS: { title: 'Application Process', route: SITE_MAP.ADMISSIONS.DEFAULT }
+  APPLICATION_PROCESS: { title: 'Application Process', route: SITE_MAP.ADMISSIONS.DEFAULT },
+  RECENT_ADMISSIONS: { title: 'Recent Admissions', route: SITE_MAP.ADMISSIONS.RECENT_ADMISSIONS }
 };
 
 export default function AdmissionLayout({ children }: { children: React.ReactNode }) {
-  const { setHeaderActiveItem } = useTopHeaderContext();
-  const { setSidebarActiveItem } = useSidebarContext();
-  useEffect(() => {
-    setHeaderActiveItem(HEADER_ITEMS.APPLICATION_PROCESS.title);
-    setSidebarActiveItem(SIDEBAR_ITEMS.ADMISSIONS);
-  }, []);
   return (
     <>
       <TechnoTopHeader headerItems={HEADER_ITEMS} />
       <div className="flex flex-col px-4 gap-4">
-        <TechnoBreadCrumb rootUrl="/c/admissions" />
+        <PremiumBreadCrumb rootUrl={SITE_MAP.ADMISSIONS.DEFAULT} />
         {children}
       </div>
     </>

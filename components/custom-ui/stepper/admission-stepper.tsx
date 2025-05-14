@@ -20,7 +20,7 @@ export function AdmissionStepper({
 
   const handleStepClick = (stepPath: string, index: number) => {
     if (index <= maxAccessibleStep) {
-      router.push(`/c/admissions/application-process/${applicationId}/${stepPath}`);
+      router.push(`/c/admissions/application-process/ongoing/${applicationId}/${stepPath}`);
     }
   };
   const maxStepNameHeight = steps.reduce((max, step) => {

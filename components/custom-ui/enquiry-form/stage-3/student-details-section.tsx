@@ -5,10 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Select,
   SelectContent,
@@ -17,30 +14,14 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { CalendarDaysIcon } from 'lucide-react';
 import { toPascal } from '@/lib/utils';
-import { format } from 'date-fns';
-import {
-  AdmissionMode,
-  AdmissionReference,
-  Category,
-  Course,
-  CourseNameMapper,
-  DocumentType,
-  Gender
-} from '@/types/enum';
-import { FieldErrors, FieldValue, FieldValues, UseFormReturn } from 'react-hook-form';
+import { AdmissionMode, Gender } from '@/types/enum';
+import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 import { enquirySchema } from '../schema/schema';
 import { formSchemaStep3 } from './enquiry-form-stage-3';
 import { DatePicker } from '@/components/ui/date-picker';
-import {
-  EnquiryDocument,
-  SingleEnquiryUploadDocument
-} from './documents-section/single-document-form';
-import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { fixCourseDropdown } from '@/components/layout/admin-tracker/helpers/fetch-data';
 import { fixCourseCodeDropdown } from '../stage-1/helpers/fetch-data';
 
 interface StudentDetailsFormPropInterface {
@@ -151,7 +132,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
           </AccordionTrigger>
 
           <AccordionContent>
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-6  gap-x-[32px] bg-white p-4 rounded-[10px]">
+            <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-1  gap-x-[32px] bg-white p-4 rounded-[10px]">
               <FormField
                 key="admissionMode"
                 control={form.control}
@@ -200,6 +181,40 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 showYearMonthDropdowns={true}
                 formItemClassName={`${commonFormItemClass} border-none`}
                 labelClassName="font-inter font-normal text-[12px] text-[#666666]"
+              />
+              <FormField
+                key="course"
+                control={form.control}
+                name="course"
+                render={({ field }) => (
+                  <FormItem className={`${commonFormItemClass} `}>
+                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                      Course
+                      <span className="text-red-500 pl-0">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        disabled={isViewable}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger className={`${commonFieldClass} w-full`}>
+                          <SelectValue className="text-[#9D9D9D]" placeholder="Select Course" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(courses).map((course) => (
+                            <SelectItem key={course.courseCode} value={course.courseCode}>
+                              {course.courseName}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
+                  </FormItem>
+                )}
               />
 
               <FormField
@@ -477,41 +492,6 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                           {Object.values(Gender).map((gender) => (
                             <SelectItem key={gender} value={gender}>
                               {toPascal(gender)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <div className="h-[20px]">
-                      <FormMessage className="text-[11px]" />
-                    </div>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                key="course"
-                control={form.control}
-                name="course"
-                render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass} col-start-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                      Course
-                      <span className="text-red-500 pl-0">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        disabled={isViewable}
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue className="text-[#9D9D9D]" placeholder="Select Course" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.values(courses).map((course) => (
-                            <SelectItem key={course.courseCode} value={course.courseCode}>
-                              {course.courseName}
                             </SelectItem>
                           ))}
                         </SelectContent>

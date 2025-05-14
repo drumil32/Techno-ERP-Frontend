@@ -122,6 +122,66 @@ export const CourseNameMapper: Record<Course, string> = {
   [Course.MSCC]: 'M.SC (Chem)'
 };
 
+export const CourseAppliedMapper: Record<Course, string> = {
+  [Course.BCOM]: 'Bachelor of Commerce',
+  [Course.BCOMH]: 'Bachelor of Commerce (Honours)',
+  [Course.BAJMC]: 'Bachelor of Arts in Journalism and Mass Communication',
+  [Course.BED]: 'Bachelor of Education',
+  [Course.BSCM]: 'Bachelor of Science (PCM)',
+  [Course.BSCB]: 'Bachelor of Science (ZBC)',
+  [Course.BBA]: 'Bachelor of Business Administration',
+  [Course.BCA]: 'Bachelor of Computer Applications',
+  [Course.BVAA]: 'Bachelor of Fine Arts (Applied Art)',
+  [Course.BVAP]: 'Bachelor of Fine Arts (Painting)',
+  [Course.MAJMC]: 'Master of Arts in Journalism and Mass Communication',
+  [Course.MCOMC]: 'Master of Commerce',
+  [Course.MBA]: 'Master of Business Administration',
+  [Course.LLB]: 'Bachelor of Laws',
+  [Course.MCA]: 'Master of Computer Applications',
+  [Course.MVAP]: 'Master of Fine Arts',
+  [Course.MSCC]: 'Master of Science (Chem)'
+};
+
+export const CollegeNameMapper: Record<Course, string> = {
+  [Course.BCOM]: 'Techno Institute of Higher Studies',
+  [Course.BCOMH]: 'Techno Institute of Higher Studies',
+  [Course.BAJMC]: 'Techno Institute of Higher Studies',
+  [Course.BED]: 'Techno Institute of Higher Studies',
+  [Course.BSCM]: 'Techno Institute of Higher Studies',
+  [Course.BSCB]: 'Techno Institute of Higher Studies',
+  [Course.BBA]: 'Techno Institute of Higher Studies',
+  [Course.BCA]: 'Techno Institute of Higher Studies',
+  [Course.BVAA]: 'Techno Institute of Higher Studies',
+  [Course.BVAP]: 'Techno Institute of Higher Studies',
+  [Course.MAJMC]: 'Techno Institute of Higher Studies',
+  [Course.MCOMC]: 'Techno Institute of Higher Studies',
+  [Course.MBA]: 'Techno Institute of Management Sciences',
+  [Course.LLB]: 'Techno College of Law',
+  [Course.MCA]: 'Techno Institute of Management Sciences',
+  [Course.MVAP]: 'Techno Institute of Higher Studies',
+  [Course.MSCC]: 'Techno Institute of Higher Studies'
+};
+
+export const AffiliationMapper: Record<Course, string> = {
+  [Course.BCOM]: 'Lucknow University',
+  [Course.BCOMH]: 'Lucknow University',
+  [Course.BAJMC]: 'Lucknow University',
+  [Course.BED]: 'Lucknow University',
+  [Course.BSCM]: 'Lucknow University',
+  [Course.BSCB]: 'Lucknow University',
+  [Course.BBA]: 'Lucknow University',
+  [Course.BCA]: 'Lucknow University',
+  [Course.BVAA]: 'Lucknow University',
+  [Course.BVAP]: 'Lucknow University',
+  [Course.MAJMC]: 'Lucknow University',
+  [Course.MCOMC]: 'Lucknow University',
+  [Course.MBA]: 'Dr. A. P. J. Abdul Kalam Technical University',
+  [Course.LLB]: 'Lucknow University',
+  [Course.MCA]: 'Dr. A. P. J. Abdul Kalam Technical University',
+  [Course.MVAP]: 'Lucknow University',
+  [Course.MSCC]: 'Lucknow University'
+};
+
 export enum EducationLevel {
   Tenth = '10th',
   Twelfth = '12th',
@@ -458,9 +518,9 @@ export enum CourseYear {
 }
 
 export enum FeeSchedule {
-  ONETIME = "ONETIME",
-  HALF_YEARLY = "HALF_YEARLY",
-  YEARLY = "YEARLY"
+  ONETIME = 'ONETIME',
+  HALF_YEARLY = 'HALF_YEARLY',
+  YEARLY = 'YEARLY'
 }
 export enum FeesPaidStatus {
   DUE = 'DUE',
@@ -519,12 +579,12 @@ export enum FinalConversionStatus {
   NO_FOOTFALL = 'NO_FOOTFALL',
   UNCONFIRMED = 'UNCONFIRMED',
   CONVERTED = 'CONVERTED',
-  NOT_INTERESTED = 'NOT_INTERESTED',
+  NOT_INTERESTED = 'NOT_INTERESTED'
 }
 
 export const FinalConversionStatusMapper: Record<FinalConversionStatus, string> = {
   [FinalConversionStatus.CONVERTED]: 'Admission',
   [FinalConversionStatus.NOT_INTERESTED]: 'Not Interested',
   [FinalConversionStatus.UNCONFIRMED]: 'Unconfirmed',
-  [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall',
+  [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall'
 };

@@ -38,7 +38,6 @@ export default function CourseBreadCrumb({ rootUrl }: BreadCrumbProps) {
 
   const sidebarKey = findSidebarKey();
 
-
   const sidebarTitle = SIDEBAR_ITEMS[sidebarKey as keyof typeof SIDEBAR_ITEMS] || 'Marketing';
   const generateBreadcrumbs = () => {
     const breadcrumbs = [];

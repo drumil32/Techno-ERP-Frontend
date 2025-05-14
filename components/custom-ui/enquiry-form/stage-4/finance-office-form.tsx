@@ -391,177 +391,156 @@ const FinanceOfficeForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-full xl:w-2/3">
-                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-3 sm:p-5 grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mb-2 rounded-[5px] text-[14px] sm:text-[16px]">
+              <div className="w-full xl:w-2/3 space-y-2">
+                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold p-3 sm:p-4 grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-x-2 sm:gap-x-3 gap-y-2 rounded-[5px] text-sm sm:text-base">
                   <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Fees Details</div>
-                  <div className="text-right">Schedule</div>
-                  <div className="text-right">Fees</div>
-                  <div className="text-right">Discount</div>
+                  <div className="text-left">Schedule</div>
+                  <div className="text-left">Fees</div>
+                  <div className="text-center">Discount</div>
                   <div className="text-right">Final Fees</div>
-                  <div className="text-right">Fees Deposited</div>
+                  <div className="text-right">Fees Deposit</div>
                   <div className="text-right">Fees Due</div>
                 </div>
 
-                {otherFeesFields.map((field, index) => {
-                  const feeType = form.getValues(`otherFees.${index}.type`);
-                  const originalFeeData = otherFeesData?.find((fee: any) =>
-                    fee.type === FeeType.SEM1FEE
-                      ? fee.type === feeType
-                      : fee.type === displayFeeMapper(feeType)
-                  );
-                  const totalFee = originalFeeData?.amount;
-                  const finalFee = otherFeesWatched?.[index]?.finalFee;
-                  const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
-                  const discountValue =
-                    finalFee != undefined ? calculateDiscountPercentage(totalFee, finalFee) : '-';
-                  const discountDisplay =
-                    typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
-                  const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
+                <div className="border border-gray-200 rounded-lg divide-y divide-gray-100 overflow-hidden">
+                  {otherFeesFields.map((field, index) => {
+                    const feeType = form.getValues(`otherFees.${index}.type`);
+                    const originalFeeData = otherFeesData?.find((fee: any) =>
+                      fee.type === FeeType.SEM1FEE
+                        ? fee.type === feeType
+                        : fee.type === displayFeeMapper(feeType)
+                    );
+                    const totalFee = originalFeeData?.amount;
+                    const finalFee = otherFeesWatched?.[index]?.finalFee;
+                    const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
+                    const discountValue =
+                      finalFee != undefined ? calculateDiscountPercentage(totalFee, finalFee) : '-';
+                    const discountDisplay =
+                      typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
+                    const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
 
-                  return (
-                    <div
-                      key={field.id}
-                      className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-2 sm:gap-3 md:gap-4 items-start px-1 py-1 sm:px-2 sm:py-1"
-                    >
-                      <div className="xs:col-span-2 sm:col-span-4 md:col-span-1 pt-2 text-[12px] sm:text-sm">
-                        {displayFeeMapper(feeType)}
-                      </div>
+                    if (totalFee === 0) {
+                      return;
+                    }
 
-                      <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
-                        {scheduleFeeMapper(feeType)}
-                      </div>
-
-                      {feeType !== FeeType.TRANSPORT && feeType !== FeeType.HOSTEL ? (
-                        <>
-                          <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
-                            {formatCurrency(totalFee)}
-                          </div>
-
-                          <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
-                            <p className="ml-auto">{discountDisplay}</p>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="pt-2 text-[12px] sm:text-sm text-right md:text-right">
-                            {}
-                          </div>
-
-                          <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1">
-                            <p className="ml-auto">{}</p>
-                          </div>
-                        </>
-                      )}
-                      <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
-                        <FormField
-                          control={form.control}
-                          name={`otherFees.${index}.finalFee`}
-                          render={({ field: formField }) => (
-                            <FormItem className="flex flex-col justify-end">
-                              <FormControl>
-                                <Input
-                                  type="text"
-                                  min="0"
-                                  placeholder="Enter fees"
-                                  {...formField}
-                                  className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
-                                  onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (/^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? null : Number(value));
-                                    }
-                                  }}
-                                  onFocus={(e) => {
-                                    e.target.placeholder = '';
-                                  }}
-                                  onBlur={(e) => {
-                                    if (!e.target.value) {
-                                      e.target.placeholder = 'Enter fees';
-                                    }
-                                  }}
-                                  value={formField.value ?? ''}
-                                />
-                              </FormControl>
-                              {/* <div className="h-[20px] sm:h-[45px]"> */}
-                              <FormMessage className="text-[10px] sm:text-xs mt-0" />
-                              {/* </div> */}
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">
-                        <FormField
-                          control={form.control}
-                          name={`otherFees.${index}.feesDepositedTOA`}
-                          render={({ field: formField }) => (
-                            <FormItem className="flex flex-col justify-end">
-                              <FormControl>
-                                <Input
-                                  type="text"
-                                  placeholder="Enter fees"
-                                  className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
-                                  value={formField.value || ''}
-                                  onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (/^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? null : Number(value));
-                                    }
-                                  }}
-                                  onFocus={(e) => (e.target.placeholder = '')}
-                                  onBlur={(e) => {
-                                    if (!e.target.value) {
-                                      e.target.placeholder = 'Enter fees';
-                                    }
-                                  }}
-                                />
-                              </FormControl>
-                              {/* <div className="h-[20px] sm:h-[45px]"> */}
-                              <FormMessage className="text-[10px] sm:text-xs min-h-10 mt-0" />
-                              {/* </div> */}
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
+                    return (
                       <div
-                        className={clsx(
-                          'flex items-center justify-end text-[12px] sm:text-sm h-9 sm:h-11 rounded-md px-2 xs:col-span-2 sm:col-span-4 md:col-span-1',
-                          { 'text-red-500': remainingFee < 0 }
-                        )}
+                        key={field.id}
+                        className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-2 sm:gap-3 md:gap-4 items-center p-3 sm:p-4 hover:bg-gray-50 transition-colors"
                       >
-                        {formatCurrency(remainingFee)}
-                      </div>
-                    </div>
-                  );
-                })}
+                        <div className="xs:col-span-2 text-left sm:col-span-4 md:col-span-1 text-sm font-medium text-gray-800">
+                          {displayFeeMapper(feeType)}
+                        </div>
 
-                <div className="grid bg-[#F7F7F7] text-[#4E4E4E] p-3 sm:p-5 rounded-[5px] grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_1fr_1fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mt-2 border-t">
-                  <div className="text-[12px] sm:text-sm xs:col-span-2 sm:col-span-4 md:col-span-1">
-                    Total Fees
-                  </div>
+                        <div className="text-sm text-left text-gray-600">
+                          {scheduleFeeMapper(feeType)}
+                        </div>
+
+                        <div className="text-sm text-left text-gray-600">
+                          {formatCurrency(totalFee)}
+                        </div>
+                        <div className="text-sm text-center text-gray-600">{discountDisplay}</div>
+
+                        <div>
+                          <FormField
+                            control={form.control}
+                            name={`otherFees.${index}.finalFee`}
+                            render={({ field: formField }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    placeholder="Enter fees"
+                                    {...formField}
+                                    className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
+                                    onChange={(e) => {
+                                      const value = e.target.value;
+                                      if (/^[0-9]*$/.test(value)) {
+                                        formField.onChange(value === '' ? null : Number(value));
+                                      }
+                                    }}
+                                    onFocus={(e) => {
+                                      e.target.placeholder = '';
+                                    }}
+                                    onBlur={(e) => {
+                                      if (!e.target.value) {
+                                        e.target.placeholder = 'Enter fees';
+                                      }
+                                    }}
+                                    value={formField.value ?? ''}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs mt-1" />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <div>
+                          <FormField
+                            control={form.control}
+                            name={`otherFees.${index}.feesDepositedTOA`}
+                            render={({ field: formField }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    placeholder="Enter fees"
+                                    {...formField}
+                                    defaultValue={'0'}
+                                    className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
+                                    onChange={(e) => {
+                                      const value = e.target.value;
+                                      if (/^[0-9]*$/.test(value)) {
+                                        formField.onChange(value === '' ? null : Number(value));
+                                      }
+                                    }}
+                                    onFocus={(e) => {
+                                      e.target.placeholder = '';
+                                    }}
+                                    onBlur={(e) => {
+                                      if (!e.target.value) {
+                                        e.target.placeholder = 'Enter fees';
+                                      }
+                                    }}
+                                    value={formField.value ?? '0'}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs mt-1" />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+
+                        <div
+                          className={clsx(
+                            'text-sm text-right font-medium',
+                            remainingFee < 0 ? 'text-red-500' : 'text-gray-800'
+                          )}
+                        >
+                          {formatCurrency(remainingFee)}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold p-3 sm:p-4 rounded-[5px] grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr]  gap-x-2 sm:gap-x-3 gap-y-2 text-sm sm:text-base">
+                  <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Total Fees</div>
                   <div></div>
-                  <div className="text-[12px] sm:text-sm text-right">
-                    {formatCurrency(otherFeesTotals.totalOriginal)}
-                  </div>
-                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
+                  <div className="text-left">{formatCurrency(otherFeesTotals.totalOriginal)}</div>
+                  <div className="text-center">
                     {calculateDiscountPercentage(
                       otherFeesTotals.totalOriginal,
                       otherFeesTotals.totalFinal
                     ) + '%'}
                   </div>
-                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
-                    {formatCurrency(otherFeesTotals.totalFinal)}
-                  </div>
-                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
-                    {formatCurrency(otherFeesTotals.totalDeposited)}
-                  </div>
-                  <div className="text-[12px] sm:text-sm text-right pr-1 sm:pr-2">
-                    {formatCurrency(otherFeesTotals.totalDue)}
-                  </div>
+                  <div className="text-right">{formatCurrency(otherFeesTotals.totalFinal)}</div>
+                  <div className="text-right">{formatCurrency(otherFeesTotals.totalDeposited)}</div>
+                  <div className="text-right">{formatCurrency(otherFeesTotals.totalDue)}</div>
                 </div>
 
-                <div className="mt-3 sm:mt-4 px-1 sm:px-2 text-[10px] sm:text-xs text-gray-600 space-y-1">
+                <div className="mt-3 p-3 text-xs text-gray-600 space-y-1 bg-gray-50 rounded-lg">
                   <p>Book Bank - *50% adjustable at the end of final semester</p>
                   <p>Book Bank - *Applicable only in BBA, MBA, BAJMC, MAJMC & BCom (Hons)</p>
                   <p>
@@ -570,7 +549,7 @@ const FinanceOfficeForm = () => {
                   </p>
                 </div>
 
-                <div className="mt-4 sm:mt-6 px-1 sm:px-2">
+                <div className="mt-4">
                   <DatePicker
                     control={form.control}
                     name="feesClearanceDate"
@@ -579,7 +558,7 @@ const FinanceOfficeForm = () => {
                     placeholder="Pick a Date"
                     showYearMonthDropdowns={true}
                     formItemClassName="w-full sm:w-[300px]"
-                    labelClassName="font-inter font-normal text-[10px] sm:text-[12px] text-[#666666]"
+                    labelClassName="font-normal text-xs text-gray-600"
                     calendarProps={{
                       disabled: (date) => {
                         const today = new Date();
@@ -601,82 +580,71 @@ const FinanceOfficeForm = () => {
             <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-full lg:w-max">
                 <div className="space-y-3 sm:space-y-4">
-                  <div className="grid bg-[#F7F7F7] rounded-[5px] text-[#4E4E4E] p-3 sm:p-5 grid-cols-1 xs:grid-cols-2 sm:grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 mb-2 pb-1 border-b">
-                    <div className="font-medium text-[12px] sm:text-sm text-gray-600">Semester</div>
-                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-right">
-                      Fees
-                    </div>
-                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-right">
-                      Applicable Discount
-                    </div>
-                    <div className="font-medium text-[12px] sm:text-sm text-gray-600 text-right">
-                      Final Fees
-                    </div>
+                  <div className="grid  rounded-[5px] bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold text-sm sm:text-base  p-3 sm:p-4 grid-cols-1 xs:grid-cols-2 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 border-b border-gray-200">
+                    <div className="text-left ">Semester</div>
+                    <div className="text-right">Fees</div>
+                    <div className="text-center">Discount</div>
+                    <div className="text-right">Final Fees</div>
                   </div>
 
-                  {semFields.map((field, index) => {
-                    const originalFeeAmount = semWiseFeesData[index];
-                    const finalFee = semWiseFeesWatched?.[index]?.finalFee;
-                    const discountValue =
-                      finalFee != undefined
-                        ? calculateDiscountPercentage(originalFeeAmount, finalFee)
-                        : '-';
-                    const discountDisplay =
-                      typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
-                    return (
-                      <div
-                        key={field.id}
-                        className="grid w-full h-max grid-cols-1 xs:grid-cols-2 sm:grid-cols-[1fr_0.5fr_1fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 items-start px-1 sm:px-2 py-1"
-                      >
-                        <div className="pt-2 text-[12px] sm:text-sm">Semester {index + 1}</div>
-                        <div className="pt-2 text-[12px] sm:text-sm text-right">
-                          {formatCurrency(originalFeeAmount)}
-                        </div>
+                  <div className="border border-gray-200 rounded-lg divide-y divide-gray-100 overflow-hidden">
+                    {semFields.map((field, index) => {
+                      const originalFeeAmount = semWiseFeesData[index];
+                      const finalFee = semWiseFeesWatched?.[index]?.finalFee;
+                      const discountValue =
+                        finalFee != undefined
+                          ? calculateDiscountPercentage(originalFeeAmount, finalFee)
+                          : '-';
+                      const discountDisplay =
+                        typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
 
-                        <div className="flex items-center text-[12px] sm:text-sm h-9 sm:h-11  rounded-md px-2">
-                          <p className="ml-auto">{discountDisplay}</p>
-                        </div>
+                      return (
+                        <div
+                          key={field.id}
+                          className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.8fr]  gap-x-2 sm:gap-x-3 gap-y-2 items-center p-3 sm:p-4 hover:bg-gray-50 transition-colors"
+                        >
+                          <div className="text-sm font-medium text-gray-800">
+                            Semester {index + 1}
+                          </div>
 
-                        <FormField
-                          control={form.control}
-                          name={`semWiseFees.${index}.finalFee`}
-                          render={({ field: formField }) => (
-                            <FormItem className="flex flex-col justify-end">
-                              <FormControl>
-                                <Input
-                                  type="text"
-                                  min="0"
-                                  placeholder="Enter fees"
-                                  {...formField}
-                                  className="text-right px-2 h-9 sm:h-11 text-[12px] sm:text-sm"
-                                  onChange={(e) => {
-                                    const value = e.target.value;
-                                    if (/^[0-9]*$/.test(value)) {
-                                      formField.onChange(value === '' ? null : Number(value));
+                          <div className="text-sm text-right text-gray-600">
+                            {formatCurrency(originalFeeAmount)}
+                          </div>
+
+                          <div className="text-sm text-center text-gray-600">{discountDisplay}</div>
+
+                          <FormField
+                            control={form.control}
+                            name={`semWiseFees.${index}.finalFee`}
+                            render={({ field: formField }) => (
+                              <FormItem>
+                                <FormControl>
+                                  <Input
+                                    type="text"
+                                    placeholder="Enter fees"
+                                    {...formField}
+                                    className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
+                                    onChange={(e) => {
+                                      const value = e.target.value;
+                                      if (/^[0-9]*$/.test(value)) {
+                                        formField.onChange(value === '' ? null : Number(value));
+                                      }
+                                    }}
+                                    value={
+                                      index === 0
+                                        ? (form.getValues('otherFees')[index].finalFee ?? '')
+                                        : (formField.value ?? '')
                                     }
-                                  }}
-                                  onFocus={(e) => {
-                                    e.target.placeholder = '';
-                                  }}
-                                  onBlur={(e) => {
-                                    if (!e.target.value) {
-                                      e.target.placeholder = 'Enter fees';
-                                    }
-                                  }}
-                                  value={
-                                    index === 0
-                                      ? (form.getValues('otherFees')[index].finalFee ?? '')
-                                      : (formField.value ?? '')
-                                  }
-                                />
-                              </FormControl>
-                              <FormMessage className="text-[10px] sm:text-xs mt-1" />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    );
-                  })}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs mt-1" />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </AccordionContent>
