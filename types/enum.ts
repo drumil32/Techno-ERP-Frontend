@@ -517,6 +517,20 @@ export enum CourseYear {
   FOURTH = 'Fourth'
 }
 
+export const CourseYearToNumber: Record<CourseYear, number> = {
+  [CourseYear.FIRST]: 1,
+  [CourseYear.SECOND]: 2,
+  [CourseYear.THIRD]: 3,
+  [CourseYear.FOURTH]: 4
+};
+
+export const CourseYearMapper: Record<CourseYear, string> = {
+  [CourseYear.FIRST]: 'First Year',
+  [CourseYear.SECOND]: 'Second Year',
+  [CourseYear.THIRD]: 'Third Year',
+  [CourseYear.FOURTH]: 'Fourth Year'
+};
+
 export enum FeeSchedule {
   ONETIME = 'ONETIME',
   HALF_YEARLY = 'HALF_YEARLY',

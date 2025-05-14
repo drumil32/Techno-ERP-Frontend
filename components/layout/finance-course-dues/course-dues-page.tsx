@@ -92,8 +92,8 @@ export default function CourseDuesDetails() {
       // sortBy: sortState.sortBy,
       // orderBy: sortState.orderBy
       collegeName,
-      // date: yesterday
-      date: format(today, 'dd/MM/yyyy')
+      date: yesterday
+      // date: format(today, 'dd/MM/yyyy')
     };
   };
 

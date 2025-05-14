@@ -17,6 +17,7 @@ import { SITE_MAP } from '@/common/constants/frontendRouting';
 import TechnoBreadCrumb from '@/components/custom-ui/breadcrump/techno-breadcrumb';
 import AdvancedTechnoBreadcrumb from '@/components/custom-ui/breadcrump/advanced-techno-breadcrumb';
 import Loading from '@/app/c/marketing/loading';
+import { CourseYear, CourseYearMapper, CourseYearToNumber } from '@/types/enum';
 
 export default function SelectedCourseDuesDetails() {
   const router = useRouter();
@@ -79,8 +80,8 @@ export default function SelectedCourseDuesDetails() {
       sortBy: sortState.sortBy,
       orderBy: sortState.orderBy,
       courseCode: courseCode,
-      academicYear: getCurrentAcademicYear()
-      // courseYear: courseYear
+      academicYear: getCurrentAcademicYear(),
+      courseYear: CourseYearToNumber[CourseYear[courseYear as keyof typeof CourseYear]] ?? 0
     };
   };
 
@@ -128,7 +129,7 @@ export default function SelectedCourseDuesDetails() {
   const breadcrumbItems = [
     { title: 'Finance', route: SITE_MAP.FINANCE.STUDENT_DUES },
     { title: 'Course Dues', route: SITE_MAP.FINANCE.COURSE_DUES },
-    { title: `${courseCode}`, route: SITE_MAP.FINANCE.SELECTED_COURSE_DUES(courseCode, courseYear) }
+    { title: `${courseCode}/${CourseYearMapper[CourseYear[courseYear as keyof typeof CourseYear]]}`, route: SITE_MAP.FINANCE.SELECTED_COURSE_DUES(courseCode, courseYear) }
   ];
 
   return (
