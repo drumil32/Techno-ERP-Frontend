@@ -357,7 +357,7 @@ const EnquiryFormStage3 = () => {
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
-          {!isViewable && <ConfirmationSection form={form} />}
+          {/* {!isViewable && <ConfirmationSection form={form} />} */}
           {/* <ScholarshipDetailsSection form={form} /> Removed as of now */}
           {!isViewable && (
             <>

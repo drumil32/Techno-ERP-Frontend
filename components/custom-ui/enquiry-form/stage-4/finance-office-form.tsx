@@ -4,7 +4,14 @@ import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
-import { Form, FormField, FormItem, FormControl, FormMessage } from '@/components/ui/form';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormControl,
+  FormMessage,
+  FormLabel
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
   Accordion,
@@ -48,6 +55,7 @@ import { getTransactionTypeLabel } from '@/lib/enumDisplayMapper';
 import { Loader } from 'lucide-react';
 import Loading from '@/app/loading';
 import { clsx } from 'clsx';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const FinanceOfficeForm = () => {
   const params = useParams();
@@ -221,6 +229,7 @@ const FinanceOfficeForm = () => {
         reference: enquiryData.reference,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
+        isFeeApplicable: enquiryData.isFeeApplicable ?? false,
         remarks: initialCollegeRemarks
       });
     } else if (error) {
@@ -445,6 +454,7 @@ const FinanceOfficeForm = () => {
                           <FormField
                             control={form.control}
                             name={`otherFees.${index}.finalFee`}
+                            defaultValue={0}
                             render={({ field: formField }) => (
                               <FormItem>
                                 <FormControl>
@@ -467,7 +477,7 @@ const FinanceOfficeForm = () => {
                                         e.target.placeholder = 'Enter fees';
                                       }
                                     }}
-                                    value={formField.value ?? ''}
+                                    value={formField.value ?? 0}
                                   />
                                 </FormControl>
                                 <FormMessage className="text-xs mt-1" />
@@ -480,6 +490,7 @@ const FinanceOfficeForm = () => {
                           <FormField
                             control={form.control}
                             name={`otherFees.${index}.feesDepositedTOA`}
+                            defaultValue={0}
                             render={({ field: formField }) => (
                               <FormItem>
                                 <FormControl>
@@ -487,7 +498,6 @@ const FinanceOfficeForm = () => {
                                     type="text"
                                     placeholder="Enter fees"
                                     {...formField}
-                                    defaultValue={'0'}
                                     className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
                                     onChange={(e) => {
                                       const value = e.target.value;
@@ -503,7 +513,7 @@ const FinanceOfficeForm = () => {
                                         e.target.placeholder = 'Enter fees';
                                       }
                                     }}
-                                    value={formField.value ?? '0'}
+                                    value={formField.value ?? 0}
                                   />
                                 </FormControl>
                                 <FormMessage className="text-xs mt-1" />
@@ -547,6 +557,35 @@ const FinanceOfficeForm = () => {
                     Exam Fees - To be given at the time of exact form submission as per LU/AKTU
                     Norms
                   </p>
+                </div>
+
+                <div>
+                  <FormField
+                    control={form.control}
+                    defaultValue={false}
+                    name="isFeeApplicable"
+                    render={({ field }) => (
+                      <>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Fees Applicable ?<span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormItem className="flex h-[36px] w-full sm:w-[300px]  flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              disabled={isViewable}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666]">
+                              {field.value ? 'No Zero Fees' : 'Zero Fees'}
+                            </FormLabel>
+                          </div>
+                        </FormItem>
+                      </>
+                    )}
+                  />
                 </div>
 
                 <div className="mt-4">
@@ -621,6 +660,7 @@ const FinanceOfficeForm = () => {
                                 <FormControl>
                                   <Input
                                     type="text"
+                                    defaultValue={0}
                                     placeholder="Enter fees"
                                     {...formField}
                                     className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
@@ -633,7 +673,7 @@ const FinanceOfficeForm = () => {
                                     value={
                                       index === 0
                                         ? (form.getValues('otherFees')[index].finalFee ?? '')
-                                        : (formField.value ?? '')
+                                        : (formField.value ?? 0)
                                     }
                                   />
                                 </FormControl>
@@ -654,11 +694,11 @@ const FinanceOfficeForm = () => {
         <FilledByCollegeSection commonFieldClass="" commonFormItemClass="" form={form} />
 
         {/* Confirmation */}
-        <ConfirmationOTPSection
+        {/* <ConfirmationOTPSection
           form={form}
           studentEmail={studentEmail}
           studentPhone={studentPhone}
-        />
+        /> */}
 
         <ConfirmationCheckBox
           form={form}
@@ -699,19 +739,35 @@ function FinalFeeSaveDialog({ studentData, otherFeesWatched, onTransactionTypeCh
   };
 
   return (
-    <div className="flex flex-col w-full max-w-md">
-      <h2 className="text-lg font-semibold mb-4"> Total Fee Amount For Sem1 </h2>
+    <div className="flex flex-col w-full ">
+      <h2 className="text-lg font-semibold mb-4 text-center "> Total Fee Amount For Semester 1 </h2>
 
       <div className="w-full space-y-4 text-left">
-        <div className="grid grid-cols-2 gap-2">
-          <p className="text-sm text-gray-600">Student Name:</p>
-          <p className="text-sm font-medium">{studentData?.studentName || 'N/A'}</p>
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <p className="text-sm text-gray-600">Student Name</p>
+            <p className="text-sm font-medium">{studentData?.studentName || 'N/A'}</p>
+          </div>
+          <div className="text-left">
+            <p className="text-sm text-gray-600">Father's Name</p>
+            <p className="text-sm font-medium">{studentData?.fatherName || 'N/A'}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600">Total Fees Due</p>
+            <p className="text-sm text-red-500 font-medium">
+              {formatCurrency(
+                otherFeesWatched?.reduce(
+                  (sum: number, fee: any) => sum + (fee?.finalFee - fee?.feesDepositedTOA || 0),
+                  0
+                ) || 0
+              )}
+            </p>
+          </div>
 
-          <p className="text-sm text-gray-600">Father's Name:</p>
-          <p className="text-sm font-medium">{studentData?.fatherName || 'N/A'}</p>
-
-          <p className="text-sm text-gray-600">Date:</p>
-          <p className="text-sm font-medium">{today}</p>
+          <div>
+            <p className="text-sm text-gray-600">Date:</p>
+            <p className="text-sm font-medium">{today}</p>
+          </div>
         </div>
 
         <div className="pt-2">

@@ -176,16 +176,17 @@ export const enquirySchema = z.object({
   aadharNumber: z
     .string()
     .regex(/^\d{12}$/, 'Aadhar Number must be exactly 12 digits')
-    .optional(),
+    .nonempty('Adhaar Number is required'),
   physicalDocumentNote: z.array(physicalDocumentNoteSchema).optional(),
   religion: z.nativeEnum(Religion).optional(),
   bloodGroup: z.nativeEnum(BloodGroup).optional(),
   previousCollegeData: previousCollegeDataSchema.optional(),
-  stateOfDomicile: z.nativeEnum(StatesOfIndia).optional(),
+  stateOfDomicile: z.nativeEnum(StatesOfIndia),
   areaType: z.nativeEnum(AreaType).optional(),
   nationality: z.string().optional(),
   entranceExamDetails: entranceExamDetailSchema.optional(),
-  admittedBy: z.union([z.string(), z.enum(['other'])]).optional()
+  admittedBy: z.union([z.string(), z.enum(['other'])]).optional(),
+  isFeeApplicable: z.boolean().default(false).optional()
 });
 
 export enum Qualification {

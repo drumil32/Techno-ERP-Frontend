@@ -63,5 +63,8 @@ export const cleanDataForDraft = (data: any) => {
     cleaned.remarks = data.remarks;
   }
 
+  if (data.isFeeApplicable === true || data.isFeeApplicable === false) {
+    cleaned.isFeeApplicable = data.isFeeApplicable;
+  }
   return Object.keys(cleaned).length > 0 ? cleaned : undefined;
 };

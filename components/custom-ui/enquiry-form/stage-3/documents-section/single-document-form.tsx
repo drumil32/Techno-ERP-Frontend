@@ -74,7 +74,7 @@ export const SingleEnquiryUploadDocument = ({
   enquiryId,
   documentType,
   existingDocument,
-  acceptedFileTypes = '.pdf,.jpeg,.jpg,.png',
+  acceptedFileTypes = '.jpeg,.jpg,.png',
   onUploadSuccess,
   onUploadError,
   isViewable
@@ -334,7 +334,7 @@ export const SingleEnquiryUploadDocument = ({
                           </span>
                           {existingDocument && <span className="font-medium"> to add/replace</span>}
                         </p>
-                        <p className="text-[11px] text-gray-500">PDF, JPG, PNG supported</p>
+                        <p className="text-[11px] text-gray-500">JPEG, JPG, PNG supported</p>
                       </div>
                     </div>
                     <Input
@@ -385,45 +385,45 @@ export const SingleEnquiryUploadDocument = ({
                     </motion.div>
                   )}
                   {displayExistingDocument && (
-                    <motion.a
-                      href={existingDocument.fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 max-w-max"
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      transition={{ duration: 0.1 }}
-                    >
-                      <div className="bg-[#4E2ECC]/5 border border-[#4E2ECC]/30 rounded-lg p-3 hover:border-[#4E2ECC]/50 transition-colors group">
-                        <div className="flex items-center justify-between gap-3 w-full">
-                          <div className="flex w-max items-center gap-3 flex-1 min-w-0">
-                            <motion.div
-                              className="bg-[#4E2ECC]/10 p-2 rounded group-hover:bg-[#4E2ECC]/20 transition-colors"
-                              whileHover={{ scale: 1.05 }}
-                            >
-                              <FileText className="h-4 w-4 text-[#4E2ECC] flex-shrink-0" />
-                            </motion.div>
-                            <div className="min-w-0">
-                              <p className="block text-sm font-medium text-[#4E2ECC] group-hover:underline truncate">
-                                {existingFilename}
-                              </p>
+                    <a href={existingDocument.fileUrl} target="_blank">
+                      <motion.div
+                        rel="noopener noreferrer"
+                        className="flex-1 max-w-max"
+                        whileHover={{ scale: 1.01 }}
+                        whileTap={{ scale: 0.99 }}
+                        transition={{ duration: 0.1 }}
+                      >
+                        <div className="bg-[#4E2ECC]/5 border border-[#4E2ECC]/30 rounded-lg p-3 hover:border-[#4E2ECC]/50 transition-colors group">
+                          <div className="flex items-center justify-between gap-3 w-full">
+                            <div className="flex w-max items-center gap-3 flex-1 min-w-0">
+                              <motion.div
+                                className="bg-[#4E2ECC]/10 p-2 rounded group-hover:bg-[#4E2ECC]/20 transition-colors"
+                                whileHover={{ scale: 1.05 }}
+                              >
+                                <FileText className="h-4 w-4 text-[#4E2ECC] flex-shrink-0" />
+                              </motion.div>
+                              <div className="min-w-0">
+                                <p className="block text-sm font-medium text-[#4E2ECC] group-hover:underline truncate">
+                                  {existingFilename}
+                                </p>
 
-                              {existingDueDateFormatted && (
-                                <span className="text-xs w-max text-gray-600">
-                                  Due: {existingDueDateFormatted}
-                                </span>
-                              )}
+                                {existingDueDateFormatted && (
+                                  <span className="text-xs w-max text-gray-600">
+                                    Due: {existingDueDateFormatted}
+                                  </span>
+                                )}
+                              </div>
                             </div>
+                            <motion.div
+                              className="text-[#4E2ECC] hover:text-[#4E2ECC]/80 p-2 rounded-full hover:bg-[#4E2ECC]/10 flex-shrink-0"
+                              whileHover={{ scale: 1.1 }}
+                            >
+                              <LinkIcon className="h-4 w-4" />
+                            </motion.div>
                           </div>
-                          <motion.div
-                            className="text-[#4E2ECC] hover:text-[#4E2ECC]/80 p-2 rounded-full hover:bg-[#4E2ECC]/10 flex-shrink-0"
-                            whileHover={{ scale: 1.1 }}
-                          >
-                            <LinkIcon className="h-4 w-4" />
-                          </motion.div>
                         </div>
-                      </div>
-                    </motion.a>
+                      </motion.div>
+                    </a>
                   )}
                 </div>
               )}
@@ -463,7 +463,7 @@ export const SingleEnquiryUploadDocument = ({
                   </Button>
                 </motion.div>
               </div>
-              <div className="flex-shrink-0 w-full sm:w-auto">
+              {/* <div className="flex-shrink-0 w-full sm:w-auto">
                 <Label
                   htmlFor={`due-date-picker-${uniqueInputId}`}
                   className="text-xs font-medium text-gray-600 mb-1 block "
@@ -505,7 +505,7 @@ export const SingleEnquiryUploadDocument = ({
                     />
                   </PopoverContent>
                 </Popover>
-              </div>
+              </div> */}
             </div>
           </div>
           {status && (

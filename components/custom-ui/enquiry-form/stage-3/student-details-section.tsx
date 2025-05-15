@@ -23,6 +23,7 @@ import { formSchemaStep3 } from './enquiry-form-stage-3';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useQuery } from '@tanstack/react-query';
 import { fixCourseCodeDropdown } from '../stage-1/helpers/fetch-data';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface StudentDetailsFormPropInterface {
   form: UseFormReturn<z.infer<typeof formSchemaStep3>>;
@@ -503,6 +504,35 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                   </FormItem>
                 )}
               />
+
+              <div>
+                <FormField
+                  control={form.control}
+                  defaultValue={false}
+                  name="isFeeApplicable"
+                  render={({ field }) => (
+                    <>
+                      <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        Fees Applicable ?<span className="text-red-500 pl-0">*</span>
+                      </FormLabel>
+                      <FormItem className="flex h-[36px]  flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            disabled={isViewable}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666]">
+                            {field.value ? 'No Zero Fees' : 'Zero Fees'}
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    </>
+                  )}
+                />
+              </div>
             </div>
           </AccordionContent>
         </div>
