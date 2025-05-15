@@ -41,34 +41,22 @@ export default function AdmissionsLandingPage() {
     { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry', meta: { align: 'center' } },
     { accessorKey: 'studentName', header: 'Name' },
     { accessorKey: 'studentPhoneNumber', header: 'Phone Number' },
+    { accessorKey: 'course', header: 'Course' },
     { accessorKey: 'genderDisplay', header: 'Gender' },
     { accessorKey: 'district', header: 'District' },
+
+    { accessorKey: 'fatherPhoneNumber', header: "Father's Number" },
+    { accessorKey: 'motherPhoneNumber', header: "Mother's Number" },
     {
       accessorKey: 'applicationStatus',
       header: 'Application Status',
       meta: { align: 'center' },
       cell: ({ getValue }: CellContext<AdmissionTableRow, string>) => {
         const rawStatus = getValue<string>();
-        return formatApplicationStatus(rawStatus);
+        return (
+          <div className="text-primary font-semibold">{formatApplicationStatus(rawStatus)}</div>
+        );
       }
-    },
-
-    { accessorKey: 'fatherPhoneNumber', header: "Father's Number" },
-    { accessorKey: 'motherPhoneNumber', header: "Mother's Number" },
-    { accessorKey: 'course', header: 'Course' },
-    {
-      id: 'actions',
-      header: 'Actions',
-      meta: { align: 'center' },
-      cell: ({ row }: any) => (
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => handleViewMore({ ...row.original })}
-        >
-          <span className="font-inter font-semibold text-[12px] text-primary">View More</span>
-        </Button>
-      )
     }
   ];
 
@@ -81,9 +69,7 @@ export default function AdmissionsLandingPage() {
       clearTimeout(searchTimerRef.current);
     }
 
-    searchTimerRef.current = setTimeout(() => {
-      setDebouncedSearch(value);
-    }, 500);
+    searchTimerRef.current = setTimeout(() => {}, 500);
   };
 
   const getQueryParams = () => {
@@ -97,7 +83,10 @@ export default function AdmissionsLandingPage() {
 
   const admissionsQuery = useQuery({
     queryKey: ['admissions', filterParams],
-    queryFn: fetchAdmissionsData,
+    queryFn: () =>
+      fetchAdmissionsData({
+        applicationStatus: ['Step_1', 'Step_2', 'Step_3', 'Step_4']
+      }),
     placeholderData: (previousData) => previousData,
     refetchOnWindowFocus: false,
     enabled: true
@@ -122,12 +111,7 @@ export default function AdmissionsLandingPage() {
           <Button
             className="w-2/3 cursor-pointer"
             onClick={() => {
-              router.push(
-                SITE_MAP.ADMISSIONS.GO_TO_ENQUIRY(
-                  'new',
-                  ApplicationStatus.STEP_1.toLocaleLowerCase()
-                )
-              );
+              router.push(SITE_MAP.ADMISSIONS.CREATE_ADMISSION);
             }}
           >
             {' '}
@@ -141,7 +125,7 @@ export default function AdmissionsLandingPage() {
         setSelectedRowId={setSelectedRowId}
         columns={columns}
         data={admissionsData}
-        tableName="Ongoing Applications"
+        tableName={'Ongoing Applications'}
         currentPage={1}
         totalPages={1}
         pageLimit={10}

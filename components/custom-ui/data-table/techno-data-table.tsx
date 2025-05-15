@@ -193,18 +193,19 @@ export default function TechnoDataTable({
     }
   };
 
-  const nonClickableColumns = [
-    'actions',
-    'leadType',
-    'footFall',
-    'finalConversion',
-  ];
+  const nonClickableColumns = ['actions', 'leadType', 'footFall', 'finalConversion'];
 
   if (!table.getRowModel().rows) {
     return <Loading />;
   }
 
-  const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate', 'leadsFollowUpCount', 'yellowLeadsFollowUpCount'];
+  const sortableColumns = [
+    'dateView',
+    'nextDueDateView',
+    'leadTypeModifiedDate',
+    'leadsFollowUpCount',
+    'yellowLeadsFollowUpCount'
+  ];
 
   return (
     <div className="w-full mb-10 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -255,7 +256,7 @@ export default function TechnoDataTable({
           ref={tableContainerRef}
           className="min-h-[580px] h-[240px] overflow-auto custom-scrollbar relative"
         >
-          <Table ref={tableRef} className={cn("w-full", tableStyles)}>
+          <Table ref={tableRef} className={cn('w-full', tableStyles)}>
             <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg font-bolds sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="h-10">
@@ -297,7 +298,7 @@ export default function TechnoDataTable({
                 </TableRow>
               ))}
             </TableHeader>
-            <TableBody className="[&_tr]:h-12">
+            <TableBody className="[&_tr]:h-[50px]">
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row: any) => (
                   <TableRow
