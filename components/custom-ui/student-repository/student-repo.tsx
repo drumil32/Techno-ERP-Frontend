@@ -138,7 +138,7 @@ export default function StudentRepositoryPage() {
         label: 'Course Year',
         options: YearMap,
         hasSearch: true,
-        multiSelect: true
+        multiSelect: false
       },
       {
         filterKey: 'academicYear',
