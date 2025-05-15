@@ -64,7 +64,7 @@ export interface YellowLeadAnalytics {
   activeYellowLeadsCount: number;
   deadLeadCount: number;
   admissions: number;
-  unconfirmed: number;
+  neutral: number;
 }
 
 export const refineAnalytics = (analytics: YellowLeadAnalytics) => {
@@ -94,8 +94,8 @@ export const refineAnalytics = (analytics: YellowLeadAnalytics) => {
       color: 'text-orange-600'
     },
     {
-      heading: String(analytics.unconfirmed ?? ''),
-      subheading: calculatePercentage(analytics.unconfirmed ?? 0),
+      heading: String(analytics.neutral ?? ''),
+      subheading: calculatePercentage(analytics.neutral ?? 0),
       title: 'Neutral',
       color: 'text-[#006ED8]'
     },

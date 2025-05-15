@@ -234,20 +234,20 @@ const AdminTracker = () => {
   const finalCampusConversion = refineAnalytics(
     {
       footFall: data?.yellowLeadsAnalytics?.footFall,
-      unconfirmed: data?.yellowLeadsAnalytics?.unconfirmed,
+      neutral: data?.yellowLeadsAnalytics?.neutral,
       dead: data?.yellowLeadsAnalytics?.dead,
       admissions: data?.yellowLeadsAnalytics?.admissions
     },
     'footFall',
     {
       footFall: 'Footfall',
-      unconfirmed: 'Neutral',
+      neutral: 'Neutral',
       dead: 'Dead Data',
       admissions: 'Admissions'
     },
     {
       footFall: 'text-[#000000]',
-      unconfirmed: 'text-[#006ED8]',
+      neutral: 'text-[#006ED8]',
       dead: 'text-[#A67B0A]',
       admissions: 'text-[#0EA80E]'
     }

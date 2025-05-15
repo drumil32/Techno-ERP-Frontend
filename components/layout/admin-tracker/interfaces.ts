@@ -30,7 +30,7 @@ export interface YellowLeadsAnalytics {
   _id: string | null;
   footFall: number;
   noFootFall: number;
-  unconfirmed: number;
+  neutral: number;
   dead: number;
   admissions: number;
 }
