@@ -4,7 +4,7 @@ import { ChevronDown, Check } from 'lucide-react';
 import { FinalConversionStatus, FinalConversionStatusMapper } from '@/types/enum';
 
 export const conversionStyles: Record<FinalConversionStatus, string> = {
-  [FinalConversionStatus.UNCONFIRMED]: 'bg-pink-100 text-pink-700',
+  [FinalConversionStatus.NEUTRAL]: 'bg-[#C8E4FF] text-[#006ED8]',
   [FinalConversionStatus.CONVERTED]: 'bg-[#8CFF8C] text-[#0D6C0D]',
   [FinalConversionStatus.NOT_INTERESTED]: 'bg-red-100 text-red-700',
   [FinalConversionStatus.NO_FOOTFALL]: 'bg-yellow-100 text-orange-700'
@@ -82,7 +82,7 @@ export default function FinalConversionSelect({
           !isDisable && setIsOpen((prev) => !prev);
         }}
         disabled={isDisable}
-        className={`w-[140px] mx-auto flex items-center justify-between gap-2 rounded-md text-sm font-medium px-3 py-1 ${conversionStyles[value]} ${
+        className={`w-[155px] mx-auto flex items-center justify-between gap-2 rounded-md text-sm font-medium px-3 py-1 ${conversionStyles[value]} ${
           isDisable
             ? 'opacity-50 cursor-not-allowed'
             : 'hover:opacity-90 hover:border-slate-500 border border-transparent'
@@ -103,7 +103,7 @@ export default function FinalConversionSelect({
               top: dropdownStyles.top,
               left: dropdownStyles.left,
               width: dropdownStyles.width,
-              minWidth: '140px'
+              minWidth: '155px'
             }}
             onClick={(e) => e.stopPropagation()}
           >
