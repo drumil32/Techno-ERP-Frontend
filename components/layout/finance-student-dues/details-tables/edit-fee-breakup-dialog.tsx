@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { FeeBreakupResponse, SemesterBreakUp } from '@/types/finance';
+import { SemesterBreakUp } from '@/types/finance';
 import { Pencil } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Label } from '@/components/ui/label';

@@ -32,8 +32,8 @@ export default function StudentData({ studentData }: { studentData: StudentDetai
           <Label className="w-1/2">{studentData.course}</Label>
         </div>
         <div className="flex w-full h-7">
-          <Label className="text-[#666666] w-1/3">HOD</Label>
-          <Label className="w-1/2">{studentData.HOD}</Label>
+          <Label className="text-[#666666] w-1/3">Semester</Label>
+          <Label className="w-1/2">Semester 0{studentData.semesterNumber}</Label>
         </div>
       </div>
       <div className="w-1/4 flex flex-col gap-3">
