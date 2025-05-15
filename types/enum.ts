@@ -592,12 +592,12 @@ export enum FinanceFeeSchedule {
 export enum FinalConversionStatus {
   NO_FOOTFALL = 'NO_FOOTFALL',
   NEUTRAL = 'NEUTRAL',
-  CONVERTED = 'CONVERTED',
+  ADMISSION = 'ADMISSION',
   NOT_INTERESTED = 'NOT_INTERESTED'
 }
 
 export const FinalConversionStatusMapper: Record<FinalConversionStatus, string> = {
-  [FinalConversionStatus.CONVERTED]: 'Admission',
+  [FinalConversionStatus.ADMISSION]: 'Admission',
   [FinalConversionStatus.NOT_INTERESTED]: 'Not Interested',
   [FinalConversionStatus.NEUTRAL]: 'Neutral',
   [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall',
