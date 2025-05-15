@@ -3,7 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import * as Dialog from '@radix-ui/react-dialog';
 import { useQueryClient } from '@tanstack/react-query';
-import { SquarePen } from 'lucide-react';
+import { Loader2, SquarePen } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -42,16 +42,19 @@ export default function UpdateFeeDetailDialog({
   studentName,
   semesterNumber,
   semesterId,
-  feeDetail
+  feeDetail,
+  disabled = false
 }: {
   studentName: string;
   semesterNumber: number;
   semesterId: string;
   feeDetail: SemesterBreakUp['details'][number];
+  disabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [adjustmentAmount, setAdjustmentAmount] = useState<number>(0);
   const [validationError, setValidationError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
   const params = useParams();
   const studentId = params.studentId as string;
   const queryClient = useQueryClient();
@@ -64,6 +67,9 @@ export default function UpdateFeeDetailDialog({
   });
 
   const handleDialogClose = () => {
+    // Don't close dialog if loading is in progress
+    if (isLoading) return;
+    
     setAdjustmentAmount(0);
     setValidationError('');
     form.reset();
@@ -79,6 +85,8 @@ export default function UpdateFeeDetailDialog({
       return;
     }
 
+    setIsLoading(true);
+
     const payload = {
       studentId,
       semesterId,
@@ -91,16 +99,17 @@ export default function UpdateFeeDetailDialog({
       toast.success(
         `${getFinanceFeeTypeLabel(feeDetail.feeCategory)} is updated for ${studentName}.`
       );
+      
+      queryClient.invalidateQueries({
+        queryKey: ['studentFeesInformation', studentId]
+      });
+      
       handleDialogClose();
     } catch (error) {
-      toast.error('Failed to record payment. Please try again.');
+      toast.error('Failed to update fee. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-
-    handleDialogClose();
-
-    queryClient.invalidateQueries({
-      queryKey: ['studentFeesInformation', studentId]
-    });
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -116,9 +125,13 @@ export default function UpdateFeeDetailDialog({
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root open={open} onOpenChange={(newOpen) => {
+      // Prevent closing dialog during loading
+      if (isLoading && !newOpen) return;
+      setOpen(newOpen);
+    }}>
       <Dialog.Trigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" disabled={disabled}>
           <SquarePen className="h-4 w-4" />
         </Button>
       </Dialog.Trigger>
@@ -134,6 +147,7 @@ export default function UpdateFeeDetailDialog({
             <Dialog.Close
               className="text-gray-500 hover:text-black text-xl font-bold cursor-pointer"
               onClick={handleDialogClose}
+              disabled={isLoading}
             >
               &times;
             </Dialog.Close>
@@ -195,6 +209,7 @@ export default function UpdateFeeDetailDialog({
                             handleAmountChange(e);
                           }}
                           className={validationError ? 'border-red-500' : ''}
+                          disabled={isLoading}
                         />
                       </FormControl>
                       {validationError && (
@@ -206,14 +221,27 @@ export default function UpdateFeeDetailDialog({
                 />
 
                 <div className="flex justify-end gap-3 mt-6">
-                  <Button type="button" variant="outline" onClick={handleDialogClose}>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={handleDialogClose}
+                    disabled={isLoading}
+                  >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    disabled={!!validationError || feeDetail.finalFee + adjustmentAmount < 0}
+                    disabled={!!validationError || feeDetail.finalFee + adjustmentAmount < 0 || isLoading}
+                    className="bg-[#5B31D1] text-white"
                   >
-                    Save Changes
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Changes"
+                    )}
                   </Button>
                 </div>
               </form>

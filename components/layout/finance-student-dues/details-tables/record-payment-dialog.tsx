@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { StudentDetails } from "@/types/finance";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Loader2 } from "lucide-react";
 import * as Dialog from '@radix-ui/react-dialog';
 import { Label } from "@/components/ui/label";
-import { record, z } from "zod";
 import { FeeActions, TransactionTypes } from "@/types/enum";
 import { useState } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -17,6 +16,7 @@ import { recordPayment } from "../helpers/fetch-data";
 import { getFeeActionLabel, getTransactionTypeLabel } from "@/lib/enumDisplayMapper";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import { z } from "zod";
 
 const feesActionMapping = {
   [FeeActions.DEPOSIT]: "DEPOSIT",
@@ -47,15 +47,13 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-
-
 export default function RecordPaymentDialog({ studentDetails }: { studentDetails: StudentDetails | undefined }) {
-  const param = useParams()
-  const studentId = param.studentId as string
-
-  const queryClient = useQueryClient()
+  const param = useParams();
+  const studentId = param.studentId as string;
+  const queryClient = useQueryClient();
 
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -68,6 +66,8 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
   });
 
   const handleRecordPayment = async (values: FormValues) => {
+    setIsLoading(true);
+
     const payload = {
       studentId: studentId,
       feeAction: feesActionMapping[values.feesAction],
@@ -81,23 +81,30 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
       const res = await recordPayment(payload);
 
       if(res == null) {
-        throw new Error("")
+        throw new Error("Failed to record payment");
       }
 
       toast.success("Payment recorded successfully!");
 
-      setOpen(false);
+      // Reset form and invalidate queries
       form.reset();
       queryClient.invalidateQueries({
         queryKey: ['studentFeesInformation', studentId]
       });
+      
+      // Close dialog only after successful response
+      setOpen(false);
+      setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
     }
   };
 
-
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root open={open} onOpenChange={(newOpen) => {
+      if (isLoading && !newOpen) return;
+      setOpen(newOpen);
+    }}>
       <Dialog.Trigger asChild>
         <Button className="ml-auto rounded-[10px]">Record a payment</Button>
       </Dialog.Trigger>
@@ -110,7 +117,12 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
               <BookOpen className="w-5 h-5 text-gray-500 text-xl" />
               &nbsp;Record a payment
             </Dialog.Title>
-            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold cursor-pointer">&times;</Dialog.Close>
+            <Dialog.Close 
+              className="text-gray-500 hover:text-black text-xl font-bold cursor-pointer"
+              disabled={isLoading}
+            >
+              &times;
+            </Dialog.Close>
           </div>
 
           {/*Readable Fields - Student Information*/}
@@ -138,7 +150,6 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
           </div>
 
           {/*Form*/}
-
           <div className="mt-8">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleRecordPayment)} className="space-y-6">
@@ -149,7 +160,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormLabel className="text-gray-500 text-md">Fees Action</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                           <FormControl>
                             <SelectTrigger className="w-full text-md">
                               <SelectValue placeholder="Select a fees action" />
@@ -174,7 +185,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormLabel className="text-gray-500 text-md">Transaction Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
                           <FormControl>
                             <SelectTrigger className="w-full text-md">
                               <SelectValue placeholder="Select a transaction type" />
@@ -206,6 +217,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                           {...field}
                           type="text"
                           className="!text-md"
+                          disabled={isLoading}
                         />
                       </FormControl>
                       <FormMessage />
@@ -220,7 +232,12 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                     <FormItem>
                       <FormLabel className="text-gray-500 text-md">Remarks</FormLabel>
                       <FormControl>
-                        <Input placeholder="Write your remarks" {...field} className="!text-md" />
+                        <Input 
+                          placeholder="Write your remarks" 
+                          {...field} 
+                          className="!text-md" 
+                          disabled={isLoading}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -228,10 +245,28 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                 />
 
                 <div className="flex justify-end gap-2 pt-4">
-                  <Dialog.Close asChild>
-                    <Button type="button" variant="outline">Cancel</Button>
-                  </Dialog.Close>
-                  <Button type="submit" className="bg-[#5B31D1] text-white">Record</Button>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => !isLoading && setOpen(false)}
+                    disabled={isLoading}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="submit" 
+                    className="bg-[#5B31D1] text-white" 
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      "Record"
+                    )}
+                  </Button>
                 </div>
               </form>
             </Form>
@@ -239,5 +274,5 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
-  )
+  );
 }
