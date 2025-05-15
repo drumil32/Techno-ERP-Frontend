@@ -517,6 +517,20 @@ export enum CourseYear {
   FOURTH = 'Fourth'
 }
 
+export const CourseYearToNumber: Record<CourseYear, number> = {
+  [CourseYear.FIRST]: 1,
+  [CourseYear.SECOND]: 2,
+  [CourseYear.THIRD]: 3,
+  [CourseYear.FOURTH]: 4
+};
+
+export const CourseYearMapper: Record<CourseYear, string> = {
+  [CourseYear.FIRST]: 'First Year',
+  [CourseYear.SECOND]: 'Second Year',
+  [CourseYear.THIRD]: 'Third Year',
+  [CourseYear.FOURTH]: 'Fourth Year'
+};
+
 export enum FeeSchedule {
   ONETIME = 'ONETIME',
   HALF_YEARLY = 'HALF_YEARLY',
@@ -577,14 +591,14 @@ export enum FinanceFeeSchedule {
 
 export enum FinalConversionStatus {
   NO_FOOTFALL = 'NO_FOOTFALL',
-  UNCONFIRMED = 'UNCONFIRMED',
-  CONVERTED = 'CONVERTED',
+  NEUTRAL = 'NEUTRAL',
+  ADMISSION = 'ADMISSION',
   NOT_INTERESTED = 'NOT_INTERESTED'
 }
 
 export const FinalConversionStatusMapper: Record<FinalConversionStatus, string> = {
-  [FinalConversionStatus.CONVERTED]: 'Admission',
+  [FinalConversionStatus.ADMISSION]: 'Admission',
   [FinalConversionStatus.NOT_INTERESTED]: 'Not Interested',
-  [FinalConversionStatus.UNCONFIRMED]: 'Unconfirmed',
-  [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall'
+  [FinalConversionStatus.NEUTRAL]: 'Neutral',
+  [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall',
 };

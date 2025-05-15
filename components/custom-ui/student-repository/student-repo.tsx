@@ -8,24 +8,27 @@ import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 
 // Local component imports
-import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import TechnoFiltersGroup from '../filter/techno-filters-group';
 import FilterBadges from '@/components/layout/allLeads/components/filter-badges';
 
 // Context and helper imports
 import { useTechnoFilterContext } from '../filter/filter-context';
-import { courseDropdown } from '@/components/layout/admin-tracker/helpers/fetch-data';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { FilterData, FilterOption, StudentListData, StudentListItem } from './helpers/interface';
 
 // Enum imports
-import { fetchStudents } from './helpers/api';
+import { courseDropdown, fetchStudents } from './helpers/api';
 import { refineStudents } from './helpers/refine-data';
 import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
 import { getCurrentAcademicYear } from '@/lib/getCurrentAcademicYear';
 import { toast } from 'sonner';
 import { columns, YearMap } from './helpers/constants';
 import TechnoDataTableAdvanced from '../data-table/techno-data-table-advanced';
+
+interface Course {
+  courseCode: string;
+  courseName: string;
+}
 
 export default function StudentRepositoryPage() {
   // State Management
@@ -57,7 +60,7 @@ export default function StudentRepositoryPage() {
     enabled: true
   });
 
-  const courses = Array.isArray(coursesDropdownQuery.data) ? coursesDropdownQuery.data : [];
+  const courses : Course[] = Array.isArray(coursesDropdownQuery.data) ? coursesDropdownQuery.data : [];
 
   // Handle Navigation to Single Student Page
   const handleViewMore = (row: StudentListItem) => {
@@ -106,6 +109,7 @@ export default function StudentRepositoryPage() {
 
     return params;
   };
+  
 
   // Filter Configuration
   const getFilterConfigurations = (): FilterData[] => {
@@ -118,23 +122,23 @@ export default function StudentRepositoryPage() {
 
     return [
       {
-        filterKey: 'course',
+        filterKey: 'courseCode',
         label: 'Course',
-        options: courses.map((item: string) => {
+        options: courses.map((item: Course) => {
           return {
-            label: item,
-            id: item
+            label: item.courseName,
+            id: item.courseCode
           };
         }),
         hasSearch: true,
-        multiSelect: true
+        multiSelect: false
       },
       {
         filterKey: 'courseYear',
         label: 'Course Year',
         options: YearMap,
         hasSearch: true,
-        multiSelect: true
+        multiSelect: false
       },
       {
         filterKey: 'academicYear',
@@ -300,6 +304,7 @@ export default function StudentRepositoryPage() {
           handleViewMore={handleViewMore}
           selectedRowId={selectedRowId}
           setSelectedRowId={setSelectedRowId}
+          rowHeight={50}
         >
           <FilterBadges onFilterRemove={handleFilterRemove} appliedFilters={appliedFilters} />
         </TechnoDataTableAdvanced>

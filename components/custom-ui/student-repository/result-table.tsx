@@ -30,7 +30,7 @@ const getSubjectMetrics = (subject: Subject) => {
       totalClasses =
         attendanceRecord.totalLectureAttendance + attendanceRecord.totalPracticalAttendance;
       attended =
-        attendanceRecord.totalLectureAttendance + attendanceRecord.totalPracticalAttendance;
+        (attendanceRecord.lecturePlan?.length || 0) + (attendanceRecord.practicalPlan?.length || 0);
     }
   });
 

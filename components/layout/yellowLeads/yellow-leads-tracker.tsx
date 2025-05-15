@@ -315,6 +315,8 @@ export default function YellowLeadsTracker() {
               };
 
               updateLeadCache();
+              queryClient.invalidateQueries({queryKey: ['leadsAnalytics']});
+
               // setRefreshKey((prevKey) => prevKey + 1);
             } else {
               toast.error('Update failed!', { duration: 1500 });
@@ -330,6 +332,7 @@ export default function YellowLeadsTracker() {
         return <FootFallSelect value={selectedStatus} onChange={handleFootfallChange} />;
       }
     },
+    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } },
 
     {
       accessorKey: 'followUpCount',
@@ -479,13 +482,13 @@ export default function YellowLeadsTracker() {
             };
 
             updateLeadCache();
-
+            queryClient.invalidateQueries({queryKey: ['leadsAnalytics']});
 
             toast.success('Final conversion updated successfully');
             // setRefreshKey((prevKey) => prevKey + 1);
           } else {
             if (
-              row.original.finalConversion === FinalConversionStatus.UNCONFIRMED &&
+              row.original.finalConversion === FinalConversionStatus.NEUTRAL &&
               newValue === FinalConversionStatus.NO_FOOTFALL
             ) {
             } else {
@@ -502,7 +505,6 @@ export default function YellowLeadsTracker() {
         );
       }
     },
-    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } },
 
     ...(
       isRoleLeadMarketing

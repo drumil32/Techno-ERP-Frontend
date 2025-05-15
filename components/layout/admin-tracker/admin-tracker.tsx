@@ -1,30 +1,26 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import Loading from '@/app/loading';
+import TechnoAnalyticCardsGroup from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
+import { FilterData } from '@/components/custom-ui/filter/type';
+import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
+import useAuthStore from '@/stores/auth-store';
+import { UserRoles } from '@/types/enum';
 import { useQuery } from '@tanstack/react-query';
-import { useAdminTrackerContext } from './admin-tracker-context';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
-import { AdminAnalyticsResponse } from './interfaces';
+import FilterBadges from '../allLeads/components/filter-badges';
+import { useAdminTrackerContext } from './admin-tracker-context';
 import {
   cityDropdown,
   fetchAssignedToDropdown,
   marketingSourcesDropdown
 } from './helpers/fetch-data';
-import { Locations, UserRoles } from '@/types/enum';
-import TechnoAnalyticCardsGroup, {
-  CardItem
-} from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { refineAnalytics } from './helpers/refine-data';
-import { FilterOption } from '@/components/custom-ui/filter/techno-filter';
-import { toast } from 'sonner';
-import FilterBadges from '../allLeads/components/filter-badges';
-import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
-import { DropDownType } from '@/types/enum';
+import { AdminAnalyticsResponse } from './interfaces';
 import { LeadConversionDashboard } from './yellow-leads-converted';
-import Loading from '@/app/loading';
-import { FilterData } from '@/components/custom-ui/filter/type';
-import useAuthStore from '@/stores/auth-store';
 // import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
 
 const AdminTracker = () => {
@@ -234,20 +230,20 @@ const AdminTracker = () => {
   const finalCampusConversion = refineAnalytics(
     {
       footFall: data?.yellowLeadsAnalytics?.footFall,
-      unconfirmed: data?.yellowLeadsAnalytics?.unconfirmed,
+      neutral: data?.yellowLeadsAnalytics?.neutral,
       dead: data?.yellowLeadsAnalytics?.dead,
       admissions: data?.yellowLeadsAnalytics?.admissions
     },
     'footFall',
     {
       footFall: 'Footfall',
-      unconfirmed: 'Unconfirmed',
+      neutral: 'Neutral',
       dead: 'Dead Data',
       admissions: 'Admissions'
     },
     {
       footFall: 'text-[#000000]',
-      unconfirmed: 'text-[#E06C06]',
+      neutral: 'text-[#006ED8]',
       dead: 'text-[#A67B0A]',
       admissions: 'text-[#0EA80E]'
     }
