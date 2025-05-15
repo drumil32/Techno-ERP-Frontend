@@ -329,8 +329,8 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
             name="confirmation"
             isViewable={isViewable}
             label="All the above information has been verified by the applicant and thoroughly checked by the Admissions team."
-            id="checkbox-for-step3"
-            className="cols-span-3"
+            id="checkbox-for-step1"
+            className="flex flex-row items-start bg-white rounded-md p-4"
           />
         )}
 

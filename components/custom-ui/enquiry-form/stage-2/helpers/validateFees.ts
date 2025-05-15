@@ -12,8 +12,7 @@ const findOriginalOtherFee = (
   if (!otherFeesData || type === undefined) return undefined;
   const found = otherFeesData.find((f) => f.type === type);
   // Ensure the fee is a valid number before returning
-  console.log('Other fees data', otherFeesData);
-  console.log('I am founding for this type', type, ' ', found?.amount);
+
   return typeof found?.amount === 'number' && !isNaN(found.amount) ? found.amount : undefined;
 };
 
@@ -44,8 +43,6 @@ export const validateCustomFeeLogic = (
 ): boolean => {
   let isOverallValid = true;
 
-  console.log('custom validation values', values);
-
   // --- Validate Other Fees ---
   values.otherFees?.forEach((otherFee: any, index: any) => {
     if (!otherFee) return; // Skip if item is somehow null/undefined
@@ -53,7 +50,7 @@ export const validateCustomFeeLogic = (
     // Define field names for clarity
     const finalFeeField = `otherFees.${index}.finalFee` as const;
     const depositField = `otherFees.${index}.feesDepositedTOA` as const;
-    console.log('Other fee type', otherFee.type);
+
     // Get fee values (handle potential undefined/null)
     const originalFeeAmount = findOriginalOtherFee(
       otherFee.type === FeeType.SEM1FEE
@@ -63,7 +60,7 @@ export const validateCustomFeeLogic = (
     );
     const finalFee = otherFee.finalFee; // Already potentially undefined | number
     const feesDeposited = otherFee.feesDepositedTOA; // Already potentially undefined | number
-    console.log(finalFee, originalFeeAmount);
+
     // Clear previous errors for these fields before re-validating
     clearErrors(finalFeeField);
     clearErrors(depositField);

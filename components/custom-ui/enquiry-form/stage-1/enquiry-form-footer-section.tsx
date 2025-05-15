@@ -68,9 +68,8 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     }
 
     const result = await onSubmit();
-    if (result === true) {
-      setSubmitDialogOpen(false);
-    }
+    //logically on any situation be it positive or negative we will be closing this dialog box off
+    setSubmitDialogOpen(false);
   }
 
   async function handleDialogSaveDraft() {

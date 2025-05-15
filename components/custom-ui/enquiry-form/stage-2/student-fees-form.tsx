@@ -55,6 +55,10 @@ import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
 import Loading from '@/app/loading';
 import FilledByCollegeSection from '../stage-1/filled-by-college-section';
 import clsx from 'clsx';
+import { Select, SelectContent, Value } from '@radix-ui/react-select';
+import { SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { read } from 'fs';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -190,6 +194,7 @@ export const StudentFeesForm = () => {
       telecaller: [],
       remarks: '',
       confirmationCheck: false,
+      isFeeApplicable: false,
       otpTarget: undefined,
       otpVerificationEmail: null
     },
@@ -218,10 +223,6 @@ export const StudentFeesForm = () => {
     control: form.control,
     name: 'otherFees'
   });
-
-  useEffect(() => {
-    console.log('other fees data is ', otherFeesData);
-  }, otherFeesData);
 
   const selectedOtpTarget = useWatch({ control: form.control, name: 'otpTarget' });
 
@@ -264,8 +265,6 @@ export const StudentFeesForm = () => {
 
       let initialTelecallers: string[] = enquiryData.telecaller ?? [];
 
-      console.log(enquiryData);
-
       initialOtherFees = Object.values(FeeType)
         .filter((ft) => ft !== FeeType.SEM1FEE)
         .map((feeType) => {
@@ -301,7 +300,6 @@ export const StudentFeesForm = () => {
         initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
       }
 
-      console.log('enquiryData', enquiryData);
       form.reset({
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,
@@ -310,6 +308,7 @@ export const StudentFeesForm = () => {
         reference: enquiryData.reference,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
+        isFeeApplicable: enquiryData.isFeeApplicable ?? false,
         remarks: enquiryData.remarks,
         confirmationCheck: form.getValues().confirmationCheck || false
       });
@@ -419,6 +418,7 @@ export const StudentFeesForm = () => {
         remarks: initialCollegeRemarks,
         confirmationCheck: form.getValues().confirmationCheck,
         otpTarget: form.getValues().otpTarget,
+        isFeeApplicable: form.getValues().isFeeApplicable,
         otpVerificationEmail: form.getValues().otpVerificationEmail
       },
       {
@@ -521,6 +521,7 @@ export const StudentFeesForm = () => {
     form.clearErrors();
 
     const currentValues = form.getValues();
+    console.log('current values of the form ', currentValues);
     const existingDraftId = enquiryData?.studentFeeDraft?._id;
 
     const isCustomValid = validateCustomFeeLogic(
@@ -548,6 +549,7 @@ export const StudentFeesForm = () => {
         }
       });
       setIsSavingDraft(false);
+      console.log('trust me I have done this already ');
       return false;
     }
 
@@ -562,6 +564,7 @@ export const StudentFeesForm = () => {
           ...cleanedData
         };
         await updateDraftMutation.mutateAsync(finalPayload);
+        toast.success('Draft Updated Successfully');
       } else {
         const finalPayload = {
           enquiryId: cleanedData.enquiryId || enquiry_id,
@@ -569,7 +572,9 @@ export const StudentFeesForm = () => {
         };
         delete finalPayload.id;
         await createDraftMutation.mutateAsync(finalPayload);
+        toast.success('Draft Created Successfully');
       }
+
       return true;
     } catch (error) {
       return false;
@@ -726,6 +731,7 @@ export const StudentFeesForm = () => {
                           <FormField
                             control={form.control}
                             name={`otherFees.${index}.finalFee`}
+                            defaultValue={0}
                             render={({ field: formField }) => (
                               <FormItem>
                                 <FormControl>
@@ -748,7 +754,7 @@ export const StudentFeesForm = () => {
                                         e.target.placeholder = 'Enter fees';
                                       }
                                     }}
-                                    value={formField.value ?? ''}
+                                    value={formField.value ?? 0}
                                   />
                                 </FormControl>
                                 <FormMessage className="text-xs mt-1" />
@@ -761,6 +767,7 @@ export const StudentFeesForm = () => {
                           <FormField
                             control={form.control}
                             name={`otherFees.${index}.feesDepositedTOA`}
+                            defaultValue={0}
                             render={({ field: formField }) => (
                               <FormItem>
                                 <FormControl>
@@ -768,7 +775,6 @@ export const StudentFeesForm = () => {
                                     type="text"
                                     placeholder="Enter fees"
                                     {...formField}
-                                    defaultValue={'0'}
                                     className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
                                     onChange={(e) => {
                                       const value = e.target.value;
@@ -784,7 +790,7 @@ export const StudentFeesForm = () => {
                                         e.target.placeholder = 'Enter fees';
                                       }
                                     }}
-                                    value={formField.value ?? '0'}
+                                    value={formField.value ?? 0}
                                   />
                                 </FormControl>
                                 <FormMessage className="text-xs mt-1" />
@@ -828,6 +834,35 @@ export const StudentFeesForm = () => {
                     Exam Fees - To be given at the time of exact form submission as per LU/AKTU
                     Norms
                   </p>
+                </div>
+
+                <div>
+                  <FormField
+                    control={form.control}
+                    defaultValue={false}
+                    name="isFeeApplicable"
+                    render={({ field }) => (
+                      <>
+                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                          Fees Applicable ?<span className="text-red-500 pl-0">*</span>
+                        </FormLabel>
+                        <FormItem className="flex h-[36px] w-full sm:w-[300px]  flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              disabled={isViewable}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666]">
+                              {field.value ? 'No Zero Fees' : 'Zero Fees'}
+                            </FormLabel>
+                          </div>
+                        </FormItem>
+                      </>
+                    )}
+                  />
                 </div>
 
                 <div className="mt-4">
@@ -903,6 +938,7 @@ export const StudentFeesForm = () => {
                                 <FormControl>
                                   <Input
                                     type="text"
+                                    defaultValue={0}
                                     placeholder="Enter fees"
                                     {...formField}
                                     className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
@@ -915,7 +951,7 @@ export const StudentFeesForm = () => {
                                     value={
                                       index === 0
                                         ? (form.getValues('otherFees')[index].finalFee ?? '')
-                                        : (formField.value ?? '')
+                                        : (formField.value ?? 0)
                                     }
                                   />
                                 </FormControl>
@@ -940,7 +976,7 @@ export const StudentFeesForm = () => {
           isViewable={isViewable}
         />
 
-        {!isViewable && (
+        {/* {!isViewable && (
           <Accordion
             type="single"
             collapsible
@@ -1030,7 +1066,7 @@ export const StudentFeesForm = () => {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-        )}
+        )} */}
 
         {!isViewable && (
           <ConfirmationCheckBox

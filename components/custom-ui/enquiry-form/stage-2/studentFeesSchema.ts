@@ -12,8 +12,8 @@ export const otherFeesSchema = z.object({
 
 export const requiredOtherFeesSchema = otherFeesSchema
   .extend({
-    feesDepositedTOA: z.number({ required_error: '' }).min(0, ''),
-    finalFee: z.number({ required_error: '' }).min(0, '')
+    feesDepositedTOA: z.number({ required_error: '' }).min(0, '').default(0),
+    finalFee: z.number({ required_error: '' }).min(0, '').default(0)
   })
   .omit({ feeAmount: true });
 
@@ -39,7 +39,8 @@ const studentFeesSchema = z.object({
   feesClearanceDate: z.string().nullable().optional(),
   counsellor: z.array(z.string()).optional(),
   telecaller: z.array(z.string()).optional(),
-  remarks: z.string().optional().nullable()
+  remarks: z.string().optional().nullable(),
+  isFeeApplicable: z.boolean().default(false).optional()
 });
 
 export const feesRequestSchema = z.object({
@@ -53,7 +54,8 @@ export const feesRequestSchema = z.object({
   confirmationCheck: z.boolean().optional(),
   otpTarget: z.string().nullable().optional(),
   reference: z.nativeEnum(AdmissionReference).optional(),
-  otpVerificationEmail: z.string().nullable().optional()
+  otpVerificationEmail: z.string().nullable().optional(),
+  isFeeApplicable: z.boolean().default(false).optional()
 });
 
 export const finalFeesCreateSchema = feesRequestSchema.extend({
@@ -98,7 +100,8 @@ export const frontendFeesDraftValidationSchema = z
     feesClearanceDate: z.string().optional().nullable(),
     counsellor: z.array(z.string()).optional(),
     telecaller: z.array(z.string()).optional(),
-    remarks: z.string().optional().nullable()
+    remarks: z.string().optional().nullable(),
+    isFeeApplicable: z.boolean().default(false).optional()
   })
   .partial();
 

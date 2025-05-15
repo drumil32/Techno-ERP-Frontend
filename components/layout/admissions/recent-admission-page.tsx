@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation';
 import { ApplicationStatus } from '@/types/enum';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { Input } from '@/components/ui/input';
-import { BookPlus, Search } from 'lucide-react';
+import { BookPlus, Download, Search } from 'lucide-react';
 import { formatApplicationStatus } from './helpers/format-application-status';
 import { CellContext } from '@tanstack/react-table';
 import { toast } from 'sonner';
@@ -26,15 +26,12 @@ export default function RecentAdmissionsPage() {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const handleViewMore = (row: AdmissionTableRow) => {
-    if (row && row.id) {
-      if (row.applicationStatus === 'Confirmed') {
-        toast.success('Your application is already confirmed');
-        return;
-      }
-      router.push(
-        SITE_MAP.ADMISSIONS.GO_TO_ENQUIRY(row._id, row.applicationStatus.toLocaleLowerCase())
-      );
-    }
+    toast.info('Hang Tight View is under construction...');
+    return;
+  };
+
+  const handleDownload = (row: AdmissionTableRow) => {
+    toast.info('Hang Tight download feature is yet under construction');
   };
   const columns = [
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
@@ -47,16 +44,31 @@ export default function RecentAdmissionsPage() {
 
     { accessorKey: 'fatherPhoneNumber', header: "Father's Number" },
     { accessorKey: 'motherPhoneNumber', header: "Mother's Number" },
+    // {
+    //   accessorKey: 'applicationStatus',
+    //   header: 'Application Status',
+    //   meta: { align: 'center' },
+    //   cell: ({ getValue }: CellContext<AdmissionTableRow, string>) => {
+    //     const rawStatus = getValue<string>();
+    //     return (
+    //       <div className="text-primary font-semibold">{formatApplicationStatus(rawStatus)}</div>
+    //     );
+    //   }
+    // },
     {
-      accessorKey: 'applicationStatus',
-      header: 'Application Status',
+      id: 'actions',
+      header: 'Actions',
       meta: { align: 'center' },
-      cell: ({ getValue }: CellContext<AdmissionTableRow, string>) => {
-        const rawStatus = getValue<string>();
-        return (
-          <div className="text-primary font-semibold">{formatApplicationStatus(rawStatus)}</div>
-        );
-      }
+      cell: ({ row }: any) => (
+        <Button
+          variant={'outline'}
+          className="cursor-pointer mx-auto"
+          onClick={() => handleDownload(row.original)}
+        >
+          <span className="mx-auto font-inter font-semibold text-[12px] text-black">Download</span>
+          <Download className="text-primary" />
+        </Button>
+      )
     }
   ];
 
@@ -101,14 +113,14 @@ export default function RecentAdmissionsPage() {
 
   return (
     <>
-      <TechnoPageTitle title="Admission Application Process" />
+      <TechnoPageTitle title="Recent Admissions" />
 
       <TechnoDataTable
         selectedRowId={selectedRowId}
         setSelectedRowId={setSelectedRowId}
         columns={columns}
         data={admissionsData}
-        tableName="Recent Applications"
+        tableName={`Recent Applications (${Object.values(admissionsData).length}) `}
         currentPage={1}
         totalPages={1}
         pageLimit={10}

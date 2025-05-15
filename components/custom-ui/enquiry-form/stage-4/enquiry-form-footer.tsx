@@ -14,6 +14,7 @@ import { FaCircleExclamation } from 'react-icons/fa6';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
+import { BadgeIndianRupee, Check } from 'lucide-react';
 
 interface EnquiryFormFooterProps {
   form: UseFormReturn<any>;
@@ -49,9 +50,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
         setSubmitDialogOpen(false);
       }
     } catch {
-      if (closeOnError) {
-        setSubmitDialogOpen(false);
-      }
+      setSubmitDialogOpen(true);
     }
   }
 
@@ -117,20 +116,24 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             }
           >
             <span className="font-inter font-semibold text-[12px]">
-              {form.formState.isSubmitting ? 'Submitting...' : 'Submit & Continue'}
+              {form.formState.isSubmitting ? 'Submitting...' : 'Record Deposit & Confirm Admission'}
             </span>
           </Button>
         </DialogTrigger>
         <DialogContent className="max-w-[444px]">
           <DialogHeader>
-            <DialogTitle>
-              {form.formState.isSubmitting ? 'Submitting Enquiry...' : 'Submit & Continue'}
+            <div className="inline-flex w-max mx-auto items-center justify-center p-1 bg-green-200 rounded-full mb-6">
+              <BadgeIndianRupee size={50} className="text-green-700" />
+            </div>
+            <DialogTitle className="text-2xl font-bold text-center">
+              {form.formState.isSubmitting
+                ? 'Submitting Enquiry...'
+                : 'Record Deposit & Confirm Admission'}
             </DialogTitle>
+            <div className="flex gap-2 justify-center items-center text-sm">
+              <span>Please reverify all details again before submitting.</span>
+            </div>
           </DialogHeader>
-          <div className="flex gap-2 items-center text-left">
-            <FaCircleExclamation className="text-yellow-500 w-8 h-8" />
-            <span>Please reverify all details again before submitting.</span>
-          </div>
           {customSaveDialog}
           <DialogFooter>
             <DialogClose asChild>

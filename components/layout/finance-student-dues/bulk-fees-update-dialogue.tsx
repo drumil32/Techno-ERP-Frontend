@@ -20,7 +20,7 @@ import { FilterData } from '@/components/custom-ui/filter/type';
 
 // Zod schema for validation
 const feeSchema = z.object({
-  finalFees: z.number().positive('Fee must be greater than 0').optional()
+  finalFees: z.number().positive('Fee must be greater than 0').optional().default(0)
 });
 
 interface StudentFee {

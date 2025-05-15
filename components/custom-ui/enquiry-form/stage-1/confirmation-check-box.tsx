@@ -44,9 +44,9 @@ const ConfirmationCheckBox: React.FC<ConfirmationCheckBoxInterface> = ({
               </label>
             </div>
           </FormControl>
-          <div className="h-[20px]">
-            <FormMessage className="text-[11px]" />
-          </div>
+          {/* <div className="h-[20px]"> */}
+          <FormMessage className="text-[11px]" />
+          {/* </div> */}
         </FormItem>
       )}
     />

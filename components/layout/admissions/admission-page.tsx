@@ -125,7 +125,7 @@ export default function AdmissionsLandingPage() {
         setSelectedRowId={setSelectedRowId}
         columns={columns}
         data={admissionsData}
-        tableName={'Ongoing Applications'}
+        tableName={`Ongoing Applications (${Object.values(admissionsData).length}) `}
         currentPage={1}
         totalPages={1}
         pageLimit={10}
