@@ -243,7 +243,19 @@ const FinanceOfficeForm = () => {
     let totalDeposited = 0;
 
     if (otherFeesData) {
-      totalOriginal = otherFeesData.reduce((sum: any, fee: any) => sum + (fee.amount ?? 0), 0);
+      // while summing up total original we will ignore for hostel and transport as that will be added directly in display :)
+      const value =
+        form.getValues('otherFees.6.finalFee')! + form.getValues('otherFees.7.finalFee')!;
+      totalOriginal =
+        otherFeesData.reduce(
+          (sum: any, fee: any) =>
+            sum +
+            (fee.type === displayFeeMapper(FeeType.TRANSPORT) ||
+            fee.type === displayFeeMapper(FeeType.HOSTEL)
+              ? 0
+              : (fee.amount ?? 0)),
+          0
+        ) + value;
     }
 
     (otherFeesWatched ?? []).forEach((fee) => {
@@ -366,8 +378,6 @@ const FinanceOfficeForm = () => {
         transactionType: transactionTypeRef.current
       });
 
-      console.log('I am there my dear friend', response);
-
       if (!response) {
         return false;
       }
@@ -384,13 +394,24 @@ const FinanceOfficeForm = () => {
     }
   }
 
+  const sourceField = 'otherFees.0.finalFee';
+  const sourceValue = form.watch(sourceField);
+
+  useEffect(() => {
+    form.setValue('semWiseFees.0.finalFee', sourceValue);
+  }, [sourceValue]);
+
+  const handleOtherFeesChange = (value: number) => {
+    form.setValue(sourceField, value);
+  };
+
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
     return <Loading />;
   }
 
   return (
     <Form {...form}>
-      <form className="pt-8 mr-[25px] space-y-8 flex flex-col w-full overflow-x-hidden relative">
+      <form className="pt-8 mr-[25px] space-y-8 flex flex-col w-full  relative">
         <ShowStudentData data={enquiryData} />
 
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="other-fees">
@@ -419,16 +440,36 @@ const FinanceOfficeForm = () => {
                         ? fee.type === feeType
                         : fee.type === displayFeeMapper(feeType)
                     );
-                    const totalFee = originalFeeData?.amount;
+
+                    let totalFee;
+                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                      totalFee = form.getValues(`otherFees.${index}.finalFee`);
+                    } else {
+                      totalFee = originalFeeData?.amount;
+                    }
+
                     const finalFee = otherFeesWatched?.[index]?.finalFee;
+
                     const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
-                    const discountValue =
-                      finalFee != undefined ? calculateDiscountPercentage(totalFee, finalFee) : '-';
+
+                    let discountValue;
+                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                      discountValue = '-';
+                    } else {
+                      discountValue =
+                        finalFee != undefined
+                          ? calculateDiscountPercentage(totalFee, finalFee)
+                          : '-';
+                    }
                     const discountDisplay =
                       typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
                     const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
 
-                    if (totalFee === 0) {
+                    if (
+                      totalFee === 0 &&
+                      feeType != FeeType.TRANSPORT &&
+                      feeType != FeeType.HOSTEL
+                    ) {
                       return;
                     }
 
@@ -569,19 +610,21 @@ const FinanceOfficeForm = () => {
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                           Fees Applicable ?<span className="text-red-500 pl-0">*</span>
                         </FormLabel>
-                        <FormItem className="flex h-[36px] w-full sm:w-[300px]  flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              disabled={isViewable}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666]">
-                              {field.value ? 'No Zero Fees' : 'Zero Fees'}
-                            </FormLabel>
-                          </div>
+                        <FormItem className="flex h-[36px] w-full sm:w-[300px] flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
+                          <label className="flex w-full cursor-pointer items-center space-x-3">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                disabled={isViewable}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666] cursor-pointer">
+                                {field.value ? 'No Zero Fees' : 'Zero Fees'}
+                              </FormLabel>
+                            </div>
+                          </label>
                         </FormItem>
                       </>
                     )}
@@ -670,11 +713,8 @@ const FinanceOfficeForm = () => {
                                         formField.onChange(value === '' ? null : Number(value));
                                       }
                                     }}
-                                    value={
-                                      index === 0
-                                        ? (form.getValues('otherFees')[index].finalFee ?? '')
-                                        : (formField.value ?? 0)
-                                    }
+                                    readOnly={index === 0}
+                                    value={formField.value ?? 0}
                                   />
                                 </FormControl>
                                 <FormMessage className="text-xs mt-1" />

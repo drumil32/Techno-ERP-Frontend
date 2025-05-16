@@ -16,6 +16,7 @@ export const SITE_MAP = {
     DEFAULT: '/c/admissions/application-process',
     RECENT_ADMISSIONS: '/c/admissions/recent-admissions',
     CREATE_ADMISSION: '/c/admissions/application-process/new',
+    ONGOING_ADMISSION: '/c/admissions/application-process/ongoing',
     FORM_STAGE_1: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_1`,
     FORM_STAGE_2: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_2`,
     FORM_STAGE_3: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_3`,

@@ -20,8 +20,8 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
 
   const feeTotals = semesterWiseFeesInformation.reduce(
     (totals, item) => {
-      totals.finalFee += item.finalFee ?? 0
-      totals.paidAmount += (item.dueDate ? item.paidAmount : 0 )
+      totals.finalFee += (item.dueDate ? item.finalFee : 0)
+      totals.paidAmount += (item.dueDate ? item.paidAmount : 0)
       totals.dueFees += (item.dueDate ? item.finalFee - item.paidAmount : 0)
       return totals
     },
@@ -54,7 +54,7 @@ export default function SemesterWiseFeesDetails({ studentDetails, semesterWiseFe
                 <TableCell>{semFee.sno}</TableCell>
                 <TableCell>{semFee.academicYear}</TableCell>
                 <TableCell>0{semFee.semesterNumber}</TableCell>
-                <TableCell className="text-right">{semFee.finalFee != null ? `₹ ${semFee.finalFee.toLocaleString()}` : '--'}</TableCell>
+                <TableCell className="text-right">{semFee.finalFee != null && semFee.dueDate ? `₹ ${semFee.finalFee.toLocaleString()}` : '--'}</TableCell>
                 <TableCell className="text-right">{semFee.paidAmount != null && semFee.dueDate ? `₹ ${semFee.paidAmount.toLocaleString()}` : '--'}</TableCell>
                 <TableCell className="text-right">{semFee.dueFees != null && semFee.dueDate ? `₹ ${semFee.dueFees.toLocaleString()}` : '--'}</TableCell>
                 <TableCell className=" pl-8">{semFee.dueDate ? format(semFee.dueDate, 'dd/MM/yyyy') : '--'}</TableCell>

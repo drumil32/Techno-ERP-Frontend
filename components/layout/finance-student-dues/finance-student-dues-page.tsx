@@ -8,7 +8,7 @@ import { LuDownload } from 'react-icons/lu';
 import { StudentDue, StudentDuesApiResponse } from '@/types/finance';
 import { useEffect, useRef, useState } from 'react';
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
-import { Course, CourseNameMapper, FeesPaidStatus } from '@/types/enum';
+import { FeesPaidStatus } from '@/types/enum';
 import { useRouter } from 'next/navigation';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import BulkFeeUpdateDialogue from './bulk-fees-update-dialogue';
@@ -25,17 +25,12 @@ import {
 } from '@/components/ui/select';
 import { toWordsOrdinal } from 'number-to-words';
 import { capitalize } from '@/lib/capitalize';
-import TechnoBreadCrumb from '@/components/custom-ui/breadcrump/techno-breadcrumb';
 import AdvancedTechnoBreadcrumb from '@/components/custom-ui/breadcrump/advanced-techno-breadcrumb';
 import Loading from '@/app/c/marketing/loading';
 
-interface RefinedStudentDue extends StudentDue {
-  id: number;
-}
-
 export default function StudentDuesPage() {
   const [academicYear, setAcademicYear] = useState(getCurrentAcademicYear());
-  const academicYearDropdownData = generateAcademicYearDropdown();
+  const academicYearDropdownData = generateAcademicYearDropdown(0, 1);
   const router = useRouter();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -119,7 +114,7 @@ export default function StudentDuesPage() {
   const columns = [
     { accessorKey: 'serialNo', header: 'S. No' },
     { accessorKey: 'studentName', header: 'Student Name' },
-    { accessorKey: 'universityId', header: 'Student Id' },
+    { accessorKey: 'universityId', header: 'Student ID' },
     { accessorKey: 'studentPhoneNumber', header: "Student's Phone Number" },
     { accessorKey: 'fatherName', header: 'Father Name' },
     { accessorKey: 'fatherPhoneNumber', header: "Father's Phone Number" },

@@ -35,6 +35,7 @@ export default function SelectedStudentDuesDetails() {
     studentID: studentFeesInformation?.studentID || '',
     course: studentFeesInformation?.course || '',
     HOD: studentFeesInformation?.HOD || '',
+    semesterNumber: studentFeesInformation?.semesterNumber || 0,
     extraBalance: studentFeesInformation?.extraBalance
   };
 

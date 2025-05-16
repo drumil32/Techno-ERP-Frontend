@@ -71,21 +71,25 @@ export default function PremiumBreadCrumb({ rootUrl }: BreadCrumbProps) {
 
       breadcrumbs.push(
         <React.Fragment key={href}>
-          <BreadcrumbSeparator className="text-muted-foreground/50" />
-          <BreadcrumbItem>
-            {isLastItem ? (
-              <BreadcrumbPage className="text-primary font-semibold">
-                {formattedSegment}
-              </BreadcrumbPage>
-            ) : (
-              <BreadcrumbLink
-                href={isActiveLink ? href : undefined}
-                className={`transition-colors ${isActiveLink ? 'hover:text-primary/80 text-primary/70' : 'text-muted-foreground cursor-default'}`}
-              >
-                {formattedSegment}
-              </BreadcrumbLink>
-            )}
-          </BreadcrumbItem>
+          {(isActiveLink || isLastItem) && (
+            <BreadcrumbItem>
+              <BreadcrumbSeparator className="text-muted-foreground/50" />
+              {isLastItem ? (
+                <BreadcrumbPage className="text-primary font-semibold">
+                  {formattedSegment}
+                </BreadcrumbPage>
+              ) : (
+                <>
+                  <BreadcrumbLink
+                    href={isActiveLink ? href : undefined}
+                    className={`transition-colors ${isActiveLink ? 'hover:text-primary/80 text-primary/70' : 'text-muted-foreground cursor-default'}`}
+                  >
+                    {formattedSegment}
+                  </BreadcrumbLink>
+                </>
+              )}
+            </BreadcrumbItem>
+          )}
         </React.Fragment>
       );
     }

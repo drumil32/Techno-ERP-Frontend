@@ -66,7 +66,9 @@ export const validateCustomFeeLogic = (
     clearErrors(depositField);
 
     // Validation 1: Final Fee <= Original Fee
+    // Just an update as Transport fee and Hostel Fees are going to be dynamic and we are sure that final and original is gonna be exact same we have to ignore that part here
     if (
+      !(otherFee.type === FeeType.TRANSPORT || otherFee.type === FeeType.HOSTEL) &&
       typeof finalFee === 'number' &&
       typeof originalFeeAmount === 'number' &&
       finalFee > originalFeeAmount

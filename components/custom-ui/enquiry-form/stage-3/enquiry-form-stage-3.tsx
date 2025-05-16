@@ -140,8 +140,10 @@ const EnquiryFormStage3 = () => {
           }
         });
       }
-
       setNestedErrors(errors);
+      toast.error('Validation failed. Please check the form fields');
+      return false;
+
       throw new Error('Validation failed');
     }
 
@@ -217,6 +219,8 @@ const EnquiryFormStage3 = () => {
         }
 
         setNestedErrors(errors);
+        toast.error('Validation failed. Please check the form fields');
+        return false;
         throw new Error('Validation failed');
       }
 
@@ -228,10 +232,11 @@ const EnquiryFormStage3 = () => {
 
       form.setValue('confirmation', false);
       form.reset();
+      toast.success('Enquiry Updated Successfully');
       router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_4(enquiry._id));
       return true;
     } catch (error) {
-      toast.error('An error occurred during submission');
+      // toast.error('An error occurred during submission');
       return false;
     }
   };
