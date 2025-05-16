@@ -51,7 +51,7 @@ export default function AllTransactionsDetails({
   const handleReceiptDownload = (transactionId: string) => {
     console.log('Download receipt for transaction ID:', transactionId);
   }
-  
+
   return (
     <div className="w-full p-3 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="w-full flex p-2 items-center">
@@ -97,8 +97,8 @@ export default function AllTransactionsDetails({
                   />
                 </TableCell>
                 <TableCell className="w-[140px] text-center">
-                  <Button>
-                    <ReceiptIndianRupee size={12} /> Receipt
+                  <Button variant='outline' className='hover:ring-primary hover:ring-1' onClick={() => {handleReceiptDownload(transaction._id)}}>
+                    <ReceiptIndianRupee className='size-4' /> Receipt
                   </Button>
                 </TableCell>
               </TableRow>
