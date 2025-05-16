@@ -394,13 +394,24 @@ const FinanceOfficeForm = () => {
     }
   }
 
+  const sourceField = 'otherFees.0.finalFee';
+  const sourceValue = form.watch(sourceField);
+
+  useEffect(() => {
+    form.setValue('semWiseFees.0.finalFee', sourceValue);
+  }, [sourceValue]);
+
+  const handleOtherFeesChange = (value: number) => {
+    form.setValue(sourceField, value);
+  };
+
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
     return <Loading />;
   }
 
   return (
     <Form {...form}>
-      <form className="pt-8 mr-[25px] space-y-8 flex flex-col w-full overflow-x-hidden relative">
+      <form className="pt-8 mr-[25px] space-y-8 flex flex-col w-full  relative">
         <ShowStudentData data={enquiryData} />
 
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="other-fees">
@@ -430,7 +441,6 @@ const FinanceOfficeForm = () => {
                         : fee.type === displayFeeMapper(feeType)
                     );
 
-                    // Handling special case for hostel and transport fees for total fees
                     let totalFee;
                     if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
                       totalFee = form.getValues(`otherFees.${index}.finalFee`);
@@ -703,11 +713,8 @@ const FinanceOfficeForm = () => {
                                         formField.onChange(value === '' ? null : Number(value));
                                       }
                                     }}
-                                    value={
-                                      index === 0
-                                        ? (form.getValues('otherFees')[index].finalFee ?? '')
-                                        : (formField.value ?? 0)
-                                    }
+                                    readOnly={index === 0}
+                                    value={formField.value ?? 0}
                                   />
                                 </FormControl>
                                 <FormMessage className="text-xs mt-1" />

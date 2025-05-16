@@ -63,13 +63,14 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     } catch {
       setDraftSaved(false);
     } finally {
+      setSubmitDialogOpen(false);
       setDraftDialogOpen(false);
     }
   }
 
   return (
-    <div className="sticky bottom-0 left-0 z-10 flex items-center justify-between space-x-4 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
-      <div className="absolute bottom-0 left-0 -z-100 w-screen bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]"></div>
+    <div className="sticky bottom-0 left-0 z-10 flex items-center justify-between space-x-4 p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] overflow-hidden">
+      <div className="absolute bottom-0 left-0 -z-100 w-screen bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)] overflow-hidden"></div>
 
       <Dialog open={isDraftDialogOpen} onOpenChange={setDraftDialogOpen}>
         <DialogTrigger asChild>
@@ -113,6 +114,9 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
         <DialogTrigger asChild>
           <Button
             type="button"
+            onClick={() => {
+              handleDialogSaveDraft();
+            }}
             disabled={
               !confirmationChecked || !draftSaved || form.formState.isSubmitting || isSavingDraft
             }

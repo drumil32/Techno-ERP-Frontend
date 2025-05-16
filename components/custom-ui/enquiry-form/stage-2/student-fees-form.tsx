@@ -11,7 +11,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
 import { getCounsellors, getEnquiry, getTeleCallers } from '../stage-1/enquiry-form-api';
-import { useEffect, useMemo, useState } from 'react';
+import { use, useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
   Form,
@@ -57,7 +57,7 @@ import FilledByCollegeSection from '../stage-1/filled-by-college-section';
 import clsx from 'clsx';
 import { Select, SelectContent, Value } from '@radix-ui/react-select';
 import { SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { read } from 'fs';
+import { read, watch } from 'fs';
 import { Checkbox } from '@/components/ui/checkbox';
 
 export const calculateDiscountPercentage = (
@@ -670,6 +670,17 @@ export const StudentFeesForm = () => {
     }
   }
 
+  const sourceField = 'otherFees.0.finalFee';
+  const sourceValue = form.watch(sourceField);
+
+  useEffect(() => {
+    form.setValue('semWiseFees.0.finalFee', sourceValue);
+  }, [sourceValue]);
+
+  const handleOtherFeesChange = (value: number) => {
+    form.setValue(sourceField, value);
+  };
+
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
     return <Loading />;
   }
@@ -709,7 +720,6 @@ export const StudentFeesForm = () => {
                         : fee.type === displayFeeMapper(feeType)
                     );
 
-                    // Handling special case for hostel and transport fees for total fees
                     let totalFee;
                     if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
                       totalFee = form.getValues(`otherFees.${index}.finalFee`);
@@ -983,11 +993,8 @@ export const StudentFeesForm = () => {
                                         formField.onChange(value === '' ? null : Number(value));
                                       }
                                     }}
-                                    value={
-                                      index === 0
-                                        ? (form.getValues('otherFees')[index].finalFee ?? '')
-                                        : (formField.value ?? 0)
-                                    }
+                                    readOnly={index === 0}
+                                    value={formField.value ?? 0}
                                   />
                                 </FormControl>
                                 <FormMessage className="text-xs mt-1" />
