@@ -177,7 +177,7 @@ export default function SelectedCourseDuesDetails() {
 function TableActionButton() {
   return (
     <>
-      <Button className="h-8 rounded-[10px] border" icon={LuDownload}>
+      <Button className="h-8 rounded-[10px] border" icon={LuDownload} disabled>
         <span className="font-inter font-semibold text-[12px]">Download</span>
       </Button>
     </>

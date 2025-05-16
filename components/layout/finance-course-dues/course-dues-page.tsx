@@ -26,6 +26,7 @@ import { getCurrentAcademicYear } from '@/lib/getCurrentAcademicYear';
 import TechnoBreadCrumb from '@/components/custom-ui/breadcrump/techno-breadcrumb';
 import AdvancedTechnoBreadcrumb from '@/components/custom-ui/breadcrump/advanced-techno-breadcrumb';
 import Loading from '@/app/c/marketing/loading';
+import SendEmailDialog from './send-email-dialog';
 
 const collegeOptions = [
   { id: 'ALL', label: 'All' },
@@ -134,7 +135,20 @@ export default function CourseDuesDetails() {
       cell: ({ row }: any) => <span>{`₹ ${row.original.totalDue.toLocaleString()}`}</span>
     },
     { accessorKey: 'departmentHODName', header: 'Course Head' },
-    { accessorKey: 'departmentHODEmail', header: 'Course Head Contact' }
+    {
+      accessorKey: 'departmentHODEmail', header: 'Course Head Contact',
+      meta: {
+        align: 'center'
+      },
+      cell: ({ row }: any) => {
+        return (
+          <div className='flex gap-5 items-center justify-center w-full'>
+            <div>{`${row.original.departmentHODEmail}`}</div>
+            <SendEmailDialog hodName={row.original.departmentHODName} hodEmail={row.original.departmentHODEmail} />
+          </div>
+        )
+      }
+    }
   ];
 
   // const { filters, updateFilter } = useTechnoFilterContext();
@@ -231,7 +245,7 @@ function CourseTableActionButton() {
 
   return (
     <>
-      <Button onClick={handleDownload} className="h-8 rounded-[10px] border" icon={LuDownload}>
+      <Button onClick={handleDownload} className="h-8 rounded-[10px] border" icon={LuDownload} disabled>
         <span className="font-inter font-semibold text-[12px]">Download</span>
       </Button>
     </>

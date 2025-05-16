@@ -10,9 +10,11 @@ import {
 } from '@/components/ui/table';
 import FeeActionTag from '../fees-action-tag';
 import { FeeActions, TransactionTypes } from '@/types/enum';
-import TxnTypaTag from '../txn-type-tag';
+import TxnTypeTag from '../txn-type-tag';
 import { format } from 'date-fns';
 import { TruncatedCell } from '@/components/custom-ui/data-table/techno-data-table';
+import { Button } from '@/components/ui/button';
+import { ReceiptIndianRupee } from 'lucide-react';
 
 type ExtendedTransaction = Transaction & {
   sno: number;
@@ -46,6 +48,10 @@ export default function AllTransactionsDetails({
     { amount: 0 }
   );
 
+  const handleReceiptDownload = (transactionId: string) => {
+    console.log('Download receipt for transaction ID:', transactionId);
+  }
+  
   return (
     <div className="w-full p-3 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="w-full flex p-2 items-center">
@@ -62,7 +68,8 @@ export default function AllTransactionsDetails({
               <TableHead className="w-[120px]">Fees Action</TableHead>
               <TableHead className="w-[80px] text-right">Amount</TableHead>
               <TableHead className="w-[110px]">Transaction Type</TableHead>
-              <TableHead className="w-auto rounded-r-[5px]">Remarks</TableHead>
+              <TableHead className="w-auto ">Remarks</TableHead>
+              <TableHead className="w-auto rounded-r-[5px]">Download Receipt</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -81,13 +88,18 @@ export default function AllTransactionsDetails({
                   {transaction.amount != null ? `₹ ${transaction.amount.toLocaleString()}` : '--'}
                 </TableCell>
                 <TableCell className="w-[110px]">
-                  <TxnTypaTag status={transaction.txnType as TransactionTypes} />
+                  <TxnTypeTag status={transaction.txnType as TransactionTypes} />
                 </TableCell>
                 <TableCell className="">
                   <TruncatedCell
                     value={!transaction.remark ? '--' : transaction.remark}
-                    maxWidth={300}
+                    maxWidth={400}
                   />
+                </TableCell>
+                <TableCell className="w-[140px] text-center">
+                  <Button>
+                    <ReceiptIndianRupee size={12} /> Receipt
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
@@ -100,7 +112,7 @@ export default function AllTransactionsDetails({
               <TableCell className="rounded-r-[5px] text-right">
                 ₹{amountTotal?.amount.toLocaleString()}
               </TableCell>
-              <TableCell className="rounded-r-[5px]" colSpan={2}>
+              <TableCell className="rounded-r-[5px]" colSpan={3}>
                 {''}
               </TableCell>
             </TableRow>

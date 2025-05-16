@@ -2,8 +2,8 @@ import { toPascal } from "@/lib/utils";
 import { FeeActions } from "@/types/enum";
 
 const feesActionTagStype: Record<FeeActions, string> = {
-  [FeeActions.REFUND]: 'bg-green-100 text-green-700',
-  [FeeActions.DEPOSIT]: 'bg-rose-100 text-rose-700',
+  [FeeActions.DEPOSIT]: 'bg-green-100 text-green-700',
+  [FeeActions.REFUND]: 'bg-rose-100 text-rose-700',
 };
 
 interface FeesActionTagProps {
