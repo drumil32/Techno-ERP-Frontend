@@ -317,13 +317,27 @@ export const StudentFeesForm = () => {
     }
   }, [enquiryData, error, semWiseFeesData, semWiseFeeError, form, enquiry_id, otherFeesData]);
 
+  //this state is specially created because we are having requirement for user to change few fees dynamically so we can add that in total and have sync properly
+
   const otherFeesTotals = useMemo(() => {
     let totalOriginal = 0;
     let totalFinal = 0;
     let totalDeposited = 0;
 
     if (otherFeesData) {
-      totalOriginal = otherFeesData.reduce((sum: any, fee: any) => sum + (fee.amount ?? 0), 0);
+      // while summing up total original we will ignore for hostel and transport as that will be added directly in display :)
+      const value =
+        form.getValues('otherFees.6.finalFee')! + form.getValues('otherFees.7.finalFee')!;
+      totalOriginal =
+        otherFeesData.reduce(
+          (sum: any, fee: any) =>
+            sum +
+            (fee.type === displayFeeMapper(FeeType.TRANSPORT) ||
+            fee.type === displayFeeMapper(FeeType.HOSTEL)
+              ? 0
+              : (fee.amount ?? 0)),
+          0
+        ) + value;
     }
 
     (otherFeesWatched ?? []).forEach((fee) => {
@@ -521,7 +535,6 @@ export const StudentFeesForm = () => {
     form.clearErrors();
 
     const currentValues = form.getValues();
-    console.log('current values of the form ', currentValues);
     const existingDraftId = enquiryData?.studentFeeDraft?._id;
 
     const isCustomValid = validateCustomFeeLogic(
@@ -549,7 +562,6 @@ export const StudentFeesForm = () => {
         }
       });
       setIsSavingDraft(false);
-      console.log('trust me I have done this already ');
       return false;
     }
 
@@ -696,16 +708,37 @@ export const StudentFeesForm = () => {
                         ? fee.type === feeType
                         : fee.type === displayFeeMapper(feeType)
                     );
-                    const totalFee = originalFeeData?.amount;
+
+                    // Handling special case for hostel and transport fees for total fees
+                    let totalFee;
+                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                      totalFee = form.getValues(`otherFees.${index}.finalFee`);
+                    } else {
+                      totalFee = originalFeeData?.amount;
+                    }
+
                     const finalFee = otherFeesWatched?.[index]?.finalFee;
+
                     const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
-                    const discountValue =
-                      finalFee != undefined ? calculateDiscountPercentage(totalFee, finalFee) : '-';
+
+                    let discountValue;
+                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                      discountValue = '-';
+                    } else {
+                      discountValue =
+                        finalFee != undefined
+                          ? calculateDiscountPercentage(totalFee, finalFee)
+                          : '-';
+                    }
                     const discountDisplay =
                       typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
                     const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
 
-                    if (totalFee === 0) {
+                    if (
+                      totalFee === 0 &&
+                      feeType != FeeType.TRANSPORT &&
+                      feeType != FeeType.HOSTEL
+                    ) {
                       return;
                     }
 
@@ -846,19 +879,21 @@ export const StudentFeesForm = () => {
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                           Fees Applicable ?<span className="text-red-500 pl-0">*</span>
                         </FormLabel>
-                        <FormItem className="flex h-[36px] w-full sm:w-[300px]  flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              disabled={isViewable}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666]">
-                              {field.value ? 'No Zero Fees' : 'Zero Fees'}
-                            </FormLabel>
-                          </div>
+                        <FormItem className="flex h-[36px] w-full sm:w-[300px] flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
+                          <label className="flex w-full cursor-pointer items-center space-x-3">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                disabled={isViewable}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666] cursor-pointer">
+                                {field.value ? 'No Zero Fees' : 'Zero Fees'}
+                              </FormLabel>
+                            </div>
+                          </label>
                         </FormItem>
                       </>
                     )}

@@ -48,9 +48,11 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
         toast.success('Enquiry got confirmed successfully');
         router.push(SITE_MAP.ADMISSIONS.DEFAULT);
         setSubmitDialogOpen(false);
+      } else {
+        setSubmitDialogOpen(false);
       }
     } catch {
-      setSubmitDialogOpen(true);
+      setSubmitDialogOpen(false);
     }
   }
 

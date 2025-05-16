@@ -181,7 +181,7 @@ export const enquirySchema = z.object({
   religion: z.nativeEnum(Religion).optional(),
   bloodGroup: z.nativeEnum(BloodGroup).optional(),
   previousCollegeData: previousCollegeDataSchema.optional(),
-  stateOfDomicile: z.nativeEnum(StatesOfIndia),
+  stateOfDomicile: z.nativeEnum(StatesOfIndia).default(StatesOfIndia.UttarPradesh),
   areaType: z.nativeEnum(AreaType).optional(),
   nationality: z.string().optional(),
   entranceExamDetails: entranceExamDetailSchema.optional(),

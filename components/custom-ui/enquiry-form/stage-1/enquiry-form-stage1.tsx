@@ -189,6 +189,8 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       }
 
       setNestedErrors(validationResult.error.format());
+
+      return false;
       throw new Error('Validation failed');
     }
 
@@ -263,6 +265,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       }
 
       setNestedErrors(validation.error.format());
+      return false;
       throw new Error('Validation failed');
     }
     const enquiry: any = await createEnquiry(rest);

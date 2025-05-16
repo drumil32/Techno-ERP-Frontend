@@ -61,7 +61,7 @@ export default function AdmissionFormLayout({ children }: { children: React.Reac
       <TechnoTopHeader headerItems={HEADER_ITEMS} />
       <div className="flex flex-col px-4 py-4 gap-6">
         <PremiumBreadCrumb rootUrl={SITE_MAP.ADMISSIONS.DEFAULT} />
-        <div className="flex items-center">
+        <div className="flex items-center flex-col justify-center lg:justify-normal lg:flex-row flex-wrap">
           <h1 className="text-2xl font-semibold text-gray-800 dark:text-white">
             Admission Application Process
           </h1>

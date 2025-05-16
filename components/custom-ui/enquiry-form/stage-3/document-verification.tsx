@@ -21,6 +21,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { UseFormReturn } from 'react-hook-form';
 import axios from 'axios';
 import { API_DOMAIN } from '@/common/constants/apiEndpoints';
+import { PopoverClose } from '@radix-ui/react-popover';
 
 export enum PhysicalDocumentNoteStatus {
   PENDING = 'PENDING',
@@ -259,13 +260,17 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                         </PopoverTrigger>
                         {doc.status === PhysicalDocumentNoteStatus.PENDING && (
                           <PopoverContent className="w-auto p-0">
-                            <Calendar
-                              mode="single"
-                              selected={doc.dueBy}
-                              onSelect={(date) => handleDueDateChange(doc.id, date)}
-                              disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
-                              initialFocus
-                            />
+                            <PopoverClose>
+                              <Calendar
+                                mode="single"
+                                selected={doc.dueBy}
+                                onSelect={(date) => handleDueDateChange(doc.id, date)}
+                                disabled={(date) =>
+                                  date < new Date(new Date().setHours(0, 0, 0, 0))
+                                }
+                                initialFocus
+                              />
+                            </PopoverClose>
                           </PopoverContent>
                         )}
                       </Popover>
