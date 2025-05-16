@@ -17,7 +17,7 @@ export const getDisplayFields = (formData: Record<string, any>) => {
     { label: 'Email ID', value: formData.emailId },
     { label: 'Student ID', value: formData.studentID },
     { label: 'Form No.', value: formData.formNo },
-    { label: 'Lurn/ Pre-registration No', value: formData.lurnRegistrationNo },
+    { label: 'LURN/Pre-registration No', value: formData.lurnRegistrationNo },
     { label: "Father's Name", value: formData.fatherName },
     { label: "Father's Phone Number", value: formData.fatherPhoneNumber },
     { label: "Father's Occupation", value: formData.fatherOccupation },

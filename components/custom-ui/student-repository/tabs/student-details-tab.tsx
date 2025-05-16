@@ -5,7 +5,6 @@ import { Form } from '@/components/ui/form';
 import { UseFormReturn } from 'react-hook-form';
 import { updateStudentDetailsRequestSchema } from '../helpers/schema';
 import { z } from 'zod';
-import AcademicDetailsSection from '../sub-sections/academic-details';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
 import { updateStudent } from '../helpers/api';
 import { toast } from 'sonner';
@@ -15,6 +14,7 @@ import {
   IAcademicDetailArraySchema,
   IAcademicDetailSchema
 } from '../../enquiry-form/schema/schema';
+import PastAcademicDetailsSection from '../sub-sections/past-academic-details';
 
 interface StudentDetailsTabProps {
   personalDetailsForm: UseFormReturn<z.infer<typeof updateStudentDetailsRequestSchema>>;
@@ -145,8 +145,8 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
         handleSave={handleSave}
       />
 
-      {/* Academic Details */}
-      <AcademicDetailsSection
+      {/* Past Academic Details */}
+      <PastAcademicDetailsSection
         form={personalDetailsForm}
         commonFieldClass={commonFieldClass}
         commonFormItemClass={commonFormItemClass}

@@ -120,8 +120,8 @@ const ProfilePicSection = ({
   };
 
   return (
-    <div className="bg-white rounded-lg py-4 px-6 flex flex-col items-center justify-center gap-2">
-      <div className="relative w-24 h-24 overflow-hidden group">
+    <div className="bg-white shadow-sm rounded-lg py-4 px-6 flex flex-col items-center justify-center gap-2">
+      <div className="relative w-32 h-32 overflow-hidden group">
         <Image
           src={image || '/images/default-profile.png'}
           alt={`${name}'s Profile Picture`}
@@ -183,7 +183,7 @@ const StudentProfileView = ({ studentData }: { studentData: StudentData }) => {
     },
     { label: 'Semester', value: currentSemester },
     { label: 'Form No.', value: studentInfo?.formNo },
-    { label: 'Lurn/Pre-registration No.', value: studentInfo?.lurnRegistrationNo }
+    { label: 'LURN/Pre-registration No.', value: studentInfo?.lurnRegistrationNo }
   ];
 
   return (
