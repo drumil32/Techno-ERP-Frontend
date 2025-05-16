@@ -154,8 +154,7 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
     return useMutation({
       mutationFn: updateDocument,
       onSuccess: (data: any) => {
-        const updatedDocuments = data?.studentInfo?.documents;
-        queryClient.invalidateQueries({ queryKey: ['student'] });
+        queryClient.invalidateQueries({ queryKey: ['student', studentData._id] });
       },
       onError: (error) => {
         console.error('Update failed:', error);
