@@ -172,9 +172,8 @@ const StudentProfileView = ({ studentData }: { studentData: StudentData }) => {
   // Define fields to display
   const studentDisplayFields: FieldDefinition[] = [
     { label: 'Student Name', value: studentInfo?.studentName },
-    { label: 'Student ID', value: studentInfo?.universityId },
-    { label: "Father's Name", value: studentInfo?.fatherName },
     { label: "Student's Phone Number", value: studentInfo?.studentPhoneNumber },
+    { label: "Father's Name", value: studentInfo?.fatherName },
     { label: "Father's Phone Number", value: studentInfo?.fatherPhoneNumber },
     { label: 'Course Code', value: courseCode },
     {
@@ -182,6 +181,7 @@ const StudentProfileView = ({ studentData }: { studentData: StudentData }) => {
       value: currentAcademicYear ? formatYearRange(currentAcademicYear) : undefined
     },
     { label: 'Semester', value: currentSemester },
+    { label: 'Student ID', value: studentInfo?.universityId },
     { label: 'Form No.', value: studentInfo?.formNo },
     { label: 'LURN/Pre-registration No.', value: studentInfo?.lurnRegistrationNo }
   ];
