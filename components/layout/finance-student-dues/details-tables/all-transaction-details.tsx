@@ -97,7 +97,7 @@ export default function AllTransactionsDetails({
                   />
                 </TableCell>
                 <TableCell className="w-[140px] text-center">
-                  <Button variant='outline' className='hover:ring-primary hover:ring-1' onClick={() => {handleReceiptDownload(transaction._id)}}>
+                  <Button variant='outline' className='ring-primary ring-1 text-primary hover:bg-primary/80 hover:ring-transparent hover:text-white' onClick={() => {handleReceiptDownload(transaction._id)}}>
                     <ReceiptIndianRupee className='size-4' /> Receipt
                   </Button>
                 </TableCell>
