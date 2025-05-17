@@ -56,12 +56,13 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     }
   }
 
-  async function handleDialogSaveDraft() {
+  async function handleDialogSaveDraft(isFromSubmit?: boolean) {
     try {
       const result = await saveDraft();
-      setDraftSaved(result !== false);
+      if (!isFromSubmit) setDraftSaved(result !== false);
     } catch {
-      setDraftSaved(false);
+      setSubmitDialogOpen(false);
+      if (!isFromSubmit) setDraftSaved(false);
     } finally {
       setDraftDialogOpen(false);
     }
@@ -102,7 +103,13 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="button" onClick={handleDialogSaveDraft} disabled={isSavingDraft}>
+            <Button
+              type="button"
+              onClick={() => {
+                handleDialogSaveDraft(true);
+              }}
+              disabled={isSavingDraft}
+            >
               {isSavingDraft ? 'Saving...' : 'Confirm'}
             </Button>
           </DialogFooter>
