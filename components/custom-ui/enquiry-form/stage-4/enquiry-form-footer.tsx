@@ -63,7 +63,6 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     } catch {
       setDraftSaved(false);
     } finally {
-      setSubmitDialogOpen(false);
       setDraftDialogOpen(false);
     }
   }
