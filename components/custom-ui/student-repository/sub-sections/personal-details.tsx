@@ -236,7 +236,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                       </FormItem>
                     )}
                   />
-                  {/* Lurn/ Pre-registration No */}
+                  {/* LURN/Pre-registration No */}
                   <FormField
                     disabled={true}
                     key="lurnRegistrationNo"
@@ -245,7 +245,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                          Lurn/ Pre-registration No
+                          LURN/Pre-registration No
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
                         <FormControl>
@@ -254,7 +254,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                             {...field}
                             value={field.value ?? ''}
                             className={commonFieldClass}
-                            placeholder="Enter the Lurn/ Pre-registration No"
+                            placeholder="Enter the LURN/Pre-registration No"
                           />
                         </FormControl>
                         <div className="h-[20px]">
