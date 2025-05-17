@@ -33,7 +33,7 @@ export interface StudentFeeInformationResponse {
   course: Course;
   extraBalance?: number;
   feeStatus: FeesPaidStatus;
-  semesterNumber?: number;
+  currentSemester?: number;
   semesterWiseFeeInformation: SemesterWiseFeeInformation[];
   semesterBreakUp: SemesterBreakUp[];
   transactionHistory: Transaction[];
@@ -96,7 +96,7 @@ export interface StudentDetails {
   feeStatus: FeesPaidStatus;
   course: string;
   HOD: string;
-  semesterNumber?: number;
+  currentSemester?: number;
   extraBalance?: number;
   universityId?: string;
 }

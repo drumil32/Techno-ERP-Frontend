@@ -4,6 +4,7 @@ import { StudentDetails } from "@/types/finance";
 import FeesPaidTag from "./fees-paid-status-tag";
 
 export default function StudentData({ studentData }: { studentData: StudentDetails }) {
+  console.log(studentData)
   return (
     <div className="w-full flex flex-row px-4 py-5 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="w-1/4 flex flex-col gap-3 ">
@@ -33,7 +34,7 @@ export default function StudentData({ studentData }: { studentData: StudentDetai
         </div>
         <div className="flex w-full h-7">
           <Label className="text-[#666666] w-1/3">Semester</Label>
-          <Label className="w-1/2">Semester 0{studentData.semesterNumber}</Label>
+          <Label className="w-1/2">{studentData.currentSemester ? `Semester 0${studentData.currentSemester}` : '--'}</Label>
         </div>
       </div>
       <div className="w-1/4 flex flex-col gap-3">
