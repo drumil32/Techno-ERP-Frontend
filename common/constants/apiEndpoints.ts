@@ -30,6 +30,7 @@ export const API_ENDPOINTS = {
 
   // Admissions
   admissionData: `${API_DOMAIN}/admission/enquiry/search`,
+  admissionReceipt: `${API_DOMAIN}/download-reciept/admission`,
   getEnquiry: (enquiry_id: string) => `${API_DOMAIN}/admission/enquiry/${enquiry_id}`,
   createEnquiry: `${API_DOMAIN}/admission/enquiry/step-1`,
   updateEnquiry: `${API_DOMAIN}/admission/enquiry/step-1`,
@@ -109,6 +110,7 @@ export const API_ENDPOINTS = {
 
 
   //Finance
+  transactionSlip: `${API_DOMAIN}/download-reciept/transaction-slip`,
   getStudentActiveDues: `${API_DOMAIN}/student/fees/active-dues`,
   getStudentFeeInformation: (student_id: string) => `${API_DOMAIN}/student/fees/fee-information/${student_id}`,
 

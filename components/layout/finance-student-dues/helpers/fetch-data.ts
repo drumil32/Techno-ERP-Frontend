@@ -62,3 +62,12 @@ export const fetchFeeBreakUpHistory = async (
 };
 
 
+export const fetchTransactionReceiptData = async (data:any) => {
+  const res = await apiRequest(
+    API_METHODS.POST,
+    API_ENDPOINTS.transactionSlip,
+    data
+  );
+  if (!res) throw new Error('Failed to fetch transaction receipt data');
+  return res;
+}

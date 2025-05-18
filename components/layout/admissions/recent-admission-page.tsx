@@ -18,6 +18,7 @@ import { formatApplicationStatus } from './helpers/format-application-status';
 import { CellContext } from '@tanstack/react-table';
 import { toast } from 'sonner';
 import Loading from '@/app/loading';
+import { DownloadAdmissionReceiptDialog } from './admission-receipt-download-dialog';
 
 export default function RecentAdmissionsPage() {
   const [search, setSearch] = useState('');
@@ -33,6 +34,7 @@ export default function RecentAdmissionsPage() {
   const handleDownload = (row: AdmissionTableRow) => {
     toast.info('Hang Tight download feature is yet under construction');
   };
+  
   const columns = [
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry', meta: { align: 'center' } },
@@ -60,14 +62,7 @@ export default function RecentAdmissionsPage() {
       header: 'Actions',
       meta: { align: 'center' },
       cell: ({ row }: any) => (
-        <Button
-          variant={'outline'}
-          className="cursor-pointer mx-auto"
-          onClick={() => handleDownload(row.original)}
-        >
-          <span className="mx-auto font-inter font-semibold text-[12px] text-black">Download</span>
-          <Download className="text-primary" />
-        </Button>
+        <DownloadAdmissionReceiptDialog studentId={row.original._id}/>
       )
     }
   ];
@@ -81,7 +76,7 @@ export default function RecentAdmissionsPage() {
       clearTimeout(searchTimerRef.current);
     }
 
-    searchTimerRef.current = setTimeout(() => {}, 500);
+    searchTimerRef.current = setTimeout(() => { }, 500);
   };
 
   const getQueryParams = () => {

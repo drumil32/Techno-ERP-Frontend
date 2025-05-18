@@ -91,7 +91,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
       queryClient.invalidateQueries({
         queryKey: ['studentFeesInformation', studentId]
       });
-      
+
       // Close dialog only after successful response
       setOpen(false);
       setIsLoading(false);
@@ -117,7 +117,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
               <BookOpen className="w-5 h-5 text-gray-500 text-xl" />
               &nbsp;Record a payment
             </Dialog.Title>
-            <Dialog.Close 
+            <Dialog.Close
               className="text-gray-500 hover:text-black text-xl font-bold cursor-pointer"
               disabled={isLoading}
             >
@@ -232,10 +232,10 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                     <FormItem>
                       <FormLabel className="text-gray-500 text-md">Remarks</FormLabel>
                       <FormControl>
-                        <Input 
-                          placeholder="Write your remarks" 
-                          {...field} 
-                          className="!text-md" 
+                        <Input
+                          placeholder="Write your remarks"
+                          {...field}
+                          className="!text-md"
                           disabled={isLoading}
                         />
                       </FormControl>
@@ -245,17 +245,17 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                 />
 
                 <div className="flex justify-end gap-2 pt-4">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => !isLoading && setOpen(false)}
                     disabled={isLoading}
                   >
                     Cancel
                   </Button>
-                  <Button 
-                    type="submit" 
-                    className="bg-[#5B31D1] text-white" 
+                  <Button
+                    type="submit"
+                    className="bg-[#5B31D1] text-white"
                     disabled={isLoading}
                   >
                     {isLoading ? (
