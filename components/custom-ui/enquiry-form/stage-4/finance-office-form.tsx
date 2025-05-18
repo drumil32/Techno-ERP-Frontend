@@ -201,7 +201,10 @@ const FinanceOfficeForm = () => {
         });
 
       initialOtherFees.unshift(sem1FeeObject);
-      otherFeesData.unshift(sem1FeeObject);
+      if (otherFeesData.at(0).type === FeeType.SEM1FEE) {
+      } else {
+        otherFeesData.unshift(sem1FeeObject);
+      }
 
       const courseSemFeeStructure = semWiseFeesData || [];
       const existingSemFees = feeDataSource?.semWiseFees || [];
@@ -243,24 +246,34 @@ const FinanceOfficeForm = () => {
     let totalDeposited = 0;
 
     if (otherFeesData) {
-      // while summing up total original we will ignore for hostel and transport as that will be added directly in display :)
-      const value =
-        form.getValues('otherFees.6.finalFee')! + form.getValues('otherFees.7.finalFee')!;
-      totalOriginal =
-        otherFeesData.reduce(
-          (sum: any, fee: any) =>
-            sum +
-            (fee.type === displayFeeMapper(FeeType.TRANSPORT) ||
-            fee.type === displayFeeMapper(FeeType.HOSTEL)
-              ? 0
-              : (fee.amount ?? 0)),
-          0
-        ) + value;
+      const baseOriginal = otherFeesData.reduce((sum, fee) => {
+        const isExcluded =
+          fee.type === displayFeeMapper(FeeType.TRANSPORT) ||
+          fee.type === displayFeeMapper(FeeType.HOSTEL);
+        console.log('otherfeesData', otherFeesData);
+
+        if (isExcluded) {
+          return sum;
+        }
+
+        return sum + (fee.amount || 0);
+      }, 0);
+
+      totalOriginal = baseOriginal;
+
+      const fee6 = Number(form.getValues('otherFees.6.finalFee')) || 0;
+      const fee7 = Number(form.getValues('otherFees.7.finalFee')) || 0;
+
+      totalOriginal += fee6 + fee7;
+    } else {
     }
 
-    (otherFeesWatched ?? []).forEach((fee) => {
-      totalFinal += fee?.finalFee ?? 0;
-      totalDeposited += fee?.feesDepositedTOA ?? 0;
+    (otherFeesWatched ?? []).forEach((fee, index) => {
+      const finalFee = Number(fee?.finalFee) || 0;
+      const deposited = Number(fee?.feesDepositedTOA) || 0;
+
+      totalFinal += finalFee;
+      totalDeposited += deposited;
     });
 
     const totalDue = totalFinal - totalDeposited;
