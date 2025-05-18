@@ -5,27 +5,41 @@ import html2canvas from 'html2canvas';
 const placeholderLogoBase64 = "/images/techno-logo.webp";
 const placeholderPhotoBase64 = "/images/dummy_user.webp";
 
+// const toBase64 = async (url: string) => {
+//   const res = await fetch(url);
+//   const blob = await res.blob();
+//   return new Promise<string>((resolve, reject) => {
+//     const reader = new FileReader();
+//     reader.onloadend = () => resolve(reader.result as string);
+//     reader.onerror = reject;
+//     reader.readAsDataURL(blob);
+//   });
+// };
 
-export const downloadAdmissionForm = async (data:any) => {
+
+
+export const downloadAdmissionForm = async (data: any) => {
   const container = document.createElement('div');
-  container.style.width = '780px'; 
+  container.style.width = '780px';
   container.style.padding = '20px';
   container.style.fontFamily = 'Arial, sans-serif';
   container.style.backgroundColor = 'white';
   container.style.boxSizing = 'border-box';
 
-  const escapeHtml = (unsafe:any) => {
+  const escapeHtml = (unsafe: any) => {
     if (typeof unsafe !== 'string') return unsafe;
     return unsafe
-         .replace(/&/g, "&")
-         .replace(/</g, "<")
-         .replace(/>/g, ">")
+      .replace(/&/g, "&")
+      .replace(/</g, "<")
+      .replace(/>/g, ">")
   };
+
+  // const profileImageDataBase64 = data.profileImage ? toBase64(data.profileImage) : null;
 
 
   container.innerHTML = `
-<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-    <div style="flex-shrink: 0;">
+<div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+    <div style="position: absolute; top: 0; left: 0;">
         <img src="${escapeHtml(placeholderLogoBase64)}" alt="College Logo"
             style="width: 100px; object-fit: contain;">
     </div>
@@ -39,9 +53,9 @@ export const downloadAdmissionForm = async (data:any) => {
             ${escapeHtml(data.collegeContact ?? "9839506777")}
         </p>
     </div>
-    <div style="flex-shrink: 0;">
+    <div style="position: absolute; top: 0; right: 0;">
         <img src="${data.profileImage ?? escapeHtml(placeholderPhotoBase64)}" alt="Student Photo"
-            style="width: 80px; object-fit: cover; border: 1px solid #DDD;">
+            style="height: 100px; width: 100px; object-fit: cover; border: 1px solid #DDD;">
     </div>
 </div>
 
@@ -62,62 +76,62 @@ export const downloadAdmissionForm = async (data:any) => {
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none; width: 20%;">
                 Admission Date :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none; width: 30%;">
-                ${escapeHtml(data.admissionDate  ?? "--")}</td>
+                ${escapeHtml(data.admissionDate ?? "--")}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Student Name :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.studentName  ?? "--")}</td>
+                ${escapeHtml(data.studentName ?? "--")}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Phone Number :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.studentPhoneNumber  ?? "--")}</td>
+                ${escapeHtml(data.studentPhoneNumber ?? "--")}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Father’s Name :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.fatherName  ?? "--")}</td>
+                ${escapeHtml(data.fatherName ?? "--")}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Father’s Phone Number :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.fatherPhoneNumber  ?? "--")}</td>
+                ${escapeHtml(data.fatherPhoneNumber ?? "--")}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Mother’s Name :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.motherName  ?? "--")}</td>
+                ${escapeHtml(data.motherName ?? "--")}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Mother’s Phone Number :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.motherPhoneNumber  ?? "--")}</td>
+                ${escapeHtml(data.motherPhoneNumber ?? "--")}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Date of Birth :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.dateOfBirth  ?? "--")}</td>
+                ${escapeHtml(data.dateOfBirth ?? "--")}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Email ID :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.emailId  ?? "--")}</td>
+                ${escapeHtml(data.emailId ?? "--")}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Gender :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.gender  ?? "--")}</td>
+                ${escapeHtml(data.gender ?? "--")}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Blood Group :</td>
@@ -129,31 +143,31 @@ export const downloadAdmissionForm = async (data:any) => {
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Religion :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.religion  ?? "--")}</td>
+                ${escapeHtml(data.religion ?? "--")}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Category :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.category  ?? "--")}</td>
+                ${escapeHtml(data.category ?? "--")}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 State of Domicile :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.stateOfDomicile  ?? "--")}</td>
+                ${escapeHtml(data.stateOfDomicile ?? "--")}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Aadhar Card Number :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.aadharNumber  ?? "--")}</td>
+                ${escapeHtml(data.aadharNumber ?? "--")}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Address :</td>
             <td colspan="3" style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.address  ?? "--")}</td>
+                ${escapeHtml(data.address ?? "--")}</td>
         </tr>
         <tr>
             <td
@@ -196,16 +210,16 @@ export const downloadAdmissionForm = async (data:any) => {
         </tr>
     </thead>
     <tbody>
-        ${data.academicDetails.map((detail:any) => `
+        ${data.academicDetails.map((detail: any) => `
         <tr>
-            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.educationLevel  ?? "--")}</td>
-            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.schoolCollegeName  ?? "--")}</td>
-            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.universityBoardName  ?? "--")}</td>
+            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.educationLevel ?? "--")}</td>
+            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.schoolCollegeName ?? "--")}</td>
+            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.universityBoardName ?? "--")}</td>
             <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.subjects ?? "--")}</td>
             <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; text-align: center;">
-                ${escapeHtml(detail.passingYear  ?? "--")}</td>
+                ${escapeHtml(detail.passingYear ?? "--")}</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; text-align: center;">
-                ${escapeHtml(detail.percentageObtained  ?? "--")}</td>
+                ${escapeHtml(detail.percentageObtained ?? "--")}</td>
         </tr>
         `).join('')}
     </tbody>
@@ -236,11 +250,11 @@ export const downloadAdmissionForm = async (data:any) => {
                 style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Qualified :</td>
             <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; border-left: none;">
-                ${data.entranceExamDetails.qualified === undefined 
-                    ? '--' 
-                    : data.entranceExamDetails.qualified 
-                    ? 'Yes' 
-                    : 'No'}
+                ${data.entranceExamDetails.qualified === undefined
+      ? '--'
+      : data.entranceExamDetails.qualified
+        ? 'Yes'
+        : 'No'}
             </td>
         </tr>
     </tbody>
@@ -270,13 +284,13 @@ export const downloadAdmissionForm = async (data:any) => {
         <p style="font-size: 20px; line-height: 1; vertical-align: start;">▢</p>
         <p style="color: #666666; font-weight: 400; flex-shrink: 0;">Email ID :</p>
         <p
-            style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.emailId  ?? "--")}</p>
+            style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.emailId ?? "--")}</p>
     </div>
     <div style="display: flex; align-items: baseline; gap: 5px; width: calc(50% - 10px);">
         <p style="font-size: 20px; line-height: 1; vertical-align: middle;">▢</p>
         <p style="color: #666666; font-weight: 400; flex-shrink: 0;">Phone Number :</p>
         <p
-            style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.studentPhoneNumber  ?? "--")}</p>
+            style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.studentPhoneNumber ?? "--")}</p>
     </div>
 </div>
 
@@ -291,8 +305,8 @@ export const downloadAdmissionForm = async (data:any) => {
   try {
     const canvas = await html2canvas(container, {
       scale: 2,
-      useCORS: true, 
-      logging: true, 
+      useCORS: true,
+      logging: true,
       onclone: (clonedDoc) => {
       }
     });
@@ -301,48 +315,50 @@ export const downloadAdmissionForm = async (data:any) => {
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'px',
-      format: 'a4' 
+      format: 'a4'
     });
 
     const imgProps = pdf.getImageProperties(imgData);
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    
+
 
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    pdf.save('admission_form.pdf');
+    const pdfBlob = pdf.output('blob');
+    const blobUrl = URL.createObjectURL(pdfBlob);
+    return blobUrl;
 
   } catch (error) {
     console.error("Error generating PDF:", error);
   } finally {
     // Clean up
     if (document.body.contains(container)) {
-        document.body.removeChild(container);
+      document.body.removeChild(container);
     }
   }
 };
 
 
 export const downloadFeeReceipt = async (data: any) => {
-    const container = document.createElement('div');
-    container.style.width = '780px'; 
-    container.style.padding = '20px';
-    container.style.fontFamily = 'Arial, sans-serif';
-    container.style.backgroundColor = 'white';
-    container.style.boxSizing = 'border-box';
-  
-    const escapeHtml = (unsafe: any) => {
-      if (typeof unsafe !== 'string') return unsafe;
-      return unsafe
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-    };
-  
-    // Calculate total sum
-    const totalAmount = data.particulars.reduce((sum: number, item: any) => sum + parseFloat(item.amount), 0);
-  
-    container.innerHTML = `
+  const container = document.createElement('div');
+  container.style.width = '780px';
+  container.style.padding = '20px';
+  container.style.fontFamily = 'Arial, sans-serif';
+  container.style.backgroundColor = 'white';
+  container.style.boxSizing = 'border-box';
+
+  const escapeHtml = (unsafe: any) => {
+    if (typeof unsafe !== 'string') return unsafe;
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+  };
+
+  // Calculate total sum
+  const totalAmount = data.particulars.reduce((sum: number, item: any) => sum + parseFloat(item.amount), 0);
+
+  container.innerHTML = `
      <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
     <div style="position: absolute; top: 0; left: 0;">
         <img src="${escapeHtml(placeholderLogoBase64)}" alt="College Logo"
@@ -402,7 +418,7 @@ export const downloadFeeReceipt = async (data: any) => {
     </tr>
   </thead>
   <tbody>
-    ${data.particulars.map((fee:any) => `
+    ${data.particulars.map((fee: any) => `
     <tr>
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none;">${escapeHtml(fee.name)}</td>
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: right; border-left:none;">
@@ -441,84 +457,88 @@ export const downloadFeeReceipt = async (data: any) => {
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none; border-bottom:none; border-top:none;"></td>
     </tr>
     <tr>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none; border-top:none;">${escapeHtml(data.remarks ?? "--")}</td>
+      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none; border-top:none; width: 30%;">${escapeHtml(data.remarks ?? "--")}</td>
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: right; border-left:none; border-top:none;">Authorized Signatory</td>
     </tr>
   </tbody>
 </table>
 
     `;
-  
-    document.body.appendChild(container);
-  
-    try {
-      const canvas = await html2canvas(container, {
-        scale: 2,
-        useCORS: true, 
-        logging: true, 
-        onclone: (clonedDoc) => {
-          // Any additional manipulation of the cloned document before rendering
-        }
-      });
-  
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'px',
-        format: 'a4' 
-      });
-  
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('fee_receipt.pdf');
-  
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-    } finally {
-      // Clean up
-      if (document.body.contains(container)) {
-        document.body.removeChild(container);
+
+  document.body.appendChild(container);
+
+  try {
+    const canvas = await html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      logging: true,
+      onclone: (clonedDoc) => {
+        // Any additional manipulation of the cloned document before rendering
       }
+    });
+
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'px',
+      format: 'a4'
+    });
+
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    // pdf.save('fee_receipt.pdf');
+
+    const pdfBlob = pdf.output('blob');
+    const blobUrl = URL.createObjectURL(pdfBlob);
+    return blobUrl;
+
+
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+  } finally {
+    // Clean up
+    if (document.body.contains(container)) {
+      document.body.removeChild(container);
     }
   }
-  
+}
+
 
 
 export const mockDataFee = {
-    logoLink: placeholderLogoBase64,
-    collegeName: "TECHNO INSTITUTE OF HIGHER STUDIES",
-    collegeAddress: "331, Anaura, Near Indira Canal, Ayodhya Road, Lucknow - 226028",
-    email: "accounts@tims.edu.in",
-    contact: "7897123666 (Voice & Whatsapp)",
-    receiptNo: "767",
-    date: "16-05-25",
-    studentName: "Avnish Kumar S/o Mr. Bal Govind",
-    category: "General",
-    fatherName: "Mr. Bal Govind",
-    session: "2024 - 25",
-    course: "BSc",
-    feeDetails: [
-      {
-        particular: "2022-23- Third Year-Vith-Misc Fee",
-        amount: 400.00
-      },
-      {
-        particular: "2024-25- Third Year-Vith-Exam Fee & PC",
-        amount: 2600.00
-      },
-      {
-        particular: "2024-25- Third Year-Vith-Misc Fee",
-        amount: 800.00
-      },
-      {
-        particular: "2024-25- Third Year-Vith-Tution Fee",
-        amount: 10000.00
-      }
-    ],
-    amountInWords: "INR Thirteen Thousand Eight Hundred Only",
-    qrCode: "QQ 271395"
-  };
-  
+  logoLink: placeholderLogoBase64,
+  collegeName: "TECHNO INSTITUTE OF HIGHER STUDIES",
+  collegeAddress: "331, Anaura, Near Indira Canal, Ayodhya Road, Lucknow - 226028",
+  email: "accounts@tims.edu.in",
+  contact: "7897123666 (Voice & Whatsapp)",
+  receiptNo: "767",
+  date: "16-05-25",
+  studentName: "Avnish Kumar S/o Mr. Bal Govind",
+  category: "General",
+  fatherName: "Mr. Bal Govind",
+  session: "2024 - 25",
+  course: "BSc",
+  feeDetails: [
+    {
+      particular: "2022-23- Third Year-Vith-Misc Fee",
+      amount: 400.00
+    },
+    {
+      particular: "2024-25- Third Year-Vith-Exam Fee & PC",
+      amount: 2600.00
+    },
+    {
+      particular: "2024-25- Third Year-Vith-Misc Fee",
+      amount: 800.00
+    },
+    {
+      particular: "2024-25- Third Year-Vith-Tution Fee",
+      amount: 10000.00
+    }
+  ],
+  amountInWords: "INR Thirteen Thousand Eight Hundred Only",
+  qrCode: "QQ 271395"
+};
