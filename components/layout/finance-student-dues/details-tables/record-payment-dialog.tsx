@@ -26,9 +26,9 @@ const feesActionMapping = {
 const transactionTypeMapping = {
   [TransactionTypes.CASH]: "CASH",
   [TransactionTypes.NEFT_IMPS_RTGS]: "NEFT/RTGS/IMPS",
-  [TransactionTypes.UPI]: "CASH",
-  [TransactionTypes.CHEQUE]: "NEFT/RTGS/IMPS",
-  [TransactionTypes.OTHERS]: "NEFT/RTGS/IMPS",
+  [TransactionTypes.UPI]: "UPI",
+  [TransactionTypes.CHEQUE]: "CHEQUE",
+  [TransactionTypes.OTHERS]: "OTHERS",
 };
 
 const formSchema = z.object({
@@ -80,7 +80,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
     try {
       const res = await recordPayment(payload);
 
-      if(res == null) {
+      if (res == null) {
         throw new Error("Failed to record payment");
       }
 

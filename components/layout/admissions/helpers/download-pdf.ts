@@ -441,7 +441,7 @@ export const downloadFeeReceipt = async (data: any) => {
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none; border-bottom:none; border-top:none;"></td>
     </tr>
     <tr>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none; border-top:none;">${escapeHtml(data.remarks ?? "--")}</td>
+      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none; border-top:none; width: 30%;">${escapeHtml(data.remarks ?? "--")}</td>
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: right; border-left:none; border-top:none;">Authorized Signatory</td>
     </tr>
   </tbody>
