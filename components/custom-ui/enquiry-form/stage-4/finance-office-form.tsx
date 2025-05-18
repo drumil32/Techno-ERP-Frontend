@@ -377,11 +377,7 @@ const FinanceOfficeForm = () => {
         id: enquiry_id,
         transactionType: transactionTypeRef.current
       });
-
-      if (!response) {
-        return false;
-      }
-
+      console.log('the response', response);
       toast.success('Enquiry submitted for final approval');
       router.push(SITE_MAP.ADMISSIONS.DEFAULT);
       return true;

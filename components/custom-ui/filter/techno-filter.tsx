@@ -84,8 +84,10 @@ export default function TechnoFilter({
   }, [filters, filterKey]);
 
   const filteredOptions = options.filter((option) => {
-    const label = typeof option === 'string' ? option : option.label;
-    return label?.toLowerCase().includes(searchTerm.toLowerCase());
+    const label =
+      typeof option === 'string' ? option : typeof option?.label === 'string' ? option.label : '';
+
+    return label.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   const handleSelect = (option: string | FilterOption) => {

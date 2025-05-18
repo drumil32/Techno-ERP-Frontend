@@ -45,8 +45,6 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     try {
       const result = await onSubmit();
       if (result !== false) {
-        toast.success('Enquiry got confirmed successfully');
-        router.push(SITE_MAP.ADMISSIONS.DEFAULT);
         setSubmitDialogOpen(false);
       } else {
         setSubmitDialogOpen(false);
@@ -56,12 +54,15 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     }
   }
 
-  async function handleDialogSaveDraft(isFromSubmit?: boolean) {
+  // this variable ifFormSubmit is put there to ensure that we are differentiating actions while saving draft on submit or just saving draft
+  async function handleDialogSaveDraft(isFromSubmit = false) {
     try {
       const result = await saveDraft();
+      console.log('the isFromSubmit', isFromSubmit);
       if (!isFromSubmit) setDraftSaved(result !== false);
     } catch {
       setSubmitDialogOpen(false);
+      console.log('the isFromSubmit', isFromSubmit);
       if (!isFromSubmit) setDraftSaved(false);
     } finally {
       setDraftDialogOpen(false);
@@ -106,7 +107,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             <Button
               type="button"
               onClick={() => {
-                handleDialogSaveDraft(true);
+                handleDialogSaveDraft();
               }}
               disabled={isSavingDraft}
             >
@@ -121,7 +122,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           <Button
             type="button"
             onClick={() => {
-              handleDialogSaveDraft();
+              handleDialogSaveDraft(true);
             }}
             disabled={
               !confirmationChecked || !draftSaved || form.formState.isSubmitting || isSavingDraft

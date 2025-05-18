@@ -15,10 +15,15 @@ interface FilterBadgesProps {
   onFilterRemove: (filterKey: string) => void;
   assignedToData?: any[];
   appliedFilters: Record<string, any>;
-  crossVisible?: boolean
+  crossVisible?: boolean;
 }
 
-const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters, crossVisible = true }: FilterBadgesProps) => {
+const FilterBadges = ({
+  onFilterRemove,
+  assignedToData,
+  appliedFilters,
+  crossVisible = true
+}: FilterBadgesProps) => {
   const [badges, setBadges] = useState<BadgeData[]>([]);
 
   const getAssignedToLabel = (id: string) => {
@@ -98,6 +103,14 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters, crossVis
       });
     }
 
+    if (appliedFilters.courseYear) {
+      newBadges.push({
+        key: 'courseYear',
+        label: 'Course Year',
+        value: appliedFilters.courseYear
+      });
+    }
+
     Object.entries(appliedFilters).forEach(([key, value]) => {
       if (key === 'startDate' || key === 'endDate') return; // Skip startDate and endDate because handled above
       if (Array.isArray(value) && value.length > 0) {
@@ -127,7 +140,6 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters, crossVis
           label: key.charAt(0).toUpperCase() + key.slice(1),
           value: displayValue
         });
-
       }
     });
 
@@ -144,9 +156,7 @@ const FilterBadges = ({ onFilterRemove, assignedToData, appliedFilters, crossVis
         >
           <Badge variant="secondary" className="py-1 px-2 flex items-center gap-1 cursor-pointer">
             <span className="font-medium">{badge.label}:</span> {badge.value}
-            {crossVisible && (
-              <X size={16} className="ml-1 cursor-pointer" />
-            )}
+            {crossVisible && <X size={16} className="ml-1 cursor-pointer" />}
           </Badge>
         </div>
       ))}

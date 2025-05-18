@@ -213,8 +213,8 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
     <div className="space-y-4">
       <div className="rounded-md border overflow-hidden">
         <div className="overflow-x-auto">
-          <Table className='bg-white'>
-            <TableHeader>
+          <Table className="bg-white">
+            <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg">
               <TableRow className="bg-gray-50">
                 <TableHead className="font-medium">Subject</TableHead>
                 <TableHead className="font-medium text-left">Subject Code</TableHead>

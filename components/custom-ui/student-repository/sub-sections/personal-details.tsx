@@ -238,7 +238,6 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                   />
                   {/* LURN/Pre-registration No */}
                   <FormField
-                    disabled={true}
                     key="lurnRegistrationNo"
                     control={form.control}
                     name="lurnRegistrationNo"

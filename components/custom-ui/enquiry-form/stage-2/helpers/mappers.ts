@@ -37,12 +37,12 @@ export const scheduleFeeMapper = (feeType: FeeType | string | undefined): string
     case FeeType.UNIFORM:
       return 'One-time';
     case FeeType.STUDENTWELFARE:
-      return 'One-time';
-    case FeeType.BOOKBANK:
       return 'Yearly';
+    case FeeType.BOOKBANK:
+      return 'Sem-wise';
     // case FeeType.EXAMFEES: return "One-time";
     case FeeType.SEM1FEE:
-      return 'One-time';
+      return 'Sem-Wise';
     default:
       return 'N/A';
   }

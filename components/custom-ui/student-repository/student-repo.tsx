@@ -60,7 +60,9 @@ export default function StudentRepositoryPage() {
     enabled: true
   });
 
-  const courses : Course[] = Array.isArray(coursesDropdownQuery.data) ? coursesDropdownQuery.data : [];
+  const courses: Course[] = Array.isArray(coursesDropdownQuery.data)
+    ? coursesDropdownQuery.data
+    : [];
 
   // Handle Navigation to Single Student Page
   const handleViewMore = (row: StudentListItem) => {
@@ -109,11 +111,10 @@ export default function StudentRepositoryPage() {
 
     return params;
   };
-  
 
   // Filter Configuration
   const getFilterConfigurations = (): FilterData[] => {
-    const academicYearOptions: FilterOption[] = generateAcademicYearDropdown().map(
+    const academicYearOptions: FilterOption[] = generateAcademicYearDropdown(0, 1).map(
       (year: string) => ({
         label: year,
         id: year
@@ -284,6 +285,7 @@ export default function StudentRepositoryPage() {
         filters={getFilterConfigurations()}
         handleFilters={applyFilter}
         clearFilters={clearFilters}
+        clearFiltersVisible={false}
       />
 
       {studentsData && (
