@@ -49,7 +49,7 @@ export const updateStudentDetailsRequestSchema = z
 
     gender: z.nativeEnum(Gender).default(Gender.OTHER),
     dateOfBirth: requestDateSchema,
-
+    lurnRegistrationNo: z.string().optional(),
     religion: z.nativeEnum(Religion).optional(),
     category: z.nativeEnum(Category),
     reference: z.nativeEnum(AdmissionReference),

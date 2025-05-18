@@ -151,7 +151,7 @@ const ProfilePicSection = ({
             <Pencil size={16} strokeWidth={1.5} color={'#4E4E4E'} />
           )}
         </button>
-      </div>  
+      </div>
       <h2 className="text-base font-semibold text-center truncate max-w-[150px]" title={name}>
         {name}
       </h2>

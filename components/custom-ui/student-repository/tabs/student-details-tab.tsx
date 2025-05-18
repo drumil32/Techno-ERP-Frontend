@@ -30,103 +30,112 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
   studentData,
   setStudentData
 }) => {
-  const handleSave = async () => {
-    let data = personalDetailsForm.getValues();
+  const handleSave = async (): Promise<boolean> => {
+    try {
+      let data = personalDetailsForm.getValues();
 
-    const filteredData = filterBySchema(updateStudentDetailsRequestSchema, data);
+      const filteredData = filterBySchema(updateStudentDetailsRequestSchema, data);
+      console.log('Filtered Data:', filteredData);
+      if (filteredData.academicDetails) {
+        const filteredAcademicDetails: IAcademicDetailArraySchema =
+          filteredData.academicDetails.filter((entry: IAcademicDetailSchema) => {
+            entry = removeNullValues(entry);
+            if (!entry) return false;
 
-    if (filteredData.academicDetails) {
-      const filteredAcademicDetails: IAcademicDetailArraySchema =
-        filteredData.academicDetails.filter((entry: IAcademicDetailSchema) => {
-          entry = removeNullValues(entry);
-          if (!entry) return false;
+            // Only look at the fields we care about for "emptiness"
+            const { schoolCollegeName, universityBoardName, passingYear, percentageObtained } =
+              entry;
 
-          // Only look at the fields we care about for "emptiness"
-          const { schoolCollegeName, universityBoardName, passingYear, percentageObtained } = entry;
+            // If ALL are empty/undefined/null/blank, skip the row
+            const isAllEmpty =
+              !schoolCollegeName &&
+              !universityBoardName &&
+              (passingYear === undefined || passingYear === null) &&
+              (percentageObtained === undefined || percentageObtained === null);
 
-          // If ALL are empty/undefined/null/blank, skip the row
-          const isAllEmpty =
-            !schoolCollegeName &&
-            !universityBoardName &&
-            (passingYear === undefined || passingYear === null) &&
-            (percentageObtained === undefined || percentageObtained === null);
+            return !isAllEmpty; // keep if at least one is filled
+          });
 
-          return !isAllEmpty; // keep if at least one is filled
-        });
-
-      filteredData.academicDetails = filteredAcademicDetails;
-    }
-
-    const cleanedData = removeNullValues(filteredData);
-    console.log(cleanedData);
-    // if form contains errors, then show toast error
-    const validationResult = updateStudentDetailsRequestSchema.safeParse(cleanedData);
-
-    if (!validationResult.success) {
-      console.log(validationResult.error);
-      const errorMessages = validationResult?.error?.issues?.map((issue) => {
-        // Get the field name from the path
-        const fieldPath = issue.path;
-        let fieldName = '';
-
-        // Handle academic details fields specially
-        if (fieldPath[0] === 'academicDetails') {
-          const index = fieldPath[1];
-          const field = fieldPath[2];
-
-          // Map education levels to user-friendly names
-          const levelMap: Record<string, string> = {
-            '0': '10th',
-            '1': '12th',
-            '2': 'Graduation'
-          };
-
-          // Format field name for academic details
-          fieldName = `${levelMap[index]} ${String(field)
-            .split(/(?=[A-Z])/)
-            .join(' ')}`;
-        } else {
-          // Format regular field names
-          fieldName = String(fieldPath[fieldPath.length - 1])
-            .split(/(?=[A-Z])/)
-            .join(' ');
-        }
-
-        return issue.message === "Required" ? `${fieldName} is required` : issue?.message;
-      });
-
-      // if there is another error, then show toast error
-      if (errorMessages && errorMessages.length > 1) {
-        toast.error('Something went wrong');
+        filteredData.academicDetails = filteredAcademicDetails;
       }
 
-      personalDetailsForm.reset(getPersonalDetailsFormData(studentData));
-      toast.error(
-        <div className="space-y-1">
-          <p className="font-semibold">Please fill in all required fields:</p>
-          {errorMessages.map((error, index) => (
-            <p key={index} className="text-sm text-red-600">
-              • {error}
-            </p>
-          ))}
-        </div>
-      );
-      return;
-    }
+      const cleanedData = removeNullValues(filteredData);
+      console.log(cleanedData);
+      // if form contains errors, then show toast error
+      const validationResult = updateStudentDetailsRequestSchema.safeParse(cleanedData);
 
-    const response: StudentData = await updateStudent(cleanedData);
+      if (!validationResult.success) {
+        console.log(validationResult.error);
+        const errorMessages = validationResult?.error?.issues?.map((issue) => {
+          // Get the field name from the path
+          const fieldPath = issue.path;
+          let fieldName = '';
 
-    if (response) {
-      setStudentData(response);
-      const filteredResponse = getPersonalDetailsFormData(response);
-      personalDetailsForm.reset(filteredResponse);
-      toast.success('Student data updated successfully');
-    } else {
+          // Handle academic details fields specially
+          if (fieldPath[0] === 'academicDetails') {
+            const index = fieldPath[1];
+            const field = fieldPath[2];
+
+            // Map education levels to user-friendly names
+            const levelMap: Record<string, string> = {
+              '0': '10th',
+              '1': '12th',
+              '2': 'Graduation'
+            };
+
+            // Format field name for academic details
+            fieldName = `${levelMap[index]} ${String(field)
+              .split(/(?=[A-Z])/)
+              .join(' ')}`;
+          } else {
+            // Format regular field names
+            fieldName = String(fieldPath[fieldPath.length - 1])
+              .split(/(?=[A-Z])/)
+              .join(' ');
+          }
+
+          return issue.message === 'Required' ? `${fieldName} is required` : issue?.message;
+        });
+
+        // if there is another error, then show toast error
+        if (errorMessages && errorMessages.length > 1) {
+          toast.error('Something went wrong');
+        }
+
+        // personalDetailsForm.reset(getPersonalDetailsFormData(studentData));
+        toast.error(
+          <div className="space-y-1">
+            <p className="font-semibold">Please fill in all required fields:</p>
+            {errorMessages.map((error, index) => (
+              <p key={index} className="text-sm text-red-600">
+                • {error}
+              </p>
+            ))}
+          </div>
+        );
+        return false;
+      }
+
+      const response: StudentData = await updateStudent(cleanedData);
+
+      if (response) {
+        setStudentData(response);
+        const filteredResponse = getPersonalDetailsFormData(response);
+        personalDetailsForm.reset(filteredResponse);
+        toast.success('Student data updated successfully');
+        return true;
+      } else {
+        personalDetailsForm.reset(getPersonalDetailsFormData(studentData));
+        toast.error('Failed to update student data');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error in handleSave:', error);
       personalDetailsForm.reset(getPersonalDetailsFormData(studentData));
-      toast.error('Failed to update student data');
+      toast.error('An unexpected error occurred');
+      return false;
     }
   };
-
   return (
     <Form {...personalDetailsForm}>
       {/* Personal Details */}

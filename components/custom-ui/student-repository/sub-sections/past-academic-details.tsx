@@ -25,7 +25,7 @@ interface PastAcademicDetailsFormPropInterface<T extends FieldValues = FieldValu
   form: UseFormReturn<z.infer<typeof updateStudentDetailsRequestSchema>>;
   commonFormItemClass: string;
   commonFieldClass: string;
-  handleSave: () => void;
+  handleSave: () => Promise<boolean>;
 }
 
 const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface> = ({
@@ -56,7 +56,6 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
   const educationLevels = [EducationLevel.Tenth, EducationLevel.Twelfth, EducationLevel.Graduation];
 
   useEffect(() => {
-
     // Set initial education levels
     educationLevels.forEach((level, index) => {
       if (!form.getValues().academicDetails?.[index]?.educationLevel) {
@@ -71,7 +70,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
       academicDetails.forEach((entry, index) => {
         if (entry) {
           const expectedLevel = educationLevels[index];
-          
+
           // Always ensure education level matches index position
           if (entry.educationLevel !== expectedLevel) {
             form.setValue(`academicDetails.${index}.educationLevel`, expectedLevel, {
@@ -85,6 +84,13 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
 
     return () => subscription.unsubscribe();
   }, [form]);
+
+  const saveHandler = async () => {
+    const success = await handleSave();
+    if (success) {
+      setIsEditing(false);
+    }
+  };
 
   return (
     <Accordion type="single" collapsible defaultValue="address-details">
@@ -104,8 +110,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSave();
-                    toggleEdit();
+                    saveHandler();
                   }}
                   className="flex items-center"
                 >

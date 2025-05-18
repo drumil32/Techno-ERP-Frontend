@@ -292,7 +292,7 @@ export default function StudentRepositoryPage() {
         <TechnoDataTableAdvanced
           columns={columns}
           data={studentsData.students}
-          tableName="Student Records"
+          tableName={`Student Records` + ` (${studentsData.students.length})`}
           currentPage={page}
           totalPages={totalPages}
           pageLimit={limit}
