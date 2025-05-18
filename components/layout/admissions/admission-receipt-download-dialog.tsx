@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
     Dialog,
@@ -11,7 +11,7 @@ import {
     DialogClose
 } from '@/components/ui/dialog';
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, DownloadIcon, Loader } from "lucide-react";
 import { FaCircleExclamation } from "react-icons/fa6";
 import { fetchDataForAdmissionReceipt } from "./helpers/fetch-data";
 import { downloadAdmissionForm } from "./helpers/download-pdf";
@@ -19,21 +19,35 @@ import { downloadAdmissionForm } from "./helpers/download-pdf";
 export function DownloadAdmissionReceiptDialog({ studentId }: { studentId: string }) {
     const [downloadOpen, setDownloadOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
+    const [debugInfo, setDebugInfo] = useState('');
+    const iframeRef = useRef<HTMLIFrameElement>(null);
 
-    const downloadAction = async () => {
-        setIsLoading(true);
-        try {
-            const res = await fetchDataForAdmissionReceipt({ studentId });
-            if (res) {
-                await downloadAdmissionForm(res);
-                setDownloadOpen(false); // close dialog after successful download
+    useEffect(() => {
+        const loadPreview = async () => {
+            setIsLoading(true);
+            setPdfDataUrl(null);
+            try {
+                const res = await fetchDataForAdmissionReceipt({ studentId });
+                if (res) {
+                    const url = await downloadAdmissionForm(res);
+                    if (url) {
+                        setPdfDataUrl(url);
+                    } else {
+                        toast.error("Error in the showing preview.")
+                    }
+                }
+            } catch (error) {
+                toast.error(error instanceof Error ? error.message : 'Failed to load preview');
+            } finally {
+                setIsLoading(false);
             }
-        } catch (error) {
-            toast.error(error instanceof Error ? error.message : 'Download failed');
-        } finally {
-            setIsLoading(false);
+        };
+
+        if (downloadOpen) {
+            loadPreview();
         }
-    };
+    }, [downloadOpen, studentId]);
 
     return (
         <>
@@ -49,25 +63,40 @@ export function DownloadAdmissionReceiptDialog({ studentId }: { studentId: strin
                         <Download className="text-primary" />
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
+                <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden">
                     <DialogHeader>
                         <DialogTitle className="flex gap-2 items-center">
-                            <FaCircleExclamation className="text-yellow-500 w-6 h-6" />
+                            <DownloadIcon className="text-primary w-6 h-6" />
                             Download Admission Form Receipt
                         </DialogTitle>
                         <DialogDescription className="my-3">
                             Are you sure you want to download admission form receipt?
                         </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter className="flex justify-end gap-2 sm:justify-end">
-                        <DialogClose asChild disabled={isLoading}>
+                    <div className="w-full h-[60vh]">
+                        {pdfDataUrl ? (
+                            <iframe
+                                ref={iframeRef}
+                                src={pdfDataUrl}
+                                className="w-full h-full border-2 border-gray-300 bg-white rounded"
+                                title="Receipt PDF Preview"
+                                onLoad={() => setDebugInfo("Iframe loaded successfully")}
+                                onError={(e) => {
+                                    setDebugInfo("Iframe error occurred");
+                                }}
+                            />
+                        ) : (
+                            <div className="flex items-center justify-center h-full bg-white border-2 border-gray-300 rounded">
+                                <Loader className="w-6 h-6 text-gray-500 animate-spin" />
+                            </div>
+                        )}
+                    </div>
+                    <DialogFooter className="justify-end mt-4">
+                        <DialogClose asChild>
                             <Button variant="outline" className="font-inter text-sm" disabled={isLoading}>
-                                Cancel
+                                Close
                             </Button>
                         </DialogClose>
-                        <Button onClick={downloadAction} className="font-inter text-sm" disabled={isLoading}>
-                            {isLoading ? 'Downloading...' : 'Confirm Download'}
-                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
