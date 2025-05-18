@@ -15,6 +15,7 @@ import { format } from 'date-fns';
 import { TruncatedCell } from '@/components/custom-ui/data-table/techno-data-table';
 import { Button } from '@/components/ui/button';
 import { ReceiptIndianRupee } from 'lucide-react';
+import { TransactionReceiptDialog } from './trascation-receipt-download-dialog';
 
 type ExtendedTransaction = Transaction & {
   sno: number;
@@ -97,9 +98,7 @@ export default function AllTransactionsDetails({
                   />
                 </TableCell>
                 <TableCell className="w-[140px] text-center">
-                  <Button variant='outline' className='ring-primary ring-1 text-primary hover:bg-primary/80 hover:ring-transparent hover:text-white' onClick={() => {handleReceiptDownload(transaction._id)}}>
-                    <ReceiptIndianRupee className='size-4' /> Receipt
-                  </Button>
+                  <TransactionReceiptDialog studentId={studentId} transactionId={transaction._id} />
                 </TableCell>
               </TableRow>
             ))}

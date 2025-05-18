@@ -758,63 +758,72 @@ export default function AllLeadsPage() {
   );
 }
 
-function TableActionButton() {
+export function TableActionButton() {
   const authStore = useAuthStore();
   const [uploadOpen, setUploadOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const uploadAction = async () => {
+    setIsUploading(true);
     try {
       const response = await fetch(API_ENDPOINTS.uploadMarketingData, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" }
       });
+
       const data = await response.json();
       if (response.ok && data.SUCCESS) {
-        toast.success(data.MESSAGE || 'Marketing Data Uploaded Successfully');
+        toast.success(data.MESSAGE || "Marketing Data Uploaded Successfully");
         setUploadOpen(false);
       } else {
         throw new Error(data.ERROR || data.MESSAGE);
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Upload failed');
+      toast.error(error instanceof Error ? error.message : "Upload failed");
+    } finally {
+      setIsUploading(false);
     }
   };
 
   const downloadAction = async () => {
+    setIsDownloading(true);
     try {
       const response = await fetch(API_ENDPOINTS.downloadMarketingData, {
-        method: 'GET',
-        credentials: 'include'
+        method: "GET",
+        credentials: "include"
       });
 
       if (!response.ok) {
         try {
           const errorData = await response.json();
-          throw new Error(errorData.ERROR || errorData.MESSAGE || 'Download failed');
+          throw new Error(errorData.ERROR || errorData.MESSAGE || "Download failed");
         } catch {
-          throw new Error('Download failed');
+          throw new Error("Download failed");
         }
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
 
-      const a = document.createElement('a');
+      const a = document.createElement("a");
       a.href = url;
-      const userName = authStore.user?.name ?? 'user';
-      const dateStr = format(new Date(), 'dd-MM-yyyy');
+      const userName = authStore.user?.name ?? "user";
+      const dateStr = format(new Date(), "dd-MM-yyyy");
       a.download = `${userName}-${dateStr}.xlsx`;
       document.body.appendChild(a);
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
 
-      toast.success('Marketing Data Downloaded Successfully');
+      toast.success("Marketing Data Downloaded Successfully");
       setDownloadOpen(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Download failed');
+      toast.error(error instanceof Error ? error.message : "Download failed");
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -847,13 +856,17 @@ function TableActionButton() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex justify-end gap-2 sm:justify-end">
-            <DialogClose asChild>
-              <Button variant="outline" className="font-inter text-sm">
+            <DialogClose asChild disabled={isUploading}>
+              <Button variant="outline" className="font-inter text-sm" disabled={isUploading}>
                 Cancel
               </Button>
             </DialogClose>
-            <Button onClick={uploadAction} className="font-inter text-sm">
-              Confirm Upload
+            <Button
+              onClick={uploadAction}
+              className="font-inter text-sm"
+              disabled={isUploading}
+            >
+              {isUploading ? "Uploading..." : "Confirm Upload"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -862,7 +875,10 @@ function TableActionButton() {
       {/* Download Dialog */}
       <Dialog open={downloadOpen} onOpenChange={setDownloadOpen}>
         <DialogTrigger asChild>
-          <Button disabled={isDownloadDisabled} className="h-8 w-[103px] rounded-[10px] border">
+          <Button
+            disabled={isDownloadDisabled}
+            className="h-8 w-[103px] rounded-[10px] border"
+          >
             <LuDownload className="mr-1 h-4 w-4" />
             <span className="font-inter font-semibold text-[12px]">Download</span>
           </Button>
@@ -878,13 +894,17 @@ function TableActionButton() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex justify-end gap-2 sm:justify-end">
-            <DialogClose asChild>
-              <Button variant="outline" className="font-inter text-sm">
+            <DialogClose asChild disabled={isDownloading}>
+              <Button variant="outline" className="font-inter text-sm" disabled={isDownloading}>
                 Cancel
               </Button>
             </DialogClose>
-            <Button onClick={downloadAction} className="font-inter text-sm">
-              Confirm Download
+            <Button
+              onClick={downloadAction}
+              className="font-inter text-sm"
+              disabled={isDownloading}
+            >
+              {isDownloading ? "Downloading..." : "Confirm Download"}
             </Button>
           </DialogFooter>
         </DialogContent>
