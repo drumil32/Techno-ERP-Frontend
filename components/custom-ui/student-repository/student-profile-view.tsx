@@ -1,27 +1,16 @@
-// React and Next.js imports
 import React, { useRef, useState } from 'react';
 import Image from 'next/image';
-
-// UI Components
 import { Label } from '@/components/ui/label';
-
-// Types and interfaces
 import { DocumentWithFileUrl, FieldDefinition, StudentData } from './helpers/interface';
-
-// Utilities
 import { formatYearRange } from '@/lib/utils';
 import { Loader2, Pencil } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { useMutation } from '@tanstack/react-query';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateDocument } from './helpers/api';
 import { DocumentType } from '@/types/enum';
 import { getReadableDocumentName } from '../enquiry-form/stage-3/documents-section/helpers/mapperFunction';
 import { toast } from 'sonner';
 
-/**
- * Displays a labeled field with value
- */
 const InfoField = ({ label, value }: FieldDefinition) => (
   <div className="flex flex-row gap-2 items-start">
     <Label className="text-sm font-normal text-gray-500 shrink-0">{label}:</Label>
@@ -31,9 +20,6 @@ const InfoField = ({ label, value }: FieldDefinition) => (
   </div>
 );
 
-/**
- * Displays student profile picture and identification
- */
 const ProfilePicSection = ({
   name,
   universityId,
@@ -45,74 +31,40 @@ const ProfilePicSection = ({
   studentId: string;
   image: string;
 }) => {
+  const [imageKey, setImageKey] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
+  const { mutateAsync: updateDocumentMutation } = useMutation({
+    mutationFn: updateDocument,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['student', studentId] });
 
-  const handlePencilClick = () => {
-    // Programmatically click the hidden file input
-    fileInputRef.current?.click();
-  };
+      setImageKey((prev) => prev + 1);
+    },
+    onError: (error) => {
+      console.error('Update failed:', error);
+    }
+  });
+
+  const handlePencilClick = () => fileInputRef.current?.click();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      handleUpload(e.target.files[0]);
-    }
+    if (e.target.files?.[0]) handleUpload(e.target.files[0]);
   };
-
-  const useUpdateDocument = () => {
-    const queryClient = useQueryClient();
-
-    return useMutation({
-      mutationFn: updateDocument,
-      onSuccess: (data: any) => {
-        queryClient.invalidateQueries({ queryKey: ['student', studentId] });
-      },
-      onError: (error) => {
-        console.error('Update failed:', error);
-      }
-    });
-  };
-
-  // Inside your component
-  const { mutateAsync: updateDocumentMutation } = useUpdateDocument();
 
   const handleUpload = async (selectedFile: File) => {
     setIsLoading(true);
-
     try {
-      const formDataPayload = new FormData();
-      formDataPayload.append('id', studentId);
-      formDataPayload.append('type', DocumentType.PHOTO);
-      if (selectedFile) {
-        formDataPayload.append('document', selectedFile);
-      }
+      const formData = new FormData();
+      formData.append('id', studentId);
+      formData.append('type', DocumentType.PHOTO);
+      formData.append('document', selectedFile);
 
-      await updateDocumentMutation(formDataPayload);
-
+      await updateDocumentMutation(formData);
       toast.success(`${getReadableDocumentName(DocumentType.PHOTO)} uploaded successfully!`);
     } catch (error) {
-      console.error('Upload failed:', error);
-      let errorMessage = 'File upload failed. Please try again.';
-      if (error instanceof Error) {
-        errorMessage = error.message;
-      } else if (typeof error === 'string') {
-        errorMessage = error;
-      } else if (
-        error &&
-        typeof error === 'object' &&
-        'message' in error &&
-        typeof error.message === 'string'
-      ) {
-        errorMessage = error.message;
-      } else if (
-        error &&
-        typeof error === 'object' &&
-        'ERROR' in error &&
-        typeof error.ERROR === 'string'
-      ) {
-        errorMessage = error.ERROR;
-      }
+      const errorMessage = error instanceof Error ? error.message : 'File upload failed';
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
@@ -123,13 +75,13 @@ const ProfilePicSection = ({
     <div className="bg-white shadow-sm rounded-lg py-4 px-6 flex flex-col items-center justify-center gap-2">
       <div className="relative w-32 h-32 overflow-hidden group">
         <Image
-          src={image || '/images/default-profile.png'}
+          src={`${image || '/images/default-profile.png'}?t=${new Date()}`}
           alt={`${name}'s Profile Picture`}
           fill
           className="object-cover rounded-full border border-gray-400"
+          key={`${image}-${imageKey}`}
         />
 
-        {/* Hidden file input */}
         <Input
           ref={fileInputRef}
           type="file"
@@ -137,8 +89,6 @@ const ProfilePicSection = ({
           className="hidden"
           onChange={handleFileChange}
         />
-
-        {/* Edit button overlay */}
         <button
           onClick={handlePencilClick}
           className="absolute bottom-0 right-0 bg-white rounded-full p-1.5 border border-gray-400 hover:bg-gray-100 transition-colors"
@@ -160,16 +110,12 @@ const ProfilePicSection = ({
   );
 };
 
-/**
- * StudentProfileView Component
- * Displays a student's profile information in a structured layout
- */
 const StudentProfileView = ({ studentData }: { studentData: StudentData }) => {
   if (!studentData) return <div className="p-4">No student data available</div>;
 
-  const { studentInfo, courseCode, currentAcademicYear, currentSemester, _id } = studentData || {};
+  const { studentInfo, courseCode, currentAcademicYear, currentSemester, _id } = studentData;
+  const photoDocument = studentInfo?.documents?.find((doc) => doc.type === 'Photo');
 
-  // Define fields to display
   const studentDisplayFields: FieldDefinition[] = [
     { label: 'Student Name', value: studentInfo?.studentName },
     { label: "Student's Phone Number", value: studentInfo?.studentPhoneNumber },
@@ -192,12 +138,8 @@ const StudentProfileView = ({ studentData }: { studentData: StudentData }) => {
         name={studentInfo?.studentName || 'Unknown Student'}
         universityId={studentInfo?.universityId || 'No ID'}
         studentId={_id}
-        image={
-          studentInfo?.documents?.find((doc: DocumentWithFileUrl) => doc.type === 'Photo')
-            ?.fileUrl || '/images/techno-logo.png'
-        }
+        image={photoDocument?.fileUrl || '/images/techno-logo.png'}
       />
-
       <div className="bg-white p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow rounded-lg shadow-sm">
         {studentDisplayFields.map(({ label, value }) => (
           <InfoField key={label} label={label} value={value || 'N/A'} />

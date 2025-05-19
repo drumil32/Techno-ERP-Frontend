@@ -194,11 +194,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select
-                        disabled={isViewable}
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                      <Select disabled={true} onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Course" />
                         </SelectTrigger>

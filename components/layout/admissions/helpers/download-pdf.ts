@@ -1,9 +1,8 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
-
-const placeholderLogoBase64 = "/images/techno-logo.webp";
-const placeholderPhotoBase64 = "/images/dummy_user.webp";
+const placeholderLogoBase64 = '/images/techno-logo.webp';
+const placeholderPhotoBase64 = '/images/dummy_user.webp';
 
 // const toBase64 = async (url: string) => {
 //   const res = await fetch(url);
@@ -15,9 +14,6 @@ const placeholderPhotoBase64 = "/images/dummy_user.webp";
 //     reader.readAsDataURL(blob);
 //   });
 // };
-
-
-
 export const downloadAdmissionForm = async (data: any) => {
   const container = document.createElement('div');
   container.style.width = '780px';
@@ -28,14 +24,8 @@ export const downloadAdmissionForm = async (data: any) => {
 
   const escapeHtml = (unsafe: any) => {
     if (typeof unsafe !== 'string') return unsafe;
-    return unsafe
-      .replace(/&/g, "&")
-      .replace(/</g, "<")
-      .replace(/>/g, ">")
+    return unsafe.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
   };
-
-  // const profileImageDataBase64 = data.profileImage ? toBase64(data.profileImage) : null;
-
 
   container.innerHTML = `
 <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
@@ -45,12 +35,12 @@ export const downloadAdmissionForm = async (data: any) => {
     </div>
     <div style="flex-grow: 1; text-align: center; margin: 0 10px;">
         <h2 style="text-align: center; color: #851A6A; font-size: 18px; font-weight: 800; margin:0 0 4px 0;">
-            ${escapeHtml(data.fullCollegeName ?? "Techno Institute of Higher Studies")}</h2>
+            ${escapeHtml(data.fullCollegeName ?? 'Techno Institute of Higher Studies')}</h2>
         <p style="text-align: center; font-size: 12px; font-weight: 600; margin: 0; line-height: 1.3;">
             (Affiliated to ${escapeHtml(data.affiliationName)})<br />
-            ${escapeHtml(data.collegeAddress ?? "CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028")}<br />
-            Website: ${escapeHtml(data.websiteUrl ?? "tihs.edu.in")} | Email: ${escapeHtml(data.collegeEmail ?? "registrar@tims.edu.in")} | Contact:
-            ${escapeHtml(data.collegeContact ?? "9839506777")}
+            ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}<br />
+            Website: ${escapeHtml(data.websiteUrl ?? 'tihs.edu.in')} | Email: ${escapeHtml(data.collegeEmail ?? 'registrar@tims.edu.in')} | Contact:
+            ${escapeHtml(data.collegeContact ?? '9839506777')}
         </p>
     </div>
     <div style="position: absolute; top: 0; right: 0;">
@@ -71,127 +61,127 @@ export const downloadAdmissionForm = async (data: any) => {
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none; width: 20%;">
                 Course :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none; width: 30%;">
-                ${escapeHtml(data.courseName ?? "--")}</td>
+                ${escapeHtml(data.courseName ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none; width: 20%;">
                 Admission Date :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none; width: 30%;">
-                ${escapeHtml(data.admissionDate ?? "--")}</td>
+                ${escapeHtml(data.admissionDate ?? '--')}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Student Name :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.studentName ?? "--")}</td>
+                ${escapeHtml(data.studentName ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Phone Number :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.studentPhoneNumber ?? "--")}</td>
+                ${escapeHtml(data.studentPhoneNumber ?? '--')}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Father’s Name :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.fatherName ?? "--")}</td>
+                ${escapeHtml(data.fatherName ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Father’s Phone Number :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.fatherPhoneNumber ?? "--")}</td>
+                ${escapeHtml(data.fatherPhoneNumber ?? '--')}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Mother’s Name :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.motherName ?? "--")}</td>
+                ${escapeHtml(data.motherName ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Mother’s Phone Number :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.motherPhoneNumber ?? "--")}</td>
+                ${escapeHtml(data.motherPhoneNumber ?? '--')}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Date of Birth :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.dateOfBirth ?? "--")}</td>
+                ${escapeHtml(data.dateOfBirth ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Email ID :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.emailId ?? "--")}</td>
+                ${escapeHtml(data.emailId ?? '--')}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Gender :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.gender ?? "--")}</td>
+                ${escapeHtml(data.gender ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Blood Group :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.bloodGroup ?? "--")}</td>
+                ${escapeHtml(data.bloodGroup ?? '--')}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Religion :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.religion ?? "--")}</td>
+                ${escapeHtml(data.religion ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Category :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.category ?? "--")}</td>
+                ${escapeHtml(data.category ?? '--')}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 State of Domicile :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.stateOfDomicile ?? "--")}</td>
+                ${escapeHtml(data.stateOfDomicile ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Aadhar Card Number :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.aadharNumber ?? "--")}</td>
+                ${escapeHtml(data.aadharNumber ?? '--')}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Address :</td>
             <td colspan="3" style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.address ?? "--")}</td>
+                ${escapeHtml(data.address ?? '--')}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Pin Code :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.pincode ?? "--")}</td>
+                ${escapeHtml(data.pincode ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Area Type :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.areaType ?? "--")}</td>
+                ${escapeHtml(data.areaType ?? '--')}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 State :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.state ?? "--")}</td>
+                ${escapeHtml(data.state ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Nationality :</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.nationality ?? "--")}</td>
+                ${escapeHtml(data.nationality ?? '--')}</td>
         </tr>
     </tbody>
 </table>
@@ -210,18 +200,22 @@ export const downloadAdmissionForm = async (data: any) => {
         </tr>
     </thead>
     <tbody>
-        ${data.academicDetails.map((detail: any) => `
+        ${data.academicDetails
+          .map(
+            (detail: any) => `
         <tr>
-            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.educationLevel ?? "--")}</td>
-            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.schoolCollegeName ?? "--")}</td>
-            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.universityBoardName ?? "--")}</td>
-            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.subjects ?? "--")}</td>
+            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.educationLevel ?? '--')}</td>
+            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.schoolCollegeName ?? '--')}</td>
+            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.universityBoardName ?? '--')}</td>
+            <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.subjects ?? '--')}</td>
             <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; text-align: center;">
-                ${escapeHtml(detail.passingYear ?? "--")}</td>
+                ${escapeHtml(detail.passingYear ?? '--')}</td>
             <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; text-align: center;">
-                ${escapeHtml(detail.percentageObtained ?? "--")}</td>
+                ${escapeHtml(detail.percentageObtained ?? '--')}</td>
         </tr>
-        `).join('')}
+        `
+          )
+          .join('')}
     </tbody>
 </table>
 
@@ -233,28 +227,30 @@ export const downloadAdmissionForm = async (data: any) => {
                 style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none; width: 20%;">
                 Examination Name :</td>
             <td colspan="5" style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.entranceExamDetails.nameOfExamination ?? "--")}</td>
+                ${escapeHtml(data.entranceExamDetails.nameOfExamination ?? '--')}</td>
         </tr>
         <tr>
             <td
                 style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Roll No :</td>
             <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.entranceExamDetails.rollNumber ?? "--")}</td>
+                ${escapeHtml(data.entranceExamDetails.rollNumber ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Rank :</td>
             <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.entranceExamDetails.rank ?? "--")}</td>
+                ${escapeHtml(data.entranceExamDetails.rank ?? '--')}</td>
             <td
                 style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Qualified :</td>
             <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; border-left: none;">
-                ${data.entranceExamDetails.qualified === undefined
-      ? '--'
-      : data.entranceExamDetails.qualified
-        ? 'Yes'
-        : 'No'}
+                ${
+                  data.entranceExamDetails.qualified === undefined
+                    ? '--'
+                    : data.entranceExamDetails.qualified
+                      ? 'Yes'
+                      : 'No'
+                }
             </td>
         </tr>
     </tbody>
@@ -284,13 +280,13 @@ export const downloadAdmissionForm = async (data: any) => {
         <p style="font-size: 20px; line-height: 1; vertical-align: start;">▢</p>
         <p style="color: #666666; font-weight: 400; flex-shrink: 0;">Email ID :</p>
         <p
-            style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.emailId ?? "--")}</p>
+            style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.emailId ?? '--')}</p>
     </div>
     <div style="display: flex; align-items: baseline; gap: 5px; width: calc(50% - 10px);">
         <p style="font-size: 20px; line-height: 1; vertical-align: middle;">▢</p>
         <p style="color: #666666; font-weight: 400; flex-shrink: 0;">Phone Number :</p>
         <p
-            style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.studentPhoneNumber ?? "--")}</p>
+            style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.studentPhoneNumber ?? '--')}</p>
     </div>
 </div>
 
@@ -303,41 +299,36 @@ export const downloadAdmissionForm = async (data: any) => {
   document.body.appendChild(container);
 
   try {
-    const canvas = await html2canvas(container, {
-      scale: 2,
-      useCORS: true,
-      logging: true,
-      onclone: (clonedDoc) => {
-      }
-    });
-
+    const canvas = await html2canvas(container, { scale: 3, useCORS: true });
     const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'px',
-      format: 'a4'
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4' });
+
+    const fileName = `Admission-Form-${data.studentName?.replace(/\s+/g, '-')}-${data.courseName}.pdf`;
+    const title = `Admission Form - ${data.studentName}`;
+
+    pdf.setProperties({
+      creator: 'Techno Institute',
+      title: title,
+      subject: `Admission details for ${data.studentName}`,
+      author: data.collegeName || 'Techno Institute'
     });
 
     const imgProps = pdf.getImageProperties(imgData);
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
     const pdfBlob = pdf.output('blob');
     const blobUrl = URL.createObjectURL(pdfBlob);
-    return blobUrl;
 
-  } catch (error) {
-    console.error("Error generating PDF:", error);
+    return {
+      url: blobUrl,
+      fileName: fileName
+    };
   } finally {
-    // Clean up
-    if (document.body.contains(container)) {
-      document.body.removeChild(container);
-    }
+    if (document.body.contains(container)) document.body.removeChild(container);
   }
 };
-
 
 export const downloadFeeReceipt = async (data: any) => {
   const container = document.createElement('div');
@@ -349,14 +340,14 @@ export const downloadFeeReceipt = async (data: any) => {
 
   const escapeHtml = (unsafe: any) => {
     if (typeof unsafe !== 'string') return unsafe;
-    return unsafe
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
+    return unsafe.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   };
 
   // Calculate total sum
-  const totalAmount = data.particulars.reduce((sum: number, item: any) => sum + parseFloat(item.amount), 0);
+  const totalAmount = data.particulars.reduce(
+    (sum: number, item: any) => sum + parseFloat(item.amount),
+    0
+  );
 
   container.innerHTML = `
      <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
@@ -366,12 +357,12 @@ export const downloadFeeReceipt = async (data: any) => {
     </div>
     <div style="flex-grow: 1; text-align: center; margin: 0 10px;">
         <h2 style="text-align: center; color: #851A6A; font-size: 18px; font-weight: 800; margin:0 0 4px 0;">
-            ${escapeHtml(data.collegeName ?? "Techno Institute of Higher Studies")}</h2>
+            ${escapeHtml(data.collegeName ?? 'Techno Institute of Higher Studies')}</h2>
         <p style="text-align: center; font-size: 12px; font-weight: 600; margin: 0; line-height: 1.3;">
-            (Affiliated to ${escapeHtml(data.affiliationName) ?? "Dr. A.P.J. Abdul Kalam Technical University, Lucknow"})<br />
-            ${escapeHtml(data.collegeAddress ?? "CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028")}<br />
-            Email: ${escapeHtml(data.collegeEmail ?? "registrar@tims.edu.in")} | Contact:
-            ${escapeHtml(data.collegeContactNumber ?? "9839506777")}
+            (Affiliated to ${escapeHtml(data.affiliationName) ?? 'Dr. A.P.J. Abdul Kalam Technical University, Lucknow'})<br />
+            ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}<br />
+            Email: ${escapeHtml(data.collegeEmail ?? 'registrar@tims.edu.in')} | Contact:
+            ${escapeHtml(data.collegeContactNumber ?? '9839506777')}
         </p>
     </div>
 </div>
@@ -418,13 +409,17 @@ export const downloadFeeReceipt = async (data: any) => {
     </tr>
   </thead>
   <tbody>
-    ${data.particulars.map((fee: any) => `
+    ${data.particulars
+      .map(
+        (fee: any) => `
     <tr>
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none;">${escapeHtml(fee.name)}</td>
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: right; border-left:none;">
       ${fee.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
       </td>
-    </tr>`).join('')}
+    </tr>`
+      )
+      .join('')}
     <tr>
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; font-weight: bold; border-right:none;">Total Dues</td>
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none;"></td>
@@ -457,7 +452,7 @@ export const downloadFeeReceipt = async (data: any) => {
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none; border-bottom:none; border-top:none;"></td>
     </tr>
     <tr>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none; border-top:none; width: 30%;">${escapeHtml(data.remarks ?? "--")}</td>
+      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none; border-top:none; width: 30%;">${escapeHtml(data.remarks ?? '--')}</td>
       <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: right; border-left:none; border-top:none;">Authorized Signatory</td>
     </tr>
   </tbody>
@@ -468,20 +463,18 @@ export const downloadFeeReceipt = async (data: any) => {
   document.body.appendChild(container);
 
   try {
-    const canvas = await html2canvas(container, {
-      scale: 2,
-      useCORS: true,
-      logging: true,
-      onclone: (clonedDoc) => {
-        // Any additional manipulation of the cloned document before rendering
-      }
-    });
-
+    const canvas = await html2canvas(container, { scale: 2, useCORS: true });
     const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'px',
-      format: 'a4'
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4' });
+
+    const fileName = `Fee-Receipt-${data.studentName?.replace(/\s+/g, '-')}-${data.courseName}.pdf`;
+    const title = `Fee Receipt - ${data.studentName}`;
+
+    pdf.setProperties({
+      creator: 'Techno Institute',
+      title: title,
+      subject: `Fee details for ${data.studentName}`,
+      author: data.collegeName || 'Techno Institute'
     });
 
     const imgProps = pdf.getImageProperties(imgData);
@@ -489,56 +482,49 @@ export const downloadFeeReceipt = async (data: any) => {
     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    // pdf.save('fee_receipt.pdf');
-
     const pdfBlob = pdf.output('blob');
     const blobUrl = URL.createObjectURL(pdfBlob);
-    return blobUrl;
 
-
-  } catch (error) {
-    console.error("Error generating PDF:", error);
+    return {
+      url: blobUrl,
+      fileName: fileName
+    };
   } finally {
-    // Clean up
-    if (document.body.contains(container)) {
-      document.body.removeChild(container);
-    }
+    if (document.body.contains(container)) document.body.removeChild(container);
   }
-}
-
-
+};
 
 export const mockDataFee = {
   logoLink: placeholderLogoBase64,
-  collegeName: "TECHNO INSTITUTE OF HIGHER STUDIES",
-  collegeAddress: "331, Anaura, Near Indira Canal, Ayodhya Road, Lucknow - 226028",
-  email: "accounts@tims.edu.in",
-  contact: "7897123666 (Voice & Whatsapp)",
-  receiptNo: "767",
-  date: "16-05-25",
-  studentName: "Avnish Kumar S/o Mr. Bal Govind",
-  category: "General",
-  fatherName: "Mr. Bal Govind",
-  session: "2024 - 25",
-  course: "BSc",
+  collegeName: 'TECHNO INSTITUTE OF HIGHER STUDIES',
+  collegeAddress: '331, Anaura, Near Indira Canal, Ayodhya Road, Lucknow - 226028',
+  email: 'accounts@tims.edu.in',
+  contact: '7897123666 (Voice & Whatsapp)',
+  receiptNo: '767',
+  date: '16-05-25',
+  studentName: 'Avnish Kumar S/o Mr. Bal Govind',
+  category: 'General',
+  fatherName: 'Mr. Bal Govind',
+  session: '2024 - 25',
+  course: 'BSc',
   feeDetails: [
     {
-      particular: "2022-23- Third Year-Vith-Misc Fee",
-      amount: 400.00
+      particular: '2022-23- Third Year-Vith-Misc Fee',
+      amount: 400.0
     },
     {
-      particular: "2024-25- Third Year-Vith-Exam Fee & PC",
-      amount: 2600.00
+      particular: '2024-25- Third Year-Vith-Exam Fee & PC',
+      amount: 2600.0
     },
     {
-      particular: "2024-25- Third Year-Vith-Misc Fee",
-      amount: 800.00
+      particular: '2024-25- Third Year-Vith-Misc Fee',
+      amount: 800.0
     },
     {
-      particular: "2024-25- Third Year-Vith-Tution Fee",
-      amount: 10000.00
+      particular: '2024-25- Third Year-Vith-Tution Fee',
+      amount: 10000.0
     }
   ],
-  amountInWords: "INR Thirteen Thousand Eight Hundred Only",
-  qrCode: "QQ 271395"
+  amountInWords: 'INR Thirteen Thousand Eight Hundred Only',
+  qrCode: 'QQ 271395'
 };

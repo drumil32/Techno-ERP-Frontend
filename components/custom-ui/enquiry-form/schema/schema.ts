@@ -116,6 +116,23 @@ export const physicalDocumentNoteSchema = z.object({
   dueBy: requestDateSchema.optional()
 });
 
+export enum Nationality {
+  INDIAN = 'INDIAN',
+  NRI = 'NRI',
+  PIO = 'PIO',
+  OCI = 'OCI',
+  FOREIGN_NATIONAL = 'FOREIGN_NATIONAL'
+  // BHUTANESE = 'BHUTANESE',
+  // NEPALESE = 'NEPALESE',
+  // AFGHAN = 'AFGHAN',
+  // BANGLADESHI = 'BANGLADESHI',
+  // PAKISTANI = 'PAKISTANI',
+  // SRI_LANKAN = 'SRI_LANKAN',
+  // MALDIVIAN = 'MALDIVIAN',
+  // TIBETAN_REFUGEE = 'TIBETAN_REFUGEE',
+  // STATELESS = 'STATELESS'
+}
+
 export const enquirySchema = z.object({
   _id: z.string().optional(),
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
@@ -183,7 +200,7 @@ export const enquirySchema = z.object({
   previousCollegeData: previousCollegeDataSchema.optional(),
   stateOfDomicile: z.nativeEnum(StatesOfIndia).default(StatesOfIndia.UttarPradesh),
   areaType: z.nativeEnum(AreaType).optional(),
-  nationality: z.string().optional(),
+  nationality: z.string().optional().default(Nationality.INDIAN),
   entranceExamDetails: entranceExamDetailSchema.optional(),
   admittedBy: z.union([z.string(), z.enum(['other'])]).optional(),
   isFeeApplicable: z.boolean().default(false).optional()
@@ -192,23 +209,6 @@ export const enquirySchema = z.object({
 export enum Qualification {
   Yes = 'Yes',
   No = 'No'
-}
-
-export enum Nationality {
-  INDIAN = 'INDIAN',
-  NRI = 'NRI',
-  PIO = 'PIO',
-  OCI = 'OCI',
-  FOREIGN_NATIONAL = 'FOREIGN_NATIONAL'
-  // BHUTANESE = 'BHUTANESE',
-  // NEPALESE = 'NEPALESE',
-  // AFGHAN = 'AFGHAN',
-  // BANGLADESHI = 'BANGLADESHI',
-  // PAKISTANI = 'PAKISTANI',
-  // SRI_LANKAN = 'SRI_LANKAN',
-  // MALDIVIAN = 'MALDIVIAN',
-  // TIBETAN_REFUGEE = 'TIBETAN_REFUGEE',
-  // STATELESS = 'STATELESS'
 }
 
 export const enquiryStep1RequestSchema = enquirySchema

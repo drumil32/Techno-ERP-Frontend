@@ -392,7 +392,6 @@ const FinanceOfficeForm = () => {
       });
       console.log('the response', response);
       toast.success('Enquiry submitted for final approval');
-      router.push(SITE_MAP.ADMISSIONS.DEFAULT);
       return true;
     } catch (error) {
       transactionTypeRef.current = '';
@@ -764,7 +763,6 @@ const FinanceOfficeForm = () => {
           onSubmit={onSubmit}
           draftExists={existingFeeDraft}
           confirmationChecked={confirmationChecked}
-          closeOnError={false}
           customSaveDialog={
             <FinalFeeSaveDialog
               studentData={enquiryData}

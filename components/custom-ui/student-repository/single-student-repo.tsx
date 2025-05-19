@@ -28,7 +28,6 @@ import { getPersonalDetailsFormData } from './helpers/helper';
 import AllDocumentsTab from './tabs/all-documents-tab';
 
 const SingleStudentRepositoryPage: React.FC = () => {
-  
   const { universityId } = useParams<{ universityId: string }>();
   const searchParams = useSearchParams();
   const studentId = searchParams.get('studentId');
@@ -107,14 +106,16 @@ const SingleStudentRepositoryPage: React.FC = () => {
     if (!headerActiveItem) return null;
 
     if (headerActiveItem === HEADER_ITEMS[StudentRepositoryTabs.STUDENT_DETAILS].title) {
-      return studentData && (
-        <StudentDetailsTab
-          personalDetailsForm={personalDetailsForm}
-          commonFormItemClass={commonFormItemClass}
-          commonFieldClass={commonFieldClass}
-          studentData={studentData}
-          setStudentData={setStudentData}
-        />
+      return (
+        studentData && (
+          <StudentDetailsTab
+            personalDetailsForm={personalDetailsForm}
+            commonFormItemClass={commonFormItemClass}
+            commonFieldClass={commonFieldClass}
+            studentData={studentData}
+            setStudentData={setStudentData}
+          />
+        )
       );
     }
 
