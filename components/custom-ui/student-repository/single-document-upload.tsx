@@ -28,6 +28,7 @@ import {
 } from '../enquiry-form/stage-3/documents-section/single-document-form';
 import { updateDocument } from './helpers/api';
 import { formatDateForDisplay } from './sub-sections/mandatory-doc-verification';
+import Link from 'next/link';
 
 interface SingleDocumentUploadProps {
   studentData: StudentData;
@@ -53,7 +54,7 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
 
   const displayExistingDocument = existingDocument && !selectedFile;
 
-  const existingDueDateFormatted = existingDocument?.dueBy || 'No due date set';
+  const existingDueDateFormatted = existingDocument?.dueBy;
 
   const uniqueInputId = `file-upload-${documentType.toString().replace(/_/g, '-')}-${studentData._id}`;
 
@@ -154,8 +155,7 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
     return useMutation({
       mutationFn: updateDocument,
       onSuccess: (data: any) => {
-        const updatedDocuments = data?.studentInfo?.documents;
-        queryClient.invalidateQueries({ queryKey: ['student'] });
+        queryClient.invalidateQueries({ queryKey: ['student', studentData._id] });
       },
       onError: (error) => {
         console.error('Update failed:', error);
@@ -173,10 +173,9 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
     }
 
     if (dueDate) {
-      
-      const dueDateObj = new Date(dueDate); 
+      const dueDateObj = new Date(dueDate);
       const today = startOfDay(new Date());
-      
+
       if (isBefore(dueDateObj, today)) {
         setStatus({ type: 'error', message: 'Due date cannot be in the past.' });
         return;
@@ -265,42 +264,49 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
           </div>
 
           {displayExistingDocument && (
-            <motion.a
-              href={existingDocument.fileUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 max-w-max"
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.99 }}
-              transition={{ duration: 0.1 }}
-            >
-              <div className="bg-[#4E2ECC]/5 border border-[#4E2ECC]/30 rounded-lg p-3 hover:border-[#4E2ECC]/50 transition-colors group">
-                <div className="flex items-center justify-between gap-3 w-full">
-                  <div className="flex w-max items-center gap-3 flex-1 min-w-0">
-                    <motion.div
-                      className="bg-[#4E2ECC]/10 p-2 rounded group-hover:bg-[#4E2ECC]/20 transition-colors"
-                      whileHover={{ scale: 1.05 }}
-                    >
-                      <FileText className="h-4 w-4 text-[#4E2ECC] flex-shrink-0" />
-                    </motion.div>
-                    <div className="min-w-0">
-                      <p className="block text-sm font-medium text-[#4E2ECC] group-hover:underline truncate">
-                        {existingFilename}
-                      </p>
-                      <span className="text-xs w-max text-gray-600">
-                        Due: {existingDueDateFormatted}
-                      </span>
+            <div className="flex-1 max-w-max">
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                transition={{ duration: 0.1 }}
+              >
+                <a
+                  target="_blank"
+                  href={existingDocument.fileUrl}
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <div className="bg-[#4E2ECC]/5 border border-[#4E2ECC]/30 rounded-lg p-3 hover:border-[#4E2ECC]/50 transition-colors group">
+                    <div className="flex items-center justify-between gap-3 w-full">
+                      <div className="flex w-max items-center gap-3 flex-1 min-w-0">
+                        <motion.div
+                          className="bg-[#4E2ECC]/10 p-2 rounded group-hover:bg-[#4E2ECC]/20 transition-colors"
+                          whileHover={{ scale: 1.05 }}
+                        >
+                          <FileText className="h-4 w-4 text-[#4E2ECC] flex-shrink-0" />
+                        </motion.div>
+                        <div className="min-w-0">
+                          <p className="block text-sm font-medium text-[#4E2ECC] group-hover:underline truncate">
+                            {existingFilename}
+                          </p>
+                          {existingDueDateFormatted && (
+                            <span className="text-xs w-max text-gray-600">
+                              Due: {existingDueDateFormatted}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <motion.div
+                        className="text-[#4E2ECC] hover:text-[#4E2ECC]/80 p-2 rounded-full hover:bg-[#4E2ECC]/10 flex-shrink-0"
+                        whileHover={{ scale: 1.1 }}
+                      >
+                        <LinkIcon className="h-4 w-4" />
+                      </motion.div>
                     </div>
                   </div>
-                  <motion.div
-                    className="text-[#4E2ECC] hover:text-[#4E2ECC]/80 p-2 rounded-full hover:bg-[#4E2ECC]/10 flex-shrink-0"
-                    whileHover={{ scale: 1.1 }}
-                  >
-                    <LinkIcon className="h-4 w-4" />
-                  </motion.div>
-                </div>
-              </div>
-            </motion.a>
+                </a>
+              </motion.div>
+            </div>
           )}
         </div>
 

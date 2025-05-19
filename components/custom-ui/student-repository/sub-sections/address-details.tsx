@@ -31,7 +31,7 @@ interface AddressDetailsFormPropInterface<T extends FieldValues = FieldValues> {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
   commonFieldClass: string;
-  handleSave: () => void;
+  handleSave: () => Promise<boolean>;
 }
 
 const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
@@ -60,6 +60,13 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
     { label: 'Country', value: toPascal(formData.address?.country) }
   ];
 
+  const saveHandler = async () => {
+    const success = await handleSave();
+    if (success) {
+      setIsEditing(false);
+    }
+  };
+
   return (
     <Accordion type="single" collapsible defaultValue="address-details">
       <AccordionItem value="address-details">
@@ -78,8 +85,7 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSave();
-                    toggleEdit();
+                    saveHandler();
                   }}
                   className="flex items-center"
                 >
@@ -157,7 +163,7 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
                     control={form.control}
                     name="address.pincode"
                     render={({ field }) => (
-                      <FormItem className={`${commonFormItemClass} col-start-1` }>
+                      <FormItem className={`${commonFormItemClass} col-start-1`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                           Pincode
                           <span className="text-red-500 pl-0">*</span>
@@ -275,33 +281,18 @@ const AddressDetailsSection: React.FC<AddressDetailsFormPropInterface> = ({
                   />
                 </>
               ) : (
-                  <div className='flex flex-col gap-2'>
-                    <div>
-                      <DisplayField
-                        label="Address Line 1"
-                        value={formData.address?.addressLine1}
-                      />
-                      <DisplayField
-                        label="Address Line 2"
-                        value={formData.address?.addressLine2}
-                      />
-                    </div>
-                    <div className='grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-2'>
-                      <DisplayField label="Pincode" value={formData.address?.pincode} />
-                      <DisplayField
-                        label="District"
-                        value={toPascal(formData.address?.district)}
-                      />
-                      <DisplayField
-                        label="State"
-                        value={toPascal(formData.address?.state)}
-                      />
-                      <DisplayField
-                        label="Country"
-                        value={toPascal(formData.address?.country)}
-                      />
-                    </div>
+                <div className="flex flex-col gap-2">
+                  <div>
+                    <DisplayField label="Address Line 1" value={formData.address?.addressLine1} />
+                    <DisplayField label="Address Line 2" value={formData.address?.addressLine2} />
                   </div>
+                  <div className="grid lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1 gap-2">
+                    <DisplayField label="Pincode" value={formData.address?.pincode} />
+                    <DisplayField label="District" value={toPascal(formData.address?.district)} />
+                    <DisplayField label="State" value={toPascal(formData.address?.state)} />
+                    <DisplayField label="Country" value={toPascal(formData.address?.country)} />
+                  </div>
+                </div>
               )}
             </div>
           </AccordionContent>

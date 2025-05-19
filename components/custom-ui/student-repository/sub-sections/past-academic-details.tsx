@@ -21,14 +21,14 @@ import { updateStudentDetailsRequestSchema } from '../helpers/schema';
 import { EducationLevel } from '@/types/enum';
 import { academicDetailsArraySchema, academicDetailSchema } from '../../enquiry-form/schema/schema';
 
-interface AcademicDetailsFormPropInterface<T extends FieldValues = FieldValues> {
+interface PastAcademicDetailsFormPropInterface<T extends FieldValues = FieldValues> {
   form: UseFormReturn<z.infer<typeof updateStudentDetailsRequestSchema>>;
   commonFormItemClass: string;
   commonFieldClass: string;
-  handleSave: () => void;
+  handleSave: () => Promise<boolean>;
 }
 
-const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
+const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface> = ({
   form,
   commonFormItemClass,
   commonFieldClass,
@@ -56,7 +56,6 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
   const educationLevels = [EducationLevel.Tenth, EducationLevel.Twelfth, EducationLevel.Graduation];
 
   useEffect(() => {
-
     // Set initial education levels
     educationLevels.forEach((level, index) => {
       if (!form.getValues().academicDetails?.[index]?.educationLevel) {
@@ -71,7 +70,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
       academicDetails.forEach((entry, index) => {
         if (entry) {
           const expectedLevel = educationLevels[index];
-          
+
           // Always ensure education level matches index position
           if (entry.educationLevel !== expectedLevel) {
             form.setValue(`academicDetails.${index}.educationLevel`, expectedLevel, {
@@ -86,13 +85,20 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
     return () => subscription.unsubscribe();
   }, [form]);
 
+  const saveHandler = async () => {
+    const success = await handleSave();
+    if (success) {
+      setIsEditing(false);
+    }
+  };
+
   return (
     <Accordion type="single" collapsible defaultValue="address-details">
       <AccordionItem value="address-details">
         <div className="space-y-2">
           {/* Section Title */}
           <AccordionTrigger className="w-full items-center">
-            <h3 className="font-inter text-[16px] font-semibold">Academic Details</h3>
+            <h3 className="font-inter text-[16px] font-semibold">Past Academic Details</h3>
             <span
               className={`cursor-pointer rounded-[10px] border font-inter font-medium text-[12px] px-3 py-1 gap-2 h-fit bg-transparent inline-flex items-center ${
                 isEditing
@@ -104,8 +110,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSave();
-                    toggleEdit();
+                    saveHandler();
                   }}
                   className="flex items-center"
                 >
@@ -203,7 +208,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                   )}
 
                   <div className="flex flex-col col-span-1 col-start-1 ">
-                    <div className={`flex flex-row gap-x-3`}>
+                    <div className={`flex flex-row gap-x-10`}>
                       {isEditing ? (
                         <FormField
                           key="academicDetails.0.passingYear"
@@ -401,7 +406,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                   )}
 
                   <div className="flex flex-col col-span-1 col-start-1 ">
-                    <div className={`flex flex-row gap-x-3`}>
+                    <div className={`flex flex-row gap-x-10`}>
                       {isEditing ? (
                         <FormField
                           key="academicDetails.1.passingYear"
@@ -593,7 +598,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
                   )}
 
                   <div className="flex flex-col col-span-1 col-start-1 ">
-                    <div className={`flex flex-row gap-x-3`}>
+                    <div className={`flex flex-row gap-x-10`}>
                       {isEditing ? (
                         <FormField
                           key="academicDetails.2.passingYear"
@@ -845,4 +850,4 @@ const AcademicDetailsSection: React.FC<AcademicDetailsFormPropInterface> = ({
   );
 };
 
-export default AcademicDetailsSection;
+export default PastAcademicDetailsSection;

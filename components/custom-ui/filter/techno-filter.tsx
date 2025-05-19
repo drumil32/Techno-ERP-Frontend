@@ -84,7 +84,9 @@ export default function TechnoFilter({
   }, [filters, filterKey]);
 
   const filteredOptions = options.filter((option) => {
-    const label = typeof option === 'string' ? option : option.label;
+    const label =
+      typeof option === 'string' ? option : typeof option?.label === 'string' ? option.label : '';
+
     return label.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
@@ -276,8 +278,8 @@ export default function TechnoFilter({
                     checked={
                       multiSelect
                         ? filters[filterKey]?.includes(
-                          typeof option === 'string' ? option : option.id
-                        )
+                            typeof option === 'string' ? option : option.id
+                          )
                         : filters[filterKey] === (typeof option === 'string' ? option : option.id)
                     }
                   />

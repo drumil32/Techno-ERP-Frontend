@@ -213,20 +213,24 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
     <div className="space-y-4">
       <div className="rounded-md border overflow-hidden">
         <div className="overflow-x-auto">
-          <Table className='bg-white'>
-            <TableHeader>
-              <TableRow className="bg-gray-50">
-                <TableHead className="font-medium">Subject</TableHead>
-                <TableHead className="font-medium text-left">Subject Code</TableHead>
-                <TableHead className="font-medium text-left">Instructor</TableHead>
-                <TableHead className="font-medium text-left">No. of Classes</TableHead>
-                <TableHead className="font-medium text-left">Attendance</TableHead>
-                <TableHead className="font-medium text-left">Attendance %</TableHead>
-                <TableHead className="font-medium text-left">Theory</TableHead>
-                <TableHead className="font-medium text-left">Practical</TableHead>
-                <TableHead className="font-medium text-left">Final Marks</TableHead>
-                <TableHead className="font-medium text-left">Percentage Score</TableHead>
-                <TableHead className="font-medium">Result</TableHead>
+          <Table className="bg-white">
+            <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg">
+              <TableRow className=" bg-[#5B31D1]/10 hover:bg-[#5B31D1]/10 text-[#5B31D1] ">
+                <TableHead className="text-[#5B31D1] font-medium">Subject</TableHead>
+                <TableHead className="text-[#5B31D1] font-medium text-left">Subject Code</TableHead>
+                <TableHead className="text-[#5B31D1] font-medium text-left">Instructor</TableHead>
+                <TableHead className="text-[#5B31D1] font-medium text-left">
+                  No. of Classes
+                </TableHead>
+                <TableHead className="text-[#5B31D1] font-medium text-left">Attendance</TableHead>
+                <TableHead className="text-[#5B31D1] font-medium text-left">Attendance %</TableHead>
+                <TableHead className="text-[#5B31D1] font-medium text-left">Theory</TableHead>
+                <TableHead className="text-[#5B31D1] font-medium text-left">Practical</TableHead>
+                <TableHead className="text-[#5B31D1] font-medium text-left">Final Marks</TableHead>
+                <TableHead className="text-[#5B31D1] font-medium text-left">
+                  Percentage Score
+                </TableHead>
+                <TableHead className="text-[#5B31D1] font-medium">Result</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

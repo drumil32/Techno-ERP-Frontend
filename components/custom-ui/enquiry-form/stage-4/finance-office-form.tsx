@@ -201,7 +201,10 @@ const FinanceOfficeForm = () => {
         });
 
       initialOtherFees.unshift(sem1FeeObject);
-      otherFeesData.unshift(sem1FeeObject);
+      if (otherFeesData.at(0).type === FeeType.SEM1FEE) {
+      } else {
+        otherFeesData.unshift(sem1FeeObject);
+      }
 
       const courseSemFeeStructure = semWiseFeesData || [];
       const existingSemFees = feeDataSource?.semWiseFees || [];
@@ -243,12 +246,34 @@ const FinanceOfficeForm = () => {
     let totalDeposited = 0;
 
     if (otherFeesData) {
-      totalOriginal = otherFeesData.reduce((sum: any, fee: any) => sum + (fee.amount ?? 0), 0);
+      const baseOriginal = otherFeesData.reduce((sum, fee) => {
+        const isExcluded =
+          fee.type === displayFeeMapper(FeeType.TRANSPORT) ||
+          fee.type === displayFeeMapper(FeeType.HOSTEL);
+        console.log('otherfeesData', otherFeesData);
+
+        if (isExcluded) {
+          return sum;
+        }
+
+        return sum + (fee.amount || 0);
+      }, 0);
+
+      totalOriginal = baseOriginal;
+
+      const fee6 = Number(form.getValues('otherFees.6.finalFee')) || 0;
+      const fee7 = Number(form.getValues('otherFees.7.finalFee')) || 0;
+
+      totalOriginal += fee6 + fee7;
+    } else {
     }
 
-    (otherFeesWatched ?? []).forEach((fee) => {
-      totalFinal += fee?.finalFee ?? 0;
-      totalDeposited += fee?.feesDepositedTOA ?? 0;
+    (otherFeesWatched ?? []).forEach((fee, index) => {
+      const finalFee = Number(fee?.finalFee) || 0;
+      const deposited = Number(fee?.feesDepositedTOA) || 0;
+
+      totalFinal += finalFee;
+      totalDeposited += deposited;
     });
 
     const totalDue = totalFinal - totalDeposited;
@@ -365,15 +390,8 @@ const FinanceOfficeForm = () => {
         id: enquiry_id,
         transactionType: transactionTypeRef.current
       });
-
-      console.log('I am there my dear friend', response);
-
-      if (!response) {
-        return false;
-      }
-
+      console.log('the response', response);
       toast.success('Enquiry submitted for final approval');
-      router.push(SITE_MAP.ADMISSIONS.DEFAULT);
       return true;
     } catch (error) {
       transactionTypeRef.current = '';
@@ -384,13 +402,24 @@ const FinanceOfficeForm = () => {
     }
   }
 
+  const sourceField = 'otherFees.0.finalFee';
+  const sourceValue = form.watch(sourceField);
+
+  useEffect(() => {
+    form.setValue('semWiseFees.0.finalFee', sourceValue);
+  }, [sourceValue]);
+
+  const handleOtherFeesChange = (value: number) => {
+    form.setValue(sourceField, value);
+  };
+
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
     return <Loading />;
   }
 
   return (
     <Form {...form}>
-      <form className="pt-8 mr-[25px] space-y-8 flex flex-col w-full overflow-x-hidden relative">
+      <form className="pt-8 mr-[25px] space-y-8 flex flex-col w-full  relative">
         <ShowStudentData data={enquiryData} />
 
         <Accordion type="single" collapsible className="w-full space-y-4" defaultValue="other-fees">
@@ -419,16 +448,36 @@ const FinanceOfficeForm = () => {
                         ? fee.type === feeType
                         : fee.type === displayFeeMapper(feeType)
                     );
-                    const totalFee = originalFeeData?.amount;
+
+                    let totalFee;
+                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                      totalFee = form.getValues(`otherFees.${index}.finalFee`);
+                    } else {
+                      totalFee = originalFeeData?.amount;
+                    }
+
                     const finalFee = otherFeesWatched?.[index]?.finalFee;
+
                     const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
-                    const discountValue =
-                      finalFee != undefined ? calculateDiscountPercentage(totalFee, finalFee) : '-';
+
+                    let discountValue;
+                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                      discountValue = '-';
+                    } else {
+                      discountValue =
+                        finalFee != undefined
+                          ? calculateDiscountPercentage(totalFee, finalFee)
+                          : '-';
+                    }
                     const discountDisplay =
                       typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
                     const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
 
-                    if (totalFee === 0) {
+                    if (
+                      totalFee === 0 &&
+                      feeType != FeeType.TRANSPORT &&
+                      feeType != FeeType.HOSTEL
+                    ) {
                       return;
                     }
 
@@ -569,19 +618,21 @@ const FinanceOfficeForm = () => {
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                           Fees Applicable ?<span className="text-red-500 pl-0">*</span>
                         </FormLabel>
-                        <FormItem className="flex h-[36px] w-full sm:w-[300px]  flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              disabled={isViewable}
-                            />
-                          </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666]">
-                              {field.value ? 'No Zero Fees' : 'Zero Fees'}
-                            </FormLabel>
-                          </div>
+                        <FormItem className="flex h-[36px] w-full sm:w-[300px] flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
+                          <label className="flex w-full cursor-pointer items-center space-x-3">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                                disabled={isViewable}
+                              />
+                            </FormControl>
+                            <div className="space-y-1 leading-none">
+                              <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666] cursor-pointer">
+                                {field.value ? 'No Zero Fees' : 'Zero Fees'}
+                              </FormLabel>
+                            </div>
+                          </label>
                         </FormItem>
                       </>
                     )}
@@ -670,11 +721,8 @@ const FinanceOfficeForm = () => {
                                         formField.onChange(value === '' ? null : Number(value));
                                       }
                                     }}
-                                    value={
-                                      index === 0
-                                        ? (form.getValues('otherFees')[index].finalFee ?? '')
-                                        : (formField.value ?? 0)
-                                    }
+                                    readOnly={index === 0}
+                                    value={formField.value ?? 0}
                                   />
                                 </FormControl>
                                 <FormMessage className="text-xs mt-1" />
@@ -715,7 +763,6 @@ const FinanceOfficeForm = () => {
           onSubmit={onSubmit}
           draftExists={existingFeeDraft}
           confirmationChecked={confirmationChecked}
-          closeOnError={false}
           customSaveDialog={
             <FinalFeeSaveDialog
               studentData={enquiryData}

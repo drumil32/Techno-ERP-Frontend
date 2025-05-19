@@ -13,12 +13,15 @@ import { useRouter } from 'next/navigation';
 import { ApplicationStatus } from '@/types/enum';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { Input } from '@/components/ui/input';
-import { BookPlus, Download, Search } from 'lucide-react';
+import { BookPlus, Download, ReceiptIndianRupee, Search } from 'lucide-react';
 import { formatApplicationStatus } from './helpers/format-application-status';
 import { CellContext } from '@tanstack/react-table';
 import { toast } from 'sonner';
 import Loading from '@/app/loading';
 import { DownloadAdmissionReceiptDialog } from './admission-receipt-download-dialog';
+import { Tooltip } from '@/components/ui/tooltip';
+import { TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
+import { AdmissionFeeReceiptDialog } from './admission-fee-receipt-download-dialog';
 
 export default function RecentAdmissionsPage() {
   const [search, setSearch] = useState('');
@@ -31,10 +34,6 @@ export default function RecentAdmissionsPage() {
     return;
   };
 
-  const handleDownload = (row: AdmissionTableRow) => {
-    toast.info('Hang Tight download feature is yet under construction');
-  };
-  
   const columns = [
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry', meta: { align: 'center' } },
@@ -58,11 +57,17 @@ export default function RecentAdmissionsPage() {
     //   }
     // },
     {
-      id: 'actions',
-      header: 'Actions',
+      id: 'form',
+      header: 'Form',
+      meta: { align: 'center' },
+      cell: ({ row }: any) => <DownloadAdmissionReceiptDialog studentId={row.original._id} />
+    },
+    {
+      id: 'receipt',
+      header: 'Receipt',
       meta: { align: 'center' },
       cell: ({ row }: any) => (
-        <DownloadAdmissionReceiptDialog studentId={row.original._id}/>
+          <AdmissionFeeReceiptDialog studentId={row.original._id} />
       )
     }
   ];
@@ -76,7 +81,7 @@ export default function RecentAdmissionsPage() {
       clearTimeout(searchTimerRef.current);
     }
 
-    searchTimerRef.current = setTimeout(() => { }, 500);
+    searchTimerRef.current = setTimeout(() => {}, 500);
   };
 
   const getQueryParams = () => {

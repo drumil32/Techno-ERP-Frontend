@@ -41,7 +41,7 @@ interface PersonalDetailsFormProps<T extends FieldValues = FieldValues> {
   form: UseFormReturn<z.infer<typeof formSchema>>;
   commonFormItemClass: string;
   commonFieldClass: string;
-  handleSave: () => void;
+  handleSave: () => Promise<boolean>;
 }
 
 const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
@@ -57,6 +57,13 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
   const formData = form.getValues();
 
   const displayFields = useMemo(() => getDisplayFields(formData), [formData]);
+
+  const saveHandler = async () => {
+    const success = await handleSave();
+    if (success) {
+      setIsEditing(false);
+    }
+  };
 
   return (
     <Accordion type="single" collapsible defaultValue="personal-details">
@@ -76,8 +83,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                 <span
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSave();
-                    toggleEdit();
+                    saveHandler();
                   }}
                   className="flex items-center"
                 >
@@ -236,16 +242,15 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                       </FormItem>
                     )}
                   />
-                  {/* Lurn/ Pre-registration No */}
+                  {/* LURN/Pre-registration No */}
                   <FormField
-                    disabled={true}
                     key="lurnRegistrationNo"
                     control={form.control}
                     name="lurnRegistrationNo"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                          Lurn/ Pre-registration No
+                          LURN/Pre-registration No
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
                         <FormControl>
@@ -254,7 +259,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                             {...field}
                             value={field.value ?? ''}
                             className={commonFieldClass}
-                            placeholder="Enter the Lurn/ Pre-registration No"
+                            placeholder="Enter the LURN/Pre-registration No"
                           />
                         </FormControl>
                         <div className="h-[20px]">
@@ -561,6 +566,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                       <FormItem className={`${commonFormItemClass} col-span-1 `}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                           Aadhaar Number
+                          <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -585,6 +591,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                       <FormItem className={`${commonFormItemClass} col-start-1`}>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                           State Of Domicile
+                          <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
                         <FormControl>
                           <Select onValueChange={field.onChange} value={field.value}>

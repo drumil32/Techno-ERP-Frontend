@@ -17,7 +17,7 @@ function SelectGroup({ ...props }: React.ComponentProps<typeof SelectPrimitive.G
 function SelectValue({ ...props }: React.ComponentProps<typeof SelectPrimitive.Value>) {
   return (
     <SelectPrimitive.Value
-      className="placeholder:text-gray-400 dark:placeholder:text-gray-500 italic"
+      className="placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:italic font-normal "
       data-slot="select-value"
       {...props}
     />

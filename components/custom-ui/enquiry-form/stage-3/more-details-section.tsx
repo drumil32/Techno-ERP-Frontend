@@ -136,6 +136,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                       State Of Domicile
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Select
@@ -200,6 +201,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                 key="nationality"
                 control={form.control}
                 name="nationality"
+                defaultValue={Nationality.INDIAN}
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
@@ -210,7 +212,6 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                         disabled={isViewable}
                         onValueChange={field.onChange}
                         value={field.value}
-                        defaultValue={Nationality.INDIAN}
                       >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue placeholder="Enter the nationality" />
@@ -342,6 +343,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                   <FormItem className={`${commonFormItemClass} col-span-1 `}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
                       Aadhaar Number
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input

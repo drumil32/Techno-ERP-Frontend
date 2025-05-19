@@ -301,7 +301,7 @@ export const SingleEnquiryUploadDocument = ({
         </div>
       </div>
 
-      {!isViewable && (
+      {!isViewable ? (
         <>
           <div className="flex flex-col sm:flex-row justify-between items-start gap-3 w-full">
             <div className="">
@@ -526,6 +526,48 @@ export const SingleEnquiryUploadDocument = ({
             </motion.div>
           )}
         </>
+      ) : (
+        displayExistingDocument && (
+          <a href={existingDocument.fileUrl} target="_blank">
+            <motion.div
+              rel="noopener noreferrer"
+              className="flex-1 max-w-max"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+              transition={{ duration: 0.1 }}
+            >
+              <div className="bg-[#4E2ECC]/5 border border-[#4E2ECC]/30 rounded-lg p-3 hover:border-[#4E2ECC]/50 transition-colors group">
+                <div className="flex items-center justify-between gap-3 w-full">
+                  <div className="flex w-max items-center gap-3 flex-1 min-w-0">
+                    <motion.div
+                      className="bg-[#4E2ECC]/10 p-2 rounded group-hover:bg-[#4E2ECC]/20 transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <FileText className="h-4 w-4 text-[#4E2ECC] flex-shrink-0" />
+                    </motion.div>
+                    <div className="min-w-0">
+                      <p className="block text-sm font-medium text-[#4E2ECC] group-hover:underline truncate">
+                        {existingFilename}
+                      </p>
+
+                      {existingDueDateFormatted && (
+                        <span className="text-xs w-max text-gray-600">
+                          Due: {existingDueDateFormatted}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <motion.div
+                    className="text-[#4E2ECC] hover:text-[#4E2ECC]/80 p-2 rounded-full hover:bg-[#4E2ECC]/10 flex-shrink-0"
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    <LinkIcon className="h-4 w-4" />
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          </a>
+        )
       )}
     </div>
   );

@@ -194,11 +194,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
-                      <Select
-                        disabled={isViewable}
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                      <Select disabled={true} onValueChange={field.onChange} value={field.value}>
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
                           <SelectValue className="text-[#9D9D9D]" placeholder="Select Course" />
                         </SelectTrigger>
@@ -504,7 +500,6 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                   </FormItem>
                 )}
               />
-
               <div>
                 <FormField
                   control={form.control}
@@ -515,19 +510,21 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                       <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
                         Fees Applicable ?<span className="text-red-500 pl-0">*</span>
                       </FormLabel>
-                      <FormItem className="flex h-[36px]  flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                            disabled={isViewable}
-                          />
-                        </FormControl>
-                        <div className="space-y-1 leading-none">
-                          <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666]">
-                            {field.value ? 'No Zero Fees' : 'Zero Fees'}
-                          </FormLabel>
-                        </div>
+                      <FormItem className="flex h-[36px] w-full  flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
+                        <label className="flex w-full cursor-pointer items-center space-x-3">
+                          <FormControl>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              disabled={isViewable}
+                            />
+                          </FormControl>
+                          <div className="space-y-1 leading-none">
+                            <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666] cursor-pointer">
+                              {field.value ? 'No Zero Fees' : 'Zero Fees'}
+                            </FormLabel>
+                          </div>
+                        </label>
                       </FormItem>
                     </>
                   )}

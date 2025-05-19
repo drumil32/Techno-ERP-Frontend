@@ -49,16 +49,13 @@ export const updateStudentDetailsRequestSchema = z
 
     gender: z.nativeEnum(Gender).default(Gender.OTHER),
     dateOfBirth: requestDateSchema,
-
+    lurnRegistrationNo: z.string().optional(),
     religion: z.nativeEnum(Religion).optional(),
     category: z.nativeEnum(Category),
     reference: z.nativeEnum(AdmissionReference),
     bloodGroup: z.nativeEnum(BloodGroup).optional(),
-    aadharNumber: z
-      .string()
-      .regex(/^\d{12}$/, 'Aadhar Number must be exactly 12 digits')
-      .optional(),
-    stateOfDomicile: z.nativeEnum(StatesOfIndia).optional(),
+    aadharNumber: z.string().regex(/^\d{12}$/, 'Aadhar Number must be exactly 12 digits'),
+    stateOfDomicile: z.nativeEnum(StatesOfIndia),
     areaType: z.nativeEnum(AreaType).optional(),
     nationality: z.string().optional(),
     address: addressSchema,

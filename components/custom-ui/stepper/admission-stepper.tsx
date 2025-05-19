@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Check, Circle, ChevronRight, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { AdmissionStep } from '@/common/constants/admissionSteps';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 
 export function AdmissionStepper({
@@ -15,14 +15,18 @@ export function AdmissionStepper({
   applicationId
 }: AdmissionStepperProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const isNewApplicationPath = pathname.includes('/c/admissions/application-process/new');
   const currentStepIndex = steps.findIndex((step) => step.path === currentStepPath) || 0;
   const maxAccessibleStep = Math.max(applicationCurrentStatus - 1, 0);
 
   const handleStepClick = (stepPath: string, index: number) => {
+    if (isNewApplicationPath) return;
     if (index <= maxAccessibleStep) {
       router.push(`/c/admissions/application-process/ongoing/${applicationId}/${stepPath}`);
     }
   };
+
   const maxStepNameHeight = steps.reduce((max, step) => {
     const lineCount = step.name.split(' ').length > 3 ? 2 : 1;
     return Math.max(max, lineCount);
@@ -34,7 +38,7 @@ export function AdmissionStepper({
         {steps.map((step, index) => {
           const isCompleted = index < applicationCurrentStatus;
           const isCurrent = index === currentStepIndex;
-          const isAccessible = index <= maxAccessibleStep;
+          const isAccessible = !isNewApplicationPath && index <= maxAccessibleStep;
           const isUpcoming = index > maxAccessibleStep;
           const isApplicationCurrent = index === applicationCurrentStatus - 1;
 
@@ -60,9 +64,9 @@ export function AdmissionStepper({
                       : isCompleted
                         ? 'text-primary'
                         : 'text-muted-foreground',
-                    isAccessible && 'cursor-pointer hover:text-primary'
+                    isAccessible && 'cursor-pointer hover:text-primary',
+                    isNewApplicationPath && 'cursor-default'
                   )}
-                  style={{}}
                 >
                   <span>{step.name}</span>
                 </div>
@@ -72,7 +76,10 @@ export function AdmissionStepper({
                   whileHover={isAccessible ? { scale: 1.1 } : {}}
                   whileTap={isAccessible ? { scale: 0.95 } : {}}
                   onClick={() => handleStepClick(step.path, index)}
-                  style={{ cursor: isAccessible ? 'pointer' : 'default' }}
+                  style={{
+                    cursor: isAccessible ? 'pointer' : 'default',
+                    pointerEvents: isNewApplicationPath ? 'none' : 'auto'
+                  }}
                 >
                   <span
                     className={cn(
