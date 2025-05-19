@@ -30,7 +30,7 @@ export const SITE_MAP = {
     COURSE_DUES: '/c/finance/course-dues',
     SELECTED_COURSE_DUES: (course: string, year: string) =>
       `/c/finance/course-dues/${course}/${year}`,
-    OVERALL_DUES: '/c/finance/overall-dues'
+    ADMIN_TRACKER: '/c/finance/admin-tracker'
   },
   STUDENT_REPOSITORY: {
     DEFAULT: '/c/student-repository',

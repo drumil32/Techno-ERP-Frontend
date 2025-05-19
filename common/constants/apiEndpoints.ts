@@ -120,4 +120,8 @@ export const API_ENDPOINTS = {
 
   getCourseDues: `${API_DOMAIN}/course/fetch-dues`,
   updateCourseDues: `${API_DOMAIN}/course/dues`,
+
+  overallCollections:  `${API_DOMAIN}/fee-analytics/overall`,
+  getDailyCollections: `${API_DOMAIN}/fee-analytics/daywise`,
+  getMonthlyCollections: `${API_DOMAIN}/fee-analytics/monthwise`,
 };
