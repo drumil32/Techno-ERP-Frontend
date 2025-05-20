@@ -14,7 +14,10 @@ const placeholderPhotoBase64 = '/images/dummy_user.webp';
 //     reader.readAsDataURL(blob);
 //   });
 // };
-export const downloadAdmissionForm = async (data: any, directSave: boolean = false) => {
+export const downloadAdmissionForm = async (
+  data: any,
+  directSave: boolean = false
+): Promise<{ url: string; fileName: string }> => {
   const container = document.createElement('div');
   container.style.width = '780px';
   container.style.padding = '20px';
@@ -158,7 +161,7 @@ export const downloadAdmissionForm = async (data: any, directSave: boolean = fal
                 Address :</td>
             <td colspan="3" style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none; width:30%;">
            <span style="display: inline-block; width: 100%; word-wrap: break-word; word-break: break-word;">
-  ${escapeHtml(data.address ?? "--")}
+  ${escapeHtml(data.address ?? '--')}
 </span>
 
                 </td>
@@ -352,7 +355,10 @@ export const downloadAdmissionForm = async (data: any, directSave: boolean = fal
     // Save the PDF
     if (directSave) {
       pdf.save(fileName);
-      return;
+      return {
+        url: URL.createObjectURL(pdf.output('blob')),
+        fileName: fileName
+      };
     }
 
     const pdfBlob = pdf.output('blob');
@@ -365,7 +371,6 @@ export const downloadAdmissionForm = async (data: any, directSave: boolean = fal
   } finally {
     if (document.body.contains(container)) document.body.removeChild(container);
   }
-
 };
 
 export const downloadFeeReceipt = async (data: any, directSave: boolean = false) => {
@@ -558,7 +563,8 @@ export const downloadFeeReceipt = async (data: any, directSave: boolean = false)
     const blobUrl = URL.createObjectURL(pdfBlob);
 
     return {
-      url: blobUrl, fileName: fileName
+      url: blobUrl,
+      fileName: fileName
     };
   } finally {
     if (document.body.contains(container)) document.body.removeChild(container);

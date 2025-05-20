@@ -29,11 +29,6 @@ export default function RecentAdmissionsPage() {
   const router = useRouter();
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
-  const handleViewMore = (row: AdmissionTableRow) => {
-    toast.info('Hang Tight View is under construction...');
-    return;
-  };
-
   const columns = [
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry', meta: { align: 'center' } },
@@ -66,9 +61,7 @@ export default function RecentAdmissionsPage() {
       id: 'receipt',
       header: 'Receipt',
       meta: { align: 'center' },
-      cell: ({ row }: any) => (
-          <AdmissionFeeReceiptDialog studentId={row.original._id} />
-      )
+      cell: ({ row }: any) => <AdmissionFeeReceiptDialog studentId={row.original._id} />
     }
   ];
 
@@ -125,9 +118,9 @@ export default function RecentAdmissionsPage() {
         totalPages={1}
         pageLimit={10}
         onSearch={handleSearch}
+        handleViewMore={() => {}}
         searchTerm={search}
         showPagination={false}
-        handleViewMore={handleViewMore}
       />
     </>
   );

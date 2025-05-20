@@ -64,6 +64,7 @@ const FinanceOfficeForm = () => {
   const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
   const [transactionType, setTransactionType] = useState('');
   const transactionTypeRef = useRef('');
+  const [transactionRemarks, setTransactionRemarks] = useState(''); // don't confuse yourself with enquiry remarks
 
   const router = useRouter();
 
@@ -377,25 +378,29 @@ const FinanceOfficeForm = () => {
     setTransactionType(type);
   };
 
+  const handleRemarksChange = (newRemarks: string) => {
+    setTransactionRemarks(newRemarks);
+  };
+
   async function onSubmit(): Promise<boolean> {
     try {
       setIsSubmittingFinal(true);
+      console.log(transactionType);
 
       if (!transactionTypeRef.current) {
         toast.error('Please select a transaction type');
         return false;
       }
 
-      const response = await approveEnquiry({
+      await approveEnquiry({
         id: enquiry_id,
-        transactionType: transactionTypeRef.current
+        transactionType: transactionTypeRef.current,
+        remarks: transactionRemarks
       });
-      console.log('the response', response);
+
       toast.success('Enquiry submitted for final approval');
       return true;
     } catch (error) {
-      transactionTypeRef.current = '';
-      setTransactionType('');
       return false;
     } finally {
       setIsSubmittingFinal(false);
@@ -767,6 +772,7 @@ const FinanceOfficeForm = () => {
             <FinalFeeSaveDialog
               studentData={enquiryData}
               otherFeesWatched={otherFeesWatched}
+              onRemarksChange={handleRemarksChange}
               onTransactionTypeChange={handleTransactionTypeUpdate}
             />
           }
@@ -776,7 +782,13 @@ const FinanceOfficeForm = () => {
   );
 };
 
-function FinalFeeSaveDialog({ studentData, otherFeesWatched, onTransactionTypeChange }: any) {
+function FinalFeeSaveDialog({
+  studentData,
+  otherFeesWatched,
+  onTransactionTypeChange,
+  onRemarksChange,
+  remarks
+}: any) {
   const [transactionType, setTransactionType] = useState('');
   const today = format(new Date(), 'dd/MM/yyyy');
 
@@ -786,8 +798,8 @@ function FinalFeeSaveDialog({ studentData, otherFeesWatched, onTransactionTypeCh
   };
 
   return (
-    <div className="flex flex-col w-full ">
-      <h2 className="text-lg font-semibold mb-4 text-center "> Total Fee Amount For Semester 1 </h2>
+    <div className="flex flex-col w-full">
+      <h2 className="text-lg font-semibold mb-4 text-center">Total Fee Amount For Semester 1</h2>
 
       <div className="w-full space-y-4 text-left">
         <div className="grid grid-cols-2 gap-6">
@@ -810,7 +822,6 @@ function FinalFeeSaveDialog({ studentData, otherFeesWatched, onTransactionTypeCh
               )}
             </p>
           </div>
-
           <div>
             <p className="text-sm text-gray-600">Date:</p>
             <p className="text-sm font-medium">{today}</p>
@@ -832,6 +843,15 @@ function FinalFeeSaveDialog({ studentData, otherFeesWatched, onTransactionTypeCh
             </SelectContent>
           </Select>
           <FormMessage className="text-[10px] sm:text-xs mt-1" />
+        </div>
+
+        <div className="pt-2">
+          <Label className="text-sm text-gray-600 block mb-1">Remarks</Label>
+          <Input
+            value={remarks}
+            onChange={(e) => onRemarksChange(e.target.value)}
+            placeholder="Enter remarks"
+          />
         </div>
 
         <div className="flex justify-between py-3">

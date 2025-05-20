@@ -20,7 +20,7 @@ import {
 } from './helpers/fetch-data';
 import { refineAnalytics } from './helpers/refine-data';
 import { AdminAnalyticsResponse } from './interfaces';
-import { LeadConversionDashboard } from './yellow-leads-converted';
+import { LeadConversionDashboard } from './leads-conversion-dashboard';
 // import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
 
 const AdminTracker = () => {
@@ -29,8 +29,8 @@ const AdminTracker = () => {
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
   const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
-  const authStore = useAuthStore()
-  const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING)
+  const authStore = useAuthStore();
+  const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING);
 
   const getQueryParams = () => {
     const params: { [key: string]: any } = {
@@ -92,21 +92,21 @@ const AdminTracker = () => {
       },
       ...(isRoleLeadMarketing
         ? [
-          {
-            filterKey: 'assignedTo',
-            label: 'Assigned To',
-            placeholder: 'person',
-            options: assignedToDropdownData.map((item: any) => {
-              return {
-                label: item.name,
-                id: item._id
-              };
-            }),
-            hasSearch: true,
-            multiSelect: true
-          }
-        ]
-        : []),
+            {
+              filterKey: 'assignedTo',
+              label: 'Assigned To',
+              placeholder: 'person',
+              options: assignedToDropdownData.map((item: any) => {
+                return {
+                  label: item.name,
+                  id: item._id
+                };
+              }),
+              hasSearch: true,
+              multiSelect: true
+            }
+          ]
+        : [])
     ];
   };
 

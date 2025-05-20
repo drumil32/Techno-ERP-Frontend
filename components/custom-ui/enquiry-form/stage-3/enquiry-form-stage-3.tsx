@@ -231,7 +231,7 @@ const EnquiryFormStage3 = () => {
       }
 
       form.setValue('confirmation', false);
-      form.reset();
+      await form.reset();
       toast.success('Enquiry Updated Successfully');
       router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_4(enquiry._id));
       return true;

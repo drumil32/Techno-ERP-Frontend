@@ -407,7 +407,7 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
             </div>
 
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-full sm:w-auto">
+              {/* <div className="flex-shrink-0 w-full sm:w-auto">
                 <Label
                   htmlFor={`due-date-picker-${uniqueInputId}`}
                   className="text-xs font-medium text-gray-600 mb-1 block "
@@ -449,7 +449,7 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
                     />
                   </PopoverContent>
                 </Popover>
-              </div>
+              </div> */}
 
               <div className="flex-shrink-0 w-full sm:w-auto">
                 <Label className="text-xs font-medium text-transparent select-none mb-1 block">
