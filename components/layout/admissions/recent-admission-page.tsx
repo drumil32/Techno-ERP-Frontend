@@ -21,6 +21,7 @@ import Loading from '@/app/loading';
 import { DownloadAdmissionReceiptDialog } from './admission-receipt-download-dialog';
 import { Tooltip } from '@/components/ui/tooltip';
 import { TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
+import { AdmissionFeeReceiptDialog } from './admission-fee-receipt-download-dialog';
 
 export default function RecentAdmissionsPage() {
   const [search, setSearch] = useState('');
@@ -60,13 +61,7 @@ export default function RecentAdmissionsPage() {
       id: 'receipt',
       header: 'Receipt',
       meta: { align: 'center' },
-      cell: ({ row }: any) => (
-        <Button variant={'outline'} className="cursor-pointer mx-auto" onClick={() => {}}>
-          {/* <span className="mx-auto font-inter font-semibold text-[12px] text-black">Download</span>
-                        <Download className="text-primary" /> */}
-          <ReceiptIndianRupee className="text-primary" />
-        </Button>
-      )
+      cell: ({ row }: any) => <AdmissionFeeReceiptDialog studentId={row.original._id} />
     }
   ];
 
@@ -123,6 +118,7 @@ export default function RecentAdmissionsPage() {
         totalPages={1}
         pageLimit={10}
         onSearch={handleSearch}
+        handleViewMore={() => {}}
         searchTerm={search}
         showPagination={false}
       />

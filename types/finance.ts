@@ -114,7 +114,7 @@ export interface CourseDues {
   courseCode: Course;
   courseName: string;
   academicYear: string;
-  date : string;
+  date: string;
   departmentHODName: string;
   departmentHODEmail: string;
   dues: CourseDueItem[];
@@ -136,4 +136,30 @@ export interface CourseDueTableItem {
   totalDue: number;
   departmentHODName: string;
   departmentHODEmail: string;
+}
+
+// Admin Tracker
+
+export interface DayCollection {
+  date: string;
+  dailyCollection: number;
+}
+
+export interface CourseCollection {
+  courseCode: Course;
+  details: { courseYear: CourseYear; totalCollection: number }[],
+  totalCollection?: number;
+}
+
+export interface DailyCollectionData {
+  totalCollection: number;
+  pastSevenDays: DayCollection[];
+  courseWiseInformation: CourseCollection[];
+}
+
+
+export interface MonthlyCollectionData {
+  totalCollection: number;
+  monthWiseData: DayCollection[];
+  courseWiseInformation: CourseCollection[];
 }

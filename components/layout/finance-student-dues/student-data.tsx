@@ -4,7 +4,6 @@ import { StudentDetails } from "@/types/finance";
 import FeesPaidTag from "./fees-paid-status-tag";
 
 export default function StudentData({ studentData }: { studentData: StudentDetails }) {
-  console.log(studentData)
   return (
     <div className="w-full flex flex-row px-4 py-5 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="w-1/4 flex flex-col gap-3 ">

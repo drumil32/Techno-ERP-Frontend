@@ -14,3 +14,8 @@ export const fetchDataForAdmissionReceipt = async (data: any) => {
   const res = await apiRequest(API_METHODS.POST, API_ENDPOINTS.admissionReceipt, data)
   return res;
 }
+
+export const fetchDataForAdmissionFeeReceipt = async (data: any) => {
+  const res = await apiRequest(API_METHODS.POST, API_ENDPOINTS.admissionFeeReceipt, data)
+  return res;
+}
