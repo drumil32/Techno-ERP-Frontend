@@ -21,6 +21,7 @@ import Loading from '@/app/loading';
 import { DownloadAdmissionReceiptDialog } from './admission-receipt-download-dialog';
 import { Tooltip } from '@/components/ui/tooltip';
 import { TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
+import { AdmissionFeeReceiptDialog } from './admission-fee-receipt-download-dialog';
 
 export default function RecentAdmissionsPage() {
   const [search, setSearch] = useState('');
@@ -31,10 +32,6 @@ export default function RecentAdmissionsPage() {
   const handleViewMore = (row: AdmissionTableRow) => {
     toast.info('Hang Tight View is under construction...');
     return;
-  };
-
-  const handleDownload = (row: AdmissionTableRow) => {
-    toast.info('Hang Tight download feature is yet under construction');
   };
 
   const columns = [
@@ -70,11 +67,7 @@ export default function RecentAdmissionsPage() {
       header: 'Receipt',
       meta: { align: 'center' },
       cell: ({ row }: any) => (
-        <Button variant={'outline'} className="cursor-pointer mx-auto" onClick={() => {}}>
-          {/* <span className="mx-auto font-inter font-semibold text-[12px] text-black">Download</span>
-                        <Download className="text-primary" /> */}
-          <ReceiptIndianRupee className="text-primary" />
-        </Button>
+          <AdmissionFeeReceiptDialog studentId={row.original._id} />
       )
     }
   ];

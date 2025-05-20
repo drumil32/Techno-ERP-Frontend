@@ -193,7 +193,7 @@ export default function TechnoDataTable({
     }
   };
 
-  const nonClickableColumns = ['actions', 'leadType', 'footFall', 'finalConversion', 'departmentHODEmail'];
+  const nonClickableColumns = ['actions', 'leadType', 'footFall', 'finalConversion', 'departmentHODEmail', 'form', 'receipt'];
 
   if (!table.getRowModel().rows) {
     return <Loading />;

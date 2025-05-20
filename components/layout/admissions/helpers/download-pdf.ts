@@ -14,7 +14,7 @@ const placeholderPhotoBase64 = '/images/dummy_user.webp';
 //     reader.readAsDataURL(blob);
 //   });
 // };
-export const downloadAdmissionForm = async (data: any) => {
+export const downloadAdmissionForm = async (data: any, directSave: boolean = false) => {
   const container = document.createElement('div');
   container.style.width = '780px';
   container.style.padding = '20px';
@@ -156,8 +156,12 @@ export const downloadAdmissionForm = async (data: any) => {
             <td
                 style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px;color: #666666; font-weight: 400; border-right: none;">
                 Address :</td>
-            <td colspan="3" style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none;">
-                ${escapeHtml(data.address ?? '--')}</td>
+            <td colspan="3" style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none; width:30%;">
+           <span style="display: inline-block; width: 100%; word-wrap: break-word; word-break: break-word;">
+  ${escapeHtml(data.address ?? "--")}
+</span>
+
+                </td>
         </tr>
         <tr>
             <td
@@ -299,8 +303,17 @@ export const downloadAdmissionForm = async (data: any) => {
   document.body.appendChild(container);
 
   try {
-    const canvas = await html2canvas(container, { scale: 3, useCORS: true });
+    const canvas = await html2canvas(container, {
+      scale: 3,
+      useCORS: true,
+      logging: false,
+      onclone: (clonedDoc) => {
+        // Optional modifications to cloned DOM
+      }
+    });
+
     const imgData = canvas.toDataURL('image/png');
+
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4' });
 
     const fileName = `Admission-Form-${data.studentName?.replace(/\s+/g, '-')}-${data.courseName}.pdf`;
@@ -313,11 +326,35 @@ export const downloadAdmissionForm = async (data: any) => {
       author: data.collegeName || 'Techno Institute'
     });
 
-    const imgProps = pdf.getImageProperties(imgData);
     const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    const pdfHeight = pdf.internal.pageSize.getHeight();
 
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    const imgProps = pdf.getImageProperties(imgData);
+    const imgWidth = pdfWidth;
+    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    // Add first page
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
+
+    // Add more pages if needed
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+
+      heightLeft -= pdfHeight;
+    }
+
+    // Save the PDF
+    if (directSave) {
+      pdf.save(fileName);
+      return;
+    }
+
     const pdfBlob = pdf.output('blob');
     const blobUrl = URL.createObjectURL(pdfBlob);
 
@@ -328,9 +365,10 @@ export const downloadAdmissionForm = async (data: any) => {
   } finally {
     if (document.body.contains(container)) document.body.removeChild(container);
   }
+
 };
 
-export const downloadFeeReceipt = async (data: any) => {
+export const downloadFeeReceipt = async (data: any, directSave: boolean = false) => {
   const container = document.createElement('div');
   container.style.width = '780px';
   container.style.padding = '20px';
@@ -463,11 +501,20 @@ export const downloadFeeReceipt = async (data: any) => {
   document.body.appendChild(container);
 
   try {
-    const canvas = await html2canvas(container, { scale: 2, useCORS: true });
+    const canvas = await html2canvas(container, {
+      scale: 3,
+      useCORS: true,
+      logging: false,
+      onclone: (clonedDoc) => {
+        // Optional modifications to cloned DOM
+      }
+    });
+
     const imgData = canvas.toDataURL('image/png');
+
     const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4' });
 
-    const fileName = `Fee-Receipt-${data.studentName?.replace(/\s+/g, '-')}-${data.courseName}.pdf`;
+    const fileName = `Fee-Receipt-${data.studentName?.replace(/\s+/g, '-')}-${data.course}.pdf`;
     const title = `Fee Receipt - ${data.studentName}`;
 
     pdf.setProperties({
@@ -477,17 +524,41 @@ export const downloadFeeReceipt = async (data: any) => {
       author: data.collegeName || 'Techno Institute'
     });
 
-    const imgProps = pdf.getImageProperties(imgData);
     const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    const pdfHeight = pdf.internal.pageSize.getHeight();
 
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    const imgProps = pdf.getImageProperties(imgData);
+    const imgWidth = pdfWidth;
+    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    // Add first page
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
+
+    // Add more pages if needed
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+
+      heightLeft -= pdfHeight;
+    }
+
+    // Save the PDF
+    if (directSave) {
+      pdf.save(fileName);
+      return;
+    }
+
     const pdfBlob = pdf.output('blob');
     const blobUrl = URL.createObjectURL(pdfBlob);
 
     return {
-      url: blobUrl,
-      fileName: fileName
+      url: blobUrl, fileName: fileName
     };
   } finally {
     if (document.body.contains(container)) document.body.removeChild(container);

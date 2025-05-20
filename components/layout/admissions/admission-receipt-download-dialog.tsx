@@ -44,12 +44,15 @@ export function DownloadAdmissionReceiptDialog({ studentId }: { studentId: strin
       try {
         const res = await fetchDataForAdmissionReceipt({ studentId });
         if (res) {
-          const { url, fileName } = await downloadAdmissionForm(res);
-          if (fileName) setFileName(fileName);
-          if (url) {
-            setPdfDataUrl(url);
-          } else {
-            toast.error('Error in showing preview.');
+          const result = await downloadAdmissionForm(res);
+          if (result) {
+            const { url, fileName } = result;
+            if (fileName) setFileName(fileName);
+            if (url) {
+              setPdfDataUrl(url);
+            } else {
+              toast.error('Error in showing preview.');
+            }
           }
         }
       } catch (error) {

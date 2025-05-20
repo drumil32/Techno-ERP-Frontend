@@ -22,10 +22,13 @@ import {
   FileArchive,
   FileText,
   GraduationCap,
-  Home
+  Home,
+  Loader2
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
+import { fetchDataForAdmissionFeeReceipt, fetchDataForAdmissionReceipt } from '@/components/layout/admissions/helpers/fetch-data';
+import { downloadAdmissionForm, downloadFeeReceipt } from '@/components/layout/admissions/helpers/download-pdf';
 
 interface EnquiryFormFooterProps {
   form: UseFormReturn<any>;
@@ -46,12 +49,17 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   customSaveDialog,
   draftExists
 }) => {
+  const params = useParams();
+  const studentId = params.id as string;  
   const [isSubmitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [isDraftDialogOpen, setDraftDialogOpen] = useState(false);
   const [isSuccessDialogOpen, setSuccessDialogOpen] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const router = useRouter();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentDownload, setCurrentDownload] = useState<string | null>(null);
 
   async function handleSubmitClick() {
     try {
@@ -73,9 +81,9 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
       if (result !== false) {
         setDraftSaved(true);
         setSubmitDialogOpen(true);
-      } else {
       }
     } catch {
+      toast.error('Failed to save draft');
     } finally {
       setIsRecording(false);
     }
@@ -87,11 +95,46 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
       if (result !== false) {
         setDraftSaved(true);
         setDraftDialogOpen(false);
-      } else {
+        toast.success('Draft saved successfully');
       }
     } catch {
+      toast.error('Failed to save draft');
     } finally {
       setDraftDialogOpen(false);
+    }
+  }
+
+  async function handleDownloadAdmissionReceipt() {
+    try {
+      setIsLoading(true);
+      setCurrentDownload('admission');
+      const res = await fetchDataForAdmissionReceipt({ studentId });
+      if (res) {
+        await downloadAdmissionForm(res, true);
+        toast.success('Admission Form downloaded successfully');
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to download Admission Form');
+    } finally {
+      setIsLoading(false);
+      setCurrentDownload(null);
+    }
+  }
+
+  async function handleDownloadFeeReceipt() {
+    try {
+      setIsLoading(true);
+      setCurrentDownload('fee');
+      const res = await fetchDataForAdmissionFeeReceipt({ studentId });
+      if (res) {
+        await downloadFeeReceipt(res, true);
+        toast.success('Fee Receipt downloaded successfully');
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to download Fee Receipt');
+    } finally {
+      setIsLoading(false);
+      setCurrentDownload(null);
     }
   }
 
@@ -99,7 +142,11 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     <div className="sticky bottom-0 left-0 z-10 flex items-center justify-between p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
       <Dialog open={isDraftDialogOpen} onOpenChange={setDraftDialogOpen}>
         <DialogTrigger asChild>
-          <Button type="button" variant="outline" disabled={isSavingDraft}>
+          <Button 
+            type="button" 
+            variant="outline" 
+            disabled={isSavingDraft || isLoading}
+          >
             {isSavingDraft
               ? 'Saving...'
               : draftSaved || draftExists
@@ -117,11 +164,15 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="secondary">
+              <Button type="button" variant="secondary" disabled={isLoading}>
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="button" onClick={handleSaveDraft} disabled={isSavingDraft}>
+            <Button 
+              type="button" 
+              onClick={handleSaveDraft} 
+              disabled={isSavingDraft || isLoading}
+            >
               {isSavingDraft ? 'Saving...' : 'Confirm'}
             </Button>
           </DialogFooter>
@@ -136,7 +187,8 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           form.formState.isSubmitting ||
           isSavingDraft ||
           isRecording ||
-          !draftSaved
+          !draftSaved ||
+          isLoading
         }
       >
         {isRecording
@@ -162,14 +214,18 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           {customSaveDialog}
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="secondary">
+              <Button 
+                type="button" 
+                variant="secondary"
+                disabled={form.formState.isSubmitting || isLoading}
+              >
                 Cancel
               </Button>
             </DialogClose>
             <Button
               type="button"
               onClick={handleSubmitClick}
-              disabled={form.formState.isSubmitting}
+              disabled={form.formState.isSubmitting || isLoading}
             >
               {form.formState.isSubmitting ? 'Submitting...' : 'Confirm'}
             </Button>
@@ -192,35 +248,44 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           </DialogHeader>
 
           <div className="grid grid-cols-2 gap-3 mt-6">
-            {/* <Button
-              variant="outline"
-              className="h-12 col-span-2 mx-auto align-middle content-center justify-center px-6 py-3 border-gray-200 hover:bg-gray-50"
-              onClick={() => {
-                router.push(SITE_MAP.ADMISSIONS.DEFAULT);
-              }}
-            >
-              <GraduationCap className="w-5 h-5 mr-3 text-gray-600" />
-              <span className="text-gray-700 font-medium">Go to Admissions</span>
-            </Button> */}
-
             <Button
               variant="outline"
-              className="h-12 col-start-1  justify-start px-6 py-3 border-gray-200 hover:bg-gray-50"
-              onClick={() => {}}
+              className="h-12 col-start-1 justify-start px-6 py-3 border-gray-200 hover:bg-gray-50"
+              onClick={handleDownloadFeeReceipt}
+              disabled={isLoading}
             >
-              <FileText className="w-5 h-5 mr-3 text-blue-600" />
-              <span className="text-gray-700 font-medium"> Fee Receipt</span>
-              <DownloadCloud className="w-4 h-4 ml-auto text-gray-400" />
+              {isLoading && currentDownload === 'fee' ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-3 text-blue-600 animate-spin" />
+                  <span className="text-gray-700 font-medium">Downloading...</span>
+                </>
+              ) : (
+                <>
+                  <FileText className="w-5 h-5 mr-3 text-blue-600" />
+                  <span className="text-gray-700 font-medium">Fee Receipt</span>
+                  <DownloadCloud className="w-4 h-4 ml-auto text-gray-400" />
+                </>
+              )}
             </Button>
 
             <Button
               variant="outline"
               className="h-12 justify-start px-6 py-3 border-gray-200 hover:bg-gray-50"
-              onClick={() => {}}
+              onClick={handleDownloadAdmissionReceipt}
+              disabled={isLoading}
             >
-              <FileArchive className="w-5 h-5 mr-3 text-amber-600" />
-              <span className="text-gray-700 font-medium"> Admission Form</span>
-              <DownloadCloud className="w-4 h-4 ml-auto text-gray-400" />
+              {isLoading && currentDownload === 'admission' ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-3 text-amber-600 animate-spin" />
+                  <span className="text-gray-700 font-medium">Downloading...</span>
+                </>
+              ) : (
+                <>
+                  <FileArchive className="w-5 h-5 mr-3 text-amber-600" />
+                  <span className="text-gray-700 font-medium">Admission Form</span>
+                  <DownloadCloud className="w-4 h-4 ml-auto text-gray-400" />
+                </>
+              )}
             </Button>
           </div>
 
@@ -232,8 +297,9 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
                 setSuccessDialogOpen(false);
                 router.push(SITE_MAP.ADMISSIONS.RECENT_ADMISSIONS);
               }}
+              disabled={isLoading}
             >
-              Close
+                Close
             </Button>
           </DialogFooter>
         </DialogContent>

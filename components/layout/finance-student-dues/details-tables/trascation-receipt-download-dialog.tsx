@@ -36,11 +36,14 @@ export function TransactionReceiptDialog({
       try {
         const res = await fetchTransactionReceiptData({ studentId, transactionId });
         if (res) {
-          const { url, fileName } = await downloadFeeReceipt(res);
-          if (url) {
-            setPdfDataUrl(url);
-          } else {
-            toast.error('Error in the showing preview.');
+          const result = await downloadFeeReceipt(res);
+          if (result) {
+            const { url, fileName } = result
+            if (url) {
+              setPdfDataUrl(url);
+            } else {
+              toast.error('Error in the showing preview.');
+            }
           }
         }
       } catch (error) {
