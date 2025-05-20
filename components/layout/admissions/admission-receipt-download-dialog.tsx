@@ -19,7 +19,8 @@ import {
   ZoomIn,
   ZoomOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Printer
 } from 'lucide-react';
 import { FaCircleExclamation } from 'react-icons/fa6';
 import { fetchDataForAdmissionReceipt } from './helpers/fetch-data';
@@ -46,11 +47,8 @@ export function DownloadAdmissionReceiptDialog({ studentId }: { studentId: strin
         if (res) {
           const { url, fileName } = await downloadAdmissionForm(res);
           if (fileName) setFileName(fileName);
-          if (url) {
-            setPdfDataUrl(url);
-          } else {
-            toast.error('Error in showing preview.');
-          }
+          if (url) setPdfDataUrl(url);
+          else toast.error('Error in showing preview.');
         }
       } catch (error) {
         toast.error(error instanceof Error ? error.message : 'Failed to load preview');
@@ -59,90 +57,55 @@ export function DownloadAdmissionReceiptDialog({ studentId }: { studentId: strin
       }
     };
 
-    if (downloadOpen) {
-      loadPreview();
-    }
+    if (downloadOpen) loadPreview();
   }, [downloadOpen, studentId]);
 
   useEffect(() => {
     if (!pdfObjectRef.current || !pdfDataUrl) return;
 
-    const observer = new MutationObserver((mutations) => {
+    const observer = new MutationObserver(() => {
       const pdfDocument = pdfObjectRef.current?.contentDocument;
       if (pdfDocument) {
-        const toolbar = pdfDocument.querySelector('.toolbar');
-        if (toolbar) {
-          (toolbar as HTMLElement).style.display = 'none';
-        }
-
-        const secondaryToolbar = pdfDocument.querySelector('#secondaryToolbar');
-        if (secondaryToolbar) {
-          (secondaryToolbar as HTMLElement).style.display = 'none';
-        }
-
+        const toolbar = pdfDocument.querySelector('.toolbar') as HTMLElement;
+        const secondaryToolbar = pdfDocument.querySelector('#secondaryToolbar') as HTMLElement;
         const pageCountElement = pdfDocument.querySelector('#numPages');
-        if (pageCountElement) {
-          const pageCount = parseInt(pageCountElement.textContent || '0');
-          setNumPages(pageCount);
-        }
+
+        if (toolbar) toolbar.style.display = 'none';
+        if (secondaryToolbar) secondaryToolbar.style.display = 'none';
+        if (pageCountElement) setNumPages(parseInt(pageCountElement.textContent || '0'));
       }
     });
 
-    observer.observe(pdfObjectRef.current, {
-      attributes: true,
-      childList: true,
-      subtree: true
-    });
-
+    observer.observe(pdfObjectRef.current, { attributes: true, childList: true, subtree: true });
     return () => observer.disconnect();
   }, [pdfDataUrl]);
 
   const handleZoomIn = () => {
-    setScale((prev) => {
-      const newScale = Math.min(prev + 0.25, 2.5);
-      setTimeout(() => {
-        if (scrollContainerRef.current) {
-          const { scrollWidth, clientWidth, scrollHeight, clientHeight } =
-            scrollContainerRef.current;
-          scrollContainerRef.current.scrollLeft = (scrollWidth - clientWidth) / 2;
-          scrollContainerRef.current.scrollTop = (scrollHeight - clientHeight) / 2;
-        }
-      }, 10);
-      return newScale;
-    });
+    setScale((prev) => Math.min(prev + 0.25, 2.5));
   };
 
   const handleZoomOut = () => {
-    setScale((prev) => {
-      const newScale = Math.max(prev - 0.25, 0.5);
-      setTimeout(() => {
-        if (scrollContainerRef.current) {
-          scrollContainerRef.current.scrollLeft = 0;
-          scrollContainerRef.current.scrollTop = 0;
-        }
-      }, 10);
-      return newScale;
-    });
+    setScale((prev) => Math.max(prev - 0.25, 0.5));
   };
 
   const handleNextPage = () => {
     if (numPages && pageNumber < numPages) {
       setPageNumber((prev) => prev + 1);
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.scrollLeft = 0;
-        scrollContainerRef.current.scrollTop = 0;
-      }
+      resetScrollPosition();
     }
   };
 
   const handlePrevPage = () => {
     if (pageNumber > 1) {
       setPageNumber((prev) => prev - 1);
-      // Reset scroll position when changing pages
-      if (scrollContainerRef.current) {
-        scrollContainerRef.current.scrollLeft = 0;
-        scrollContainerRef.current.scrollTop = 0;
-      }
+      resetScrollPosition();
+    }
+  };
+
+  const resetScrollPosition = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollLeft = 0;
+      scrollContainerRef.current.scrollTop = 0;
     }
   };
 
@@ -156,14 +119,16 @@ export function DownloadAdmissionReceiptDialog({ studentId }: { studentId: strin
     document.body.removeChild(link);
   };
 
+  const handlePrint = () => {
+    if (!pdfDataUrl) return;
+    const printWindow = window.open(pdfDataUrl, '_blank');
+    if (printWindow) printWindow.onload = () => printWindow.print();
+  };
+
   return (
     <Dialog open={downloadOpen} onOpenChange={setDownloadOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant={'outline'}
-          className="cursor-pointer mx-auto"
-          onClick={() => setDownloadOpen(true)}
-        >
+        <Button variant={'outline'} className="cursor-pointer mx-auto">
           <FileArchive className="text-primary" />
         </Button>
       </DialogTrigger>
@@ -214,16 +179,16 @@ export function DownloadAdmissionReceiptDialog({ studentId }: { studentId: strin
               </div>
             )}
 
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleDownload}
-              disabled={!pdfDataUrl}
-              className="ml-auto"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Download
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={handlePrint} disabled={!pdfDataUrl}>
+                <Printer className="h-4 w-4 mr-2" />
+                Print
+              </Button>
+              <Button variant="default" size="sm" onClick={handleDownload} disabled={!pdfDataUrl}>
+                <Download className="h-4 w-4 mr-2" />
+                Download
+              </Button>
+            </div>
           </div>
 
           <div

@@ -28,15 +28,6 @@ export default function RecentAdmissionsPage() {
   const router = useRouter();
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
-  const handleViewMore = (row: AdmissionTableRow) => {
-    toast.info('Hang Tight View is under construction...');
-    return;
-  };
-
-  const handleDownload = (row: AdmissionTableRow) => {
-    toast.info('Hang Tight download feature is yet under construction');
-  };
-
   const columns = [
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry', meta: { align: 'center' } },
@@ -134,7 +125,6 @@ export default function RecentAdmissionsPage() {
         onSearch={handleSearch}
         searchTerm={search}
         showPagination={false}
-        handleViewMore={handleViewMore}
       />
     </>
   );
