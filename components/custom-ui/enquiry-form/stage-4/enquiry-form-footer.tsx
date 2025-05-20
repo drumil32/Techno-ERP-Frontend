@@ -27,8 +27,14 @@ import {
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
-import { fetchDataForAdmissionFeeReceipt, fetchDataForAdmissionReceipt } from '@/components/layout/admissions/helpers/fetch-data';
-import { downloadAdmissionForm, downloadFeeReceipt } from '@/components/layout/admissions/helpers/download-pdf';
+import {
+  fetchDataForAdmissionFeeReceipt,
+  fetchDataForAdmissionReceipt
+} from '@/components/layout/admissions/helpers/fetch-data';
+import {
+  downloadAdmissionForm,
+  downloadFeeReceipt
+} from '@/components/layout/admissions/helpers/download-pdf';
 
 interface EnquiryFormFooterProps {
   form: UseFormReturn<any>;
@@ -50,7 +56,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   draftExists
 }) => {
   const params = useParams();
-  const studentId = params.id as string;  
+  const studentId = params.id as string;
   const [isSubmitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [isDraftDialogOpen, setDraftDialogOpen] = useState(false);
   const [isSuccessDialogOpen, setSuccessDialogOpen] = useState(false);
@@ -142,11 +148,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     <div className="sticky bottom-0 left-0 z-10 flex items-center justify-between p-4 bg-white h-18 shadow-[0px_-2px_10px_rgba(0,0,0,0.1)]">
       <Dialog open={isDraftDialogOpen} onOpenChange={setDraftDialogOpen}>
         <DialogTrigger asChild>
-          <Button 
-            type="button" 
-            variant="outline" 
-            disabled={isSavingDraft || isLoading}
-          >
+          <Button type="button" variant="outline" disabled={isSavingDraft || isLoading}>
             {isSavingDraft
               ? 'Saving...'
               : draftSaved || draftExists
@@ -168,11 +170,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
                 Cancel
               </Button>
             </DialogClose>
-            <Button 
-              type="button" 
-              onClick={handleSaveDraft} 
-              disabled={isSavingDraft || isLoading}
-            >
+            <Button type="button" onClick={handleSaveDraft} disabled={isSavingDraft || isLoading}>
               {isSavingDraft ? 'Saving...' : 'Confirm'}
             </Button>
           </DialogFooter>
@@ -207,15 +205,12 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             <DialogTitle className="text-2xl font-bold text-center">
               Record Deposit & Confirm Admission
             </DialogTitle>
-            <div className="flex gap-2 justify-center items-center text-sm">
-              <span>Please reverify all details before submitting.</span>
-            </div>
           </DialogHeader>
           {customSaveDialog}
           <DialogFooter>
             <DialogClose asChild>
-              <Button 
-                type="button" 
+              <Button
+                type="button"
                 variant="secondary"
                 disabled={form.formState.isSubmitting || isLoading}
               >
@@ -243,7 +238,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
               Admission Confirmed!
             </DialogTitle>
             <DialogDescription className="text-center text-gray-500 mt-2">
-              Your admission has been processed successfully. You can now download the documents.
+              Your payment has been processed successfully. You can now download the documents.
             </DialogDescription>
           </DialogHeader>
 
@@ -299,7 +294,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
               }}
               disabled={isLoading}
             >
-                Close
+              Close
             </Button>
           </DialogFooter>
         </DialogContent>

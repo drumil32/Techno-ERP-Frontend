@@ -508,23 +508,24 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                   render={({ field }) => (
                     <>
                       <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                        Fees Applicable ?<span className="text-red-500 pl-0">*</span>
+                        Fees Applicable <span className="text-red-500 pl-0">*</span>
                       </FormLabel>
-                      <FormItem className="flex h-[36px] w-full  flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
-                        <label className="flex w-full cursor-pointer items-center space-x-3">
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value}
-                              onCheckedChange={field.onChange}
-                              disabled={isViewable}
-                            />
+                      <FormItem className="h-[36px] z-50 w-full  rounded-md border">
+                        <Select
+                          onValueChange={(value) => field.onChange(value === 'true')}
+                          value={field.value ? 'true' : 'false'}
+                          disabled={isViewable}
+                        >
+                          <FormControl className="w-full">
+                            <SelectTrigger className="h-[36px]">
+                              <SelectValue placeholder="Select fee type" />
+                            </SelectTrigger>
                           </FormControl>
-                          <div className="space-y-1 leading-none">
-                            <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666] cursor-pointer">
-                              {field.value ? 'No Zero Fees' : 'Zero Fees'}
-                            </FormLabel>
-                          </div>
-                        </label>
+                          <SelectContent className="">
+                            <SelectItem value="false">Zero Fees</SelectItem>
+                            <SelectItem value="true">Non-Zero Fees</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormItem>
                     </>
                   )}
