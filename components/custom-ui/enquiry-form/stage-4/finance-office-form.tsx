@@ -392,23 +392,15 @@ const FinanceOfficeForm = () => {
         return false;
       }
 
-      const res = await approveEnquiry({
+      await approveEnquiry({
         id: enquiry_id,
         transactionType: transactionTypeRef.current,
         remarks: transactionRemarks
       });
 
-      if (res) {
-        console.log('the response', res);
-        toast.success('Enquiry submitted for final approval');
-      } else {
-        return false;
-      }
-
-      return false;
+      toast.success('Enquiry submitted for final approval');
+      return true;
     } catch (error) {
-      transactionTypeRef.current = '';
-      setTransactionType('');
       return false;
     } finally {
       setIsSubmittingFinal(false);

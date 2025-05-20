@@ -119,18 +119,14 @@ export const LeadConversionDashboard = ({
   );
 
   return (
-    <Card className="shadow-xl border-0 bg-gradient-to-br from-purple-50/20 to-indigo-50/20">
-      <CardHeader className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 rounded-t-xl">
-        <CardTitle className="text-2xl font-bold text-white">{title}</CardTitle>
-        <CardDescription className="text-purple-100">{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="grid grid-cols-1 xl:grid-cols-2 gap-6 p-6">
-        <Table className="max-h-max max-w-max">
-          <TableHeader className="bg-gradient-to-r from-purple-50 to-indigo-50">
+    <>
+      <div className="grid gap-4 md:grid-cols-6 w-full h-max rounded-lg bg-white p-5">
+        <Table className="col-span-2 ">
+          <TableHeader className="rounded-lg bg-primary/10  ">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-transparent">
+              <TableRow key={headerGroup.id} className="hover:bg-transparent rounded-lg border">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="font-semibold text-purple-800 py-4">
+                  <TableHead key={header.id} className="font-semibold  text-purple-800 py-4 ">
                     {flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
@@ -147,18 +143,13 @@ export const LeadConversionDashboard = ({
                 ))}
               </TableRow>
             ))}
-            <TableRow className="bg-gradient-to-r from-purple-50/40 to-indigo-50/40 font-medium border-t-2">
-              <TableCell className="py-3">Total Leads</TableCell>
-              <TableCell className="py-3">{totalLeads.toLocaleString()}</TableCell>
-              <TableCell className="py-3">100%</TableCell>
-            </TableRow>
           </TableBody>
         </Table>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="col-start-3 col-span-4  grid grid-cols-1 md:grid-cols-2 gap-5">
           {renderChart(
             'Lead Distribution',
-            <ResponsiveContainer width="100%" height="100%">
+            <ChartContainer config={chartConfig}>
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Pie
@@ -176,65 +167,12 @@ export const LeadConversionDashboard = ({
                   ))}
                 </Pie>
               </PieChart>
-            </ResponsiveContainer>
+            </ChartContainer>
           )}
 
-          {renderChart(
-            'Leads by Type',
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData}>
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
-                  {chartData.map((entry, index) => (
-                    <Cell key={index} fill={getColorValue(entry.color!)} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-
-          {renderChart(
-            'Lead Trend',
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  stroke="#7C3AED"
-                  strokeWidth={2}
-                  dot={{ r: 3 }}
-                  activeDot={{ r: 5 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
-
-          {renderChart(
-            'Conversion Rate',
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={chartData}>
-                <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Area
-                  type="monotone"
-                  dataKey="percent"
-                  stroke="#7C3AED"
-                  fill="#DDD6FE"
-                  strokeWidth={2}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          )}
-
-          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow md:col-span-2">
+          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow md:col-span-1">
             <h3 className="text-sm font-medium text-gray-700 mb-3">Lead Performance</h3>
-            <div className="h-[400px] w-full">
+            <div className=" w-full">
               <ChartContainer config={chartConfig}>
                 <ResponsiveContainer width="100%" height="100%">
                   <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
@@ -255,7 +193,7 @@ export const LeadConversionDashboard = ({
             </div>
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </>
   );
 };

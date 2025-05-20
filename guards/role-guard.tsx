@@ -30,6 +30,8 @@ export default function RoleGuard({
     const hasPermission = user?.roles?.some((role) => allowedRoles.includes(role));
 
     if (!hasPermission) {
+      toast.error('You do not have permisison');
+      console.log('here here here bro');
       router.push(fallbackPath);
     }
   }, [allowedRoles, fallbackPath, isAuthenticated, router, user]);
