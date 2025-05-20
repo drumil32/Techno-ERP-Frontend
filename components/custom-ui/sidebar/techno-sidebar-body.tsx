@@ -6,7 +6,7 @@ export default function TechnoSidebarBody() {
   return (
     <div className="flex flex-col gap-4 w-full">
       {MENU_ITEMS.map((item, i) => (
-        <TechnoSidebarItem key={i} icon={item.icon} text={item.text} />
+        <TechnoSidebarItem key={i} icon={item.icon} text={item.text} onClick={() => {}} />
       ))}
     </div>
   );
@@ -20,4 +20,3 @@ const MENU_ITEMS = [
   { icon: BookOpen, text: SIDEBAR_ITEMS.ACADEMICS },
   { icon: Users, text: SIDEBAR_ITEMS.FACULTY }
 ];
-

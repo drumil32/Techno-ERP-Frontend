@@ -53,13 +53,13 @@ export default function RecentAdmissionsPage() {
     // },
     {
       id: 'form',
-      header: 'Form',
+      header: '',
       meta: { align: 'center' },
       cell: ({ row }: any) => <DownloadAdmissionReceiptDialog studentId={row.original._id} />
     },
     {
       id: 'receipt',
-      header: 'Receipt',
+      header: '',
       meta: { align: 'center' },
       cell: ({ row }: any) => <AdmissionFeeReceiptDialog studentId={row.original._id} />
     }
