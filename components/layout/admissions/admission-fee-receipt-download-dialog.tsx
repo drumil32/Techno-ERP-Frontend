@@ -11,14 +11,16 @@ import {
     DialogClose
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Download, Loader, Receipt, ReceiptIndianRupee, ZoomIn, ZoomOut } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Download, DownloadCloud, FileText, Loader, Receipt, ReceiptIndianRupee, ZoomIn, ZoomOut } from 'lucide-react';
 import { FaCircleExclamation } from 'react-icons/fa6';
 import { fetchDataForAdmissionFeeReceipt } from './helpers/fetch-data';
 import { downloadFeeReceipt } from './helpers/download-pdf';
 
 export function AdmissionFeeReceiptDialog({
+    tableActionButton = true,
     studentId,
 }: {
+    tableActionButton?: boolean;
     studentId: string;
 }) {
     const [downloadOpen, setDownloadOpen] = useState(false);
@@ -157,13 +159,28 @@ export function AdmissionFeeReceiptDialog({
     return (
         <Dialog open={downloadOpen} onOpenChange={setDownloadOpen}>
             <DialogTrigger asChild>
-                <Button
-                    variant={'outline'}
-                    className="cursor-pointer mx-auto"
-                    onClick={() => setDownloadOpen(true)}
-                >
-                    <ReceiptIndianRupee className="text-primary" />
-                </Button>
+                {
+                    tableActionButton ? (
+                        <Button
+                            variant={'outline'}
+                            className="cursor-pointer mx-auto"
+                            onClick={() => setDownloadOpen(true)}
+                        >
+                            <ReceiptIndianRupee className="text-primary" />
+                        </Button>
+                    ) : (
+                        <Button
+                            variant="outline"
+                            className="h-12 col-start-1 justify-start px-6 py-3 border-gray-200 hover:bg-gray-50"
+                            onClick={() => setDownloadOpen(true)}
+                        >
+                            <FileText className="w-5 h-5 mr-3 text-blue-600" />
+                            <span className="text-gray-700 font-medium">Fee Receipt</span>
+                            <DownloadCloud className="w-4 h-4 ml-auto text-gray-400" />
+                        </Button>
+                    )
+                }
+
             </DialogTrigger>
             <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden">
                 <DialogHeader>
