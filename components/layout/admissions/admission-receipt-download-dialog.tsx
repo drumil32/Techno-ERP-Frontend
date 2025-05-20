@@ -36,7 +36,7 @@ export function DownloadAdmissionReceiptDialog({ tableActionButton = true, stude
   const [pageNumber, setPageNumber] = useState(1);
   const [numPages, setNumPages] = useState<number | null>(null);
   const pdfContainerRef = useRef<HTMLDivElement>(null);
-  const pdfObjectRef = useRef<HTMLObjectElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,23 +62,23 @@ export function DownloadAdmissionReceiptDialog({ tableActionButton = true, stude
   }, [downloadOpen, studentId]);
 
   useEffect(() => {
-    if (!pdfObjectRef.current || !pdfDataUrl) return;
+    if (!iframeRef.current || !pdfDataUrl) return;
 
-    const observer = new MutationObserver(() => {
-      const pdfDocument = pdfObjectRef.current?.contentDocument;
+    const iframe = iframeRef.current;
+    const handleLoad = () => {
+      const pdfDocument = iframe.contentDocument;
       if (pdfDocument) {
         const toolbar = pdfDocument.querySelector('.toolbar') as HTMLElement;
         const secondaryToolbar = pdfDocument.querySelector('#secondaryToolbar') as HTMLElement;
         const pageCountElement = pdfDocument.querySelector('#numPages');
-
         if (toolbar) toolbar.style.display = 'none';
         if (secondaryToolbar) secondaryToolbar.style.display = 'none';
         if (pageCountElement) setNumPages(parseInt(pageCountElement.textContent || '0'));
       }
-    });
+    };
 
-    observer.observe(pdfObjectRef.current, { attributes: true, childList: true, subtree: true });
-    return () => observer.disconnect();
+    iframe.addEventListener('load', handleLoad);
+    return () => iframe.removeEventListener('load', handleLoad);
   }, [pdfDataUrl]);
 
   const handleZoomIn = () => {
@@ -121,9 +121,18 @@ export function DownloadAdmissionReceiptDialog({ tableActionButton = true, stude
   };
 
   const handlePrint = () => {
-    if (!pdfDataUrl) return;
-    const printWindow = window.open(pdfDataUrl, '_blank');
-    if (printWindow) printWindow.onload = () => printWindow.print();
+    if (!iframeRef.current || !pdfDataUrl) return;
+    try {
+      const iframeWindow = iframeRef.current.contentWindow;
+      if (iframeWindow) {
+        iframeWindow.focus();
+        iframeWindow.print();
+      } else {
+        toast.error('Failed to access PDF viewer. Please download the PDF.');
+      }
+    } catch (error) {
+      toast.error('Failed to initiate print. Please try downloading the PDF.');
+    }
   };
 
   return (
@@ -231,13 +240,14 @@ export function DownloadAdmissionReceiptDialog({ tableActionButton = true, stude
                 </div>
               ) : pdfDataUrl ? (
                 <div className="relative" style={{ width: '100%', height: '100%' }}>
-                  <object
-                    ref={pdfObjectRef}
-                    data={`${pdfDataUrl}#page=${pageNumber}&toolbar=0&navpanes=0`}
-                    type="application/pdf"
+                  <iframe
+                    ref={iframeRef}
+                    src={`${pdfDataUrl}#page=${pageNumber}&toolbar=0&navpanes=0&scrollbar=0`}
                     width="100%"
                     height="100%"
                     className="absolute inset-0"
+                    style={{ border: 'none' }}
+                    title="PDF Preview"
                   >
                     <div className="flex flex-col items-center justify-center h-full p-4 text-center">
                       <FaCircleExclamation className="w-10 h-10 text-yellow-500 mb-4" />
@@ -250,7 +260,7 @@ export function DownloadAdmissionReceiptDialog({ tableActionButton = true, stude
                         Download PDF
                       </Button>
                     </div>
-                  </object>
+                  </iframe>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center h-full p-4 text-center">

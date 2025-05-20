@@ -120,76 +120,79 @@ export const LeadConversionDashboard = ({
 
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-6 w-full h-max rounded-lg bg-white p-5">
-        <Table className="col-span-2 ">
-          <TableHeader className="rounded-lg bg-primary/10  ">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-transparent rounded-lg border">
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="font-semibold  text-purple-800 py-4 ">
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow key={row.id} className="border-t hover:bg-purple-50/30">
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="py-3">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
-        <div className="col-start-3 col-span-4  grid grid-cols-1 md:grid-cols-2 gap-5">
-          {renderChart(
-            'Lead Distribution',
-            <ChartContainer config={chartConfig}>
-              <PieChart>
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Pie
-                  data={chartData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={60}
-                  outerRadius={90}
-                  paddingAngle={2}
-                >
-                  {chartData.map((entry, index) => (
-                    <Cell key={index} fill={getColorValue(entry.color!)} />
+      <div className="grid gap-4 md:grid-cols-6 grid-cols-1 w-full h-max rounded-lg bg-white p-5">
+        <div className="md:col-span-2 ">
+          <Table>
+            <TableHeader className="rounded-lg bg-primary/10  ">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className="hover:bg-transparent rounded-lg border">
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} className="font-semibold  text-purple-800 py-4 ">
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
                   ))}
-                </Pie>
-              </PieChart>
-            </ChartContainer>
-          )}
-
-          <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow md:col-span-1">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Lead Performance</h3>
-            <div className=" w-full">
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id} className="border-t hover:bg-purple-50/30">
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="py-3">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="md:col-span-4 ">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {renderChart(
+              'Lead Distribution',
               <ChartContainer config={chartConfig}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
-                    <PolarGrid gridType="circle" />
-                    <PolarAngleAxis dataKey="name" tick={{ fontSize: 11 }} />
-                    <PolarRadiusAxis angle={30} tick={{ fontSize: 10 }} />
-                    <ChartTooltip content={<ChartTooltipContent />} />
-                    <Radar
-                      name="Leads"
-                      dataKey="value"
-                      stroke="#7C3AED"
-                      fill="#7C3AED"
-                      fillOpacity={0.15}
-                    />
-                  </RadarChart>
-                </ResponsiveContainer>
+                <PieChart>
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <Pie
+                    data={chartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={90}
+                    paddingAngle={2}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={index} fill={getColorValue(entry.color!)} />
+                    ))}
+                  </Pie>
+                </PieChart>
               </ChartContainer>
+            )}
+
+            <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow md:col-span-1">
+              <h3 className="text-sm font-medium text-gray-700 mb-3">Lead Performance</h3>
+              <div className=" w-full">
+                <ChartContainer config={chartConfig}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
+                      <PolarGrid gridType="circle" />
+                      <PolarAngleAxis dataKey="name" tick={{ fontSize: 11 }} />
+                      <PolarRadiusAxis angle={30} tick={{ fontSize: 10 }} />
+                      <ChartTooltip content={<ChartTooltipContent />} />
+                      <Radar
+                        name="Leads"
+                        dataKey="value"
+                        stroke="#7C3AED"
+                        fill="#7C3AED"
+                        fillOpacity={0.15}
+                      />
+                    </RadarChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </div>
             </div>
           </div>
         </div>

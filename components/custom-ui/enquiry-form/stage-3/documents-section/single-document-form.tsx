@@ -24,6 +24,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { getReadableDocumentName } from './helpers/mapperFunction';
 import { DatePicker } from '@/components/ui/date-picker';
 import { motion } from 'framer-motion';
+import { random } from 'lodash';
 interface SingleEnquiryUploadDocumentProps {
   enquiryId: string;
   documentType: DocumentType;
@@ -347,43 +348,6 @@ export const SingleEnquiryUploadDocument = ({
                       accept={acceptedFileTypes}
                     />
                   </Label>
-                  {selectedFile && (
-                    <motion.div
-                      className={cn(
-                        'flex items-center justify-between gap-3 p-2 h-20',
-                        'border border-purple-200 bg-purple-50 rounded-lg',
-                        'w-full sm:w-64 md:w-80 lg:w-96'
-                      )}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <div className="flex items-center gap-2 overflow-hidden">
-                        <FileText className="h-5 w-5 text-purple-600 flex-shrink-0" />
-                        <div className="flex flex-col overflow-hidden">
-                          <span
-                            className="text-sm font-medium text-purple-800 truncate"
-                            title={selectedFile.name}
-                          >
-                            {selectedFile.name}
-                          </span>
-                          <span className="text-xs text-purple-600">
-                            {formatFileSize(selectedFile.size)}
-                          </span>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-purple-500 hover:bg-purple-100 hover:text-purple-700 flex-shrink-0 rounded-full"
-                        onClick={handleRemoveFile}
-                        aria-label="Remove file"
-                        disabled={isLoading}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </motion.div>
-                  )}
                   {displayExistingDocument && (
                     <a href={existingDocument.fileUrl} target="_blank">
                       <motion.div
@@ -424,6 +388,43 @@ export const SingleEnquiryUploadDocument = ({
                         </div>
                       </motion.div>
                     </a>
+                  )}
+                  {selectedFile && (
+                    <motion.div
+                      className={cn(
+                        'flex items-center justify-between gap-3 p-2 h-20',
+                        'border border-purple-200 bg-purple-50 rounded-lg',
+                        'w-full sm:w-64 md:w-80 lg:w-96'
+                      )}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <FileText className="h-5 w-5 text-purple-600 flex-shrink-0" />
+                        <div className="flex flex-col overflow-hidden">
+                          <span
+                            className="text-sm font-medium text-purple-800 truncate"
+                            title={selectedFile.name}
+                          >
+                            {selectedFile.name}
+                          </span>
+                          <span className="text-xs text-purple-600">
+                            {formatFileSize(selectedFile.size)}
+                          </span>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-purple-500 hover:bg-purple-100 hover:text-purple-700 flex-shrink-0 rounded-full"
+                        onClick={handleRemoveFile}
+                        aria-label="Remove file"
+                        disabled={isLoading}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </motion.div>
                   )}
                 </div>
               )}

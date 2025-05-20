@@ -351,18 +351,18 @@ export const downloadAdmissionForm = async (
 
       heightLeft -= pdfHeight;
     }
+    const pdfBlob = pdf.output('blob');
+    const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+    const blobUrl = URL.createObjectURL(file);
 
     // Save the PDF
     if (directSave) {
       pdf.save(fileName);
       return {
-        url: URL.createObjectURL(pdf.output('blob')),
+        url: blobUrl,
         fileName: fileName
       };
     }
-
-    const pdfBlob = pdf.output('blob');
-    const blobUrl = URL.createObjectURL(pdfBlob);
 
     return {
       url: blobUrl,
@@ -373,7 +373,10 @@ export const downloadAdmissionForm = async (
   }
 };
 
-export const downloadFeeReceipt = async (data: any, directSave: boolean = false) => {
+export const downloadFeeReceipt = async (
+  data: any,
+  directSave: boolean = false
+): Promise<{ url: string; fileName: string }> => {
   const container = document.createElement('div');
   container.style.width = '780px';
   container.style.padding = '20px';
@@ -552,15 +555,18 @@ export const downloadFeeReceipt = async (data: any, directSave: boolean = false)
 
       heightLeft -= pdfHeight;
     }
+    const pdfBlob = pdf.output('blob');
+    const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+    const blobUrl = URL.createObjectURL(file);
 
     // Save the PDF
     if (directSave) {
       pdf.save(fileName);
-      return;
+      return {
+        url: blobUrl,
+        fileName: fileName
+      };
     }
-
-    const pdfBlob = pdf.output('blob');
-    const blobUrl = URL.createObjectURL(pdfBlob);
 
     return {
       url: blobUrl,

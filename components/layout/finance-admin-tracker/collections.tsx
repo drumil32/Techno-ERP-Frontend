@@ -5,6 +5,7 @@ import { DailyCollectionData, MonthlyCollectionData } from "@/types/finance";
 import { fetchDailyCollections, fetchMonthlyCollections } from "./helpers/fetch-data";
 import CollectionSummary from "./collections-summary";
 import CourseWiseCollections from "./collections-course-wise";
+import Chart7DaySummary from "./day-wise-graph";
 
 export enum ViewMode {
     DAY = 'day',
@@ -81,12 +82,14 @@ export default function Collections() {
             {
                 collectionData &&
                 <div className="w-full flex gap-6">
-                    <div className="w-1/3">
+                    <div className="flex flex-col w-1/3 gap-6">
                         <CollectionSummary
                             label={viewMode === ViewMode.DAY ? selectedDate : `${months[selectedMonth - 1]} ${selectedYear}`}
                             totalCollections={collectionData?.totalCollection || 0}
                             viewMode={viewMode}
                         />
+                        <Chart7DaySummary/>
+
                     </div>
                     <div className="w-2/3">
                         <CourseWiseCollections
