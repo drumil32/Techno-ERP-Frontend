@@ -11,7 +11,7 @@ import { UseFormReturn } from 'react-hook-form';
 import { z } from 'zod';
 import { academicDetailsArraySchema, academicDetailSchema } from '../schema/schema';
 import TagInput from '../stage-1/tag-input';
-import { handleNumericInputChange } from '@/lib/utils';
+import { handlePercentageInputChange, handleNumericInputChange } from '@/lib/utils';
 import { formSchemaStep3 } from './enquiry-form-stage-3';
 import { EducationLevel } from '@/types/enum';
 
@@ -262,11 +262,31 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                                 {...field}
                                 type="text"
                                 placeholder="Out of 100%"
-                                inputMode="numeric"
-                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
-                                value={field.value ?? ''}
-                                min={0}
-                                max={100}
+                                inputMode="decimal"
+                                onChange={(e) => handlePercentageInputChange(e, field.onChange)}
+                                value={
+                                  field.value !== undefined && field.value !== null
+                                    ? field.value.toString()
+                                    : ''
+                                }
+                                onKeyDown={(e) => {
+                                  if (
+                                    !/[0-9.]/.test(e.key) &&
+                                    ![
+                                      'Backspace',
+                                      'Delete',
+                                      'ArrowLeft',
+                                      'ArrowRight',
+                                      'Tab'
+                                    ].includes(e.key)
+                                  ) {
+                                    e.preventDefault();
+                                  }
+
+                                  if (e.key === '.' && e.currentTarget.value.includes('.')) {
+                                    e.preventDefault();
+                                  }
+                                }}
                               />
                             </FormControl>
                             <div className="h-[20px]">
@@ -419,11 +439,31 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                                 {...field}
                                 type="text"
                                 placeholder="Out of 100%"
-                                inputMode="numeric"
-                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
-                                value={field.value ?? ''}
-                                min={0}
-                                max={100}
+                                inputMode="decimal"
+                                onChange={(e) => handlePercentageInputChange(e, field.onChange)}
+                                value={
+                                  field.value !== undefined && field.value !== null
+                                    ? field.value.toString()
+                                    : ''
+                                }
+                                onKeyDown={(e) => {
+                                  if (
+                                    !/[0-9.]/.test(e.key) &&
+                                    ![
+                                      'Backspace',
+                                      'Delete',
+                                      'ArrowLeft',
+                                      'ArrowRight',
+                                      'Tab'
+                                    ].includes(e.key)
+                                  ) {
+                                    e.preventDefault();
+                                  }
+
+                                  if (e.key === '.' && e.currentTarget.value.includes('.')) {
+                                    e.preventDefault();
+                                  }
+                                }}
                               />
                             </FormControl>
                             <div className="h-[20px]">
@@ -581,11 +621,31 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
                                 {...field}
                                 type="text"
                                 placeholder="Out of 100%"
-                                inputMode="numeric"
-                                onChange={(e) => handleNumericInputChange(e, field.onChange)}
-                                value={field.value ?? ''}
-                                min={0}
-                                max={100}
+                                inputMode="decimal"
+                                onChange={(e) => handlePercentageInputChange(e, field.onChange)}
+                                value={
+                                  field.value !== undefined && field.value !== null
+                                    ? field.value.toString()
+                                    : ''
+                                }
+                                onKeyDown={(e) => {
+                                  if (
+                                    !/[0-9.]/.test(e.key) &&
+                                    ![
+                                      'Backspace',
+                                      'Delete',
+                                      'ArrowLeft',
+                                      'ArrowRight',
+                                      'Tab'
+                                    ].includes(e.key)
+                                  ) {
+                                    e.preventDefault();
+                                  }
+
+                                  if (e.key === '.' && e.currentTarget.value.includes('.')) {
+                                    e.preventDefault();
+                                  }
+                                }}
                               />
                             </FormControl>
                             <div className="h-[20px]">

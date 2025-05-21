@@ -64,12 +64,14 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   const [isSuccessDialogOpen, setSuccessDialogOpen] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isFinalApproval, setFinalApproval] = useState(false);
   const router = useRouter();
 
   const [isLoading, setIsLoading] = useState(false);
   const [currentDownload, setCurrentDownload] = useState<string | null>(null);
 
   async function handleSubmitClick() {
+    setFinalApproval(true);
     try {
       const result = await onSubmit();
       if (result !== false) {
@@ -79,6 +81,8 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     } catch {
       setSubmitDialogOpen(false);
       toast.error('Submission failed');
+    } finally {
+      setFinalApproval(false);
     }
   }
 
@@ -222,9 +226,13 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             <Button
               type="button"
               onClick={handleSubmitClick}
-              disabled={form.formState.isSubmitting || isLoading}
+              disabled={form.formState.isSubmitting || isLoading || isFinalApproval}
             >
-              {form.formState.isSubmitting ? 'Submitting...' : 'Confirm'}
+              {isFinalApproval
+                ? 'Making your payment..'
+                : form.formState.isSubmitting
+                  ? 'Submitting...'
+                  : 'Confirm'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -235,7 +243,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
         onOpenChange={(open) => {
           setSuccessDialogOpen(open);
           if (!open) {
-            router.push(SITE_MAP.ADMISSIONS.DEFAULT);
+            router.push(SITE_MAP.ADMISSIONS.RECENT_ADMISSIONS);
           }
         }}
       >
@@ -263,7 +271,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
               className="px-8"
               onClick={() => {
                 setSuccessDialogOpen(false);
-                router.push(SITE_MAP.ADMISSIONS.DEFAULT);
+                router.push(SITE_MAP.ADMISSIONS.RECENT_ADMISSIONS);
               }}
             >
               Close

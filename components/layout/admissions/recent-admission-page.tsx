@@ -37,20 +37,19 @@ export default function RecentAdmissionsPage() {
     { accessorKey: 'course', header: 'Course' },
     { accessorKey: 'genderDisplay', header: 'Gender' },
     { accessorKey: 'district', header: 'District' },
-
+    { accessorKey: 'fatherName', header: "Father's Name" },
     { accessorKey: 'fatherPhoneNumber', header: "Father's Number" },
-    { accessorKey: 'motherPhoneNumber', header: "Mother's Number" },
-    // {
-    //   accessorKey: 'applicationStatus',
-    //   header: 'Application Status',
-    //   meta: { align: 'center' },
-    //   cell: ({ getValue }: CellContext<AdmissionTableRow, string>) => {
-    //     const rawStatus = getValue<string>();
-    //     return (
-    //       <div className="text-primary font-semibold">{formatApplicationStatus(rawStatus)}</div>
-    //     );
-    //   }
-    // },
+    {
+      accessorKey: 'applicationStatus',
+      header: 'Application Status',
+      meta: { align: 'center' },
+      cell: ({ getValue }: CellContext<AdmissionTableRow, string>) => {
+        const rawStatus = getValue<string>();
+        return (
+          <div className="text-primary font-semibold">{formatApplicationStatus(rawStatus)}</div>
+        );
+      }
+    },
     {
       id: 'form',
       header: '',
@@ -113,7 +112,7 @@ export default function RecentAdmissionsPage() {
         setSelectedRowId={setSelectedRowId}
         columns={columns}
         data={admissionsData}
-        tableName={`Recent Applications (${Object.values(admissionsData).length}) `}
+        tableName={`Recent Admissions (${Object.values(admissionsData).length}) `}
         currentPage={1}
         totalPages={1}
         pageLimit={10}

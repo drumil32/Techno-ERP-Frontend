@@ -43,7 +43,6 @@ type DocumentVerificationProps = {
   onValidationChange?: (isValid: boolean) => void;
   documentVerificationStatus?: boolean;
 };
-
 const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
   form,
   isViewable,
@@ -62,7 +61,8 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
     return !documents.some(
       (doc) => doc.status === PhysicalDocumentNoteStatus.PENDING && !doc.dueBy
     );
-  }, [documents, isViewable, isTouched]);
+    console.log(documents, 'this are my documents');
+  }, [documents, isViewable]);
 
   const initializeDocuments = useCallback(
     async (course: string) => {
@@ -118,6 +118,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
 
   useEffect(() => {
     onValidationChange?.(isValid);
+    console.log('I have got value', isValid);
   }, [isValid, onValidationChange]);
 
   const updateDocuments = useCallback(

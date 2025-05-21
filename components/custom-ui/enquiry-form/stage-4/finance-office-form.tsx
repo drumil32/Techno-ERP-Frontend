@@ -136,6 +136,7 @@ const FinanceOfficeForm = () => {
       telecaller: [],
       remarks: '',
       confirmationCheck: false,
+      isFeeApplicable: true,
       otpTarget: undefined,
       otpVerificationEmail: null
     },
@@ -233,7 +234,7 @@ const FinanceOfficeForm = () => {
         reference: enquiryData.reference,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
-        isFeeApplicable: enquiryData.isFeeApplicable ?? false,
+        isFeeApplicable: enquiryData.isFeeApplicable,
         remarks: initialCollegeRemarks
       });
     } else if (error) {
@@ -680,7 +681,7 @@ const FinanceOfficeForm = () => {
                 <div className="space-y-3 sm:space-y-4">
                   <div className="grid rounded-[5px] bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold text-sm sm:text-base p-3 sm:p-4 grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 border-b border-gray-200">
                     <div className="text-left">Semester</div>
-                    <div className="text-center">Fee Type</div>
+                    <div className="text-center">Fee Details</div>
                     <div className="text-center">Fees</div>
                     <div className="text-center">Discount</div>
                     <div className="text-right">Final Fees</div>
@@ -817,7 +818,7 @@ function FinalFeeSaveDialog({
           </div>
           <div>
             <p className="text-sm text-green-700 font-medium">
-              Total Deposited:{' '}
+              Total Deposited: <br />
               {formatCurrency(
                 otherFeesWatched?.reduce(
                   (sum: number, fee: any) => sum + (fee?.feesDepositedTOA || 0),

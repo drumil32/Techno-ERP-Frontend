@@ -11,6 +11,7 @@ const displayGender = (gender: string) => {
 };
 
 export const refineAdmissions = (data: any) => {
+  console.log('Refined Data is', data);
   const refineAdmissions = data.map((admission: any, index: number) => {
     return {
       ...admission,
@@ -18,7 +19,7 @@ export const refineAdmissions = (data: any) => {
 
       district: admission.address?.district ?? '-',
       fatherPhoneNumber: admission.fatherPhoneNumber ?? '-',
-      motherPhoneNumber: admission.motherPhoneNumber ?? '-',
+      fatherName: admission.fatherName ?? '-',
       course: admission.course ?? '-',
       genderDisplay: displayGender(admission.gender)
     };
