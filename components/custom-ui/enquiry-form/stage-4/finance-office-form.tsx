@@ -592,13 +592,16 @@ const FinanceOfficeForm = () => {
                 <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold p-3 sm:p-4 rounded-[5px] grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr]  gap-x-2 sm:gap-x-3 gap-y-2 text-sm sm:text-base">
                   <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Total Fees</div>
                   <div></div>
-                  <div className="text-left">{formatCurrency(otherFeesTotals.totalOriginal)}</div>
-                  <div className="text-center">
+                  {/* <div className="text-left">{formatCurrency(otherFeesTotals.totalOriginal)}</div> */}
+                  <div className="text-left">-</div>
+                  <div className="text-center">-</div>
+
+                  {/* <div className="text-center">
                     {calculateDiscountPercentage(
                       otherFeesTotals.totalOriginal,
                       otherFeesTotals.totalFinal
                     ) + '%'}
-                  </div>
+                  </div> */}
                   <div className="text-right">{formatCurrency(otherFeesTotals.totalFinal)}</div>
                   <div className="text-right">{formatCurrency(otherFeesTotals.totalDeposited)}</div>
                   <div className="text-right">{formatCurrency(otherFeesTotals.totalDue)}</div>
@@ -621,23 +624,24 @@ const FinanceOfficeForm = () => {
                     render={({ field }) => (
                       <>
                         <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
-                          Fees Applicable ?<span className="text-red-500 pl-0">*</span>
+                          Fees Applicable <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
-                        <FormItem className="flex h-[36px] w-full sm:w-[300px] flex-row items-start space-x-3 space-y-0 rounded-md border p-2">
-                          <label className="flex w-full cursor-pointer items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                                disabled={isViewable}
-                              />
+                        <FormItem className="h-[36px] z-50 w-full sm:w-[300px] rounded-md border">
+                          <Select
+                            onValueChange={(value) => field.onChange(value === 'true')}
+                            value={field.value ? 'true' : 'false'}
+                            disabled={isViewable}
+                          >
+                            <FormControl className="w-full">
+                              <SelectTrigger className="h-[36px]">
+                                <SelectValue placeholder="Select fee type" />
+                              </SelectTrigger>
                             </FormControl>
-                            <div className="space-y-1 leading-none">
-                              <FormLabel className="font-inter font-normal py-1 text-[12px] text-[#666666] cursor-pointer">
-                                {field.value ? 'No Zero Fees' : 'Zero Fees'}
-                              </FormLabel>
-                            </div>
-                          </label>
+                            <SelectContent className="">
+                              <SelectItem value="false">Zero Fees</SelectItem>
+                              <SelectItem value="true">Non-Zero Fees</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </FormItem>
                       </>
                     )}
@@ -675,9 +679,10 @@ const FinanceOfficeForm = () => {
             <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-full lg:w-max">
                 <div className="space-y-3 sm:space-y-4">
-                  <div className="grid  rounded-[5px] bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold text-sm sm:text-base  p-3 sm:p-4 grid-cols-1 xs:grid-cols-2 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 border-b border-gray-200">
-                    <div className="text-left ">Semester</div>
-                    <div className="text-right">Fees</div>
+                  <div className="grid rounded-[5px] bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold text-sm sm:text-base p-3 sm:p-4 grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 border-b border-gray-200">
+                    <div className="text-left">Semester</div>
+                    <div className="text-center">Fee Type</div>
+                    <div className="text-center">Fees</div>
                     <div className="text-center">Discount</div>
                     <div className="text-right">Final Fees</div>
                   </div>
@@ -696,13 +701,15 @@ const FinanceOfficeForm = () => {
                       return (
                         <div
                           key={field.id}
-                          className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.8fr]  gap-x-2 sm:gap-x-3 gap-y-2 items-center p-3 sm:p-4 hover:bg-gray-50 transition-colors"
+                          className="grid grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 items-center p-3 sm:p-4 hover:bg-gray-50 transition-colors"
                         >
                           <div className="text-sm font-medium text-gray-800">
                             Semester {index + 1}
                           </div>
 
-                          <div className="text-sm text-right text-gray-600">
+                          <div className="text-sm text-center text-gray-600">Tuition Fee</div>
+
+                          <div className="text-sm text-center text-gray-600">
                             {formatCurrency(originalFeeAmount)}
                           </div>
 
@@ -799,8 +806,6 @@ function FinalFeeSaveDialog({
 
   return (
     <div className="flex flex-col w-full">
-      <h2 className="text-lg font-semibold mb-4 text-center">Total Fee Amount For Semester 1</h2>
-
       <div className="w-full space-y-4 text-left">
         <div className="grid grid-cols-2 gap-6">
           <div>
@@ -812,11 +817,11 @@ function FinalFeeSaveDialog({
             <p className="text-sm font-medium">{studentData?.fatherName || 'N/A'}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">Total Fees Due</p>
-            <p className="text-sm text-red-500 font-medium">
+            <p className="text-sm text-green-700 font-medium">
+              Total Deposited:{' '}
               {formatCurrency(
                 otherFeesWatched?.reduce(
-                  (sum: number, fee: any) => sum + (fee?.finalFee - fee?.feesDepositedTOA || 0),
+                  (sum: number, fee: any) => sum + (fee?.feesDepositedTOA || 0),
                   0
                 ) || 0
               )}
@@ -852,25 +857,6 @@ function FinalFeeSaveDialog({
             onChange={(e) => onRemarksChange(e.target.value)}
             placeholder="Enter remarks"
           />
-        </div>
-
-        <div className="flex justify-between py-3">
-          <p className="text-sm text-gray-600 font-medium">
-            Total Fee Amount:{' '}
-            {formatCurrency(
-              otherFeesWatched?.reduce((sum: number, fee: any) => sum + (fee?.finalFee || 0), 0) ||
-                0
-            )}
-          </p>
-          <p className="text-sm text-green-700 font-medium">
-            Total Deposited:{' '}
-            {formatCurrency(
-              otherFeesWatched?.reduce(
-                (sum: number, fee: any) => sum + (fee?.feesDepositedTOA || 0),
-                0
-              ) || 0
-            )}
-          </p>
         </div>
       </div>
     </div>

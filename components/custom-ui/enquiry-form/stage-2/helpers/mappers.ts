@@ -18,7 +18,7 @@ export const displayFeeMapper = (feeType: FeeType | string | undefined): string 
       return 'Book Bank';
     // case FeeType.EXAMFEES: return "Exam Fees";
     case FeeType.SEM1FEE:
-      return 'Semester 1 Fees';
+      return 'Tuition Fees';
     default:
       return 'Unknown Fee Type';
   }

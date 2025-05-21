@@ -209,9 +209,6 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             <DialogTitle className="text-2xl font-bold text-center">
               Record Deposit & Confirm Admission
             </DialogTitle>
-            <div className="flex gap-2 justify-center items-center text-sm">
-              <span>Please reverify all details before submitting.</span>
-            </div>
           </DialogHeader>
           {customSaveDialog}
           <DialogFooter>
@@ -245,7 +242,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
               Admission Confirmed!
             </DialogTitle>
             <DialogDescription className="text-center text-gray-500 mt-2">
-              Your admission has been processed successfully. You can now download the documents.
+              Your payment has been processed successfully. You can now download the documents.
             </DialogDescription>
           </DialogHeader>
 

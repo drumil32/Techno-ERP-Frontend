@@ -166,7 +166,7 @@ export function DownloadAdmissionReceiptDialog({ tableActionButton = true, stude
             Download Admission Form Receipt
           </DialogTitle>
           <DialogDescription className="my-3">
-            Preview and download admission form receipt
+            Preview and download admission form receipt.
           </DialogDescription>
         </DialogHeader>
 
