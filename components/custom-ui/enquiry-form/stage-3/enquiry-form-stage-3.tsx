@@ -7,7 +7,11 @@ import { useParams } from 'next/navigation';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { enquiryDraftStep3Schema, enquiryStep3UpdateRequestSchema } from '../schema/schema';
+import {
+  enquiryDraftStep3Schema,
+  enquiryStep3UpdateRequestSchema,
+  Nationality
+} from '../schema/schema';
 
 // UI components and form utilities
 import { Form } from '@/components/ui/form';
@@ -31,7 +35,7 @@ import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 
 // Utility and type imports
 import { format } from 'date-fns';
-import { ApplicationStatus, EducationLevel } from '@/types/enum';
+import { ApplicationStatus, EducationLevel, StatesOfIndia } from '@/types/enum';
 import { Admission } from '@/types/admissions';
 import { toast } from 'sonner';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
@@ -82,6 +86,10 @@ const EnquiryFormStage3 = () => {
 
   const form = useForm<z.infer<typeof formSchemaStep3>>({
     resolver: zodResolver(formSchemaStep3),
+    defaultValues: {
+      stateOfDomicile: StatesOfIndia.UttarPradesh,
+      nationality: Nationality.INDIAN
+    },
     disabled: isViewable
   });
 
@@ -161,6 +169,7 @@ const EnquiryFormStage3 = () => {
       setRefreshKey((prev) => prev + 1);
       return true;
     } catch (error) {
+      return false;
       throw error;
     }
   }

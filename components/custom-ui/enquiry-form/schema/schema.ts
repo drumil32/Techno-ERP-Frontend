@@ -203,7 +203,7 @@ export const enquirySchema = z.object({
   nationality: z.string().optional().default(Nationality.INDIAN),
   entranceExamDetails: entranceExamDetailSchema.optional(),
   admittedBy: z.union([z.string(), z.enum(['other'])]).optional(),
-  isFeeApplicable: z.boolean().default(false).optional()
+  isFeeApplicable: z.boolean().default(true).optional()
 });
 
 export enum Qualification {

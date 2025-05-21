@@ -395,7 +395,7 @@ const FinanceOfficeForm = () => {
       await approveEnquiry({
         id: enquiry_id,
         transactionType: transactionTypeRef.current,
-        remarks: transactionRemarks
+        transactionRemark: transactionRemarks
       });
 
       toast.success('Enquiry submitted for final approval');
@@ -619,7 +619,6 @@ const FinanceOfficeForm = () => {
                 <div>
                   <FormField
                     control={form.control}
-                    defaultValue={false}
                     name="isFeeApplicable"
                     render={({ field }) => (
                       <>

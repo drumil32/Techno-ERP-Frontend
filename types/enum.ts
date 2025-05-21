@@ -327,7 +327,16 @@ export enum StatesOfIndia {
   Tripura = 'Tripura',
   UttarPradesh = 'Uttar Pradesh',
   Uttarakhand = 'Uttarakhand',
-  WestBengal = 'West Bengal'
+  WestBengal = 'West Bengal',
+  // Union Territories added
+  AndamanAndNicobarIslands = 'Andaman and Nicobar Islands',
+  Chandigarh = 'Chandigarh',
+  DadraAndNagarHaveliAndDamanAndDiu = 'Dadra and Nagar Haveli and Daman & Diu',
+  Delhi = 'Delhi',
+  JammuAndKashmir = 'Jammu and Kashmir',
+  Ladakh = 'Ladakh',
+  Lakshadweep = 'Lakshadweep',
+  Puducherry = 'Puducherry'
 }
 
 // export enum Countries {
@@ -600,5 +609,5 @@ export const FinalConversionStatusMapper: Record<FinalConversionStatus, string> 
   [FinalConversionStatus.ADMISSION]: 'Admission',
   [FinalConversionStatus.NOT_INTERESTED]: 'Not Interested',
   [FinalConversionStatus.NEUTRAL]: 'Neutral',
-  [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall',
+  [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall'
 };

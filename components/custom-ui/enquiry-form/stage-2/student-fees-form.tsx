@@ -199,7 +199,7 @@ export const StudentFeesForm = () => {
       telecaller: [],
       remarks: '',
       confirmationCheck: false,
-      isFeeApplicable: false,
+      isFeeApplicable: true,
       otpTarget: undefined,
       otpVerificationEmail: null
     },
@@ -307,6 +307,8 @@ export const StudentFeesForm = () => {
         initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
       }
 
+      console.log('enquiry Data is', enquiryData);
+
       form.reset({
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,
@@ -315,7 +317,7 @@ export const StudentFeesForm = () => {
         reference: enquiryData.reference,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
-        isFeeApplicable: enquiryData.isFeeApplicable ?? false,
+        isFeeApplicable: enquiryData.isFeeApplicable,
         remarks: enquiryData.remarks,
         confirmationCheck: form.getValues().confirmationCheck || false
       });
@@ -902,7 +904,6 @@ export const StudentFeesForm = () => {
                 <div>
                   <FormField
                     control={form.control}
-                    defaultValue={false}
                     name="isFeeApplicable"
                     render={({ field }) => (
                       <>

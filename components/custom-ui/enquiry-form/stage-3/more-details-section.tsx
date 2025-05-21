@@ -53,6 +53,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
 
   const checkValidity = () => {
     const values = form.getValues();
+    console.log(values);
 
     const moreDetails = {
       stateOfDomicile: values.stateOfDomicile,
@@ -131,7 +132,6 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                 key="stateOfDomicile"
                 control={form.control}
                 name="stateOfDomicile"
-                defaultValue={StatesOfIndia.UttarPradesh}
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
@@ -201,7 +201,6 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                 key="nationality"
                 control={form.control}
                 name="nationality"
-                defaultValue={Nationality.INDIAN}
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
                     <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">

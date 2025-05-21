@@ -260,17 +260,13 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                         </PopoverTrigger>
                         {doc.status === PhysicalDocumentNoteStatus.PENDING && (
                           <PopoverContent className="w-auto p-0">
-                            <PopoverClose>
-                              <Calendar
-                                mode="single"
-                                selected={doc.dueBy}
-                                onSelect={(date) => handleDueDateChange(doc.id, date)}
-                                disabled={(date) =>
-                                  date < new Date(new Date().setHours(0, 0, 0, 0))
-                                }
-                                initialFocus
-                              />
-                            </PopoverClose>
+                            <Calendar
+                              mode="single"
+                              selected={doc.dueBy}
+                              onSelect={(date) => handleDueDateChange(doc.id, date)}
+                              disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                              initialFocus
+                            />
                           </PopoverContent>
                         )}
                       </Popover>
