@@ -20,13 +20,14 @@ import {
   ZoomOut,
   ChevronLeft,
   ChevronRight,
+  DownloadCloud,
   Printer
 } from 'lucide-react';
 import { FaCircleExclamation } from 'react-icons/fa6';
 import { fetchDataForAdmissionReceipt } from './helpers/fetch-data';
 import { downloadAdmissionForm } from './helpers/download-pdf';
 
-export function DownloadAdmissionReceiptDialog({ studentId }: { studentId: string }) {
+export function DownloadAdmissionReceiptDialog({ tableActionButton = true, studentId }: { tableActionButton?: boolean; studentId: string }) {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
@@ -137,10 +138,26 @@ export function DownloadAdmissionReceiptDialog({ studentId }: { studentId: strin
   return (
     <Dialog open={downloadOpen} onOpenChange={setDownloadOpen}>
       <DialogTrigger asChild>
-        <Button variant={'outline'} className="cursor-pointer mx-auto">
-          <FileArchive className="text-primary" />
-          View Form
-        </Button>
+        {tableActionButton ?
+          <Button
+            variant={'outline'}
+            className="cursor-pointer mx-auto"
+            onClick={() => setDownloadOpen(true)}
+          >
+            <FileArchive className="text-primary" />
+          </Button>
+          :
+          <Button
+            variant="outline"
+            className="h-12 justify-start px-6 py-3 border-gray-200 hover:bg-gray-50"
+            onClick={() => setDownloadOpen(true)}
+          >
+            <FileArchive className="w-5 h-5 mr-3 text-amber-600" />
+            <span className="text-gray-700 font-medium">Admission Form</span>
+            <DownloadCloud className="w-4 h-4 ml-auto text-gray-400" />
+          </Button>
+        }
+
       </DialogTrigger>
       <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden">
         <DialogHeader>

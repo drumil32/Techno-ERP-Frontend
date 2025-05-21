@@ -21,13 +21,21 @@ import {
   ChevronLeft,
   ChevronRight,
   Printer,
-  ReceiptIndianRupee
+  ReceiptIndianRupee,
+  DownloadCloud,
+  Receipt
 } from 'lucide-react';
 import { FaCircleExclamation } from 'react-icons/fa6';
 import { fetchDataForAdmissionFeeReceipt } from './helpers/fetch-data';
 import { downloadFeeReceipt } from './helpers/download-pdf';
 
-export function AdmissionFeeReceiptDialog({ studentId }: { studentId: string }) {
+export function AdmissionFeeReceiptDialog({
+    tableActionButton = true,
+    studentId,
+}: {
+    tableActionButton?: boolean;
+    studentId: string;
+}) {
   const [receiptOpen, setReceiptOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
@@ -137,22 +145,40 @@ export function AdmissionFeeReceiptDialog({ studentId }: { studentId: string }) 
 
   return (
     <Dialog open={receiptOpen} onOpenChange={setReceiptOpen}>
-      <DialogTrigger asChild>
-        <Button variant={'outline'} className="cursor-pointer">
-          <ReceiptIndianRupee className="text-primary" />
-          <span className="ml-2">View Receipt</span>
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden">
-        <DialogHeader>
-          <DialogTitle className="flex gap-2 items-center">
-            <ReceiptIndianRupee className="text-primary w-6 h-6" />
-            Fee Payment Receipt
-          </DialogTitle>
-          <DialogDescription className="my-3">
-            Preview and download the payment receipt
-          </DialogDescription>
-        </DialogHeader>
+        <DialogTrigger asChild>
+            {
+                tableActionButton ? (
+                    <Button
+                        variant={'outline'}
+                        className="cursor-pointer mx-auto"
+                        onClick={() => setReceiptOpen(true)}
+                    >
+                        <ReceiptIndianRupee className="text-primary" />
+                    </Button>
+                ) : (
+                    <Button
+                        variant="outline"
+                        className="h-12 col-start-1 justify-start px-6 py-3 border-gray-200 hover:bg-gray-50"
+                        onClick={() => setReceiptOpen(true)}
+                    >
+                        <FileText className="w-5 h-5 mr-3 text-blue-600" />
+                        <span className="text-gray-700 font-medium">Fee Receipt</span>
+                        <DownloadCloud className="w-4 h-4 ml-auto text-gray-400" />
+                    </Button>
+                )
+            }
+
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden">
+            <DialogHeader>
+                <DialogTitle className="flex gap-2 items-center">
+                    <Receipt className="text-primary w-6 h-6" />
+                    Transaction Slip
+                </DialogTitle>
+                <DialogDescription className="my-3">
+                    The transaction receipt preview is shown below.
+                </DialogDescription>
+            </DialogHeader>
 
         <div className="w-full h-[60vh] flex flex-col">
           <div className="flex items-center justify-between mb-2 bg-gray-100 p-2 rounded">

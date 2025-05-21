@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import DateNavigator from "./collections-selection";
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
 import { DailyCollectionData, MonthlyCollectionData } from "@/types/finance";
 import { fetchDailyCollections, fetchMonthlyCollections } from "./helpers/fetch-data";
 import CollectionSummary from "./collections-summary";
 import CourseWiseCollections from "./collections-course-wise";
+import ChartDaySummary from "./day-wise-graph";
 
 export enum ViewMode {
     DAY = 'day',
@@ -25,22 +26,22 @@ export default function Collections() {
     const [selectedMonth, setSelectedMonth] = useState(() => new Date().getMonth() + 1);
     const [selectedYear, setSelectedYear] = useState(() => new Date().getFullYear());
 
-    useEffect(() => {
-        console.log(selectedMonth)
-        console.log(selectedYear)
-    }, [selectedMonth, selectedYear])
+    // useEffect(() => {
+    //     console.log(selectedMonth)
+    //     console.log(selectedYear)
+    // }, [selectedMonth, selectedYear])
 
-    const makeApiCall = async () => {
-        console.log('Making API call with:', {
-            viewMode,
-            selectedDate: viewMode === ViewMode.DAY ? selectedDate : null,
-            selectedMonth: viewMode === ViewMode.MONTH ? selectedMonth : null
-        });
-    };
+    // const makeApiCall = async () => {
+    //     console.log('Making API call with:', {
+    //         viewMode,
+    //         selectedDate: viewMode === ViewMode.DAY ? selectedDate : null,
+    //         selectedMonth: viewMode === ViewMode.MONTH ? selectedMonth : null
+    //     });
+    // };
 
-    useEffect(() => {
-        makeApiCall();
-    }, [viewMode, selectedDate, selectedMonth]);
+    // useEffect(() => {
+    //     makeApiCall();
+    // }, [viewMode, selectedDate, selectedMonth]);
 
     const handleDateChange = (newDate: any) => {
         setSelectedDate(newDate);
@@ -66,6 +67,27 @@ export default function Collections() {
     const collectionData = collectionsQuery.data
     const isLoading = collectionsQuery.isLoading
 
+    console.log(collectionData)
+
+    const normalizedChartData = useMemo(() => {
+        if (!collectionData) return []
+      
+        if (viewMode === ViewMode.DAY) {
+          const dailyData = (collectionData as DailyCollectionData)?.pastSevenDays
+          return dailyData?.map(d => ({
+            date: d.date,
+            dailyCollection: d.dailyCollection,
+          })) || []
+        } else {
+          const monthlyData = (collectionData as MonthlyCollectionData)?.monthWiseData
+          return monthlyData?.map(d => ({
+            date: d.date,
+            dailyCollection: d.totalCollection,
+          })) || []
+        }
+      }, [viewMode, collectionData])
+      
+
 
     return (
         <>
@@ -80,32 +102,33 @@ export default function Collections() {
 
             {
                 collectionData &&
-                <div className="w-full flex gap-6">
-                    <div className="w-1/3">
+                <div className="w-full flex gap-6 my-4">
+                    <div className="flex flex-col w-1/3 gap-6">
                         <CollectionSummary
                             label={viewMode === ViewMode.DAY ? selectedDate : `${months[selectedMonth - 1]} ${selectedYear}`}
                             totalCollections={collectionData?.totalCollection || 0}
                             viewMode={viewMode}
                         />
+                        <ChartDaySummary
+                            chartData={
+                                normalizedChartData
+                            }
+                            chartFooterLabel={viewMode === ViewMode.DAY ? "Last 7-Day Summary" : "Monthly Summary"}
+                            title={viewMode === ViewMode.DAY ? "Last 7-Day Summary" : "Monthly Summary"}
+                        />
+
                     </div>
                     <div className="w-2/3">
                         <CourseWiseCollections
-                            courseWiseCollection={collectionData?.courseWiseInformation || []}
+                            courseWiseCollection={
+                                viewMode === ViewMode.DAY
+                                    ? (collectionData as DailyCollectionData)?.courseWiseInformation || []
+                                    : (collectionData as MonthlyCollectionData)?.courseWiseCollection || []
+                            }
                         />
                     </div>
                 </div>
             }
-
-
-
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">Current Selection:</h3>
-                <div className="text-sm text-gray-800">
-                    <div>View Mode: {viewMode}</div>
-                    {viewMode === ViewMode.DAY && <div>Selected Date: {selectedDate}</div>}
-                    {viewMode === ViewMode.MONTH && <div>Selected Month: {selectedMonth}</div>}
-                </div>
-            </div>
         </>
     )
 }

@@ -145,6 +145,12 @@ export interface DayCollection {
   dailyCollection: number;
 }
 
+export interface MonthDayCollection {
+  date: string;
+  totalCollection: number;
+}
+
+
 export interface CourseCollection {
   courseCode: Course;
   details: { courseYear: CourseYear; totalCollection: number }[],
@@ -160,6 +166,6 @@ export interface DailyCollectionData {
 
 export interface MonthlyCollectionData {
   totalCollection: number;
-  monthWiseData: DayCollection[];
-  courseWiseInformation: CourseCollection[];
+  monthWiseData: MonthDayCollection[];
+  courseWiseCollection: CourseCollection[];
 }
