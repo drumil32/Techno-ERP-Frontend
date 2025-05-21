@@ -379,7 +379,7 @@ export const downloadFeeReceipt = async (
 ): Promise<{ url: string; fileName: string }> => {
   const container = document.createElement('div');
   container.style.width = '780px';
-  container.style.padding = '20px';
+  container.style.padding = '0'; // Removed padding to maximize space
   container.style.fontFamily = 'Arial, sans-serif';
   container.style.backgroundColor = 'white';
   container.style.boxSizing = 'border-box';
@@ -395,122 +395,139 @@ export const downloadFeeReceipt = async (
     0
   );
 
+  // Create a function to generate receipt HTML - now with smaller font sizes and reduced spacing
+  const generateReceiptHtml = () => `
+    <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; ">
+      <div style="position: absolute; top: 0; left: 0;">
+          <img src="${escapeHtml(placeholderLogoBase64)}" alt="College Logo"
+              style="width: 80px; object-fit: contain;">
+      </div>
+      <div style="flex-grow: 1; text-align: center; margin: 0 10px;">
+          <h2 style="text-align: center; color: #851A6A; font-size: 16px; font-weight: 800; margin:0 0 2px 0;">
+              ${escapeHtml(data.collegeName ?? 'Techno Institute of Higher Studies')}</h2>
+          <p style="text-align: center; font-size: 10px; font-weight: 600; margin: 0; line-height: 1.2;">
+              (Affiliated to ${escapeHtml(data.affiliationName) ?? 'Dr. A.P.J. Abdul Kalam Technical University, Lucknow'})<br />
+              ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}<br />
+              Email: ${escapeHtml(data.collegeEmail ?? 'registrar@tims.edu.in')} | Contact:
+              ${escapeHtml(data.collegeContactNumber ?? '9839506777')}
+          </p>
+      </div>
+    </div>
+
+    <h3 style="text-align: center; color: #851A6A; font-size: 14px; font-weight: 700; text-decoration: underline; margin: 10px 0;">
+      FEE RECEIPT
+    </h3>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+      <tbody>
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 2px 5px 5px; width: 18%; border-right:none;">Receipt No :</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; width: 32%; border-left:none;">${escapeHtml(data.recieptNumber)}</td>
+          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 2px 5px 5px; width: 18%; border-right:none;">Date :</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; width: 32%; border-left:none;">${escapeHtml(data.date)}</td>
+        </tr>
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 2px 5px 5px; border-right:none;">Name :</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-left:none;">${escapeHtml(data.studentName)}</td>
+          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 2px 5px 5px; border-right:none;">Category :</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-left:none;">${escapeHtml(data.category)}</td>
+        </tr>
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 2px 5px 5px; border-right:none;">Father Name :</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-left:none;">${escapeHtml(data.fatherName)}</td>
+          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 2px 5px 5px; border-right:none;">Session :</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-left:none;">${escapeHtml(data.session)}</td>
+        </tr>
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 2px 5px 5px; border-right:none;">Course :</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-left:none; border-right:none;">${escapeHtml(data.course)}</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-right:none; border-left:none"></td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-left:none;"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-top: -1px;">
+      <thead>
+        <tr>
+          <th style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; text-align: left; border-right:none;">Particular</th>
+          <th style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; text-align: right; border-left:none; width: 25%;">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${data.particulars
+          .map(
+            (fee: any) => `
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-right:none;">${escapeHtml(fee.name)}</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; text-align: right; border-left:none;">
+          ${fee.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </td>
+        </tr>`
+          )
+          .join('')}
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; font-weight: bold; border-right:none;">Total Dues</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-left:none;"></td>
+        </tr>
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; font-weight: bold; border-right:none;">Total</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-left:none;"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 10px; margin-top: -1px;">
+      <tbody>
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; font-weight: bold; border-right:none;">Total Received Amount</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; text-align: right; border-left:none;">
+          ${totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </td>
+        </tr>
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-right:none;">via ${data.transactionType}</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; text-align: right; border-left:none;"><span style="color: #666666; ">Date : </span>${escapeHtml(data.date)}</td>
+        </tr>
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; font-weight: bold; border-right:none; border-bottom:none;">Amount in words</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; text-align: right; border-left:none; border-bottom:none;">For Techno Institute of Higher Studies</td>
+        </tr>
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-right:none; border-bottom:none; border-top:none;">${escapeHtml(data.amountInWords)}</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-left:none; border-bottom:none; border-top:none;"></td>
+        </tr>
+        <tr>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; border-right:none; border-top:none; width: 30%;">${escapeHtml(data.remarks ?? '--')}</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 2px 5px 5px; text-align: right; border-left:none; border-top:none;">Authorized Signatory</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
+
+  // Generate both receipts (original and duplicate) and add them to container
+  // Using a thinner divider and reduced spacing between receipts
   container.innerHTML = `
-     <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-    <div style="position: absolute; top: 0; left: 0;">
-        <img src="${escapeHtml(placeholderLogoBase64)}" alt="College Logo"
-            style="width: 100px; object-fit: contain;">
-    </div>
-    <div style="flex-grow: 1; text-align: center; margin: 0 10px;">
-        <h2 style="text-align: center; color: #851A6A; font-size: 18px; font-weight: 800; margin:0 0 4px 0;">
-            ${escapeHtml(data.collegeName ?? 'Techno Institute of Higher Studies')}</h2>
-        <p style="text-align: center; font-size: 12px; font-weight: 600; margin: 0; line-height: 1.3;">
-            (Affiliated to ${escapeHtml(data.affiliationName) ?? 'Dr. A.P.J. Abdul Kalam Technical University, Lucknow'})<br />
-            ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}<br />
-            Email: ${escapeHtml(data.collegeEmail ?? 'registrar@tims.edu.in')} | Contact:
-            ${escapeHtml(data.collegeContactNumber ?? '9839506777')}
-        </p>
-    </div>
+ <div style="height: 100vh; display: flex; flex-direction: column;">
+  <div style="flex: 1; padding: 20px;">
+    ${generateReceiptHtml()}
+  </div>
+  
+  <div style="border-top: 1px dashed #666; width: 100%; margin: 20px 0 10px 0;"></div>
+  
+  <div style="flex: 1; padding: 20px;">
+    ${generateReceiptHtml()}
+  </div>
 </div>
 
-
-<h3 style="text-align: center; color: #851A6A; font-size: 16px; font-weight: 700; text-decoration: underline; margin: 20px 0;">
-  FEE RECEIPT
-</h3>
-
-<table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-  <tbody>
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 4px 4px 10px 10px; width: 18%; border-right:none;">Receipt No :</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; width: 32%; border-left:none;">${escapeHtml(data.recieptNumber)}</td>
-      <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 4px 4px 10px 10px; width: 18%; border-right:none;">Date :</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; width: 32%; border-left:none;">${escapeHtml(data.date)}</td>
-    </tr>
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 4px 4px 10px 10px; border-right:none;">Name :</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none;">${escapeHtml(data.studentName)}</td>
-      <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 4px 4px 10px 10px; border-right:none;">Category :</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none;">${escapeHtml(data.category)}</td>
-    </tr>
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 4px 4px 10px 10px; border-right:none;">Father Name :</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none;">${escapeHtml(data.fatherName)}</td>
-      <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 4px 4px 10px 10px; border-right:none;">Session :</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px;border-left:none;">${escapeHtml(data.session)}</td>
-    </tr>
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 4px 4px 10px 10px; border-right:none;">Course :</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none; border-right:none;">${escapeHtml(data.course)}</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none; border-left:none"></td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none;"></td>
-    </tr>
-  </tbody>
-</table>
-
-<table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-top: -2px;">
-  <thead>
-    <tr>
-      <th style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: left; border-right:none;">Particular</th>
-      <th style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: right; border-left:none;">Amount</th>
-    </tr>
-  </thead>
-  <tbody>
-    ${data.particulars
-      .map(
-        (fee: any) => `
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none;">${escapeHtml(fee.name)}</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: right; border-left:none;">
-      ${fee.amount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-      </td>
-    </tr>`
-      )
-      .join('')}
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; font-weight: bold; border-right:none;">Total Dues</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none;"></td>
-    </tr>
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; font-weight: bold; border-right:none;">Total</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none;"></td>
-    </tr>
-  </tbody>
-</table>
-
-<table style="width: 100%; border-collapse: collapse; font-size: 12px; margin-top: -2px;">
-  <tbody>
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; font-weight: bold; border-right:none;">Total Received Amount</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: right; border-left:none;">
-      ${totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-      </td>
-    </tr>
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none;">via ${data.transactionType}</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: right; border-left:none;"><span style="color: #666666; ">Date : </span>${escapeHtml(data.date)}</td>
-    </tr>
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; font-weight: bold; border-right:none; border-bottom:none;">Amount in words</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: right; border-left:none; border-bottom:none;">For Techno Institute of Higher Studies</td>
-    </tr>
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none; border-bottom:none; border-top:none;">${escapeHtml(data.amountInWords)}</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-left:none; border-bottom:none; border-top:none;"></td>
-    </tr>
-    <tr>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; border-right:none; border-top:none; width: 30%;">${escapeHtml(data.remarks ?? '--')}</td>
-      <td style="border: 0.5px solid #E6E6E6; padding: 4px 4px 10px 10px; text-align: right; border-left:none; border-top:none;">Authorized Signatory</td>
-    </tr>
-  </tbody>
-</table>
-
-    `;
+  `;
 
   document.body.appendChild(container);
 
   try {
+    // Adjust scale for proper fit on one page
     const canvas = await html2canvas(container, {
-      scale: 3,
+      scale: 2, // Reduced scale to make content fit on a single page
       useCORS: true,
       logging: false,
       onclone: (clonedDoc) => {
@@ -519,8 +536,12 @@ export const downloadFeeReceipt = async (
     });
 
     const imgData = canvas.toDataURL('image/png');
-
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4' });
+    const pdf = new jsPDF({ 
+      orientation: 'portrait', 
+      unit: 'px', 
+      format: 'a4',
+      compress: true // Enable compression to reduce file size
+    });
 
     const fileName = `Fee-Receipt-${data.studentName?.replace(/\s+/g, '-')}-${data.course}.pdf`;
     const title = `Fee Receipt - ${data.studentName}`;
@@ -533,28 +554,20 @@ export const downloadFeeReceipt = async (
     });
 
     const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
-
+    
+    // Calculate appropriate height to ensure content fits on one page
     const imgProps = pdf.getImageProperties(imgData);
     const imgWidth = pdfWidth;
-    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+    const ratio = imgProps.width / imgWidth;
+    const imgHeight = imgProps.height / ratio;
+    
+    // Position to start at top of page without margins
+    const positionX = 0;
+    const positionY = 0;
 
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    // Add first page
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pdfHeight;
-
-    // Add more pages if needed
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-
-      heightLeft -= pdfHeight;
-    }
+    // Add image to single page, adjusting size to fit
+    pdf.addImage(imgData, 'PNG', positionX, positionY, imgWidth, imgHeight);
+    
     const pdfBlob = pdf.output('blob');
     const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
     const blobUrl = URL.createObjectURL(file);
@@ -562,10 +575,6 @@ export const downloadFeeReceipt = async (
     // Save the PDF
     if (directSave) {
       pdf.save(fileName);
-      return {
-        url: blobUrl,
-        fileName: fileName
-      };
     }
 
     return {
