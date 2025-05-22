@@ -45,8 +45,8 @@ export default function AdmissionsLandingPage() {
     { accessorKey: 'genderDisplay', header: 'Gender' },
     { accessorKey: 'district', header: 'District' },
 
+    { accessorKey: 'fatherName', header: "Father's Name" },
     { accessorKey: 'fatherPhoneNumber', header: "Father's Number" },
-    { accessorKey: 'motherPhoneNumber', header: "Mother's Number" },
     {
       accessorKey: 'applicationStatus',
       header: 'Application Status',

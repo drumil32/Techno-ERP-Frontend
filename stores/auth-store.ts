@@ -6,7 +6,7 @@ export type User = {
   email: string;
   roles: UserRoles[];
   accessToken?: string;
-};
+}
 
 type AuthState = {
   user: User | null;

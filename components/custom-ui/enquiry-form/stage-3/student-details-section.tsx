@@ -503,7 +503,6 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
               <div>
                 <FormField
                   control={form.control}
-                  defaultValue={false}
                   name="isFeeApplicable"
                   render={({ field }) => (
                     <>

@@ -43,7 +43,6 @@ type DocumentVerificationProps = {
   onValidationChange?: (isValid: boolean) => void;
   documentVerificationStatus?: boolean;
 };
-
 const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
   form,
   isViewable,
@@ -62,7 +61,8 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
     return !documents.some(
       (doc) => doc.status === PhysicalDocumentNoteStatus.PENDING && !doc.dueBy
     );
-  }, [documents, isViewable, isTouched]);
+    console.log(documents, 'this are my documents');
+  }, [documents, isViewable]);
 
   const initializeDocuments = useCallback(
     async (course: string) => {
@@ -118,6 +118,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
 
   useEffect(() => {
     onValidationChange?.(isValid);
+    console.log('I have got value', isValid);
   }, [isValid, onValidationChange]);
 
   const updateDocuments = useCallback(
@@ -260,17 +261,13 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                         </PopoverTrigger>
                         {doc.status === PhysicalDocumentNoteStatus.PENDING && (
                           <PopoverContent className="w-auto p-0">
-                            <PopoverClose>
-                              <Calendar
-                                mode="single"
-                                selected={doc.dueBy}
-                                onSelect={(date) => handleDueDateChange(doc.id, date)}
-                                disabled={(date) =>
-                                  date < new Date(new Date().setHours(0, 0, 0, 0))
-                                }
-                                initialFocus
-                              />
-                            </PopoverClose>
+                            <Calendar
+                              mode="single"
+                              selected={doc.dueBy}
+                              onSelect={(date) => handleDueDateChange(doc.id, date)}
+                              disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                              initialFocus
+                            />
                           </PopoverContent>
                         )}
                       </Popover>

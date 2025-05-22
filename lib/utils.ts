@@ -16,12 +16,11 @@ export function toPascal(title: unknown) {
 
   const words = title.split('_');
   const convertedTitle = words
-    .map(word => word[0].toUpperCase() + word.slice(1).toLowerCase())
+    .map((word) => word[0].toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
 
   return convertedTitle;
 }
-
 
 export function filterBySchema<T extends ZodObject<any>>(
   schema: T,
@@ -39,7 +38,7 @@ export function filterBySchema<T extends ZodObject<any>>(
   return filtered;
 }
 
-const skipKeys = [ 'remarks' ];
+const skipKeys = ['remarks'];
 
 function isObject(value: any): boolean {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -59,7 +58,7 @@ function isAllValuesUndefined(obj: any): boolean {
 export function removeNullValues(obj: any, parentKey?: string): any {
   if (Array.isArray(obj)) {
     if (skipKeys.includes(parentKey || '')) {
-      return obj.map((item) => isObject(item) ? removeNullValues(item) : item);
+      return obj.map((item) => (isObject(item) ? removeNullValues(item) : item));
     }
 
     return obj
@@ -78,7 +77,7 @@ export function removeNullValues(obj: any, parentKey?: string): any {
         .map(([k, v]) => [k, removeNullValues(v, k)])
         .filter(
           ([k, v]) =>
-            skipKeys.includes(k) || 
+            skipKeys.includes(k) ||
             (v !== null &&
               v !== undefined &&
               v !== '' &&
@@ -108,8 +107,28 @@ export const handleNumericInputChange = (
     onChange(Number(rawValue));
   }
 };
+export const handlePercentageInputChange = (
+  e: React.ChangeEvent<HTMLInputElement>,
+  onChange: (value: number | string) => void
+) => {
+  const value = e.target.value;
 
+  if (value === '') {
+    onChange('');
+    return;
+  }
 
+  if (/^\d*\.?\d*$/.test(value)) {
+    if (value === '.' || value.endsWith('.')) {
+      onChange(value); // Allow "." or "123." during typing
+    } else {
+      const num = parseFloat(value);
+      if (!isNaN(num) && num >= 0 && num <= 100) {
+        onChange(num);
+      }
+    }
+  }
+};
 export const parseDateFromAPI = (dateString: string | undefined): Date | undefined => {
   if (!dateString) return undefined;
   const parsed = parse(dateString, 'dd/MM/yyyy', new Date());
@@ -126,7 +145,7 @@ export const getOrdinalSuffix = (num: number): string => {
   const suffixes = ['th', 'st', 'nd', 'rd'];
   const value = num % 100;
   return num + (suffixes[(value - 20) % 10] || suffixes[value] || suffixes[0]);
-}
+};
 
 export function formatYearRange(yearRange: string): string {
   const [startYear, endYear] = yearRange.split('-');
