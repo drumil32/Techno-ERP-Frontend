@@ -25,12 +25,22 @@ export default function LeadTypeSelect({ value, onChange, disabled = false }: Le
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleWheel = (e: WheelEvent) => e.preventDefault();
+    document.addEventListener('wheel', handleWheel, { passive: false });
+    return () => document.removeEventListener('wheel', handleWheel);
+  }, [isOpen]);
+
   useLayoutEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+      const dropdownHeight = Object.keys(LeadType).length * 36 + 16;
+      const spaceBelow = window.innerHeight - rect.bottom;
+
       setPosition({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
+        top: spaceBelow > dropdownHeight ? rect.bottom : rect.top - dropdownHeight,
+        left: rect.left,
         width: rect.width
       });
     }
@@ -38,7 +48,6 @@ export default function LeadTypeSelect({ value, onChange, disabled = false }: Le
 
   useEffect(() => {
     if (!isOpen || disabled) return;
-
     const handleClick = (e: MouseEvent) => {
       if (
         !buttonRef.current?.contains(e.target as Node) &&
@@ -47,7 +56,6 @@ export default function LeadTypeSelect({ value, onChange, disabled = false }: Le
         setIsOpen(false);
       }
     };
-
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
   }, [isOpen, disabled]);
@@ -56,7 +64,7 @@ export default function LeadTypeSelect({ value, onChange, disabled = false }: Le
     <div className="relative">
       <button
         ref={buttonRef}
-        onClick={() => !disabled && setIsOpen((v) => !v)}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={`w-[150px] flex items-center justify-between gap-2 rounded-[5px] px-3 py-1 text-sm font-medium ${typeStyles[value]} ${
           disabled ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90'
@@ -72,12 +80,8 @@ export default function LeadTypeSelect({ value, onChange, disabled = false }: Le
         createPortal(
           <div
             ref={dropdownRef}
-            className="absolute z-50 mt-1 w-full bg-white rounded-[5px] shadow-lg border border-gray-200 py-1"
-            style={{
-              top: `${position.top}px`,
-              left: `${position.left}px`,
-              width: `${position.width}px`
-            }}
+            className="fixed z-50 bg-white rounded-[5px] shadow-lg border border-gray-200 py-1"
+            style={{ top: position.top, left: position.left, width: position.width }}
           >
             {Object.values(LeadType).map((type) => (
               <div

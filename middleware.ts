@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { API_ENDPOINTS } from './common/constants/apiEndpoints';
 import { SITE_MAP } from './common/constants/frontendRouting';
+import { toast } from 'sonner';
 
 export async function middleware(request: NextRequest) {
   const isAuthenticated = request.cookies.get('is-authenticated')?.value === 'true';

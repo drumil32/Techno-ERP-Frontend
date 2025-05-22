@@ -22,51 +22,49 @@ export default function FinalConversionSelect({
   isDisable = false
 }: FinalConversionSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [dropdownStyles, setDropdownStyles] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-    placeAbove: false
-  });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleScroll = () => setIsOpen(false);
+    const handleWheel = (e: WheelEvent) => e.preventDefault();
+    window.addEventListener('scroll', handleScroll, true);
+    document.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      window.removeEventListener('scroll', handleScroll, true);
+      document.removeEventListener('wheel', handleWheel);
+    };
+  }, [isOpen]);
 
   useLayoutEffect(() => {
     if (isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const dropdownHeight = 200;
+      const dropdownHeight = Object.values(FinalConversionStatus).length * 36 + 16;
       const spaceBelow = window.innerHeight - rect.bottom;
-      const placeAbove = spaceBelow < dropdownHeight;
-      setDropdownStyles({
-        top: placeAbove ? rect.top - dropdownHeight : rect.bottom,
+
+      setPosition({
+        top: spaceBelow > dropdownHeight ? rect.bottom : rect.top - dropdownHeight,
         left: rect.left,
-        width: rect.width,
-        placeAbove
+        width: rect.width
       });
     }
   }, [isOpen]);
 
   useEffect(() => {
-    if (isDisable || !isOpen) return;
-
-    const handleClickOutside = (event: MouseEvent) => {
+    if (!isOpen || isDisable) return;
+    const handleClick = (e: MouseEvent) => {
       if (
-        !buttonRef.current?.contains(event.target as Node) &&
-        !dropdownRef.current?.contains(event.target as Node)
+        !buttonRef.current?.contains(e.target as Node) &&
+        !dropdownRef.current?.contains(e.target as Node)
       ) {
         setIsOpen(false);
       }
     };
-
-    const timer = setTimeout(() => {
-      document.addEventListener('click', handleClickOutside, true);
-    }, 0);
-
-    return () => {
-      clearTimeout(timer);
-      document.removeEventListener('click', handleClickOutside, true);
-    };
-  }, [isDisable, isOpen]);
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [isOpen, isDisable]);
 
   const handleOptionClick = (status: FinalConversionStatus) => {
     onChange(status);
@@ -74,13 +72,10 @@ export default function FinalConversionSelect({
   };
 
   return (
-    <div className="relative inline-block">
+    <div className="relative">
       <button
         ref={buttonRef}
-        onClick={(e) => {
-          e.stopPropagation();
-          !isDisable && setIsOpen((prev) => !prev);
-        }}
+        onClick={() => !isDisable && setIsOpen(!isOpen)}
         disabled={isDisable}
         className={`w-[155px] mx-auto flex items-center justify-between gap-2 rounded-md text-sm font-medium px-3 py-1 ${conversionStyles[value]} ${
           isDisable
@@ -98,20 +93,18 @@ export default function FinalConversionSelect({
         createPortal(
           <div
             ref={dropdownRef}
-            className="fixed z-50 bg-white rounded-md shadow-lg border border-gray-200 py-1"
+            className="fixed z-50 bg-white rounded-md shadow-lg border border-gray-200 py-1 min-w-[155px]"
             style={{
-              top: dropdownStyles.top,
-              left: dropdownStyles.left,
-              width: dropdownStyles.width,
-              minWidth: '155px'
+              top: position.top,
+              left: position.left,
+              width: position.width
             }}
-            onClick={(e) => e.stopPropagation()}
           >
             {Object.values(FinalConversionStatus).map((status) => (
               <div
                 key={status}
                 onClick={() => handleOptionClick(status)}
-                className={`flex items-center justify-between px-3 py-2 mx-1 rounded-md text-sm font-medium cursor-pointer transition-colors hover:opacity-80 ${conversionStyles[status]}`}
+                className={`flex items-center justify-between px-3 py-2 mx-1 rounded-md text-sm font-medium cursor-pointer hover:opacity-80 ${conversionStyles[status]}`}
               >
                 <span>{FinalConversionStatusMapper[status]}</span>
                 {value === status && <Check className="w-4 h-4" />}

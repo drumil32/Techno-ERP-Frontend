@@ -41,10 +41,14 @@ import {
   DialogClose
 } from '@/components/ui/dialog';
 import { FaCircleExclamation } from 'react-icons/fa6';
-import { format } from 'date-fns';
+import { format, formatDate } from 'date-fns';
+import { Popover, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { PopoverContent } from '@radix-ui/react-popover';
+import { Calendar } from '@/components/ui/calendar';
 
 export default function AllLeadsPage() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
@@ -302,7 +306,111 @@ export default function AllLeadsPage() {
 
   const columns = [
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
-    { accessorKey: 'dateView', header: 'Date' },
+    {
+      accessorKey: 'dateView',
+      header: 'Date',
+      meta: { align: 'center' },
+      cell: ({ row }: any) => {
+        const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+          row.original.date ? new Date(row.original.date) : undefined
+        );
+        const toastIdRef = useRef<string | number | null>(null);
+
+        const handleDateChange = async (date: Date | undefined) => {
+          if (!date) return;
+
+          const previousDate = selectedDate;
+          setSelectedDate(date);
+
+          toastIdRef.current = toast.loading('Updating date...', {
+            duration: Infinity
+          });
+
+          const updatedData = {
+            _id: row.original._id,
+            date: formatDate(date, 'dd/MM/yyyy')
+          };
+
+          try {
+            const response: LeadData | null = await apiRequest(
+              API_METHODS.PUT,
+              API_ENDPOINTS.updateLead,
+              updatedData
+            );
+
+            toast.dismiss(toastIdRef.current);
+
+            if (response) {
+              toast.success('Date updated successfully', {
+                id: toastIdRef.current,
+                duration: 1500
+              });
+
+              const updateLeadCache = () => {
+                const queryCache = queryClient.getQueryCache();
+                const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
+
+                leadQueries.forEach((query) => {
+                  queryClient.setQueryData(query.queryKey, (oldData: any) => {
+                    if (!oldData || !oldData.leads) return oldData;
+
+                    const newData = JSON.parse(JSON.stringify(oldData));
+
+                    const leadIndex = newData.leads.findIndex(
+                      (lead: any) => lead._id === response._id
+                    );
+
+                    if (leadIndex !== -1) {
+                      newData.leads[leadIndex] = {
+                        ...newData.leads[leadIndex],
+                        date: response.date ?? newData.leads[leadIndex].date,
+                        dateView:
+                          formatTimeStampView(response.date) ?? newData.leads[leadIndex].dateView,
+                        updatedAt: response.updatedAt
+                      };
+                    }
+
+                    return newData;
+                  });
+                });
+              };
+
+              updateLeadCache();
+              queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
+            }
+          } catch (error) {
+            toast.dismiss(toastIdRef.current);
+            toast.error('Failed to update date', {
+              id: toastIdRef.current,
+              duration: 3000
+            });
+            console.error('Error updating date:', error);
+
+            setSelectedDate(previousDate);
+          }
+        };
+
+        return (
+          <Popover modal={true}>
+            <PopoverTrigger asChild>
+              <Button variant={'outline'} className="w-full justify-start text-left font-normal">
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, 'dd/MM/yyyy') : <span>Pick a date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto rounded-lg p-0 z-50">
+              <Calendar
+                mode="single"
+                className="z-50 border rounded-lg bg-white"
+                selected={selectedDate}
+                onSelect={handleDateChange}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        );
+      }
+    },
     {
       accessorKey: 'name',
       header: 'Name',
@@ -380,12 +488,11 @@ export default function AllLeadsPage() {
                 duration: 1500
               });
 
-
               const updateLeadCache = () => {
                 const queryCache = queryClient.getQueryCache();
                 const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
 
-                leadQueries.forEach(query => {
+                leadQueries.forEach((query) => {
                   queryClient.setQueryData(query.queryKey, (oldData: any) => {
                     if (!oldData || !oldData.leads) return oldData;
 
@@ -398,10 +505,14 @@ export default function AllLeadsPage() {
                     if (leadIndex !== -1) {
                       newData.leads[leadIndex] = {
                         ...newData.leads[leadIndex],
-                        leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
+                        leadType:
+                          LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
                         _leadType: response.leadType,
-                        leadTypeModifiedDate: response.leadTypeModifiedDate ?? newData.leads[leadIndex].leadTypeModifiedDate,
-                        leadTypeModifiedDateView: formatTimeStampView(response.leadTypeModifiedDate) ??
+                        leadTypeModifiedDate:
+                          response.leadTypeModifiedDate ??
+                          newData.leads[leadIndex].leadTypeModifiedDate,
+                        leadTypeModifiedDateView:
+                          formatTimeStampView(response.leadTypeModifiedDate) ??
                           newData.leads[leadIndex].leadTypeModifiedDateView,
                         updatedAt: response.updatedAt
                       };
@@ -410,11 +521,10 @@ export default function AllLeadsPage() {
                     return newData;
                   });
                 });
-
               };
 
               updateLeadCache();
-              queryClient.invalidateQueries({queryKey: ['leadsAnalytics']});
+              queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
             }
           } catch (error) {
             toast.dismiss(toastIdRef.current);
@@ -422,13 +532,12 @@ export default function AllLeadsPage() {
               id: toastIdRef.current,
               duration: 3000
             });
-            console.error("Error updating lead:", error);
+            console.error('Error updating lead:', error);
 
             // Revert to previous value on error
             setSelectedType(previousValue);
           }
-        }
-
+        };
 
         return (
           <LeadTypeSelect
@@ -512,7 +621,7 @@ export default function AllLeadsPage() {
                 const queryCache = queryClient.getQueryCache();
                 const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
 
-                leadQueries.forEach(query => {
+                leadQueries.forEach((query) => {
                   queryClient.setQueryData(query.queryKey, (oldData: any) => {
                     if (!oldData || !oldData.leads) return oldData;
 
@@ -525,17 +634,17 @@ export default function AllLeadsPage() {
                     if (leadIndex !== -1) {
                       newData.leads[leadIndex] = {
                         ...newData.leads[leadIndex],
-                        followUpCount: response.followUpCount ?? newData.leads[leadIndex].followUpCount,
-                        updatedAt: response.updatedAt,
+                        followUpCount:
+                          response.followUpCount ?? newData.leads[leadIndex].followUpCount,
+                        updatedAt: response.updatedAt
                       };
                     }
 
                     return newData;
                   });
                 });
-
-              }
-              updateLeadCache()
+              };
+              updateLeadCache();
               // setRefreshKey((prevKey) => prevKey + 1);
             } else {
               toast.error('Failed to update follow-up count', {
@@ -560,7 +669,7 @@ export default function AllLeadsPage() {
             value={selectedValue.toString()}
             onValueChange={(value) => handleDropdownChange(Number(value))}
           >
-            <SelectTrigger className="w-[60px] mx-auto min-h-[unset] h-8 text-sm">
+            <SelectTrigger className="w-[60px] bg-white mx-auto min-h-[unset] h-8 text-sm">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent className="w-[60px] min-w-[unset]">
@@ -666,20 +775,20 @@ export default function AllLeadsPage() {
       },
       ...(isRoleLeadMarketing
         ? [
-          {
-            filterKey: 'assignedTo',
-            label: 'Assigned To',
-            options: assignedToDropdownData.map((item: any) => {
-              return {
-                label: item.name,
-                id: item._id
-              };
-            }),
-            placeholder: 'assignee',
-            hasSearch: true,
-            multiSelect: true
-          }
-        ]
+            {
+              filterKey: 'assignedTo',
+              label: 'Assigned To',
+              options: assignedToDropdownData.map((item: any) => {
+                return {
+                  label: item.name,
+                  id: item._id
+                };
+              }),
+              placeholder: 'assignee',
+              hasSearch: true,
+              multiSelect: true
+            }
+          ]
         : [])
     ];
   };
@@ -769,20 +878,20 @@ export function TableActionButton() {
     setIsUploading(true);
     try {
       const response = await fetch(API_ENDPOINTS.uploadMarketingData, {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" }
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
       });
 
       const data = await response.json();
       if (response.ok && data.SUCCESS) {
-        toast.success(data.MESSAGE || "Marketing Data Uploaded Successfully");
+        toast.success(data.MESSAGE || 'Marketing Data Uploaded Successfully');
         setUploadOpen(false);
       } else {
         throw new Error(data.ERROR || data.MESSAGE);
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Upload failed");
+      toast.error(error instanceof Error ? error.message : 'Upload failed');
     } finally {
       setIsUploading(false);
     }
@@ -792,36 +901,36 @@ export function TableActionButton() {
     setIsDownloading(true);
     try {
       const response = await fetch(API_ENDPOINTS.downloadMarketingData, {
-        method: "GET",
-        credentials: "include"
+        method: 'GET',
+        credentials: 'include'
       });
 
       if (!response.ok) {
         try {
           const errorData = await response.json();
-          throw new Error(errorData.ERROR || errorData.MESSAGE || "Download failed");
+          throw new Error(errorData.ERROR || errorData.MESSAGE || 'Download failed');
         } catch {
-          throw new Error("Download failed");
+          throw new Error('Download failed');
         }
       }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
 
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
-      const userName = authStore.user?.name ?? "user";
-      const dateStr = format(new Date(), "dd-MM-yyyy");
+      const userName = authStore.user?.name ?? 'user';
+      const dateStr = format(new Date(), 'dd-MM-yyyy');
       a.download = `${userName}-${dateStr}.xlsx`;
       document.body.appendChild(a);
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
 
-      toast.success("Marketing Data Downloaded Successfully");
+      toast.success('Marketing Data Downloaded Successfully');
       setDownloadOpen(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Download failed");
+      toast.error(error instanceof Error ? error.message : 'Download failed');
     } finally {
       setIsDownloading(false);
     }
@@ -829,7 +938,8 @@ export function TableActionButton() {
 
   const isUploadDisabled = !authStore.hasRole(UserRoles.LEAD_MARKETING);
   const isDownloadDisabled =
-    !authStore.hasRole(UserRoles.EMPLOYEE_MARKETING) && !authStore.hasRole(UserRoles.LEAD_MARKETING);
+    !authStore.hasRole(UserRoles.EMPLOYEE_MARKETING) &&
+    !authStore.hasRole(UserRoles.LEAD_MARKETING);
 
   return (
     <>
@@ -861,12 +971,8 @@ export function TableActionButton() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button
-              onClick={uploadAction}
-              className="font-inter text-sm"
-              disabled={isUploading}
-            >
-              {isUploading ? "Uploading..." : "Confirm Upload"}
+            <Button onClick={uploadAction} className="font-inter text-sm" disabled={isUploading}>
+              {isUploading ? 'Uploading...' : 'Confirm Upload'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -875,10 +981,7 @@ export function TableActionButton() {
       {/* Download Dialog */}
       <Dialog open={downloadOpen} onOpenChange={setDownloadOpen}>
         <DialogTrigger asChild>
-          <Button
-            disabled={isDownloadDisabled}
-            className="h-8 w-[103px] rounded-[10px] border"
-          >
+          <Button disabled={isDownloadDisabled} className="h-8 w-[103px] rounded-[10px] border">
             <LuDownload className="mr-1 h-4 w-4" />
             <span className="font-inter font-semibold text-[12px]">Download</span>
           </Button>
@@ -904,7 +1007,7 @@ export function TableActionButton() {
               className="font-inter text-sm"
               disabled={isDownloading}
             >
-              {isDownloading ? "Downloading..." : "Confirm Download"}
+              {isDownloading ? 'Downloading...' : 'Confirm Download'}
             </Button>
           </DialogFooter>
         </DialogContent>

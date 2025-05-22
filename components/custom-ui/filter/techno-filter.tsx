@@ -300,7 +300,7 @@ export default function TechnoFilter({
                       }
                     />
                   ) : filterKey === 'source' ? (
-                    <span>{toPascal(typeof option === 'string' ? option : option.label)}</span>
+                    <span>{typeof option === 'string' ? option : option.label}</span>
                   ) : (
                     <span>{typeof option === 'string' ? option : option.label}</span>
                   )}

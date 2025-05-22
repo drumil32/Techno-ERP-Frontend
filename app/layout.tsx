@@ -5,7 +5,6 @@ import './globals.css';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { Toaster } from '@/components/ui/sonner';
-import Head from 'next/head';
 import ProgressBar from '@/components/custom-ui/progress-bar/progress-bar';
 import { NavigationEvents } from '@/components/custom-ui/router-events/router-event';
 import { Suspense } from 'react';

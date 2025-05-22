@@ -527,15 +527,6 @@ export const StudentFeesForm = () => {
           return;
         }
 
-        const statusPayload = {
-          id: enquiry_id,
-          newStatus: ApplicationStatus.STEP_3
-        };
-
-        await updateEnquiryStatus(statusPayload);
-
-        toast.success('Enquiry status updated to Step 3.');
-
         await queryClient.invalidateQueries({ queryKey: ['enquireFormData', enquiry_id] });
 
         router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_3(enquiry_id));

@@ -124,7 +124,7 @@ const FilterBadges = ({
         } else if (key === 'assignedTo') {
           getLabel = getAssignedToLabel;
         } else if (key === 'source') {
-          getLabel = (val: string) => toPascal(val);
+          getLabel = (val: string) => val;
         } else {
           getLabel = (val: string) => val;
         }

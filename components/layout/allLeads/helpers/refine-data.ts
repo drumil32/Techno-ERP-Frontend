@@ -26,12 +26,34 @@ export const formatTimeStampView = (dateStr: string) => {
   return timePart ? `${formattedDate} | ${timePart}` : formattedDate;
 };
 
+export function convertDdmmyyyyToDate(dateString: string): Date | null {
+  const parts = dateString.split(/[-/.]/);
+
+  if (parts.length !== 3) {
+    return null;
+  }
+
+  const [day, month, year] = parts.map(Number);
+
+  if (isNaN(day) || isNaN(month) || isNaN(year)) {
+    return null;
+  }
+
+  const date = new Date(year, month - 1, day);
+
+  if (isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date;
+}
+
 export const refineLeads = (data: any, assignedToDropdownData: any) => {
   const refinedLeads = data.leads?.map((lead: any, index: number) => {
     const assignedToUsers = Array.isArray(lead.assignedTo)
       ? lead.assignedTo
-        .map((id: string) => assignedToDropdownData?.find((user: any) => user._id === id))
-        .filter(Boolean)
+          .map((id: string) => assignedToDropdownData?.find((user: any) => user._id === id))
+          .filter(Boolean)
       : [];
 
     // Create assignedToName string
@@ -52,7 +74,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
     return {
       _id: lead._id,
       id: index + 1,
-      date: lead.date,
+      date: convertDdmmyyyyToDate(lead.date),
       dateView: formatDateView(lead.date),
       name: lead.name,
       phoneNumber: lead.phoneNumber,

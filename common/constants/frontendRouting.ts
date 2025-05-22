@@ -7,7 +7,7 @@ export const SITE_MAP = {
     LOGIN: '/auth/login'
   },
   MARKETING: {
-    DEFAULT: '/c/marketing/all-leads',
+    DEFAULT: '/',
     ALL_LEADS: '/c/marketing/all-leads',
     ACTIVE_LEADS: '/c/marketing/active-leads',
     ADMIN_TRACKER: '/c/marketing/admin-tracker'

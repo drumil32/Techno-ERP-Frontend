@@ -29,7 +29,7 @@ import {
   fixCityDropdown,
   fixCourseDropdown
 } from '../admin-tracker/helpers/fetch-data';
-import { formatDateView, formatTimeStampView } from './helpers/refine-data';
+import { convertDdmmyyyyToDate, formatDateView, formatTimeStampView } from './helpers/refine-data';
 import { MultiSelectCustomDropdown } from '@/components/custom-ui/common/multi-select-custom-editable';
 import { cleanDataForDraft } from '@/components/custom-ui/enquiry-form/stage-2/helpers/refine-data';
 import { Badge } from '@/components/ui/badge';
@@ -51,6 +51,7 @@ export interface LeadData {
   name: string;
   phoneNumber: string;
   altPhoneNumber?: string;
+  date: string;
   email: string;
   gender: string;
   area: string;
@@ -79,6 +80,7 @@ interface FormErrors {
   degree?: string;
   remarks?: string;
   city?: string;
+  date?: string;
 }
 
 export default function LeadViewEdit({
@@ -87,7 +89,7 @@ export default function LeadViewEdit({
   setSelectedRowId,
   setRefreshKey
 }: any) {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState<LeadData | null>(null);
   const [originalData, setOriginalData] = useState<LeadData | null>(null);
   // const [isEditing, toggleIsEditing] = useState(false);
@@ -191,7 +193,6 @@ export default function LeadViewEdit({
         leadTypeModifiedDate: tempData.leadTypeModifiedDate
       };
 
-
       validationData = removeNullValues(validationData);
 
       const response = updateLeadRequestSchema.parse(validationData);
@@ -245,11 +246,20 @@ export default function LeadViewEdit({
     validateField(name, value);
   };
 
-  const handleDateChange = (date: Date | undefined) => {
+  const handleDueDateChange = (date: Date | undefined) => {
     if (!date) return;
 
     const formattedDate = format(date, 'dd/MM/yyyy');
     setFormData((prev) => (prev ? { ...prev, nextDueDate: formattedDate } : null));
+    validateField('nextDueDate', formattedDate);
+    setIsCalendarOpen(false);
+  };
+
+  const handleDateChange = (date: Date | undefined) => {
+    if (!date) return;
+
+    const formattedDate = format(date, 'dd/MM/yyyy');
+    setFormData((prev) => (prev ? { ...prev, date: formattedDate } : null));
     validateField('nextDueDate', formattedDate);
     setIsCalendarOpen(false);
   };
@@ -275,6 +285,7 @@ export default function LeadViewEdit({
       'email',
       'gender',
       'area',
+      'date',
       'city',
       'course',
       'leadType',
@@ -325,6 +336,7 @@ export default function LeadViewEdit({
         'gender',
         'area',
         'city',
+        'date',
         'course',
         'leadType',
         'schoolName',
@@ -372,20 +384,20 @@ export default function LeadViewEdit({
           const queryCache = queryClient.getQueryCache();
           const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
 
-          leadQueries.forEach(query => {
+          leadQueries.forEach((query) => {
             queryClient.setQueryData(query.queryKey, (oldData: any) => {
               if (!oldData || !oldData.leads) return oldData;
 
               const newData = JSON.parse(JSON.stringify(oldData));
 
-              const leadIndex = newData.leads.findIndex(
-                (lead: any) => lead._id === response._id
-              );
+              const leadIndex = newData.leads.findIndex((lead: any) => lead._id === response._id);
 
               const assignedToUsers = Array.isArray(response.assignedTo)
                 ? response.assignedTo
-                  .map((id: string) => assignedToDropdownData?.find((user: any) => user._id === id))
-                  .filter(Boolean)
+                    .map((id: string) =>
+                      assignedToDropdownData?.find((user: any) => user._id === id)
+                    )
+                    .filter(Boolean)
                 : [];
 
               let assignedToName = 'N/A';
@@ -400,7 +412,6 @@ export default function LeadViewEdit({
                   assignedToView += ` +${assignedToUsers.length - 1}`;
                 }
               }
-
 
               if (leadIndex !== -1) {
                 newData.leads[leadIndex] = {
@@ -426,31 +437,36 @@ export default function LeadViewEdit({
                   assignedTo: response.assignedTo,
                   assignedToView: assignedToView,
                   assignedToName: assignedToName,
+                  date: response.date,
                   updatedAt: response.updatedAt,
                   nextDueDate: response.nextDueDate,
-                  nextDueDateView: response.nextDueDate ? formatDateView(response.nextDueDate) : '-',
-                  leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
+                  nextDueDateView: response.nextDueDate
+                    ? formatDateView(response.nextDueDate)
+                    : '-',
+                  leadType:
+                    LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
                   _leadType: response.leadType,
                   followUpCount: response.followUpCount ?? newData.leads[leadIndex].followUpCount,
                   remarks: response.remarks || newData.leads[leadIndex].remarks,
-                  remarksView: response.remarks && response.remarks.length > 0
-                    ? response.remarks[response.remarks.length - 1]
-                    : newData.leads[leadIndex].remarksView,
-                  leadTypeModifiedDate: response.leadTypeModifiedDate ?? newData.leads[leadIndex].leadTypeModifiedDate,
-                  leadTypeModifiedDateView: formatTimeStampView(response.leadTypeModifiedDate) ??
+                  remarksView:
+                    response.remarks && response.remarks.length > 0
+                      ? response.remarks[response.remarks.length - 1]
+                      : newData.leads[leadIndex].remarksView,
+                  leadTypeModifiedDate:
+                    response.leadTypeModifiedDate ?? newData.leads[leadIndex].leadTypeModifiedDate,
+                  leadTypeModifiedDateView:
+                    formatTimeStampView(response.leadTypeModifiedDate) ??
                     newData.leads[leadIndex].leadTypeModifiedDateView
                 };
               }
-
+              console.log('our new data is ', newData);
               return newData;
             });
           });
-
         };
 
         updateLeadCache();
-        queryClient.invalidateQueries({queryKey: ['leadsAnalytics']});
-
+        queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
       } else {
         setFormData(originalData);
       }
@@ -551,9 +567,42 @@ export default function LeadViewEdit({
   const EditView = (
     <>
       <div className="flex gap-5 items-center">
-        <div className="flex flex-col gap-2 w-1/2">
-          <EditLabel htmlFor="name" title={'Date'} />
-          <p className="h-9 font-medium">{formatDateView(data.date)}</p>
+        <div className="space-y-2 w-1/2">
+          <EditLabel htmlFor="date" title={'Date'} />
+          <Popover modal>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={`w-full justify-start text-left font-normal ${inputStyle}`}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {formData.date ? (
+                  typeof formData.date === 'object' ? (
+                    format(formData.date, 'dd/MM/yyyy')
+                  ) : (
+                    formData.date
+                  )
+                ) : (
+                  <span>Pick a date</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={
+                  formData.date
+                    ? typeof formData.date === 'object'
+                      ? new Date(formData.date)
+                      : convertDdmmyyyyToDate(formData.date)!
+                    : undefined
+                }
+                onSelect={handleDateChange}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          {errors.date && <p className="text-red-500 text-xs mt-1">{errors.date}</p>}
         </div>
 
         <div className="space-y-2 w-1/2">
@@ -715,7 +764,7 @@ export default function LeadViewEdit({
                 mode="single"
                 disabled={(date) => isBefore(date, startOfDay(new Date()))}
                 selected={parseDateString(formData.nextDueDate)}
-                onSelect={handleDateChange}
+                onSelect={handleDueDateChange}
                 initialFocus
                 captionLayout={'dropdown-buttons'}
                 fromYear={new Date().getFullYear() - 100}
@@ -730,9 +779,7 @@ export default function LeadViewEdit({
           <EditLabel htmlFor="followUpCount" title={'Follow-up Count'} />
           <Select
             defaultValue={formData.followUpCount?.toString() || ''}
-            onValueChange={(value) =>
-              handleFollowUpCountChange('followUpCount', Number(value))
-            }
+            onValueChange={(value) => handleFollowUpCountChange('followUpCount', Number(value))}
           >
             <SelectTrigger id="followUpCount" className="w-full rounded-[5px]">
               <SelectValue placeholder="Select follow-up count" />
@@ -748,7 +795,7 @@ export default function LeadViewEdit({
         </div>
       </div>
 
-      <div className='flex gap-5'>
+      <div className="flex gap-5">
         <div className="space-y-2 w-1/2">
           <EditLabel htmlFor="schoolName" title={'School/College Name'} />
           <Input
@@ -789,9 +836,12 @@ export default function LeadViewEdit({
         </div>
         {formData.remarks && formData.remarks.length > 0 ? (
           [...formData.remarks].reverse().map((remark, reversedIndex) => {
-            const actualIndex = formData.remarks.length - 1 - reversedIndex
+            const actualIndex = formData.remarks.length - 1 - reversedIndex;
             return (
-              <div className="flex items-center gap-2 p-2 border border-gray-300 rounded-[5px]" key={actualIndex}>
+              <div
+                className="flex items-center gap-2 p-2 border border-gray-300 rounded-[5px]"
+                key={actualIndex}
+              >
                 <div className="bg-blue-100 px-3 py-1 rounded-md text-sm text-blue-600 min-w-24 flex justify-center h-7">
                   Remark {actualIndex + 1}:
                 </div>
@@ -907,9 +957,7 @@ export default function LeadViewEdit({
 
       <div className="flex flex-col gap-2">
         <EditLabel className="text-[#666666]" title="Lead Modified Date" />
-        <p className="font-medium">
-          {formatTimeStampView(formData.updatedAt) ?? 'Not Provided'}
-        </p>
+        <p className="font-medium">{formatTimeStampView(formData.updatedAt) ?? 'Not Provided'}</p>
       </div>
     </>
   );

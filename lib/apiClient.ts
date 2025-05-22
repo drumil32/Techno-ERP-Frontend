@@ -1,7 +1,6 @@
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { toast } from 'sonner';
-import useAuthRedirect from './useAuthRedirect';
 
 type RequestParams = Record<string, string | number | boolean | undefined>;
 

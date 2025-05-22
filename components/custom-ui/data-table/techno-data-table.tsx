@@ -193,19 +193,22 @@ export default function TechnoDataTable({
     }
   };
 
-  const nonClickableColumns = ['actions', 'leadType', 'footFall', 'finalConversion', 'departmentHODEmail', 'form', 'receipt'];
+  const nonClickableColumns = [
+    'actions',
+    'leadType',
+    'footFall',
+    'dateView',
+    'finalConversion',
+    'departmentHODEmail',
+    'form',
+    'receipt'
+  ];
 
   if (!table.getRowModel().rows) {
     return <Loading />;
   }
 
-  const sortableColumns = [
-    'dateView',
-    'nextDueDateView',
-    'leadTypeModifiedDate',
-    'leadsFollowUpCount',
-    'yellowLeadsFollowUpCount'
-  ];
+  const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate', 'followUpCount'];
 
   return (
     <div className="w-full mb-10 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -331,6 +334,8 @@ export default function TechnoDataTable({
                         >
                           {maxWidth ? (
                             <TruncatedCell value={cellValue} maxWidth={maxWidth} />
+                          ) : cell.column.id === 'id' ? (
+                            cellValue + pageSize * (currentPage - 1) // Adjust serial number according to pagination (Assumption and Compulsion : always keep id of serial number as id !)
                           ) : (
                             flexRender(cell.column.columnDef.cell, cell.getContext())
                           )}

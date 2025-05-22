@@ -41,15 +41,15 @@ import useAuthStore from '@/stores/auth-store';
 import { FinalConversionStatus, UserRoles } from '@/types/enum';
 
 export default function YellowLeadsTracker() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editRow, setEditRow] = useState<any>(null);
-  const authStore = useAuthStore()
-  const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING)
+  const authStore = useAuthStore();
+  const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING);
 
   const [sortState, setSortState] = useState<any>({
     sortBy: ['leadTypeModifiedDate'],
@@ -290,7 +290,7 @@ export default function YellowLeadsTracker() {
                 const queryCache = queryClient.getQueryCache();
                 const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
 
-                leadQueries.forEach(query => {
+                leadQueries.forEach((query) => {
                   queryClient.setQueryData(query.queryKey, (oldData: any) => {
                     if (!oldData || !oldData.yellowLeads) return oldData;
 
@@ -305,17 +305,16 @@ export default function YellowLeadsTracker() {
                         ...newData.yellowLeads[leadIndex],
                         footFall: response.footFall,
                         finalConversion: response.finalConversion,
-                        updatedAt: response.updatedAt,
+                        updatedAt: response.updatedAt
                       };
                     }
                     return newData;
                   });
                 });
-
               };
 
               updateLeadCache();
-              queryClient.invalidateQueries({queryKey: ['leadsAnalytics']});
+              queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
 
               // setRefreshKey((prevKey) => prevKey + 1);
             } else {
@@ -371,7 +370,7 @@ export default function YellowLeadsTracker() {
                 const queryCache = queryClient.getQueryCache();
                 const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
 
-                leadQueries.forEach(query => {
+                leadQueries.forEach((query) => {
                   queryClient.setQueryData(query.queryKey, (oldData: any) => {
                     if (!oldData || !oldData.yellowLeads) return oldData;
 
@@ -385,13 +384,12 @@ export default function YellowLeadsTracker() {
                       newData.yellowLeads[leadIndex] = {
                         ...newData.yellowLeads[leadIndex],
                         followUpCount: response.followUpCount,
-                        updatedAt: response.updatedAt,
+                        updatedAt: response.updatedAt
                       };
                     }
                     return newData;
                   });
                 });
-
               };
 
               updateLeadCache();
@@ -420,7 +418,7 @@ export default function YellowLeadsTracker() {
             value={selectedValue.toString()}
             onValueChange={(value) => handleDropdownChange(Number(value))}
           >
-            <SelectTrigger className="w-[60px] mx-auto min-h-[unset] h-8 text-sm">
+            <SelectTrigger className="w-[60px] bg-white mx-auto min-h-[unset] h-8 text-sm">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
             <SelectContent className="w-[60px] min-w-[unset]">
@@ -458,7 +456,7 @@ export default function YellowLeadsTracker() {
               const queryCache = queryClient.getQueryCache();
               const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
 
-              leadQueries.forEach(query => {
+              leadQueries.forEach((query) => {
                 queryClient.setQueryData(query.queryKey, (oldData: any) => {
                   if (!oldData || !oldData.yellowLeads) return oldData;
 
@@ -478,11 +476,10 @@ export default function YellowLeadsTracker() {
                   return newData;
                 });
               });
-
             };
 
             updateLeadCache();
-            queryClient.invalidateQueries({queryKey: ['leadsAnalytics']});
+            queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
 
             toast.success('Final conversion updated successfully');
             // setRefreshKey((prevKey) => prevKey + 1);
@@ -506,13 +503,9 @@ export default function YellowLeadsTracker() {
       }
     },
 
-    ...(
-      isRoleLeadMarketing
-        ? [
-          { accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } },
-        ]
-        : []
-    ),
+    ...(isRoleLeadMarketing
+      ? [{ accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } }]
+      : [])
 
     // {
     //   id: 'actions',
@@ -600,9 +593,8 @@ export default function YellowLeadsTracker() {
         options: Object.values(FinalConversionStatus),
         multiSelect: true
       },
-      ...(
-        isRoleLeadMarketing
-          ? [
+      ...(isRoleLeadMarketing
+        ? [
             {
               filterKey: 'assignedTo',
               label: 'Assigned To',
@@ -614,10 +606,8 @@ export default function YellowLeadsTracker() {
               hasSearch: true,
               multiSelect: true
             }
-
           ]
-          : []
-      ),
+        : [])
     ];
   };
 

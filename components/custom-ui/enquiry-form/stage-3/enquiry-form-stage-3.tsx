@@ -29,7 +29,7 @@ import ShowStudentData from '../stage-2/data-show';
 import AllDocuments, { mandatoryDocuments } from './documents-section/all-documents';
 
 // API and data fetching imports
-import { getEnquiry, updateEnquiryStatus } from '../stage-1/enquiry-form-api';
+import { getEnquiry } from '../stage-1/enquiry-form-api';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 

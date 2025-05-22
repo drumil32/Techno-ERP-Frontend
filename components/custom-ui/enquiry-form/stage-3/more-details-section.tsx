@@ -53,7 +53,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
 
   const checkValidity = () => {
     const values = form.getValues();
-    console.log(values);
+    console.log('values that we are getting in more details', values);
 
     const moreDetails = {
       stateOfDomicile: values.stateOfDomicile,
@@ -86,6 +86,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
     });
     return () => subscription.unsubscribe();
   }, [form]);
+
   const findExistingDocument = (docType: DocumentType): EnquiryDocument | undefined => {
     const apiDocType = docType.toString();
     return enquiryDocuments?.find((doc: any) => doc.type == apiDocType);
