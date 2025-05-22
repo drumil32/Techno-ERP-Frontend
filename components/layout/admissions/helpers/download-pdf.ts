@@ -3,6 +3,9 @@ import html2canvas from 'html2canvas';
 
 const placeholderLogoBase64 = '/images/techno-logo.webp';
 const placeholderPhotoBase64 = '/images/dummy_user.webp';
+const TIMS = "Techno Institute of Management Sciences";
+const THIS = "Techno Institute of Higher Studies";
+const TCL = "Techno College of Law";
 
 // const toBase64 = async (url: string) => {
 //   const res = await fetch(url);
@@ -52,11 +55,19 @@ export const downloadAdmissionForm = async (
   `;
   }).join('');
 
+  let logo = placeholderLogoBase64;
+  if (data.fullCollegeName === TIMS) {
+    logo = "/images/TIMS.png"
+  } else if(data.fullCollegeName === TCL) {
+    logo = "/images/TCL.jpg"
+  } else if(data.fullCollegeName === THIS) {
+    logo = "/images/THIS.jpg"
+  }
 
   container.innerHTML = `
 <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
     <div style="position: absolute; top: 0; left: 0;">
-        <img src="${escapeHtml(placeholderLogoBase64)}" alt="College Logo"
+        <img src="${logo}" alt="College Logo"
             style="width: 100px; object-fit: contain;">
     </div>
     <div style="flex-grow: 1; text-align: center; margin: 0 10px;">
@@ -274,7 +285,9 @@ export const downloadAdmissionForm = async (
     style="text-align: center; font-size: 12px; font-weight: 700; text-decoration: underline; margin-bottom: 6px; margin-top: 12px;">
     Undertaking for Admission
 </h4>
-<p style="font-size: 11px; line-height: 1.4; text-align: justify; margin-bottom: 15px;">
+<div style="margin-bottom: 15px; display: flex; gap:8px;">
+    <p style="font-size: 16px; line-height: 1; margin-top:-2px;">□</p>
+    <p style="font-size: 11px; line-height: 1.4; text-align: justify;">
     In case I am admitted, I undertake that I will make all the payments laid down by the institute from time to time. I
     solemnly declare that the information provided by me in the admission form is correct and I have not concealed any
     facts. I undertake to abide by all the rules, instructions and guidelines of the University and the Institute. I am
@@ -285,19 +298,20 @@ export const downloadAdmissionForm = async (
     whatsoever, directly or Indirectly. If my attendance is below 75% detainment will be the sole decision of the
     Principal/Management. No refund is admissible if a student withdraws voluntarily after registering, or his/her
     admission is cancelled due to any reason.
-</p>
+    </p>
+</div>
 
 <p style="font-size: 12px; font-weight: 600; margin-top: 10px; margin-bottom: 8px;">Confirmed by Student/Guardian (Via
     OTP):</p>
-<div style="font-size: 12px; display: flex; justify-content: space-between; width: 100%;">
+<div style="font-size: 12px; display: flex; justify-content: space-between; width: 100%; align-items: baseline">
     <div style="display: flex; align-items: baseline; gap: 5px; width: calc(50% - 10px);">
-        <p style="font-size: 20px; line-height: 1; vertical-align: start;">▢</p>
+        <p style="font-size: 14px; line-height: 1; vertical-align: center;">🗹</p>
         <p style="color: #666666; font-weight: 400; flex-shrink: 0;">Email ID :</p>
         <p
             style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.emailId ?? '--')}</p>
     </div>
     <div style="display: flex; align-items: baseline; gap: 5px; width: calc(50% - 10px);">
-        <p style="font-size: 20px; line-height: 1; vertical-align: middle;">▢</p>
+        <p style="font-size: 16px; line-height: 1; vertical-align: middle; margin-top:-2px;">□</p>
         <p style="color: #666666; font-weight: 400; flex-shrink: 0;">Phone Number :</p>
         <p
             style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.studentPhoneNumber ?? '--')}</p>
@@ -324,7 +338,9 @@ export const downloadAdmissionForm = async (
 
     const imgData = canvas.toDataURL('image/png');
 
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4' });
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4', 
+      compress: true,
+     });
 
     const fileName = `Admission-Form-${data.studentName?.replace(/\s+/g, '-')}-${data.courseName}.pdf`;
     const title = `Admission Form - ${data.studentName}`;
@@ -385,7 +401,7 @@ export const downloadFeeReceipt = async (
   directSave: boolean = false
 ): Promise<{ url: string; fileName: string }> => {
   const container = document.createElement('div');
-  container.style.width = '780px'; 
+  container.style.width = '780px';
   container.style.padding = '0';
   container.style.fontFamily = 'Arial, sans-serif';
   container.style.backgroundColor = 'white';
@@ -397,7 +413,7 @@ export const downloadFeeReceipt = async (
   };
 
   const totalAmount = data.particulars.reduce(
-    (sum: number, item: any) => sum + parseFloat(item.amount || 0), 
+    (sum: number, item: any) => sum + parseFloat(item.amount || 0),
     0
   );
 
