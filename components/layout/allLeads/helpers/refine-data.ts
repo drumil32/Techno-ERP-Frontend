@@ -74,7 +74,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
     return {
       _id: lead._id,
       id: index + 1,
-      date: convertDdmmyyyyToDate(lead.date),
+      date: lead.date,
       dateView: formatDateView(lead.date),
       name: lead.name,
       phoneNumber: lead.phoneNumber,

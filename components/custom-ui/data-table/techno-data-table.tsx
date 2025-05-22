@@ -197,7 +197,6 @@ export default function TechnoDataTable({
     'actions',
     'leadType',
     'footFall',
-    'dateView',
     'finalConversion',
     'departmentHODEmail',
     'form',

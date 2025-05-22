@@ -29,7 +29,7 @@ import {
   type ChartConfig
 } from '@/components/ui/chart';
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, Shrub } from 'lucide-react';
 
 const COLORS = {
   orange: '#ED8936',
@@ -73,7 +73,7 @@ export const LeadConversionDashboard = ({
 
   const chartData = isEmpty
     ? []
-    : data.map((item) => ({
+    : data.slice(1).map((item) => ({
         name: item.title,
         value: parseInt(item.heading.replace(/,/g, '')) || 0,
         percent: parseFloat(item.subheading.replace('%', '')),
@@ -128,9 +128,13 @@ export const LeadConversionDashboard = ({
         textAnchor="middle"
         dominantBaseline="central"
       >
-        {`${(percent * 100).toFixed(0)}%`}
+        {`${percent.toFixed(0)}%`}
       </text>
     );
+  };
+
+  const renderCustomDataKey = ({ name, value }: any) => {
+    return name + '(' + value + ')';
   };
 
   const CustomTooltip = ({ active, payload }: any) => {
@@ -152,8 +156,8 @@ export const LeadConversionDashboard = ({
   };
 
   const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center h-full p-6 text-center">
-      <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+    <div className="flex w-full h-[300px] flex-col items-center justify-center  p-6 text-center">
+      <Shrub className="w-12 h-12 text-gray-400 mb-4" />
       <h3 className="text-lg font-medium text-gray-700">No data available</h3>
       <p className="text-sm text-gray-500 mt-1">There's no lead data to display at the moment</p>
     </div>
@@ -238,7 +242,7 @@ export const LeadConversionDashboard = ({
               <ChartContainer className="w-full h-[300px]" config={chartConfig}>
                 <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
                   <PolarGrid gridType="circle" />
-                  <PolarAngleAxis dataKey="name" tick={{ fontSize: 11 }} />
+                  <PolarAngleAxis dataKey={renderCustomDataKey} tick={{ fontSize: 11 }} />
                   <PolarRadiusAxis angle={30} tick={{ fontSize: 10 }} />
                   <ChartTooltip content={<CustomTooltip />} />
                   <Radar

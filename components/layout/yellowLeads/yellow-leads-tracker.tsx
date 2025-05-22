@@ -246,17 +246,45 @@ export default function YellowLeadsTracker() {
   ]);
 
   const columns = [
-    { accessorKey: 'id', header: 'S. No.', meta: { align: 'center' } },
-    { accessorKey: 'leadTypeModifiedDate', header: 'LTC Date', meta: { align: 'center' } },
-    { accessorKey: 'name', header: 'Name', meta: { align: 'left', maxWidth: 120 } },
-    { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'areaView', header: 'Area', meta: { align: 'left' } },
-    { accessorKey: 'cityView', header: 'City' },
-    { accessorKey: 'courseView', header: 'Course' },
+    {
+      accessorKey: 'id',
+      header: 'S. No.',
+      meta: { align: 'center', maxWidth: 60, fixedWidth: 60 }
+    },
+    {
+      accessorKey: 'leadTypeModifiedDate',
+      header: 'LTC Date',
+      meta: { align: 'center', maxWidth: 110, fixedWidth: 110 }
+    },
+    {
+      accessorKey: 'name',
+      header: 'Name',
+      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+    },
+    {
+      accessorKey: 'phoneNumber',
+      header: 'Phone Number',
+      meta: { maxWidth: 130, fixedWidth: 130 }
+    },
+    {
+      accessorKey: 'areaView',
+      header: 'Area',
+      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+    },
+    {
+      accessorKey: 'cityView',
+      header: 'City',
+      meta: { maxWidth: 120, fixedWidth: 120 }
+    },
+    {
+      accessorKey: 'courseView',
+      header: 'Course',
+      meta: { maxWidth: 120, fixedWidth: 120 }
+    },
     {
       accessorKey: 'footFall',
-      meta: { align: 'center' },
       header: 'Footfall',
+      meta: { align: 'center' },
       cell: ({ row }: any) => {
         const [selectedStatus, setSelectedStatus] = useState<FootFallStatus>(
           row.original.footFall === true ? FootFallStatus.true : FootFallStatus.false
@@ -265,15 +293,9 @@ export default function YellowLeadsTracker() {
         const handleFootfallChange = async (newValue: FootFallStatus) => {
           const previousValue = selectedStatus;
           setSelectedStatus(newValue);
+          const toastId = toast.loading('Updating footfall...', { duration: Infinity });
 
-          const toastId = toast.loading('Updating footfall...', {
-            duration: Infinity
-          });
-
-          const updatedData = {
-            _id: row.original._id,
-            footFall: newValue === FootFallStatus.true
-          };
+          const updatedData = { _id: row.original._id, footFall: newValue === FootFallStatus.true };
 
           try {
             const response: any = await apiRequest(
@@ -281,7 +303,6 @@ export default function YellowLeadsTracker() {
               API_ENDPOINTS.updateYellowLead,
               updatedData
             );
-
             toast.dismiss(toastId);
 
             if (response) {
@@ -293,13 +314,10 @@ export default function YellowLeadsTracker() {
                 leadQueries.forEach((query) => {
                   queryClient.setQueryData(query.queryKey, (oldData: any) => {
                     if (!oldData || !oldData.yellowLeads) return oldData;
-
                     const newData = JSON.parse(JSON.stringify(oldData));
-
                     const leadIndex = newData.yellowLeads.findIndex(
                       (lead: any) => lead._id === response._id
                     );
-
                     if (leadIndex !== -1) {
                       newData.yellowLeads[leadIndex] = {
                         ...newData.yellowLeads[leadIndex],
@@ -312,16 +330,13 @@ export default function YellowLeadsTracker() {
                   });
                 });
               };
-
               updateLeadCache();
               queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
-
-              // setRefreshKey((prevKey) => prevKey + 1);
             } else {
               toast.error('Update failed!', { duration: 1500 });
               setSelectedStatus(previousValue);
             }
-          } catch (error) {
+          } catch {
             toast.dismiss(toastId);
             toast.error('Update failed!', { duration: 1500 });
             setSelectedStatus(previousValue);
@@ -331,12 +346,15 @@ export default function YellowLeadsTracker() {
         return <FootFallSelect value={selectedStatus} onChange={handleFootfallChange} />;
       }
     },
-    { accessorKey: 'remarksView', header: 'Remarks', meta: { maxWidth: 130 } },
-
+    {
+      accessorKey: 'remarksView',
+      header: 'Remarks',
+      meta: { maxWidth: 130, fixedWidth: 130 }
+    },
     {
       accessorKey: 'followUpCount',
-      meta: { align: 'center' },
       header: 'Follow Ups',
+      meta: { align: 'center' },
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.followUpCount);
         const toastIdRef = useRef<string | number | null>(null);
@@ -344,15 +362,9 @@ export default function YellowLeadsTracker() {
         const handleDropdownChange = async (newValue: number) => {
           const previousValue = selectedValue;
           setSelectedValue(newValue);
+          toastIdRef.current = toast.loading('Updating follow-up count...', { duration: Infinity });
 
-          toastIdRef.current = toast.loading('Updating follow-up count...', {
-            duration: Infinity
-          });
-
-          const filteredData = {
-            _id: row.original._id,
-            followUpCount: newValue
-          };
+          const filteredData = { _id: row.original._id, followUpCount: newValue };
 
           try {
             const response: LeadData | null = await apiRequest(
@@ -361,6 +373,7 @@ export default function YellowLeadsTracker() {
               filteredData
             );
             toast.dismiss(toastIdRef.current);
+
             if (response) {
               toast.success('Follow-up count updated successfully', {
                 id: toastIdRef.current,
@@ -373,13 +386,10 @@ export default function YellowLeadsTracker() {
                 leadQueries.forEach((query) => {
                   queryClient.setQueryData(query.queryKey, (oldData: any) => {
                     if (!oldData || !oldData.yellowLeads) return oldData;
-
                     const newData = JSON.parse(JSON.stringify(oldData));
-
                     const leadIndex = newData.yellowLeads.findIndex(
                       (lead: any) => lead._id === response._id
                     );
-
                     if (leadIndex !== -1) {
                       newData.yellowLeads[leadIndex] = {
                         ...newData.yellowLeads[leadIndex],
@@ -391,10 +401,7 @@ export default function YellowLeadsTracker() {
                   });
                 });
               };
-
               updateLeadCache();
-
-              // setRefreshKey((prevKey) => prevKey + 1);
             } else {
               toast.error('Failed to update follow-up count', {
                 id: toastIdRef.current,
@@ -402,7 +409,7 @@ export default function YellowLeadsTracker() {
               });
               setSelectedValue(previousValue);
             }
-          } catch (error) {
+          } catch {
             toast.error('Failed to update follow-up count', {
               id: toastIdRef.current,
               duration: 1500
@@ -432,19 +439,20 @@ export default function YellowLeadsTracker() {
         );
       }
     },
-    { accessorKey: 'nextDueDateView', header: 'Next Call Date', meta: { align: 'center' } },
+    {
+      accessorKey: 'nextDueDateView',
+      header: 'Next Call Date',
+      meta: { align: 'center', maxWidth: 140, fixedWidth: 140 }
+    },
     {
       accessorKey: 'finalConversion',
       header: 'Final Conversion',
-      meta: { align: 'center' },
+      meta: { align: 'center', maxWidth: 150, fixedWidth: 150 },
       cell: ({ row }: any) => {
         const value = row.original.finalConversion as FinalConversionStatus;
 
         const handleChange = async (newValue: FinalConversionStatus) => {
-          const updatedData = {
-            _id: row.original._id,
-            finalConversion: newValue
-          };
+          const updatedData = { _id: row.original._id, finalConversion: newValue };
           const response: LeadData | null = await apiRequest(
             API_METHODS.PUT,
             API_ENDPOINTS.updateYellowLead,
@@ -459,13 +467,10 @@ export default function YellowLeadsTracker() {
               leadQueries.forEach((query) => {
                 queryClient.setQueryData(query.queryKey, (oldData: any) => {
                   if (!oldData || !oldData.yellowLeads) return oldData;
-
                   const newData = JSON.parse(JSON.stringify(oldData));
-
                   const leadIndex = newData.yellowLeads.findIndex(
                     (lead: any) => lead._id === response._id
                   );
-
                   if (leadIndex !== -1) {
                     newData.yellowLeads[leadIndex] = {
                       ...newData.yellowLeads[leadIndex],
@@ -480,47 +485,22 @@ export default function YellowLeadsTracker() {
 
             updateLeadCache();
             queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
-
             toast.success('Final conversion updated successfully');
-            // setRefreshKey((prevKey) => prevKey + 1);
-          } else {
-            if (
-              row.original.finalConversion === FinalConversionStatus.NEUTRAL &&
-              newValue === FinalConversionStatus.NO_FOOTFALL
-            ) {
-            } else {
-            }
           }
         };
 
-        return (
-          <FinalConversionSelect
-            // isDisable={!row.original.footFall}
-            value={value}
-            onChange={handleChange}
-          />
-        );
+        return <FinalConversionSelect value={value} onChange={handleChange} />;
       }
     },
-
     ...(isRoleLeadMarketing
-      ? [{ accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } }]
+      ? [
+          {
+            accessorKey: 'assignedToName',
+            header: 'Assigned To',
+            meta: { align: 'center', maxWidth: 140, fixedWidth: 140 }
+          }
+        ]
       : [])
-
-    // {
-    //   id: 'actions',
-    //   header: 'Actions',
-    //   meta: { align: 'center' },
-    //   cell: ({ row }: any) => (
-    //     <Button
-    //       variant="ghost"
-    //       className="cursor-pointer"
-    //       onClick={() => handleViewMore({ ...row.original, leadType: row.original._leadType })}
-    //     >
-    //       <span className="font-inter font-semibold text-[12px] text-primary ">View More</span>
-    //     </Button>
-    //   )
-    // }
   ];
 
   const cityDropdownQuery = useQuery({

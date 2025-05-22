@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { format, parse } from 'date-fns';
-import { Course, CourseNameMapper, Locations } from '@/types/enum';
+import { Course, CourseNameMapper, LeadType, LeadTypeMapper, Locations } from '@/types/enum';
 import { Badge } from '@/components/ui/badge';
 import { toPascal } from '@/lib/utils';
 
@@ -125,6 +125,8 @@ const FilterBadges = ({
           getLabel = getAssignedToLabel;
         } else if (key === 'source') {
           getLabel = (val: string) => val;
+        } else if (key === 'leadType') {
+          getLabel = (val: string) => LeadTypeMapper[val as LeadType];
         } else {
           getLabel = (val: string) => val;
         }

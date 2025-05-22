@@ -305,121 +305,41 @@ export default function AllLeadsPage() {
   ]);
 
   const columns = [
-    { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
+    {
+      accessorKey: 'id',
+      header: 'S. No',
+      meta: { align: 'center', maxWidth: 60, fixedWidth: 60 }
+    },
     {
       accessorKey: 'dateView',
       header: 'Date',
-      meta: { align: 'center' },
-      cell: ({ row }: any) => {
-        const [selectedDate, setSelectedDate] = useState<Date | undefined>(
-          row.original.date ? new Date(row.original.date) : undefined
-        );
-        const toastIdRef = useRef<string | number | null>(null);
-
-        const handleDateChange = async (date: Date | undefined) => {
-          if (!date) return;
-
-          const previousDate = selectedDate;
-          setSelectedDate(date);
-
-          toastIdRef.current = toast.loading('Updating date...', {
-            duration: Infinity
-          });
-
-          const updatedData = {
-            _id: row.original._id,
-            date: formatDate(date, 'dd/MM/yyyy')
-          };
-
-          try {
-            const response: LeadData | null = await apiRequest(
-              API_METHODS.PUT,
-              API_ENDPOINTS.updateLead,
-              updatedData
-            );
-
-            toast.dismiss(toastIdRef.current);
-
-            if (response) {
-              toast.success('Date updated successfully', {
-                id: toastIdRef.current,
-                duration: 1500
-              });
-
-              const updateLeadCache = () => {
-                const queryCache = queryClient.getQueryCache();
-                const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
-
-                leadQueries.forEach((query) => {
-                  queryClient.setQueryData(query.queryKey, (oldData: any) => {
-                    if (!oldData || !oldData.leads) return oldData;
-
-                    const newData = JSON.parse(JSON.stringify(oldData));
-
-                    const leadIndex = newData.leads.findIndex(
-                      (lead: any) => lead._id === response._id
-                    );
-
-                    if (leadIndex !== -1) {
-                      newData.leads[leadIndex] = {
-                        ...newData.leads[leadIndex],
-                        date: response.date ?? newData.leads[leadIndex].date,
-                        dateView:
-                          formatTimeStampView(response.date) ?? newData.leads[leadIndex].dateView,
-                        updatedAt: response.updatedAt
-                      };
-                    }
-
-                    return newData;
-                  });
-                });
-              };
-
-              updateLeadCache();
-              queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
-            }
-          } catch (error) {
-            toast.dismiss(toastIdRef.current);
-            toast.error('Failed to update date', {
-              id: toastIdRef.current,
-              duration: 3000
-            });
-            console.error('Error updating date:', error);
-
-            setSelectedDate(previousDate);
-          }
-        };
-
-        return (
-          <Popover modal={true}>
-            <PopoverTrigger asChild>
-              <Button variant={'outline'} className="w-full justify-start text-left font-normal">
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, 'dd/MM/yyyy') : <span>Pick a date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto rounded-lg p-0 z-50">
-              <Calendar
-                mode="single"
-                className="z-50 border rounded-lg bg-white"
-                selected={selectedDate}
-                onSelect={handleDateChange}
-                initialFocus
-              />
-            </PopoverContent>
-          </Popover>
-        );
-      }
+      meta: { align: 'center', maxWidth: 110, fixedWidth: 110 }
     },
     {
       accessorKey: 'name',
       header: 'Name',
-      meta: { align: 'left', maxWidth: 120 }
+      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
     },
-    { accessorKey: 'phoneNumber', header: 'Phone Number' },
-    { accessorKey: 'areaView', header: 'Area', meta: { align: 'left' } },
-    { accessorKey: 'cityView', header: 'City', meta: { align: 'left' } },
-    { accessorKey: 'courseView', header: 'Course' },
+    {
+      accessorKey: 'phoneNumber',
+      header: 'Phone Number',
+      meta: { maxWidth: 130, fixedWidth: 130 }
+    },
+    {
+      accessorKey: 'areaView',
+      header: 'Area',
+      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+    },
+    {
+      accessorKey: 'cityView',
+      header: 'City',
+      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+    },
+    {
+      accessorKey: 'courseView',
+      header: 'Course',
+      meta: { maxWidth: 120, fixedWidth: 120 }
+    },
     {
       accessorKey: 'leadType',
       meta: { align: 'center' },
@@ -434,7 +354,6 @@ export default function AllLeadsPage() {
             return;
           }
 
-          // Store the previous value to revert on failure
           const previousValue = selectedType;
           setSelectedType(value);
 
@@ -533,8 +452,6 @@ export default function AllLeadsPage() {
               duration: 3000
             });
             console.error('Error updating lead:', error);
-
-            // Revert to previous value on error
             setSelectedType(previousValue);
           }
         };
@@ -548,15 +465,14 @@ export default function AllLeadsPage() {
         );
       }
     },
-
     {
       accessorKey: 'remarksView',
       header: 'Remarks',
       meta: {
-        maxWidth: isRoleLeadMarketing ? 130 : 230
+        maxWidth: isRoleLeadMarketing ? 130 : 230,
+        fixedWidth: isRoleLeadMarketing ? 130 : 230
       }
     },
-
     {
       accessorKey: 'followUpCount',
       header: 'Follow Ups',
@@ -645,7 +561,6 @@ export default function AllLeadsPage() {
                 });
               };
               updateLeadCache();
-              // setRefreshKey((prevKey) => prevKey + 1);
             } else {
               toast.error('Failed to update follow-up count', {
                 id: toastIdRef.current,
@@ -683,29 +598,20 @@ export default function AllLeadsPage() {
         );
       }
     },
-
-    { accessorKey: 'nextDueDateView', header: 'Next Due Date', meta: { align: 'center' } },
+    {
+      accessorKey: 'nextDueDateView',
+      header: 'Next Due Date',
+      meta: { align: 'center', maxWidth: 140, fixedWidth: 140 }
+    },
     ...(isRoleLeadMarketing
-      ? [{ accessorKey: 'assignedToName', header: 'Assigned To', meta: { align: 'center' } }]
+      ? [
+          {
+            accessorKey: 'assignedToName',
+            header: 'Assigned To',
+            meta: { align: 'center', maxWidth: 140, fixedWidth: 140 }
+          }
+        ]
       : [])
-    // { accessorKey: 'leadTypeModifiedDateView', header: 'Timestamp', meta: { align: 'center' } },
-    // {
-    //   id: 'actions',
-    //   header: 'Actions',
-    //   meta: { align: 'center' },
-    //   cell: ({ row }: any) => (
-    //     <Button
-    //       variant="ghost"
-    //       className="cursor-pointer"
-    //       onClick={() => {
-    //         setSelectedRowId(row.id);
-    //         handleViewMore({ ...row.original, leadType: row.original._leadType });
-    //       }}
-    //     >
-    //       <span className="font-inter font-semibold text-[12px] text-primary">View More</span>
-    //     </Button>
-    //   )
-    // },
   ];
 
   const marketingSourceQuery = useQuery({

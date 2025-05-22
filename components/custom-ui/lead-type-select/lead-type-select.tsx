@@ -66,7 +66,7 @@ export default function LeadTypeSelect({ value, onChange, disabled = false }: Le
         ref={buttonRef}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className={`w-[150px] flex items-center justify-between gap-2 rounded-[5px] px-3 py-1 text-sm font-medium ${typeStyles[value]} ${
+        className={`w-[150px] mx-auto flex items-center justify-between gap-2 rounded-[5px] px-3 py-1 text-sm font-medium ${typeStyles[value]} ${
           disabled ? 'opacity-70 cursor-not-allowed' : 'hover:opacity-90'
         }`}
       >

@@ -21,6 +21,8 @@ import {
 import { refineAnalytics } from './helpers/refine-data';
 import { AdminAnalyticsResponse } from './interfaces';
 import { LeadConversionDashboard } from './leads-conversion-dashboard';
+import { LeadTables } from './analytics-tables';
+import { PerformanceDashboard } from './performance-dashboard';
 // import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
 
 const AdminTracker = () => {
@@ -329,6 +331,8 @@ const AdminTracker = () => {
         />
 
         <>
+          <LeadTables />
+          <PerformanceDashboard />
           {/* Total Leads Reached Section */}
           <div className="mt-[32px]">
             <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
