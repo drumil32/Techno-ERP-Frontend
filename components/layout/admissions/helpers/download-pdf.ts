@@ -61,7 +61,7 @@ export const downloadAdmissionForm = async (
   } else if(data.fullCollegeName === TCL) {
     logo = "/images/TCL.jpg"
   } else if(data.fullCollegeName === THIS) {
-    logo = "/images/THIS.jpg"
+    logo = "/images/TIHS.png"
   }
 
   container.innerHTML = `
