@@ -165,14 +165,16 @@ export default function TechnoDataTable({
   };
 
   const getSortIcon = (columnName: string) => {
+    const iconStyle = { minWidth: '16px', minHeight: '16px', width: '16px', height: '16px' };
+
     if (activeSortColumn === columnName) {
       return sortDirection === 'asc' ? (
-        <ArrowUp className="ml-1 h-4 w-4" />
+        <ArrowUp className="ml-1 flex-shrink-0" style={iconStyle} />
       ) : (
-        <ArrowDown className="ml-1 h-4 w-4" />
+        <ArrowDown className="ml-1 flex-shrink-0" style={iconStyle} />
       );
     }
-    return <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />;
+    return <ArrowUpDown className="ml-1 opacity-50 flex-shrink-0" style={iconStyle} />;
   };
 
   const uploadAction = async () => {
@@ -273,10 +275,10 @@ export default function TechnoDataTable({
                     // Style for fixed width columns
                     const widthStyle = fixedWidth
                       ? {
-                          width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                          minWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                          maxWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
-                        }
+                        width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                        minWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                        maxWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
+                      }
                       : {};
 
                     return (
@@ -355,12 +357,12 @@ export default function TechnoDataTable({
                       // Style for fixed width columns
                       const widthStyle = fixedWidth
                         ? {
-                            width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                            minWidth:
-                              typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                            maxWidth:
-                              typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
-                          }
+                          width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                          minWidth:
+                            typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                          maxWidth:
+                            typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
+                        }
                         : {};
 
                       return (

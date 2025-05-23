@@ -476,7 +476,7 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'followUpCount',
       header: 'Follow Ups',
-      meta: { align: 'center', maxWidth: 80, fixedWidth: 120 },
+      meta: { align: 'center', maxWidth: 150, fixedWidth: 150 },
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.followUpCount);
         const toastIdRef = useRef<string | number | null>(null);
@@ -601,7 +601,7 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'nextDueDateView',
       header: 'Next Due Date',
-      meta: { align: 'center', maxWidth: 140, fixedWidth: 140 }
+      meta: { align: 'center', maxWidth: 160, fixedWidth: 160 }
     },
     ...(isRoleLeadMarketing
       ? [
