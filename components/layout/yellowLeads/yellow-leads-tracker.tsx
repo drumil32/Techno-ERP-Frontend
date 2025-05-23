@@ -248,23 +248,23 @@ export default function YellowLeadsTracker() {
   const columns = [
     {
       accessorKey: 'id',
-      header: 'S. No.',
-      meta: { align: 'center', maxWidth: 60, fixedWidth: 60 }
+      header: 'S.No.',
+      meta: { align: 'center', maxWidth: 60, fixedWidth: 70 }
     },
     {
       accessorKey: 'leadTypeModifiedDate',
       header: 'LTC Date',
-      meta: { align: 'center', maxWidth: 110, fixedWidth: 110 }
+      meta: { align: 'center', maxWidth: 100, fixedWidth: 120 }
     },
     {
       accessorKey: 'name',
       header: 'Name',
-      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+      meta: { align: 'left', maxWidth: 130, fixedWidth: 150 }
     },
     {
       accessorKey: 'phoneNumber',
       header: 'Phone Number',
-      meta: { maxWidth: 130, fixedWidth: 130 }
+      meta: { maxWidth: 130, fixedWidth: 150 }
     },
     {
       accessorKey: 'areaView',
@@ -279,12 +279,12 @@ export default function YellowLeadsTracker() {
     {
       accessorKey: 'courseView',
       header: 'Course',
-      meta: { maxWidth: 120, fixedWidth: 120 }
+      meta: { maxWidth: 120, fixedWidth: 140 }
     },
     {
       accessorKey: 'footFall',
       header: 'Footfall',
-      meta: { align: 'center' },
+      meta: { align: 'center', fixedWidth: 100, maxWidth: 100 },
       cell: ({ row }: any) => {
         const [selectedStatus, setSelectedStatus] = useState<FootFallStatus>(
           row.original.footFall === true ? FootFallStatus.true : FootFallStatus.false
@@ -349,12 +349,15 @@ export default function YellowLeadsTracker() {
     {
       accessorKey: 'remarksView',
       header: 'Remarks',
-      meta: { maxWidth: 130, fixedWidth: 130 }
+      meta: {
+        maxWidth: isRoleLeadMarketing ? 130 : 230,
+        fixedWidth: isRoleLeadMarketing ? 180 : 280
+      }
     },
     {
       accessorKey: 'followUpCount',
       header: 'Follow Ups',
-      meta: { align: 'center' },
+      meta: { align: 'center', maxWidth: 100, fixedWidth: 120 },
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.followUpCount);
         const toastIdRef = useRef<string | number | null>(null);
@@ -447,7 +450,7 @@ export default function YellowLeadsTracker() {
     {
       accessorKey: 'finalConversion',
       header: 'Final Conversion',
-      meta: { align: 'center', maxWidth: 150, fixedWidth: 150 },
+      meta: { align: 'center', maxWidth: 170, fixedWidth: 190 },
       cell: ({ row }: any) => {
         const value = row.original.finalConversion as FinalConversionStatus;
 

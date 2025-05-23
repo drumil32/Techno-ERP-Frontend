@@ -18,268 +18,347 @@ import {
   School,
   Bookmark,
   Globe,
-  Facebook,
-  Phone,
-  MessageSquare,
-  Home,
   UserCheck,
   Cpu,
-  PlusCircle
+  PlusCircle,
+  Home,
+  WifiOffIcon
 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { sourceAnalytics } from './helpers/fetch-data';
 
 export function LeadTables() {
+  const { data } = useQuery({
+    queryKey: ['sourceAnalytics'],
+    queryFn: sourceAnalytics
+  });
+
+  const sourceData = Array.isArray(data) ? data : [];
+  const offlineData = sourceData?.find((item) => item.type === 'offline-data')?.details || [];
+  const onlineData = sourceData?.find((item) => item.type === 'online-data')?.details || [];
+  const allLeads = sourceData?.find((item) => item.type === 'all-leads')?.details || [];
+
+  const getTotal = (key: string) =>
+    allLeads.reduce((sum: number, item: any) => sum + (item.data[key] || 0), 0);
+
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <Card className="col-span-2">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-purple-800">
-            <Users className="h-5 w-5" />
+    <div className="grid gap-6 p-6 w-full   grid-cols-2 lg:grid-cols-4">
+      <Card className="col-span-2 col-start-1 bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg rounded-2xl ">
+        <CardHeader className="px-6 ">
+          <CardTitle className="flex items-center gap-3 text-xl font-semibold text-purple-900">
+            <Users className="h-6 w-6 text-purple-600" />
             Leads Summary
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader className="bg-gray-50">
-              <TableRow>
-                <TableHead className="w-[150px]">Source</TableHead>
-                <TableHead className="text-center">
-                  <Bookmark className="mx-auto h-4 w-4" />
-                  Total
-                </TableHead>
-                <TableHead className="text-center">
-                  <Activity className="mx-auto h-4 w-4" />
-                  Active
-                </TableHead>
-                <TableHead className="text-center">
-                  <HelpCircle className="mx-auto h-4 w-4" />
-                  Neutral
-                </TableHead>
-                <TableHead className="text-center">
-                  <PhoneOff className="mx-auto h-4 w-4" />
-                  No Pickup
-                </TableHead>
-                <TableHead className="text-center">
-                  <PlusCircle className="mx-auto h-4 w-4" />
-                  Others
-                </TableHead>
-                <TableHead className="text-center">
-                  <Footprints className="mx-auto h-4 w-4" />
-                  Footfall
-                </TableHead>
-                <TableHead className="text-center">
-                  <School className="mx-auto h-4 w-4" />
-                  Admissions
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <Smartphone className="h-4 w-4" />
-                  Digital
-                </TableCell>
-                <TableCell className="text-center">100</TableCell>
-                <TableCell className="text-center">14</TableCell>
-                <TableCell className="text-center">40</TableCell>
-                <TableCell className="text-center">12</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">4</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <Home className="h-4 w-4" />
-                  Offline
-                </TableCell>
-                <TableCell className="text-center">100</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">13</TableCell>
-                <TableCell className="text-center">16</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">4</TableCell>
-              </TableRow>
-              <TableRow className="bg-gray-50 font-semibold">
-                <TableCell className="font-medium">Total</TableCell>
-                <TableCell className="text-center">200</TableCell>
-                <TableCell className="text-center">29</TableCell>
-                <TableCell className="text-center">55</TableCell>
-                <TableCell className="text-center">25</TableCell>
-                <TableCell className="text-center">31</TableCell>
-                <TableCell className="text-center">30</TableCell>
-                <TableCell className="text-center">8</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+        <CardContent className="">
+          <div className="rounded-lg overflow-auto  border border-gray-100">
+            <Table>
+              <TableHeader className="bg-purple-50/50">
+                <TableRow className="hover:bg-purple-50/50">
+                  <TableHead className="w-[150px] text-purple-900 font-semibold py-4">
+                    Source
+                  </TableHead>
+                  <TableHead className="text-center text-purple-900 font-semibold">Total</TableHead>
+                  <TableHead className="text-center text-purple-900 font-semibold">
+                    Active
+                  </TableHead>
+                  <TableHead className="text-center text-purple-900 font-semibold">
+                    Neutral
+                  </TableHead>
+                  <TableHead className="text-center text-purple-900 font-semibold">
+                    No Pickup
+                  </TableHead>
+                  <TableHead className="text-center text-purple-900 font-semibold">
+                    Others
+                  </TableHead>
+                  <TableHead className="text-center text-purple-900 font-semibold">
+                    Footfall
+                  </TableHead>
+                  <TableHead className="text-center text-purple-900 font-semibold">
+                    Admissions
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {allLeads.map((lead: any) => (
+                  <TableRow
+                    key={lead.source}
+                    className="border-b border-gray-100 hover:bg-purple-50/30 transition-colors"
+                  >
+                    <TableCell className="font-medium flex items-center gap-3 py-4">
+                      {lead.source === 'online' ? (
+                        <Smartphone className="h-5 w-5 text-blue-500" />
+                      ) : lead.source === 'offline' ? (
+                        <Home className="h-5 w-5 text-amber-500" />
+                      ) : (
+                        <PlusCircle className="h-5 w-5 text-gray-500" />
+                      )}
+                      <span className="text-gray-800">
+                        {lead.source.charAt(0).toUpperCase() + lead.source.slice(1)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-gray-700">
+                      {lead.data.totalLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-green-600">
+                      {lead.data.activeLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-yellow-600">
+                      {lead.data.neutralLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-red-600">
+                      {lead.data.didNotPickLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-gray-600">
+                      {lead.data.others}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-purple-600">
+                      {lead.data.footFall}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-emerald-600">
+                      {lead.data.totalAdmissions}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                <TableRow className="bg-purple-50/50 font-semibold hover:bg-purple-50/50">
+                  <TableCell className="text-purple-900 font-semibold py-4">Total</TableCell>
+                  <TableCell className="text-center font-bold text-gray-800">
+                    {getTotal('totalLeads')}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-green-600">
+                    {getTotal('activeLeads')}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-yellow-600">
+                    {getTotal('neutralLeads')}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-red-600">
+                    {getTotal('didNotPickLeads')}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-gray-600">
+                    {getTotal('others')}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-purple-600">
+                    {getTotal('footFall')}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-emerald-600">
+                    {getTotal('totalAdmissions')}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Online Data */}
-      <Card className="md:col-span-2">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-purple-800">
-            <Globe className="h-5 w-5" />
+      <Card className=" col-start-1 col-span-2 bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg rounded-2xl ">
+        <CardHeader className=" px-6 ">
+          <CardTitle className="flex items-center gap-3 text-xl font-semibold text-blue-900">
+            <Globe className="h-6 w-6 text-blue-500" />
             Online Data
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader className="bg-gray-50">
-              <TableRow>
-                <TableHead className="w-[200px]">Channel</TableHead>
-                <TableHead className="text-center">Total</TableHead>
-                <TableHead className="text-center">Active</TableHead>
-                <TableHead className="text-center">Neutral</TableHead>
-                <TableHead className="text-center">No Pickup</TableHead>
-                <TableHead className="text-center">Others</TableHead>
-                <TableHead className="text-center">Footfall</TableHead>
-                <TableHead className="text-center">Admissions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <Globe className="h-4 w-4" />
-                  Google Ads
-                </TableCell>
-                <TableCell className="text-center">100</TableCell>
-                <TableCell className="text-center">14</TableCell>
-                <TableCell className="text-center">40</TableCell>
-                <TableCell className="text-center">12</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">4</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <Facebook className="h-4 w-4" />
-                  Meta Ads
-                </TableCell>
-                <TableCell className="text-center">100</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">13</TableCell>
-                <TableCell className="text-center">16</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">4</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
-                  IVR
-                </TableCell>
-                <TableCell className="text-center">100</TableCell>
-                <TableCell className="text-center">16</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">14</TableCell>
-                <TableCell className="text-center">17</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">4</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4" />
-                  TawkTo
-                </TableCell>
-                <TableCell className="text-center">100</TableCell>
-                <TableCell className="text-center">17</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">18</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">4</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <Laptop className="h-4 w-4" />
-                  Website
-                </TableCell>
-                <TableCell className="text-center">100</TableCell>
-                <TableCell className="text-center">18</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">16</TableCell>
-                <TableCell className="text-center">18</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">4</TableCell>
-              </TableRow>
-              <TableRow className="bg-gray-50 font-semibold">
-                <TableCell className="font-medium">Total</TableCell>
-                <TableCell className="text-center">500</TableCell>
-                <TableCell className="text-center">80</TableCell>
-                <TableCell className="text-center">75</TableCell>
-                <TableCell className="text-center">70</TableCell>
-                <TableCell className="text-center">84</TableCell>
-                <TableCell className="text-center">75</TableCell>
-                <TableCell className="text-center">20</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+        <CardContent className="">
+          <div className="overflow-auto rounded-lg  border border-gray-100">
+            <Table>
+              <TableHeader className="bg-blue-50/50">
+                <TableRow className="hover:bg-blue-50/50">
+                  <TableHead className="w-[200px] text-blue-900 font-semibold py-4">
+                    Channel
+                  </TableHead>
+                  <TableHead className="text-center text-blue-900 font-semibold">Total</TableHead>
+                  <TableHead className="text-center text-blue-900 font-semibold">Active</TableHead>
+                  <TableHead className="text-center text-blue-900 font-semibold">Neutral</TableHead>
+                  <TableHead className="text-center text-blue-900 font-semibold">
+                    No Pickup
+                  </TableHead>
+                  <TableHead className="text-center text-blue-900 font-semibold">Others</TableHead>
+                  <TableHead className="text-center text-blue-900 font-semibold">
+                    Footfall
+                  </TableHead>
+                  <TableHead className="text-center text-blue-900 font-semibold">
+                    Admissions
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {onlineData.map((item: any) => (
+                  <TableRow
+                    key={item.source}
+                    className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors"
+                  >
+                    <TableCell className="font-medium flex items-center gap-3 py-4">
+                      {item.source.includes('Google') ? (
+                        <Globe className="h-5 w-5 text-blue-400" />
+                      ) : item.source.includes('Website') ? (
+                        <Laptop className="h-5 w-5 text-indigo-400" />
+                      ) : (
+                        <PlusCircle className="h-5 w-5 text-gray-400" />
+                      )}
+                      <span className="text-gray-800">{item.source.split('- ')[1]}</span>
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-gray-700">
+                      {item.data.totalLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-green-600">
+                      {item.data.activeLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-yellow-600">
+                      {item.data.neutralLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-red-600">
+                      {item.data.didNotPickLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-gray-600">
+                      {item.data.others}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-purple-600">
+                      {item.data.footFall}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-emerald-600">
+                      {item.data.totalAdmissions}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                <TableRow className="bg-blue-50/50 font-semibold hover:bg-blue-50/50">
+                  <TableCell className="text-blue-900 font-semibold py-4">Total</TableCell>
+                  <TableCell className="text-center font-bold text-gray-800">
+                    {onlineData.reduce((sum: number, item: any) => sum + item.data.totalLeads, 0)}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-green-600">
+                    {onlineData.reduce((sum: number, item: any) => sum + item.data.activeLeads, 0)}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-yellow-600">
+                    {onlineData.reduce((sum: number, item: any) => sum + item.data.neutralLeads, 0)}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-red-600">
+                    {onlineData.reduce(
+                      (sum: number, item: any) => sum + item.data.didNotPickLeads,
+                      0
+                    )}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-gray-600">
+                    {onlineData.reduce((sum: number, item: any) => sum + item.data.others, 0)}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-purple-600">
+                    {onlineData.reduce((sum: number, item: any) => sum + item.data.footFall, 0)}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-emerald-600">
+                    {onlineData.reduce(
+                      (sum: number, item: any) => sum + item.data.totalAdmissions,
+                      0
+                    )}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Offline Data */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-purple-800">
-            <UserCheck className="h-5 w-5" />
+      <Card className="col-start-1 col-span-2  bg-gradient-to-br from-white to-gray-50 border  border-gray-100 shadow-lg rounded-2xl">
+        <CardHeader className="px-6 ">
+          <CardTitle className="flex items-center gap-3 text-xl font-semibold text-amber-900">
+            <WifiOffIcon className="h-6 w-6 text-amber-500" />
             Offline Data
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader className="bg-gray-50">
-              <TableRow>
-                <TableHead>Source</TableHead>
-                <TableHead className="text-center">Total</TableHead>
-                <TableHead className="text-center">Active</TableHead>
-                <TableHead className="text-center">Admissions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  LU/NPG
-                </TableCell>
-                <TableCell className="text-center">100</TableCell>
-                <TableCell className="text-center">14</TableCell>
-                <TableCell className="text-center">4</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <UserCheck className="h-4 w-4" />
-                  References
-                </TableCell>
-                <TableCell className="text-center">100</TableCell>
-                <TableCell className="text-center">15</TableCell>
-                <TableCell className="text-center">4</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <Cpu className="h-4 w-4" />
-                  Technoligence
-                </TableCell>
-                <TableCell className="text-center">100</TableCell>
-                <TableCell className="text-center">16</TableCell>
-                <TableCell className="text-center">4</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium flex items-center gap-2">
-                  <PlusCircle className="h-4 w-4" />
-                  Others
-                </TableCell>
-                <TableCell className="text-center">100</TableCell>
-                <TableCell className="text-center">17</TableCell>
-                <TableCell className="text-center">4</TableCell>
-              </TableRow>
-              <TableRow className="bg-gray-50 font-semibold">
-                <TableCell className="font-medium">Total</TableCell>
-                <TableCell className="text-center">400</TableCell>
-                <TableCell className="text-center">62</TableCell>
-                <TableCell className="text-center">16</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+        <CardContent className="">
+          <div className="rounded-lg border overflow-auto border-gray-100">
+            <Table>
+              <TableHeader className="bg-amber-50/50">
+                <TableRow className="hover:bg-amber-50/50">
+                  <TableHead className="w-[200px] text-amber-900 font-semibold py-4">
+                    Source
+                  </TableHead>
+                  <TableHead className="text-center text-amber-900 font-semibold">Total</TableHead>
+                  <TableHead className="text-center text-amber-900 font-semibold">Active</TableHead>
+                  <TableHead className="text-center text-amber-900 font-semibold">
+                    Neutral
+                  </TableHead>
+                  <TableHead className="text-center text-amber-900 font-semibold">
+                    Did Not Pick
+                  </TableHead>
+                  <TableHead className="text-center text-amber-900 font-semibold">Others</TableHead>
+                  <TableHead className="text-center text-amber-900 font-semibold">
+                    Footfall
+                  </TableHead>
+                  <TableHead className="text-center text-amber-900 font-semibold">
+                    Admissions
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {offlineData.map((item: any) => (
+                  <TableRow
+                    key={item.source}
+                    className="border-b border-gray-100 hover:bg-amber-50/30 transition-colors"
+                  >
+                    <TableCell className="font-medium flex items-center gap-3 py-4">
+                      {item.source === 'Student Reference' ? (
+                        <UserCheck className="h-5 w-5 text-amber-500" />
+                      ) : item.source === 'Technoligence' ? (
+                        <Cpu className="h-5 w-5 text-teal-500" />
+                      ) : (
+                        <PlusCircle className="h-5 w-5 text-gray-500" />
+                      )}
+                      <span className="text-gray-800">{item.source}</span>
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-gray-700">
+                      {item.data.totalLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-green-600">
+                      {item.data.activeLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-yellow-600">
+                      {item.data.neutralLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-red-600">
+                      {item.data.didNotPickLeads}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-gray-600">
+                      {item.data.others}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-purple-600">
+                      {item.data.footFall}
+                    </TableCell>
+                    <TableCell className="text-center font-medium text-emerald-600">
+                      {item.data.totalAdmissions}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                <TableRow className="bg-amber-50/50 font-semibold hover:bg-amber-50/50">
+                  <TableCell className="text-amber-900 font-semibold py-4">Total</TableCell>
+                  <TableCell className="text-center font-bold text-gray-800">
+                    {offlineData.reduce((sum: number, item: any) => sum + item.data.totalLeads, 0)}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-green-600">
+                    {offlineData.reduce((sum: number, item: any) => sum + item.data.activeLeads, 0)}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-yellow-600">
+                    {onlineData.reduce((sum: number, item: any) => sum + item.data.neutralLeads, 0)}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-red-600">
+                    {offlineData.reduce(
+                      (sum: number, item: any) => sum + item.data.didNotPickLeads,
+                      0
+                    )}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-gray-600">
+                    {offlineData.reduce((sum: number, item: any) => sum + item.data.others, 0)}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-purple-600">
+                    {offlineData.reduce((sum: number, item: any) => sum + item.data.footFall, 0)}
+                  </TableCell>
+                  <TableCell className="text-center font-bold text-emerald-600">
+                    {offlineData.reduce(
+                      (sum: number, item: any) => sum + item.data.totalAdmissions,
+                      0
+                    )}
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
     </div>

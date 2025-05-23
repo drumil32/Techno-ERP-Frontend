@@ -48,3 +48,8 @@ export const fixCourseDropdown = async () => {
   const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchFixCourseDropdown);
   return result;
 };
+
+export const sourceAnalytics = async () => {
+  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.sourceAnalytics);
+  return result;
+};

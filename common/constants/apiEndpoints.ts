@@ -22,6 +22,10 @@ export const API_ENDPOINTS = {
   fetchAssignedToDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=MARKETING`,
   updateLead: `${API_DOMAIN}/crm/edit`,
 
+  // Marketing Analytics
+
+  sourceAnalytics: `${API_DOMAIN}/crm/source-analytics`,
+
   getAdminAnalytics: `${API_DOMAIN}/crm/admin/analytics`,
 
   getYellowLeads: `${API_DOMAIN}/crm/yellow-lead`,
@@ -100,7 +104,6 @@ export const API_ENDPOINTS = {
   deletePlan: `${API_DOMAIN}/course/subject/schedule/plan`,
   deleteFileUsingURL: `${API_DOMAIN}/course/subject/schedule/delete-file`,
 
-
   //Student Repository
 
   getStudentRepository: `${API_DOMAIN}/student/repo/search`,
@@ -109,11 +112,11 @@ export const API_ENDPOINTS = {
   updateStudentDocuments: `${API_DOMAIN}/student/repo/student-physical-document`,
   updateDocument: `${API_DOMAIN}/student/repo/document`,
 
-
   //Finance
   transactionSlip: `${API_DOMAIN}/download-reciept/transaction-slip`,
   getStudentActiveDues: `${API_DOMAIN}/student/fees/active-dues`,
-  getStudentFeeInformation: (student_id: string) => `${API_DOMAIN}/student/fees/fee-information/${student_id}`,
+  getStudentFeeInformation: (student_id: string) =>
+    `${API_DOMAIN}/student/fees/fee-information/${student_id}`,
 
   recordPayment: `${API_DOMAIN}/student/fees/record-payment`,
   updateFeeBreakup: `${API_DOMAIN}/student/fees/fee-breakup`,
@@ -122,7 +125,7 @@ export const API_ENDPOINTS = {
   getCourseDues: `${API_DOMAIN}/course/fetch-dues`,
   updateCourseDues: `${API_DOMAIN}/course/dues`,
 
-  overallCollections:  `${API_DOMAIN}/fee-analytics/overall`,
+  overallCollections: `${API_DOMAIN}/fee-analytics/overall`,
   getDailyCollections: `${API_DOMAIN}/fee-analytics/daywise`,
-  getMonthlyCollections: `${API_DOMAIN}/fee-analytics/monthwise`,
+  getMonthlyCollections: `${API_DOMAIN}/fee-analytics/monthwise`
 };

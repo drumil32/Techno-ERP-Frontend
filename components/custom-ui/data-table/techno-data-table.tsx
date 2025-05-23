@@ -50,11 +50,11 @@ declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends unknown, TValue> {
     align?: 'left' | 'center' | 'right';
     maxWidth?: number;
-    fixedWidth?: number;
+    fixedWidth?: number | string; // Minor Change Allow both number (px) and string (like '100px')
   }
 }
 
-export const TruncatedCell = ({ value, maxWidth }: { value: string; maxWidth?: number }) => {
+export const TruncatedCell = ({ value, maxWidth }: { value: any; maxWidth?: number }) => {
   const cellRef = useRef<HTMLSpanElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
 
@@ -268,6 +268,16 @@ export default function TechnoDataTable({
                     const isNonClickable = nonClickableColumns.includes(columnId);
                     const align = header.column.columnDef.meta?.align || 'left';
                     const fixedWidth = header.column.columnDef.meta?.fixedWidth;
+                    const maxWidth = header.column.columnDef.meta?.maxWidth;
+
+                    // Style for fixed width columns
+                    const widthStyle = fixedWidth
+                      ? {
+                          width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                          minWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                          maxWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
+                        }
+                      : {};
 
                     return (
                       <TableHead
@@ -279,21 +289,43 @@ export default function TechnoDataTable({
                           'rounded-l-[5px]': index === 0,
                           'rounded-r-[5px]': index === headerGroup.headers.length - 1
                         })}
-                        style={{ width: fixedWidth ? `${fixedWidth}px` : 'auto' }}
+                        style={widthStyle}
                       >
-                        {isSortable && !isNonClickable ? (
-                          <div
-                            className="flex items-center justify-center cursor-pointer"
-                            onClick={() => handleSort(columnId)}
-                          >
-                            <span>
-                              {flexRender(header.column.columnDef.header, header.getContext())}
-                            </span>
-                            {getSortIcon(columnId)}
-                          </div>
-                        ) : (
-                          flexRender(header.column.columnDef.header, header.getContext())
-                        )}
+                        <div
+                          className={clsx('w-full overflow-hidden', {
+                            'text-left': align === 'left',
+                            'text-center': align === 'center',
+                            'text-right': align === 'right'
+                          })}
+                        >
+                          {isSortable && !isNonClickable ? (
+                            <div
+                              className={clsx('flex items-center cursor-pointer w-full', {
+                                'justify-start': align === 'left',
+                                'justify-center': align === 'center',
+                                'justify-end': align === 'right'
+                              })}
+                              onClick={() => handleSort(columnId)}
+                            >
+                              <TruncatedCell
+                                value={flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                                maxWidth={maxWidth}
+                              />
+                              {getSortIcon(columnId)}
+                            </div>
+                          ) : (
+                            <TruncatedCell
+                              value={flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                              maxWidth={maxWidth}
+                            />
+                          )}
+                        </div>
                       </TableHead>
                     );
                   })}
@@ -320,6 +352,17 @@ export default function TechnoDataTable({
                       const maxWidth = cell.column.columnDef.meta?.maxWidth;
                       const fixedWidth = cell.column.columnDef.meta?.fixedWidth;
 
+                      // Style for fixed width columns
+                      const widthStyle = fixedWidth
+                        ? {
+                            width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                            minWidth:
+                              typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                            maxWidth:
+                              typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
+                          }
+                        : {};
+
                       return (
                         <TableCell
                           key={cell.id}
@@ -328,16 +371,28 @@ export default function TechnoDataTable({
                             'text-center': cellValue === 'N/A' || align === 'center',
                             'text-right': align === 'right'
                           })}
-                          style={{ width: fixedWidth ? `${fixedWidth}px` : 'auto' }}
+                          style={widthStyle}
                           onClick={(e) => isExcluded && e.stopPropagation()}
                         >
-                          {maxWidth ? (
-                            <TruncatedCell value={cellValue} maxWidth={maxWidth} />
-                          ) : cell.column.id === 'id' ? (
-                            cellValue + pageSize * (currentPage - 1) // Adjust serial number according to pagination (Assumption and Compulsion : always keep id of serial number as id !)
-                          ) : (
-                            flexRender(cell.column.columnDef.cell, cell.getContext())
-                          )}
+                          <div
+                            className={clsx('w-full overflow-hidden', {
+                              'text-left': align === 'left',
+                              'text-center': align === 'center',
+                              'text-right': align === 'right'
+                            })}
+                          >
+                            {cell.column.id === 'id' ? (
+                              <TruncatedCell
+                                value={cellValue + pageSize * (currentPage - 1)}
+                                maxWidth={maxWidth}
+                              />
+                            ) : (
+                              <TruncatedCell
+                                value={flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                maxWidth={maxWidth}
+                              />
+                            )}
+                          </div>
                         </TableCell>
                       );
                     })}

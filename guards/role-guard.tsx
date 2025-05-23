@@ -7,6 +7,7 @@ import { SITE_MAP } from '@/common/constants/frontendRouting';
 import useAuthStore from '@/stores/auth-store';
 import { UserRoles } from '@/types/enum';
 import { toast } from 'sonner';
+import { isatty } from 'tty';
 
 interface RoleGuardProps {
   children: ReactNode;
@@ -24,19 +25,17 @@ export default function RoleGuard({
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    if (isAuthenticated !== undefined) {
+    if (user && isAuthenticated !== undefined) {
       if (!isAuthenticated) {
         router.push(SITE_MAP.AUTH.LOGIN);
         return;
       }
 
       const hasPermission = user?.roles?.some((role) => allowedRoles.includes(role));
-      console.log('you are here andd you have permissions', user?.roles);
       if (!hasPermission) {
         toast.error('You do not have permission');
         router.push(fallbackPath);
       }
-      console.log('you have passed it ');
 
       setIsChecking(false);
     }

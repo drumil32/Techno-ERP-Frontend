@@ -67,7 +67,7 @@ export default function FootFallSelect({ value, onChange, disabled = false }: Fo
         ref={buttonRef}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className={`w-[75px] flex mx-auto items-center justify-between gap-1 rounded-md text-sm font-medium px-2 py-1 hover:border-slate-500 border-1 border-transparent hover:opacity-90 ${footfallStyles[value]} ${
+        className={`w-[60px] flex mx-auto items-center justify-between gap-1 rounded-md text-sm font-medium px-2 py-1 hover:border-slate-500 border-1 border-transparent hover:opacity-90 ${footfallStyles[value]} ${
           disabled ? 'opacity-70 cursor-not-allowed' : ''
         }`}
       >

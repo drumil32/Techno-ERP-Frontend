@@ -77,7 +77,7 @@ export default function FinalConversionSelect({
         ref={buttonRef}
         onClick={() => !isDisable && setIsOpen(!isOpen)}
         disabled={isDisable}
-        className={`w-[155px] mx-auto flex items-center justify-between gap-2 rounded-md text-sm font-medium px-3 py-1 ${conversionStyles[value]} ${
+        className={`w-[150px] mx-auto flex items-center justify-between gap-2 rounded-md text-sm font-medium px-2 py-1 ${conversionStyles[value]} ${
           isDisable
             ? 'opacity-50 cursor-not-allowed'
             : 'hover:opacity-90 hover:border-slate-500 border border-transparent'

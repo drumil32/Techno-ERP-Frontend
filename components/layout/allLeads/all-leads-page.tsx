@@ -318,12 +318,12 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'name',
       header: 'Name',
-      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+      meta: { align: 'left', maxWidth: 130, fixedWidth: 150 }
     },
     {
       accessorKey: 'phoneNumber',
       header: 'Phone Number',
-      meta: { maxWidth: 130, fixedWidth: 130 }
+      meta: { maxWidth: 130, fixedWidth: 150 }
     },
     {
       accessorKey: 'areaView',
@@ -338,11 +338,11 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'courseView',
       header: 'Course',
-      meta: { maxWidth: 120, fixedWidth: 120 }
+      meta: { maxWidth: 120, fixedWidth: 140 }
     },
     {
       accessorKey: 'leadType',
-      meta: { align: 'center' },
+      meta: { align: 'center', maxWidth: 150, fixedWidth: 200 },
       header: 'Lead Type',
       cell: ({ row }: any) => {
         const [selectedType, setSelectedType] = useState<LeadType>(row.original.leadType);
@@ -470,13 +470,13 @@ export default function AllLeadsPage() {
       header: 'Remarks',
       meta: {
         maxWidth: isRoleLeadMarketing ? 130 : 230,
-        fixedWidth: isRoleLeadMarketing ? 130 : 230
+        fixedWidth: isRoleLeadMarketing ? 180 : 280
       }
     },
     {
       accessorKey: 'followUpCount',
       header: 'Follow Ups',
-      meta: { align: 'center' },
+      meta: { align: 'center', maxWidth: 80, fixedWidth: 120 },
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.followUpCount);
         const toastIdRef = useRef<string | number | null>(null);
