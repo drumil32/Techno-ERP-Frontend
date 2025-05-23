@@ -46,11 +46,11 @@ export const downloadAdmissionForm = async (
         <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(level)}</td>
         <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.schoolCollegeName ?? '--')}</td>
         <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.universityBoardName ?? '--')}</td>
-        <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.subjects ?? '--')}</td>
-        <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; text-align: center;">
-            ${escapeHtml(detail.passingYear ?? '--')}</td>
         <td style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; text-align: center;">
-            ${escapeHtml(detail.percentageObtained ?? '--')}</td>
+        ${escapeHtml(detail.percentageObtained ?? '--')}</td>
+        <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; text-align: center;">
+        ${escapeHtml(detail.passingYear ?? '--')}</td>
+        <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px;">${escapeHtml(detail.subjects ?? '--')}</td>
     </tr>
   `;
   }).join('');
@@ -58,9 +58,9 @@ export const downloadAdmissionForm = async (
   let logo = placeholderLogoBase64;
   if (data.fullCollegeName === TIMS) {
     logo = "/images/TIMS.png"
-  } else if(data.fullCollegeName === TCL) {
+  } else if (data.fullCollegeName === TCL) {
     logo = "/images/TCL.jpg"
-  } else if(data.fullCollegeName === THIS) {
+  } else if (data.fullCollegeName === THIS) {
     logo = "/images/TIHS.png"
   }
 
@@ -72,7 +72,7 @@ export const downloadAdmissionForm = async (
     </div>
     <div style="flex-grow: 1; text-align: center; margin: 0 10px;">
         <h2 style="text-align: center; color: #851A6A; font-size: 18px; font-weight: 800; margin:0 0 4px 0;">
-            ${escapeHtml(data.fullCollegeName ?? 'Techno Institute of Higher Studies')}</h2>
+            ${escapeHtml(data.fullCollegeName.toUpperCase() ?? 'Techno Institute of Higher Studies')}</h2>
         <p style="text-align: center; font-size: 12px; font-weight: 600; margin: 0; line-height: 1.3;">
             (Affiliated to ${escapeHtml(data.affiliationName)})<br />
             ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}<br />
@@ -235,9 +235,10 @@ export const downloadAdmissionForm = async (
             <th style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; text-align: left;">Institution/University
             </th>
             <th style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; text-align: left;">Board</th>
-            <th style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; text-align: left;">Subjects/Stream</th>
-            <th style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; text-align: center;">Pass Year</th>
             <th style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; text-align: center;">Percentage/CGPA</th>
+
+            <th style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; text-align: center;">Pass Year</th>
+            <th style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; text-align: left;">Subjects/Stream</th>
         </tr>
     </thead>
     <tbody>
@@ -286,7 +287,7 @@ export const downloadAdmissionForm = async (
     Undertaking for Admission
 </h4>
 <div style="margin-bottom: 15px; display: flex; gap:8px;">
-    <p style="font-size: 16px; line-height: 1; margin-top:-2px;">□</p>
+    <p style="font-size: 16px; line-height: 1; margin-top:-2px;">🗹</p>
     <p style="font-size: 11px; line-height: 1.4; text-align: justify;">
     In case I am admitted, I undertake that I will make all the payments laid down by the institute from time to time. I
     solemnly declare that the information provided by me in the admission form is correct and I have not concealed any
@@ -338,9 +339,10 @@ export const downloadAdmissionForm = async (
 
     const imgData = canvas.toDataURL('image/png');
 
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: 'a4', 
+    const pdf = new jsPDF({
+      orientation: 'portrait', unit: 'px', format: 'a4',
       compress: true,
-     });
+    });
 
     const fileName = `Admission-Form-${data.studentName?.replace(/\s+/g, '-')}-${data.courseName}.pdf`;
     const title = `Admission Form - ${data.studentName}`;
@@ -417,15 +419,24 @@ export const downloadFeeReceipt = async (
     0
   );
 
+  let logo = placeholderLogoBase64;
+  if (data.collegeName === TIMS) {
+    logo = "/images/TIMS.png"
+  } else if (data.collegeName === TCL) {
+    logo = "/images/TCL.jpg"
+  } else if (data.collegeName === THIS) {
+    logo = "/images/TIHS.png"
+  }
+
   const generateReceiptHtml = () => `
     <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; ">
       <div style="position: absolute; top: 0; left: 0;">
-          <img src="${escapeHtml(data.logoBase64 ?? placeholderLogoBase64)}" alt="College Logo"
-              style="width: 60px; object-fit: contain;">
+          <img src="${logo}" alt="College Logo"
+            style="width: 60px; object-fit: contain;">
       </div>
       <div style="flex-grow: 1; text-align: center; margin: 0 10px;">
           <h2 style="text-align: center; color: #851A6A; font-size: 10px; font-weight: 800; margin:0 0 2px 0;">
-              ${escapeHtml(data.collegeName ?? 'Techno Institute of Higher Studies')}</h2>
+              ${escapeHtml(data.collegeName.toUpperCase() ?? 'Techno Institute of Higher Studies')}</h2>
           <p style="text-align: center; font-size: 8px; font-weight: 600; margin: 0; line-height: 1.2;">
               (Affiliated to ${escapeHtml(data.affiliationName) ?? 'Dr. A.P.J. Abdul Kalam Technical University, Lucknow'})<br />
               ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}<br />
@@ -440,39 +451,39 @@ export const downloadFeeReceipt = async (
     </h3>
 
     <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
-      <tbody>
+      <tbody style="border: 0.5px solid #E6E6E6; padding: 2px 4px 20px 4px;">
         <tr>
-          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 4px 4px 4px; width: 18%; border-right:none;">Receipt No :</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; width: 32%; border-left:none;">${escapeHtml(data.recieptNumber)}</td>
-          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 4px 4px 4px; width: 18%; border-right:none;">Date :</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; width: 32%; border-left:none;">${escapeHtml(data.date)}</td>
+          <td style="color: #666666; padding: 2px 4px 4px 4px; width: 18%; border:none;">Receipt No :</td>
+          <td style="padding: 2px 4px 4px 4px; width: 32%; border:none;">${escapeHtml(data.recieptNumber)}</td>
+          <td style="color: #666666; padding: 2px 4px 4px 4px; width: 18%; border:none;">Date :</td>
+          <td style="padding: 2px 4px 4px 4px; width: 32%; border:none;">${escapeHtml(data.date)}</td>
         </tr>
         <tr>
-          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 4px 4px 4px; border-right:none;">Name :</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-left:none;">${escapeHtml(data.studentName)}</td>
-          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 4px 4px 4px; border-right:none;">Category :</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-left:none;">${escapeHtml(data.category)}</td>
+          <td style="color: #666666; padding: 2px 4px 4px 4px; border:none;">Name :</td>
+          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(data.studentName)}</td>
+          <td style="color: #666666; padding: 2px 4px 4px 4px; border:none;">Category :</td>
+          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(data.category)}</td>
         </tr>
         <tr>
-          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 4px 4px 4px; border-right:none;">Father Name :</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-left:none;">${escapeHtml(data.fatherName)}</td>
-          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 4px 4px 4px; border-right:none;">Session :</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-left:none;">${escapeHtml(data.session)}</td>
+          <td style="color: #666666; padding: 2px 4px 4px 4px; border:none;">Father Name :</td>
+          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(data.fatherName)}</td>
+          <td style="color: #666666; padding: 2px 4px 4px 4px; border:none;">Session :</td>
+          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(data.session)}</td>
         </tr>
         <tr>
-          <td style="border: 0.5px solid #E6E6E6; color: #666666; padding: 2px 4px 4px 4px; border-right:none;">Course :</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-left:none; border-right:none;">${escapeHtml(data.course)}</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-right:none; border-left:none"></td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-left:none;"></td>
+          <td style="color: #666666; padding: 2px 4px 10px 4px; border:none;">Course :</td>
+          <td style="padding: 2px 4px 10px 4px; border:none; ">${escapeHtml(data.course)}</td>
+          <td style="padding: 2px 4px 10px 4px; border:none; "></td>
+          <td style="padding: 2px 4px 10px 4px; border:none;"></td>
         </tr>
       </tbody>
     </table>
 
-    <table style="width: 100%; border-collapse: collapse; font-size: 8px; margin-top: -1px;">
+    <table style="border: 0.5px solid #E6E6E6; padding: 2px 4px 20px 4px; width: 100%; border-collapse: collapse; font-size: 8px; margin-top: -1px;">
       <thead>
         <tr>
-          <th style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; text-align: left; border-right:none;">Particular</th>
-          <th style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; text-align: right; border-left:none; width: 25%;">Amount</th>
+          <th style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: left; border-right:none;">Particular</th>
+          <th style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: right; border-left:none; width: 25%;">Amount</th>
         </tr>
       </thead>
       <tbody>
@@ -480,20 +491,20 @@ export const downloadFeeReceipt = async (
       .map(
         (fee: any) => `
         <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-right:none;">${escapeHtml(fee.name)}</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; text-align: right; border-left:none;">
+          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(fee.name)}</td>
+          <td style="padding: 2px 4px 4px 4px; text-align: right; border:none;">
           ${parseFloat(fee.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </td>
         </tr>`
       )
       .join('')}
         <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; font-weight: bold; border-right:none;">Total Dues</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-left:none;"></td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; font-weight: bold; border-right:none;">Total Dues</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; border-left:none;"></td>
         </tr>
         <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; font-weight: bold; border-right:none;">Total</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-left:none;"></td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; font-weight: bold; border-right:none;">Total</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; border-left:none;"></td>
         </tr>
       </tbody>
     </table>
@@ -501,14 +512,14 @@ export const downloadFeeReceipt = async (
     <table style="width: 100%; border-collapse: collapse; font-size: 8px; margin-top: -1px;">
       <tbody>
         <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; font-weight: bold; border-right:none;">Total Received Amount</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; text-align: right; border-left:none;">
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; font-weight: bold; border-right:none;">Total Received Amount</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: right; border-left:none;">
           ${totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </td>
         </tr>
         <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-right:none;">via ${escapeHtml(data.transactionType)}</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; text-align: right; border-left:none;"><span style="color: #666666; ">Date : </span>${escapeHtml(data.date)}</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; border-right:none;">Vide ${escapeHtml(data.transactionType)}</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: right; border-left:none;"><span style="color: #666666; ">Date : </span>${escapeHtml(data.date)}</td>
         </tr>
         <tr>
           <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; font-weight: bold; border-right:none; border-bottom:none;">Amount in words</td>
@@ -519,8 +530,8 @@ export const downloadFeeReceipt = async (
           <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-left:none; border-bottom:none; border-top:none;"></td>
         </tr>
         <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-right:none; border-top:none; width: 30%;">${escapeHtml(data.remarks ?? '--')}</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; text-align: right; border-left:none; border-top:none;">Authorized Signatory</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; border-right:none; border-top:none; width: 30%;">${escapeHtml(data.remarks ?? '--')}</td>
+          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: right; border-left:none; border-top:none;">Authorized Signatory</td>
         </tr>
       </tbody>
     </table>

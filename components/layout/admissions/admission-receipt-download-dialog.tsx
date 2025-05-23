@@ -163,10 +163,10 @@ export function DownloadAdmissionReceiptDialog({ tableActionButton = true, stude
         <DialogHeader>
           <DialogTitle className="flex gap-2 items-center">
             <DownloadIcon className="text-primary w-6 h-6" />
-            Download Admission Form Receipt
+            Download Admission Form
           </DialogTitle>
           <DialogDescription className="my-3">
-            Preview and download admission form receipt.
+            Preview and download admission form.
           </DialogDescription>
         </DialogHeader>
 

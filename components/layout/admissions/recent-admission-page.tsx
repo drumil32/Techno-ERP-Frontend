@@ -1,26 +1,17 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
 import { fetchAdmissionsData } from './helpers/fetch-data';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import { refineAdmissions } from './helpers/refine-data';
 import { AdmissionTableRow } from '@/types/admissions';
-import AdmissionCard from '@/components/custom-ui/admission-card/techno-admission-card';
 import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
 import { useRouter } from 'next/navigation';
-import { ApplicationStatus } from '@/types/enum';
-import { SITE_MAP } from '@/common/constants/frontendRouting';
-import { Input } from '@/components/ui/input';
-import { BookPlus, Download, ReceiptIndianRupee, Search } from 'lucide-react';
 import { formatApplicationStatus } from './helpers/format-application-status';
 import { CellContext } from '@tanstack/react-table';
-import { toast } from 'sonner';
 import Loading from '@/app/loading';
 import { DownloadAdmissionReceiptDialog } from './admission-receipt-download-dialog';
-import { Tooltip } from '@/components/ui/tooltip';
-import { TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
 import { AdmissionFeeReceiptDialog } from './admission-fee-receipt-download-dialog';
 
 export default function RecentAdmissionsPage() {
@@ -33,12 +24,16 @@ export default function RecentAdmissionsPage() {
     { accessorKey: 'id', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'dateOfEnquiry', header: 'Date Of Enquiry', meta: { align: 'center' } },
     { accessorKey: 'studentName', header: 'Name' },
-    { accessorKey: 'studentPhoneNumber', header: 'Phone Number' },
+    { accessorKey: 'studentPhoneNumber', header: 'Phone Number', meta: {
+      align: 'center'
+    }},
     { accessorKey: 'course', header: 'Course' },
     { accessorKey: 'genderDisplay', header: 'Gender' },
     { accessorKey: 'district', header: 'District' },
     { accessorKey: 'fatherName', header: "Father's Name" },
-    { accessorKey: 'fatherPhoneNumber', header: "Father's Number" },
+    { accessorKey: 'fatherPhoneNumber', header: "Father's Number", meta: {
+      align: 'center'
+    } },
     {
       accessorKey: 'applicationStatus',
       header: 'Application Status',
@@ -73,7 +68,7 @@ export default function RecentAdmissionsPage() {
       clearTimeout(searchTimerRef.current);
     }
 
-    searchTimerRef.current = setTimeout(() => {}, 500);
+    searchTimerRef.current = setTimeout(() => { }, 500);
   };
 
   const getQueryParams = () => {
@@ -117,7 +112,7 @@ export default function RecentAdmissionsPage() {
         totalPages={1}
         pageLimit={10}
         onSearch={handleSearch}
-        handleViewMore={() => {}}
+        handleViewMore={() => { }}
         searchTerm={search}
         showPagination={false}
       />
