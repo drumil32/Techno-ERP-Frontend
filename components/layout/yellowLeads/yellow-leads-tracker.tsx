@@ -357,7 +357,7 @@ export default function YellowLeadsTracker() {
     {
       accessorKey: 'followUpCount',
       header: 'Follow Ups',
-      meta: { align: 'center', maxWidth: 100, fixedWidth: 120 },
+      meta: { align: 'center', maxWidth: 150, fixedWidth: 150 },
       cell: ({ row }: any) => {
         const [selectedValue, setSelectedValue] = useState(row.original.followUpCount);
         const toastIdRef = useRef<string | number | null>(null);
@@ -445,7 +445,7 @@ export default function YellowLeadsTracker() {
     {
       accessorKey: 'nextDueDateView',
       header: 'Next Call Date',
-      meta: { align: 'center', maxWidth: 140, fixedWidth: 140 }
+      meta: { align: 'center', maxWidth: 160, fixedWidth: 160 }
     },
     {
       accessorKey: 'finalConversion',

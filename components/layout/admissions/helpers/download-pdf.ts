@@ -482,7 +482,7 @@ export const downloadFeeReceipt = async (
     <table style="border: 0.5px solid #E6E6E6; padding: 2px 4px 20px 4px; width: 100%; border-collapse: collapse; font-size: 8px; margin-top: -1px;">
       <thead>
         <tr>
-          <th style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: left; border-right:none;">Particular</th>
+          <th style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: left; border-right:none;">Particulars</th>
           <th style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: right; border-left:none; width: 25%;">Amount</th>
         </tr>
       </thead>
@@ -498,10 +498,6 @@ export const downloadFeeReceipt = async (
         </tr>`
       )
       .join('')}
-        <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; font-weight: bold; border-right:none;">Total Dues</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; border-left:none;"></td>
-        </tr>
         <tr>
           <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; font-weight: bold; border-right:none;">Total</td>
           <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; border-left:none;"></td>
