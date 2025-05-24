@@ -10,7 +10,8 @@ import {
   Category,
   Course,
   AdmissionReference,
-  EducationLevel
+  EducationLevel,
+  AdmissionAggregationType
 } from './enum';
 
 interface EntranceExamDetails {
@@ -153,4 +154,39 @@ export interface AdmissionTableRow extends Admission {
   id: number;
   genderDisplay: string;
   district: string;
+}
+
+/** Admission Analytics **/
+
+export interface AdmissionAggregationItem {
+  _id: string;
+  type: string;
+  date: string;
+  count: number;
+  courseCode: string;
+}
+
+export type AdmissionAggregationResponse = AdmissionAggregationItem[];
+
+export interface CourseWiseAggregationItem {
+  count: number;
+  courseCode: Course;
+}
+
+export interface YearWiseAggregationItem {
+  date: string;
+  courseWise: CourseWiseAggregationItem[];
+}
+
+export interface AdmissionCourseYearWiseResponse {
+  yearWise: YearWiseAggregationItem[];
+}
+
+export interface MonthWiseAggregationItem {
+  date: string;
+  courseWise: CourseWiseAggregationItem[];
+}
+
+export interface AdmissionMonthCourseWiseResponse {
+  monthWise: MonthWiseAggregationItem[];
 }
