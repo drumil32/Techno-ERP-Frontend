@@ -3,20 +3,21 @@ import html2canvas from 'html2canvas';
 
 const placeholderLogoBase64 = '/images/techno-logo.webp';
 const placeholderPhotoBase64 = '/images/dummy_user.webp';
-const TIMS = "Techno Institute of Management Sciences";
-const THIS = "Techno Institute of Higher Studies";
-const TCL = "Techno College of Law";
+const TIMS = 'Techno Institute of Management Sciences';
+const THIS = 'Techno Institute of Higher Studies';
+const TCL = 'Techno College of Law';
 
-// const toBase64 = async (url: string) => {
-//   const res = await fetch(url);
-//   const blob = await res.blob();
-//   return new Promise<string>((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.onloadend = () => resolve(reader.result as string);
-//     reader.onerror = reject;
-//     reader.readAsDataURL(blob);
-//   });
-// };
+const toBase64 = async (url: string) => {
+  const res = await fetch(url);
+  const blob = await res.blob();
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
 export const downloadAdmissionForm = async (
   data: any,
   directSave: boolean = false
@@ -39,7 +40,9 @@ export const downloadAdmissionForm = async (
     data.academicDetails.map((detail: any) => [detail.educationLevel, detail])
   );
 
-  const academicRows = REQUIRED_LEVELS.map(level => {
+  const imageData = await toBase64(data.profileImage ?? placeholderPhotoBase64);
+
+  const academicRows = REQUIRED_LEVELS.map((level) => {
     const detail: any = academicMap.get(level) || {};
     return `
     <tr>
@@ -57,11 +60,11 @@ export const downloadAdmissionForm = async (
 
   let logo = placeholderLogoBase64;
   if (data.fullCollegeName === TIMS) {
-    logo = "/images/TIMS.png"
+    logo = '/images/TIMS.png';
   } else if (data.fullCollegeName === TCL) {
-    logo = "/images/TCL.jpg"
+    logo = '/images/TCL.jpg';
   } else if (data.fullCollegeName === THIS) {
-    logo = "/images/TIHS.png"
+    logo = '/images/TIHS.png';
   }
 
   container.innerHTML = `
@@ -72,7 +75,7 @@ export const downloadAdmissionForm = async (
     </div>
     <div style="flex-grow: 1; text-align: center; margin: 0 10px;">
         <h2 style="text-align: center; color: #851A6A; font-size: 18px; font-weight: 800; margin:0 0 4px 0;">
-            ${escapeHtml(data.fullCollegeName.toUpperCase() ?? 'Techno Institute of Higher Studies')}</h2>
+            ${escapeHtml(data.fullCollegeName ? data.fullCollegeName.toUpperCase() : 'Techno Institute of Higher Studies')}</h2>
         <p style="text-align: center; font-size: 12px; font-weight: 600; margin: 0; line-height: 1.3;">
             (Affiliated to ${escapeHtml(data.affiliationName)})<br />
             ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}<br />
@@ -81,7 +84,7 @@ export const downloadAdmissionForm = async (
         </p>
     </div>
     <div style="position: absolute; top: 0; right: 0;">
-        <img src="${data.profileImage ?? escapeHtml(placeholderPhotoBase64)}" alt="Student Photo"
+        <img src="${imageData}" alt="Student Photo"
             style="height: 100px; width: 100px; object-fit: cover; border: 1px solid #DDD;">
     </div>
 </div>
@@ -271,12 +274,13 @@ export const downloadAdmissionForm = async (
                 style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Qualified :</td>
             <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; border-left: none;">
-                ${data.entranceExamDetails.qualified === undefined
-      ? '--'
-      : data.entranceExamDetails.qualified
-        ? 'Yes'
-        : 'No'
-    }
+                ${
+                  data.entranceExamDetails.qualified === undefined
+                    ? '--'
+                    : data.entranceExamDetails.qualified
+                      ? 'Yes'
+                      : 'No'
+                }
             </td>
         </tr>
     </tbody>
@@ -340,8 +344,10 @@ export const downloadAdmissionForm = async (
     const imgData = canvas.toDataURL('image/png');
 
     const pdf = new jsPDF({
-      orientation: 'portrait', unit: 'px', format: 'a4',
-      compress: true,
+      orientation: 'portrait',
+      unit: 'px',
+      format: 'a4',
+      compress: true
     });
 
     const fileName = `Admission-Form-${data.studentName?.replace(/\s+/g, '-')}-${data.courseName}.pdf`;
@@ -421,11 +427,11 @@ export const downloadFeeReceipt = async (
 
   let logo = placeholderLogoBase64;
   if (data.collegeName === TIMS) {
-    logo = "/images/TIMS.png"
+    logo = '/images/TIMS.png';
   } else if (data.collegeName === TCL) {
-    logo = "/images/TCL.jpg"
+    logo = '/images/TCL.jpg';
   } else if (data.collegeName === THIS) {
-    logo = "/images/TIHS.png"
+    logo = '/images/TIHS.png';
   }
 
   const generateReceiptHtml = () => `
@@ -488,16 +494,16 @@ export const downloadFeeReceipt = async (
       </thead>
       <tbody>
         ${data.particulars
-      .map(
-        (fee: any) => `
+          .map(
+            (fee: any) => `
         <tr>
           <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(fee.name)}</td>
           <td style="padding: 2px 4px 4px 4px; text-align: right; border:none;">
           ${parseFloat(fee.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </td>
         </tr>`
-      )
-      .join('')}
+          )
+          .join('')}
         <tr>
           <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; font-weight: bold; border-right:none;">Total</td>
           <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; border-left:none;"></td>
@@ -545,7 +551,7 @@ export const downloadFeeReceipt = async (
     const canvas = await html2canvas(container, {
       scale: 2,
       useCORS: true,
-      logging: false,
+      logging: false
     });
 
     const imgData = canvas.toDataURL('image/png');
@@ -553,7 +559,7 @@ export const downloadFeeReceipt = async (
       orientation: 'portrait',
       unit: 'px',
       format: 'a4',
-      compress: true,
+      compress: true
     });
 
     const fileName = `Fee-Receipt-${data.studentName?.replace(/\s+/g, '-')}-${data.course}.pdf`;
@@ -563,13 +569,12 @@ export const downloadFeeReceipt = async (
       creator: 'Techno Institute',
       title: title,
       subject: `Fee details for ${data.studentName}`,
-      author: data.collegeName || 'Techno Institute',
+      author: data.collegeName || 'Techno Institute'
     });
 
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
     const imgProps = pdf.getImageProperties(imgData);
-
 
     let imgFinalWidth = pdfWidth;
     let imgFinalHeight = (imgProps.height * imgFinalWidth) / imgProps.width;
@@ -593,7 +598,6 @@ export const downloadFeeReceipt = async (
 
     pdf.addImage(imgData, 'PNG', positionX, middleY + 3, imgFinalWidth, imgFinalHeight);
 
-
     const pdfBlob = pdf.output('blob');
     const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
     const blobUrl = URL.createObjectURL(file);
@@ -604,14 +608,12 @@ export const downloadFeeReceipt = async (
 
     return {
       url: blobUrl,
-      fileName: fileName,
+      fileName: fileName
     };
   } finally {
     if (document.body.contains(container)) document.body.removeChild(container);
   }
 };
-
-
 
 export const mockDataFee = {
   logoLink: placeholderLogoBase64,
