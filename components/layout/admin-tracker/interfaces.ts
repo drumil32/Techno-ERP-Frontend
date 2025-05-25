@@ -41,3 +41,33 @@ export interface AnalyticsSection {
   values: number[];
   total: number;
 }
+
+export type DailyStatsResponse = {
+  data: DailyUserStats[];
+};
+export type DailyUserStats = {
+  userId: string;
+  userFirstName: string;
+  userLastName: string;
+  totalCalls: number;
+  newLeadCalls: number;
+  activeLeadCalls: number;
+  nonActiveLeadCalls: number;
+  totalFootFall: number;
+  totalAdmissions: number;
+};
+export type DurationUserStats = {
+  _id: string;
+  userFirstName: string;
+  userLastName: string;
+  totalCalls: number;
+  newLeadCalls: number;
+  activeLeadCalls: number;
+  nonActiveLeadCalls: number;
+  totalFootFall: number;
+  totalAdmissions: number;
+};
+export type StatsDuration = {
+  startDate: string;
+  endDate: string;
+};

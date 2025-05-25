@@ -25,6 +25,8 @@ export const API_ENDPOINTS = {
   // Marketing Analytics
 
   sourceAnalytics: `${API_DOMAIN}/crm/source-analytics`,
+  durationBasedSourceAnalytics: `${API_DOMAIN}/crm/user-wise-analytics-duration`,
+  todaySourceAnalytics: `${API_DOMAIN}/crm/user-wise-analytics-daily`,
 
   getAdminAnalytics: `${API_DOMAIN}/crm/admin/analytics`,
 
@@ -73,6 +75,7 @@ export const API_ENDPOINTS = {
 
   updateEnquiryDraftStep3: `${API_DOMAIN}/admission/enquiry/save-draft-step-3`,
   updateEnquiryStep3: `${API_DOMAIN}/admission/enquiry/step-3`,
+  verifyOtpSection: `${API_DOMAIN}/admission/enquiry/step-3/verify-otp`,
 
   // Document Upload
   uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,

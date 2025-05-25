@@ -308,7 +308,7 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'id',
       header: 'S. No',
-      meta: { align: 'center', maxWidth: 60, fixedWidth: 60 }
+      meta: { align: 'center', maxWidth: 60, fixedWidth: 80 }
     },
     {
       accessorKey: 'dateView',

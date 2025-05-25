@@ -45,6 +45,7 @@ import { useRouter } from 'next/navigation';
 import { error } from 'console';
 import { EnquiryDocument } from './documents-section/single-document-form';
 import DocumentVerificationSection from './document-verification';
+import { OtpVerificationDialog } from './otp-verification-dialog';
 
 export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).extend({
   confirmation: z.boolean().refine((value) => value === true, {
@@ -173,6 +174,10 @@ const EnquiryFormStage3 = () => {
       throw error;
     }
   }
+  const [otpDialogOpen, setOtpDialogOpen] = useState(false);
+  const [currentEnquiryId, setCurrentEnquiryId] = useState<string | null>(null);
+  const [currentEmailId, setCurrentEmailId] = useState<string | null>(null);
+
   const onSubmit = async (): Promise<boolean> => {
     try {
       let values = form.getValues();
@@ -230,7 +235,6 @@ const EnquiryFormStage3 = () => {
         setNestedErrors(errors);
         toast.error('Validation failed. Please check the form fields');
         return false;
-        throw new Error('Validation failed');
       }
 
       const enquiry: any = await updateEnquiryStep3(rest);
@@ -239,16 +243,24 @@ const EnquiryFormStage3 = () => {
         return false;
       }
 
-      form.setValue('confirmation', false);
-      await form.reset();
-      toast.success('Enquiry Updated Successfully');
-      router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_4(enquiry._id));
+      setCurrentEnquiryId(enquiry._id);
+      setCurrentEmailId(enquiry.emailId);
+      setOtpDialogOpen(true);
+
       return true;
     } catch (error) {
-      // toast.error('An error occurred during submission');
+      toast.error('An error occurred during submission');
       return false;
     }
   };
+
+  const handleOtpSuccess = () => {
+    form.setValue('confirmation', false);
+    form.reset();
+    toast.success('Verification successful! Proceeding to next stage.');
+    router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_4(currentEnquiryId!));
+  };
+
   const confirmationChecked = useWatch({ control: form.control, name: 'confirmation' });
 
   useEffect(() => {
@@ -371,6 +383,14 @@ const EnquiryFormStage3 = () => {
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
           />
+
+          <OtpVerificationDialog
+            open={otpDialogOpen}
+            onOpenChange={setOtpDialogOpen}
+            enquiryId={currentEnquiryId!}
+            onSuccess={handleOtpSuccess}
+            userEmail={currentEmailId!}
+          />
           {/* {!isViewable && <ConfirmationSection form={form} />} */}
           {/* <ScholarshipDetailsSection form={form} /> Removed as of now */}
           {!isViewable && (
@@ -381,6 +401,7 @@ const EnquiryFormStage3 = () => {
                 onSubmit={onSubmit}
                 saveDraft={saveDraft}
                 confirmationChecked={confirmationChecked}
+                isOtpVerificationRequired={true}
               />
             </>
           )}

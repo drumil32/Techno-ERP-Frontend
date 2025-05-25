@@ -23,6 +23,7 @@ import { AdminAnalyticsResponse } from './interfaces';
 import { LeadConversionDashboard } from './leads-conversion-dashboard';
 import { LeadTables } from './analytics-tables';
 import { PerformanceDashboard } from './performance-dashboard';
+import { Card } from '@/components/ui/card';
 // import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
 
 const AdminTracker = () => {
@@ -319,52 +320,57 @@ const AdminTracker = () => {
         <TechnoPageTitle title="Admin Tracker" />
 
         {/* Filters Section */}
-        <TechnoFiltersGroup
-          filters={getFiltersData()}
-          handleFilters={applyFilter}
-          clearFilters={clearFilters}
-        />
-        <FilterBadges
-          onFilterRemove={handleFilterRemove}
-          assignedToData={assignedToDropdownData}
-          appliedFilters={appliedFilters}
-        />
 
         <>
-          <LeadTables />
           <PerformanceDashboard />
-          {/* Total Leads Reached Section */}
-          <div className="mt-[32px]">
-            <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-              Total number of leads reached
-            </h1>
-            {totalLeadsReached && <TechnoAnalyticCardsGroup cardsData={totalLeadsReached} />}
-          </div>
 
-          {/* Active Leads Conversion Section */}
-          <div className="mt-[32px]">
-            <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-              How many leads were converted to Active Leads?
-            </h1>
-            {yellowLeadsConverted && <LeadConversionDashboard data={yellowLeadsConverted} />}
-          </div>
-          {/* Active Leads Campus Visit Section */}
-          <div className="mt-[32px]">
-            <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-              How many Active leads visited the campus?
-            </h1>
-            {yellowLeadsVisited && <TechnoAnalyticCardsGroup cardsData={yellowLeadsVisited} />}
-          </div>
+          <Card>
+            <LeadTables />
+            {/* Total Leads Reached Section */}
+            <div className="ml-[32px] mt-[32px]">
+              <TechnoFiltersGroup
+                filters={getFiltersData()}
+                handleFilters={applyFilter}
+                clearFilters={clearFilters}
+              />
+              <FilterBadges
+                onFilterRemove={handleFilterRemove}
+                assignedToData={assignedToDropdownData}
+                appliedFilters={appliedFilters}
+              />
+            </div>
+            <div className="ml-[32px] mt-[32px]">
+              <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+                Total number of leads reached
+              </h1>
+              {totalLeadsReached && <TechnoAnalyticCardsGroup cardsData={totalLeadsReached} />}
+            </div>
 
-          {/* Final Campus Conversion Section */}
-          <div className="mt-[32px] mb-[68px]">
-            <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
-              Final conversion from those who visited the campus
-            </h1>
-            {finalCampusConversion && (
-              <TechnoAnalyticCardsGroup cardsData={finalCampusConversion} />
-            )}
-          </div>
+            {/* Active Leads Conversion Section */}
+            <div className="ml-[32px] mt-[32px]">
+              <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+                How many leads were converted to Active Leads?
+              </h1>
+              {yellowLeadsConverted && <LeadConversionDashboard data={yellowLeadsConverted} />}
+            </div>
+            {/* Active Leads Campus Visit Section */}
+            <div className="ml-[32px] mt-[32px]">
+              <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+                How many Active leads visited the campus?
+              </h1>
+              {yellowLeadsVisited && <TechnoAnalyticCardsGroup cardsData={yellowLeadsVisited} />}
+            </div>
+
+            {/* Final Campus Conversion Section */}
+            <div className="ml-[32px] mt-[32px] mb-[68px]">
+              <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+                Final conversion from those who visited the campus
+              </h1>
+              {finalCampusConversion && (
+                <TechnoAnalyticCardsGroup cardsData={finalCampusConversion} />
+              )}
+            </div>
+          </Card>
         </>
       </>
     )

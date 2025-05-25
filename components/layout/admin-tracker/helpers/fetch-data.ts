@@ -2,7 +2,7 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { apiRequest } from '@/lib/apiClient';
 import { UserRoles } from '@/types/enum';
-
+import { DailyStatsResponse, DurationUserStats, StatsDuration } from '../interfaces';
 interface UserData {
   userData: {
     id: string;
@@ -52,4 +52,17 @@ export const fixCourseDropdown = async () => {
 export const sourceAnalytics = async () => {
   const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.sourceAnalytics);
   return result;
+};
+
+export const durationBasedSourceAnalytics = async (duration: StatsDuration) => {
+  const result = await apiRequest(
+    API_METHODS.POST,
+    API_ENDPOINTS.durationBasedSourceAnalytics,
+    duration
+  );
+  return result as DurationUserStats[];
+};
+export const todaySourceAnalytics = async () => {
+  const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.todaySourceAnalytics);
+  return result as DailyStatsResponse;
 };

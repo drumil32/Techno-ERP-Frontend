@@ -20,6 +20,7 @@ interface EnquiryFormFooterProps {
   isSavingDraft?: boolean;
   confirmationChecked?: boolean;
   draftExists?: boolean;
+  isOtpVerificationRequired?: boolean;
 }
 
 const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
@@ -28,11 +29,15 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   onSubmit,
   isSavingDraft,
   confirmationChecked,
-  draftExists
+  draftExists,
+  isOtpVerificationRequired
 }) => {
   const [isSubmitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [isDraftDialogOpen, setDraftDialogOpen] = useState(false);
   const [draftSaved, setDraftSaved] = useState(false);
+
+  const [otpGenerationTimer, setOtpGenerationTimer] = useState<boolean>(false);
+
   useEffect(() => {
     const saved = sessionStorage.getItem('draftSaved');
     if (saved === 'true') {
@@ -67,7 +72,14 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
       form.setValue('academicDetails', filteredAcademicDetails);
     }
 
+    if (isOtpVerificationRequired !== undefined && isOtpVerificationRequired) {
+      setOtpGenerationTimer(true);
+    }
     const result = await onSubmit();
+
+    if (isOtpVerificationRequired !== undefined && isOtpVerificationRequired) {
+      setOtpGenerationTimer(false);
+    }
     //logically on any situation be it positive or negative we will be closing this dialog box off
     setSubmitDialogOpen(false);
   }
@@ -108,8 +120,8 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           <div className="flex gap-2 items-center text-left">
             <FaCircleExclamation className="text-yellow-500 w-8 h-8" />
             <span>
-              Please reverify all details again before{' '}
-              {draftExists ? 'updating the draft' : 'saving the enquiry form'}.
+              Please reverify all details again before saving.{' '}
+              {/* {draftExists ? 'updating the draft' : 'saving the enquiry form'}. */}
             </span>
           </div>
           <DialogFooter>
@@ -157,9 +169,13 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
             <Button
               type="button"
               onClick={handleSubmitClick}
-              disabled={form.formState.isSubmitting}
+              disabled={form.formState.isSubmitting || otpGenerationTimer}
             >
-              {form.formState.isSubmitting ? 'Submitting...' : 'Confirm'}
+              {otpGenerationTimer
+                ? 'Generating OTP...'
+                : form.formState.isSubmitting
+                  ? 'Submitting...'
+                  : 'Confirm'}
             </Button>
           </DialogFooter>
         </DialogContent>

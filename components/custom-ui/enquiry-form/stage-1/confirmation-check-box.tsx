@@ -30,7 +30,7 @@ const ConfirmationCheckBox: React.FC<ConfirmationCheckBoxInterface> = ({
       render={({ field }) => (
         <FormItem className={className}>
           <FormControl>
-            <div className="flex items-center bg-white rounded-[5px] p-[10px]">
+            <div className="flex items-center bg-white font-semibold rounded-[5px] p-[10px]">
               <Checkbox
                 disabled={isViewable}
                 id={id}
