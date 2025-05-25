@@ -43,7 +43,10 @@ export default function AdmissionTrend() {
     placeholderData: (previousData: any) => previousData
   });
 
-  const chartData = refineDataForDayWiseGraph({ data: aggregationData ?? [] });
+  const chartData = refineDataForDayWiseGraph({
+    data: aggregationData ?? [],
+    type: admissionAggregationType
+  });
 
   return (
     <Card className="p-4 w-full">
@@ -58,9 +61,8 @@ export default function AdmissionTrend() {
         changeToDateTab={tabsChangeToDate}
         changeToMonthTab={tabsChangeToMonth}
       />
-
       <div className="flex gap-6">
-        <div className="w-1/2">
+        <div className="w-1/2 min-h-[620px]">
           <DayWiseTrend
             chartData={chartData}
             heading="Day Wise Admissions"
@@ -71,7 +73,7 @@ export default function AdmissionTrend() {
             }
           />
         </div>
-        <div className="w-1/2">
+        <div className="w-1/2 min-h-[620px]">
           <CourseYearWiseTable />
         </div>
       </div>

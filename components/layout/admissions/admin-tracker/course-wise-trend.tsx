@@ -49,7 +49,7 @@ export default function CourseWiseAdmissionTrend() {
   const chartData = data?.monthWise?.[0]?.courseWise ?? [];
 
   return (
-    <Card className="p-4 w-full">
+    <Card className="p-6 w-full">
       <DateMonthYearNavigator
         date={false}
         month={true}
@@ -62,18 +62,20 @@ export default function CourseWiseAdmissionTrend() {
         changeToMonthTab={tabsChangeToMonth}
       />
 
-      <div className="w-1/2">
-        <MonthWiseCourseTrend
-          chartData={chartData}
-          heading="Month Wise Admissions"
-          headingFooter={
-            chartData.length > 0
-              ? `Total Courses: ${chartData.length}`
-              : isError
-                ? 'Error loading data'
-                : 'No data available'
-          }
-        />
+      <div className="w-full flex">
+        <div className="w-[60%] min-h-[720px]">
+          <MonthWiseCourseTrend
+            chartData={chartData}
+            heading="Month Wise Admissions"
+            headingFooter={
+              chartData.length > 0
+                ? `Total Courses: ${chartData.length}`
+                : isError
+                  ? 'Error loading data'
+                  : 'No data available'
+            }
+          />
+        </div>
       </div>
     </Card>
   );

@@ -36,34 +36,36 @@ export function DayWiseTrend({
   const isEmpty = chartData.length === 0;
 
   return (
-    <Card className="bg-gradient-to-br border border-gray-100 shadow-lg rounded-2xl">
+    <Card className="h-full bg-gradient-to-br border border-gray-100 shadow-lg rounded-2xl">
       <CardHeader>
         <CardTitle>{heading}</CardTitle>
         <CardDescription className="text-muted-foreground">
           {isEmpty ? 'No data available' : headingFooter}
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1">
         {isEmpty ? (
-          <div className="flex flex-col items-center gap-6 text-muted-foreground text-sm py-12">
-            <svg
-              className="w-16 h-16 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1}
-                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
+          <div className="flex flex-col h-full justify-center items-center gap-6 text-muted-foreground text-sm py-12">
+            <div className="text-yellow-300">
+              <svg
+                className="w-16 h-16 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1}
+                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
             No admission data available for the selected date.
           </div>
         ) : (
-          <ChartContainer config={chartConfig}>
+          <ChartContainer config={chartConfig} className="h-full w-full">
             <BarChart
               data={chartData}
               barSize={48}

@@ -221,7 +221,7 @@ export default function DateMonthYearNavigator({
               </TabsList>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 h-24">
               <button
                 onClick={() => navigateRange(-1)}
                 className="p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
@@ -350,7 +350,7 @@ export default function DateMonthYearNavigator({
         ) : (
           <div className="w-full">
             <div className="text-lg font-semibold mb-4">{label}</div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 h-24">
               <button
                 onClick={() => navigateRange(-1)}
                 className="p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
