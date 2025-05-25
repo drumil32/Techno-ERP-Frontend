@@ -84,12 +84,24 @@ export default function TechnoFilter({
   }, [filters, filterKey]);
 
   const filteredOptions = options.filter((option) => {
-    const label =
-      typeof option === 'string' ? option : typeof option?.label === 'string' ? option.label : '';
+    let label = '';
+
+    if (option === null || option === undefined) {
+      return false;
+    }
+
+    if (typeof option === 'string') {
+      label = option;
+    } else if (option.label && typeof option.label === 'string') {
+      label = option.label;
+    }
+
+    if (typeof searchTerm !== 'string' || typeof label !== 'string') {
+      return false;
+    }
 
     return label.toLowerCase().includes(searchTerm.toLowerCase());
   });
-
   const handleSelect = (option: string | FilterOption) => {
     const value = typeof option === 'string' ? option : option.id;
     const displayLabel = typeof option === 'string' ? option : option.label;
