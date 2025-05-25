@@ -1,4 +1,4 @@
-import { DropDownType } from '@/types/enum';
+import { AdmissionAggregationType, DropDownType } from '@/types/enum';
 
 export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
 
@@ -73,6 +73,10 @@ export const API_ENDPOINTS = {
 
   updateEnquiryDraftStep3: `${API_DOMAIN}/admission/enquiry/save-draft-step-3`,
   updateEnquiryStep3: `${API_DOMAIN}/admission/enquiry/step-3`,
+
+  admissionAnalyticsData: ({ type, date }: { type: AdmissionAggregationType; date: string }) => {
+    return `${API_DOMAIN}/admission/analytics?type=${type}&date=${date}`;
+  },
 
   // Document Upload
   uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,

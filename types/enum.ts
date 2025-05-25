@@ -611,3 +611,10 @@ export const FinalConversionStatusMapper: Record<FinalConversionStatus, string> 
   [FinalConversionStatus.NEUTRAL]: 'Neutral',
   [FinalConversionStatus.NO_FOOTFALL]: 'No Footfall'
 };
+
+export enum AdmissionAggregationType {
+  DATE_WISE = 'totalAdmissionDateWise',
+  MONTH_WISE = 'totalAdmissionMonthWise',
+  MONTH_AND_COURSE_WISE = 'totalAdmissionMonthAndCourseWise',
+  YEAR_AND_COURSE_WISE = 'totalAdmissionYearAndCourseWise'
+}

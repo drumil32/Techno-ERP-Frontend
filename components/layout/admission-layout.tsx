@@ -13,7 +13,8 @@ import PremiumBreadCrumb from '../custom-ui/breadcrump/premium-breadcrumb';
 
 const HEADER_ITEMS = {
   APPLICATION_PROCESS: { title: 'Application Process', route: SITE_MAP.ADMISSIONS.DEFAULT },
-  RECENT_ADMISSIONS: { title: 'Recent Admissions', route: SITE_MAP.ADMISSIONS.RECENT_ADMISSIONS }
+  RECENT_ADMISSIONS: { title: 'Recent Admissions', route: SITE_MAP.ADMISSIONS.RECENT_ADMISSIONS },
+  ADMIN_TRACKER: { title: 'Admin Tracker', route: SITE_MAP.ADMISSIONS.ADMIN_TRACKER }
 };
 
 export default function AdmissionLayout({ children }: { children: React.ReactNode }) {

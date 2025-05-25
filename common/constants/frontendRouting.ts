@@ -22,7 +22,8 @@ export const SITE_MAP = {
     FORM_STAGE_3: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_3`,
     FORM_STAGE_4: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_4`,
     GO_TO_ENQUIRY: (id: string, stage: string) =>
-      `/c/admissions/application-process/ongoing/${id}/${stage}`
+      `/c/admissions/application-process/ongoing/${id}/${stage}`,
+    ADMIN_TRACKER: '/c/admissions/admin-tracker'
   },
   FINANCE: {
     DEFAULT: '/c/finance/student-dues',

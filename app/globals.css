@@ -61,7 +61,7 @@
   --popover: #ffffff;
   --popover-foreground: #252525;
 
-  --primary: #5B31D1;
+  --primary: #5b31d1;
   --primary-foreground: #fcfcfc;
 
   --secondary: #f8f8f8;
@@ -83,7 +83,7 @@
   --chart-1: #e1b228;
   --chart-2: #3bacc5;
   --chart-3: #4f68dd;
-  --chart-4: #ffb84d;
+  --chart-4: #60b464;
   --chart-5: #f5b74b;
 
   --radius: 0.625rem;
@@ -140,7 +140,6 @@
   --sidebar-border: #444444;
   --sidebar-ring: #707070;
 }
-
 
 @layer base {
   * {
