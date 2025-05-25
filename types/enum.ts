@@ -572,6 +572,14 @@ export enum TransactionTypes {
   OTHERS = 'OTHERS'
 }
 
+export const TransactionTypesMapper: Record<TransactionTypes, string> = {
+  [TransactionTypes.NEFT_IMPS_RTGS]: 'NEFT/RTGS/IMPS',
+  [TransactionTypes.UPI]: 'UPI',
+  [TransactionTypes.CASH]: 'Cash',
+  [TransactionTypes.CHEQUE]: 'Cheque',
+  [TransactionTypes.OTHERS]: 'Others'
+};
+
 export enum FinanceFeeType {
   HOSTEL = 'HOSTEL', //OPTIONAL
   TRANSPORT = 'TRANSPORT', //OPTIONAL

@@ -22,7 +22,8 @@ export default function SelectedStudentDuesDetails() {
     queryKey: ['studentFeesInformation', studentId],
     queryFn: (context) =>
       fetchStudentFeeInformation(context as QueryFunctionContext<readonly [string, any]>),
-    placeholderData: (previousData) => previousData
+    placeholderData: (previousData) => previousData,
+    refetchOnWindowFocus: false
   });
 
   const isLoading = studentFeesInformationQuery.isLoading;

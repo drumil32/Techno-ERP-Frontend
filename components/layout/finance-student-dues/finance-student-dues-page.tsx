@@ -89,6 +89,7 @@ export default function StudentDuesPage() {
   const duesQuery = useQuery<StudentDuesApiResponse, Error>({
     queryKey: ['studentDues', queryParams],
     queryFn: (context) => fetchActiveDues(context as QueryFunctionContext<readonly [string, any]>),
+    refetchOnWindowFocus: false,
     placeholderData: (previousData) => previousData
   });
 
@@ -112,12 +113,12 @@ export default function StudentDuesPage() {
   };
 
   const columns = [
-    { accessorKey: 'serialNo', header: 'S. No' },
+    { accessorKey: 'serialNo', header: 'S. No', meta: { align: 'center' } },
     { accessorKey: 'studentName', header: 'Student Name' },
     { accessorKey: 'universityId', header: 'Student ID' },
-    { accessorKey: 'studentPhoneNumber', header: "Student's Phone Number" },
+    { accessorKey: 'studentPhoneNumber', header: "Student's Number" },
     { accessorKey: 'fatherName', header: 'Father Name' },
-    { accessorKey: 'fatherPhoneNumber', header: "Father's Phone Number" },
+    { accessorKey: 'fatherPhoneNumber', header: "Father's Number" },
     { accessorKey: 'courseName', header: 'Course' },
     {
       accessorKey: 'courseYear',
@@ -130,6 +131,7 @@ export default function StudentDuesPage() {
     {
       accessorKey: 'currentSemester',
       header: 'Semester',
+      meta: { align: 'center' },
       cell: ({ row }: any) => {
         return <span>{`0${row.original.currentSemester}`}</span>;
       }
@@ -137,6 +139,7 @@ export default function StudentDuesPage() {
     {
       accessorKey: 'feeStatus',
       header: 'Fee Status',
+      meta: { align: 'center' },
       cell: ({ row }: any) => {
         const statusValue = row.original.feeStatus;
         return <FeesPaidTag status={statusValue as FeesPaidStatus} />;
@@ -156,7 +159,9 @@ export default function StudentDuesPage() {
     { title: 'Finance', route: SITE_MAP.FINANCE.DEFAULT },
     { title: 'Student Dues', route: SITE_MAP.FINANCE.STUDENT_DUES }
   ];
-
+  if (!duesQuery.data) {
+    return <Loading />;
+  }
   return (
     <>
       <AdvancedTechnoBreadcrumb items={breadcrumbItems} />
@@ -178,30 +183,26 @@ export default function StudentDuesPage() {
           </Select>
         </div>
       </span>
-
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <TechnoDataTable
-          selectedRowId={selectedRowId}
-          setSelectedRowId={setSelectedRowId}
-          columns={columns}
-          data={tableData}
-          tableName="Student Dues"
-          tableActionButton={<TableActionButton />}
-          currentPage={page}
-          totalPages={totalPages}
-          pageLimit={limit}
-          totalEntries={totalEntries}
-          onPageChange={handlePageChange}
-          onLimitChange={handleLimitChange}
-          onSearch={handleSearch}
-          searchTerm={search}
-          isLoading={isLoading}
-          handleViewMore={handleViewMore}
-          headerStyles={'text-[#5B31D1] bg-[#F7F4FF]'}
-        />
-      )}
+      <TechnoDataTable
+        selectedRowId={selectedRowId}
+        setSelectedRowId={setSelectedRowId}
+        columns={columns}
+        data={tableData}
+        tableName="Student Dues"
+        tableActionButton={<TableActionButton />}
+        currentPage={page}
+        totalPages={totalPages}
+        pageLimit={limit}
+        totalEntries={totalEntries}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSearch={handleSearch}
+        searchTerm={search}
+        isLoading={isLoading}
+        searchBarPlaceholder={'Search Student Name, ID, Phone Number here'}
+        handleViewMore={handleViewMore}
+        headerStyles={'text-[#5B31D1] bg-[#F7F4FF]'}
+      />
     </>
   );
 }
