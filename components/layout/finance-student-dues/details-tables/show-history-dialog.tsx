@@ -57,7 +57,7 @@ export default function ShowHistoryDialog({
           </Dialog.Trigger>
         </TooltipTrigger>
         <TooltipContent>
-          <p>More</p>
+          <p>Info</p>
         </TooltipContent>
       </Tooltip>
       <Dialog.Portal>
