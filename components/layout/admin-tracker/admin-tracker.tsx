@@ -24,6 +24,7 @@ import { LeadConversionDashboard } from './leads-conversion-dashboard';
 import { LeadTables } from './analytics-tables';
 import { PerformanceDashboard } from './performance-dashboard';
 import { Card } from '@/components/ui/card';
+import AdminTrackerCardGroup, { CardItem } from './admin-tracker-cards-group';
 // import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
 
 const AdminTracker = () => {
@@ -324,8 +325,16 @@ const AdminTracker = () => {
         <>
           <PerformanceDashboard />
 
-          <Card>
-            <LeadTables />
+          <LeadTables />
+
+          <Card className="w-7xl">
+            <div className="ml-5">
+              <h2 className="text-2xl font-bold">Overall Leads Performance</h2>
+              <p className="text-muted-foreground">
+                Track and Visualize overall leads performance and filter your analytics with
+                ease{' '}
+              </p>
+            </div>
             {/* Total Leads Reached Section */}
             <div className="ml-[32px] mt-[32px]">
               <TechnoFiltersGroup
@@ -340,35 +349,33 @@ const AdminTracker = () => {
               />
             </div>
             <div className="ml-[32px] mt-[32px]">
-              <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+              <h1 className="font-inter font-semibold text-[20px] mb-2 text-[#4E4E4E]">
                 Total number of leads reached
               </h1>
-              {totalLeadsReached && <TechnoAnalyticCardsGroup cardsData={totalLeadsReached} />}
+              {totalLeadsReached && <AdminTrackerCardGroup cardsData={totalLeadsReached} />}
             </div>
 
             {/* Active Leads Conversion Section */}
             <div className="ml-[32px] mt-[32px]">
-              <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+              <h1 className="font-inter w-full font-semibold text-[20px] mb-2 text-[#4E4E4E]">
                 How many leads were converted to Active Leads?
               </h1>
               {yellowLeadsConverted && <LeadConversionDashboard data={yellowLeadsConverted} />}
             </div>
             {/* Active Leads Campus Visit Section */}
             <div className="ml-[32px] mt-[32px]">
-              <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+              <h1 className="font-inter font-semibold text-[20px] mb-2 text-[#4E4E4E]">
                 How many Active leads visited the campus?
               </h1>
-              {yellowLeadsVisited && <TechnoAnalyticCardsGroup cardsData={yellowLeadsVisited} />}
+              {yellowLeadsVisited && <AdminTrackerCardGroup cardsData={yellowLeadsVisited} />}
             </div>
 
             {/* Final Campus Conversion Section */}
             <div className="ml-[32px] mt-[32px] mb-[68px]">
-              <h1 className="font-inter font-semibold text-[16px] mb-2 text-[#4E4E4E]">
+              <h1 className="font-inter font-semibold text-[20px] mb-2 text-[#4E4E4E]">
                 Final conversion from those who visited the campus
               </h1>
-              {finalCampusConversion && (
-                <TechnoAnalyticCardsGroup cardsData={finalCampusConversion} />
-              )}
+              {finalCampusConversion && <AdminTrackerCardGroup cardsData={finalCampusConversion} />}
             </div>
           </Card>
         </>

@@ -39,7 +39,7 @@ export default function RootLayout({
     <html lang="en">
       <head></head>
       <body
-        className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
+        className={` ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
         <Suspense>
           <ProgressBar />

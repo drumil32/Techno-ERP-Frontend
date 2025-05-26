@@ -175,7 +175,6 @@ export const CreateCourseDialog = () => {
   });
 
   const handleFormSubmit = (data: FormData) => {
-
     const matchedDepartment = departments.find(
       (dep) =>
         dep.departmentName === data.departmentName && dep.departmentHOD === data.departmentHOD
@@ -190,7 +189,6 @@ export const CreateCourseDialog = () => {
       startingYear: parseAcademicYear(data.academicYear),
       totalSemesters: data.totalSemesters
     };
-
 
     createCourseMutation.mutate(requestObject);
   };
@@ -244,7 +242,7 @@ export const CreateCourseDialog = () => {
                     selected={field.value ?? ''}
                     onChange={(val: any) => field.onChange(val)}
                     placeholder="Select the college name"
-                    isOpen={openDropdownId === "collegeName"}
+                    isOpen={openDropdownId === 'collegeName'}
                     setOpenDropdownId={setOpenDropdownId}
                   />
                 )}
@@ -264,8 +262,9 @@ export const CreateCourseDialog = () => {
                   <input
                     {...field}
                     placeholder="Enter the course Full Name"
-                    className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${!field.value ? 'form-field-input-init-text' : ''
-                      }`}
+                    className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${
+                      !field.value ? 'form-field-input-init-text' : ''
+                    }`}
                   />
                 )}
               />
@@ -285,8 +284,9 @@ export const CreateCourseDialog = () => {
                     <input
                       {...field}
                       placeholder="Enter the course name"
-                      className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${!field.value ? 'form-field-input-init-text' : ''
-                        }`}
+                      className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${
+                        !field.value ? 'form-field-input-init-text' : ''
+                      }`}
                     />
                   )}
                 />
@@ -323,7 +323,7 @@ export const CreateCourseDialog = () => {
                   render={({ field }) => (
                     <CustomDropdown
                       id="academicYear"
-                      isOpen={openDropdownId === "academicYear"}
+                      isOpen={openDropdownId === 'academicYear'}
                       setOpenDropdownId={setOpenDropdownId}
                       options={academicYears}
                       selected={field.value ?? ''}
@@ -345,7 +345,7 @@ export const CreateCourseDialog = () => {
                   render={({ field }) => (
                     <CustomDropdown
                       id="totalSemesters"
-                      isOpen={openDropdownId === "totalSemesters"}
+                      isOpen={openDropdownId === 'totalSemesters'}
                       setOpenDropdownId={setOpenDropdownId}
                       options={[...Array(12)].map((_, i) => (i + 1).toString())}
                       selected={field.value?.toString() ?? ''}
@@ -370,7 +370,7 @@ export const CreateCourseDialog = () => {
                   return (
                     <CustomDropdown
                       id="departmentName"
-                      isOpen={openDropdownId === "departmentName"}
+                      isOpen={openDropdownId === 'departmentName'}
                       setOpenDropdownId={setOpenDropdownId}
                       options={departments.map((dep) => dep.departmentName)}
                       selected={field.value ?? ''}
@@ -394,10 +394,11 @@ export const CreateCourseDialog = () => {
                 control={control}
                 render={({ field }) => (
                   <input
-                    {...field ?? ""}
+                    {...(field ?? '')}
                     placeholder="Enter the HOD name"
-                    className={`disabled p-3 form-field-input-text border rounded-md w-full ${!field.value ? 'form-field-input-init-text' : ''
-                      }`}
+                    className={`disabled p-3 form-field-input-text border rounded-md w-full ${
+                      !field.value ? 'form-field-input-init-text' : ''
+                    }`}
                     disabled
                   />
                 )}
