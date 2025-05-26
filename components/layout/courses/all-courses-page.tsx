@@ -40,7 +40,6 @@ export interface CourseApiResponse {
   pagination: Pagination;
 }
 
-
 export default function AllCoursesPage() {
   const router = useRouter();
   const [appliedFilters, setAppliedFilters] = useState<any>({});
@@ -53,16 +52,15 @@ export default function AllCoursesPage() {
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleViewMore = (row: any) => {
-    console.log("Inside handle view more!");
-    console.log("Row is : ", row);
-    console.log("Course ID : ", row.courseId);
-    console.log("Semester ID : ", row.semesterId);
+    console.log('Inside handle view more!');
+    console.log('Row is : ', row);
+    console.log('Course ID : ', row.courseId);
+    console.log('Semester ID : ', row.semesterId);
     const { courseCode, courseId, semesterId } = row;
     //DTODO : Here this will redirect to other page.
-    const redirectionPath = `${SITE_MAP.ACADEMICS.COURSES}/${courseCode}?crsi=${courseId}&si=${semesterId}`
+    const redirectionPath = `${SITE_MAP.ACADEMICS.COURSES}/${courseCode}?crsi=${courseId}&si=${semesterId}`;
     router.push(redirectionPath);
   };
-
 
   const { filters, updateFilter } = useTechnoFilterContext();
 
@@ -71,22 +69,21 @@ export default function AllCoursesPage() {
   const applyFilter = () => {
     currentFiltersRef.current = { ...filters };
     setPage(1);
-    console.log("Filters are : ", filters);
+    console.log('Filters are : ', filters);
     setAppliedFilters({ ...filters });
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
   const clearFilters = () => {
-    console.log("Applied filters are : ", appliedFilters);
+    console.log('Applied filters are : ', appliedFilters);
     currentFiltersRef.current = {};
     setPage(1);
-    setRefreshKey(prevKey => prevKey + 1);
+    setRefreshKey((prevKey) => prevKey + 1);
 
     const academicYearList = generateAcademicYearDropdown();
     const currentAcademicYear = academicYearList[5];
     updateFilter('academicYear', currentAcademicYear);
   };
-
 
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = { ...appliedFilters };
@@ -95,8 +92,7 @@ export default function AllCoursesPage() {
       const academicYearList = generateAcademicYearDropdown();
       const currentAcademicYear = academicYearList[5];
       updateFilter('academicYear', currentAcademicYear);
-    } 
-    else {
+    } else {
       delete updatedFilters[filterKey];
       updateFilter(filterKey, undefined);
     }
@@ -105,7 +101,6 @@ export default function AllCoursesPage() {
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
   };
-
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -135,7 +130,7 @@ export default function AllCoursesPage() {
     const currentAcademicYear = academicYearList[5];
     updateFilter('academicYear', currentAcademicYear);
   }, []);
-  
+
   useEffect(() => {
     if (filters.academicYear) {
       setFiltersReady(true);
@@ -158,7 +153,6 @@ export default function AllCoursesPage() {
     setPage(1);
   };
 
-
   const getQueryParams = () => {
     const params: { [key: string]: any } = {
       page,
@@ -176,15 +170,15 @@ export default function AllCoursesPage() {
     queryKey: ['courses', filterParams, appliedFilters, debouncedSearch],
     queryFn: fetchCourses,
     placeholderData: (previousData) => previousData,
-    enabled: filtersReady,
-  });        
+    enabled: filtersReady
+  });
 
   const courseResponse: CourseApiResponse = courseQuery.data as CourseApiResponse;
-  console.log(courseResponse)
+  console.log(courseResponse);
   const courses = courseResponse?.courseInformation || [];
   const coursesWithSerialNo = courses.map((course, index) => ({
     ...course,
-    serialNo: (page - 1) * limit + index + 1,
+    serialNo: (page - 1) * limit + index + 1
   }));
 
   const pagination = courseResponse?.pagination;
@@ -243,7 +237,7 @@ export default function AllCoursesPage() {
     courseQuery.isLoading,
     courseQuery.isError,
     courseQuery.isSuccess,
-    courseQuery.isFetching,
+    courseQuery.isFetching
   ]);
 
   const columns = [
@@ -268,15 +262,17 @@ export default function AllCoursesPage() {
         >
           <span className="font-inter font-semibold text-[12px] text-primary">View More</span>
         </Button>
-      ),
-    },
+      )
+    }
   ];
 
   const getFiltersData = () => {
-    const academicYearOptions: FilterOption[] = generateAcademicYearDropdown().map((year: string) => ({
-      label: year,
-      id: year
-    }));
+    const academicYearOptions: FilterOption[] = generateAcademicYearDropdown().map(
+      (year: string) => ({
+        label: year,
+        id: year
+      })
+    );
 
     return [
       {
@@ -290,7 +286,6 @@ export default function AllCoursesPage() {
     ];
   };
 
-
   useEffect(() => {
     if (courses.length > 0) {
       setTotalPages(pagination.totalPages);
@@ -300,21 +295,20 @@ export default function AllCoursesPage() {
 
   return (
     <>
-      <TechnoPageHeading title={"All Courses"} />
+      <TechnoPageHeading title={'All Courses'} />
 
       <span>
-        <div className='flex justify-between'>
+        <div className="flex justify-between">
           <TechnoFiltersGroup
             filters={getFiltersData()}
             handleFilters={applyFilter}
             clearFilters={clearFilters}
-            clearFiltersVisible = {false}
+            clearFiltersVisible={false}
           />
-          
+
           <CreateCourseDialog />
         </div>
       </span>
-
 
       <TechnoDataTableAdvanced
         columns={columns}
@@ -328,17 +322,17 @@ export default function AllCoursesPage() {
         onSearch={handleSearch}
         searchTerm={search}
         minVisibleRows={13}
-        maxVisibleRows = {10}
+        maxVisibleRows={10}
         totalEntries={totalEntries}
         handleViewMore={handleViewMore}
         selectedRowId={selectedRowId}
         setSelectedRowId={setSelectedRowId}
       >
-         <FilterBadges
-            onFilterRemove={handleFilterRemove}
-            appliedFilters={appliedFilters}
-            crossVisible = {false}
-          />
+        <FilterBadges
+          onFilterRemove={handleFilterRemove}
+          appliedFilters={appliedFilters}
+          crossVisible={false}
+        />
       </TechnoDataTableAdvanced>
     </>
   );

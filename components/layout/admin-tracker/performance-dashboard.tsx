@@ -51,7 +51,11 @@ export function PerformanceDashboard() {
   const [sortConfig, setSortConfig] = useState<{
     key: keyof DurationUserStats;
     direction: 'ascending' | 'descending';
-  } | null>(null);
+  }>({
+    key: 'userFirstName',
+    direction: 'ascending'
+  });
+
   const [activeTab, setActiveTab] = useState<'day' | 'week' | 'month' | 'all'>('day');
 
   const today = endOfDay(new Date());
@@ -102,10 +106,19 @@ export function PerformanceDashboard() {
       : durationAnalytics || [];
 
   const sortedData = [...currentData].sort((a, b) => {
-    if (!sortConfig) return 0;
-    return sortConfig.direction === 'ascending'
-      ? Number(a[sortConfig.key]) - Number(b[sortConfig.key])
-      : Number(b[sortConfig.key]) - Number(a[sortConfig.key]);
+    if (sortConfig.key === 'userFirstName' || sortConfig.key === 'userLastName') {
+      // Lexicographic sorting for names
+      const aValue = `${a.userFirstName} ${a.userLastName}`.toLowerCase();
+      const bValue = `${b.userFirstName} ${b.userLastName}`.toLowerCase();
+      return sortConfig.direction === 'ascending'
+        ? aValue.localeCompare(bValue)
+        : bValue.localeCompare(aValue);
+    } else {
+      // Numeric sorting for other fields
+      return sortConfig.direction === 'ascending'
+        ? Number(a[sortConfig.key]) - Number(b[sortConfig.key])
+        : Number(b[sortConfig.key]) - Number(a[sortConfig.key]);
+    }
   });
 
   const totals = sortedData.reduce(
@@ -180,11 +193,11 @@ export function PerformanceDashboard() {
     (activeTab === 'day' && todayLoading) || (activeTab !== 'day' && durationLoading);
 
   return (
-    <Card className="p-4 max-w-7xl ">
+    <Card className="p-4 max-w-7xl">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold">Team Performance Dashboard</h2>
+            <h2 className="text-2xl font-bold">Team Performance</h2>
             <p className="text-muted-foreground">Track and analyze team performance metrics</p>
           </div>
           <div className="flex gap-2">
@@ -207,7 +220,7 @@ export function PerformanceDashboard() {
           </div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {metrics.map((metric, i) => (
             <Card key={i} className="hover:shadow-md">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -328,7 +341,7 @@ export function PerformanceDashboard() {
               )}
             </CardContent>
           </Card>
-        </div>
+        </div> */}
 
         <Tabs
           value={activeTab}
@@ -366,50 +379,57 @@ export function PerformanceDashboard() {
                 ) : sortedData.length === 0 ? (
                   <NoDataPreview
                     message="No performance data available for the selected period."
-                    className="w-full "
+                    className="w-full"
                   />
                 ) : (
-                  <div className="overflow-auto max-h-[500px]">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Individual Level</TableHead>
-                          <TableHead className="text-center">
+                  <div className="overflow-auto max-h-[500px] relative">
+                    <Table className="border-collapse">
+                      <TableHeader className="sticky top-0 z-10">
+                        <TableRow className="bg-primary/10 hover:bg-primary/10 backdrop-blur-lg">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100">
+                            <button
+                              onClick={() => requestSort('userFirstName')}
+                              className="flex items-center w-full hover:text-primary cursor-pointer"
+                            >
+                              Individual Level {getSortIcon('userFirstName')}
+                            </button>
+                          </TableHead>
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
                             <button
                               onClick={() => requestSort('totalCalls')}
-                              className="flex items-center justify-center w-full"
+                              className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
                               Total No. Of Calls {getSortIcon('totalCalls')}
                             </button>
                           </TableHead>
-                          <TableHead className="text-center">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
                             <button
                               onClick={() => requestSort('newLeadCalls')}
-                              className="flex items-center justify-center w-full"
+                              className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
                               New Lead Calls {getSortIcon('newLeadCalls')}
                             </button>
                           </TableHead>
-                          <TableHead className="text-center">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
                             <button
                               onClick={() => requestSort('activeLeadCalls')}
-                              className="flex items-center justify-center w-full"
+                              className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
                               Active Lead Calls {getSortIcon('activeLeadCalls')}
                             </button>
                           </TableHead>
-                          <TableHead className="text-center">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
                             <button
                               onClick={() => requestSort('totalFootFall')}
-                              className="flex items-center justify-center w-full"
+                              className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
                               Total Footfall {getSortIcon('totalFootFall')}
                             </button>
                           </TableHead>
-                          <TableHead className="text-center">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
                             <button
                               onClick={() => requestSort('totalAdmissions')}
-                              className="flex items-center justify-center w-full"
+                              className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
                               Total Admissions {getSortIcon('totalAdmissions')}
                             </button>
@@ -453,16 +473,21 @@ export function PerformanceDashboard() {
                             </TableCell>
                           </TableRow>
                         ))}
-                        <TableRow className="bg-muted/50 font-bold">
+                      </TableBody>
+                      <tfoot className="sticky bottom-0 z-10">
+                        <TableRow className="font-bold bg-primary/10 hover:bg-primary/10 backdrop-blur-3xl">
                           <TableCell>Team Total</TableCell>
                           <TableCell className="text-center">{totals.totalCalls}</TableCell>
                           <TableCell className="text-center">{totals.newLeadCalls}</TableCell>
                           <TableCell className="text-center">{totals.activeLeadCalls}</TableCell>
                           <TableCell className="text-center">{totals.totalFootFall}</TableCell>
-                          <TableCell className="text-center">{totals.totalAdmissions}</TableCell>
-                          <TableCell className="text-center"></TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant="default" className="px-2">
+                              {totals.totalAdmissions}
+                            </Badge>
+                          </TableCell>
                         </TableRow>
-                      </TableBody>
+                      </tfoot>
                     </Table>
                   </div>
                 )}

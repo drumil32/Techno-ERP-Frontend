@@ -115,6 +115,7 @@ export const LeadConversionDashboard = ({
     innerRadius,
     outerRadius,
     percent,
+    value,
     index
   }: any) => {
     const radius = 25 + innerRadius + (outerRadius - innerRadius) * 1.5;
@@ -128,7 +129,7 @@ export const LeadConversionDashboard = ({
         textAnchor="middle"
         dominantBaseline="central"
       >
-        {`${percent.toFixed(0)}%`}
+        {`${value}`}
       </text>
     );
   };
@@ -165,8 +166,8 @@ export const LeadConversionDashboard = ({
 
   return (
     <div className="grid gap-4 md:grid-cols-6 grid-cols-1 min-h-max h-max rounded-lg bg-white p-5">
-      <div className="md:col-span-2 min-h-max min-w-max">
-        <div className="rounded-lg  overflow-clip">
+      <div className="md:col-span-3 min-h-max min-w-max">
+        <div className="rounded-lg shadow  overflow-clip">
           <Table>
             <TableHeader className="rounded-lg bg-primary/10">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -184,7 +185,7 @@ export const LeadConversionDashboard = ({
             </TableHeader>
             <TableBody>
               {table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} className="border-t hover:bg-purple-50/30">
+                <TableRow key={row.id} className="border-t hover:bg-gray-400/20">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="py-3 mx-auto text-center">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -197,8 +198,8 @@ export const LeadConversionDashboard = ({
         </div>
       </div>
 
-      <div className="md:col-span-4 grid-cols-1 min-h-max h-max">
-        <div className="grid min-h-max h-max grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="md:col-span-3 grid-cols-1 min-h-max h-max">
+        <div className="grid min-h-max h-max grid-cols-1  gap-5">
           <div className="bg-white p-4 rounded-xl min-h-max h-max border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
             <h3 className="text-sm font-medium text-gray-700 mb-3">Lead Distribution</h3>
             {isEmpty ? (
@@ -234,7 +235,7 @@ export const LeadConversionDashboard = ({
             )}
           </div>
 
-          <div className="bg-white p-4 rounded-xl min-h-max h-max border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+          {/* <div className="bg-white p-4 rounded-xl min-h-max h-max border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
             <h3 className="text-sm font-medium text-gray-700 mb-3">Lead Performance</h3>
             {isEmpty ? (
               <EmptyState />
@@ -255,7 +256,7 @@ export const LeadConversionDashboard = ({
                 </RadarChart>
               </ChartContainer>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
