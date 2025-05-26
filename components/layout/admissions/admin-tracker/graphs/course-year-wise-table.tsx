@@ -36,7 +36,7 @@ export default function CourseYearWiseTable() {
   console.log(tableData, yearColumns, columnTotals, grandTotal);
 
   return (
-    <Card className="col-span-2 col-start-1 bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg rounded-2xl ">
+    <Card className="h-full col-span-2 col-start-1 bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg rounded-2xl ">
       <CardHeader className="px-6 ">
         <CardTitle className="flex items-center gap-3 text-xl font-semibold text-purple-900">
           <UserPlus2 className="h-6 w-6 text-purple-600" />
@@ -45,9 +45,9 @@ export default function CourseYearWiseTable() {
       </CardHeader>
 
       <CardContent className="">
-        <div className="rounded-lg overflow-auto  border border-gray-100">
+        <div className="rounded-lg w-full overflow-auto h-[520px] border border-gray-100 relative">
           <Table>
-            <TableHeader className="bg-purple-50/50">
+            <TableHeader className="bg-purple-50 sticky top-0">
               <TableRow className="hover:bg-purple-50/50">
                 <TableHead className="w-[150px] text-purple-900 font-semibold py-4">
                   Course
@@ -55,7 +55,7 @@ export default function CourseYearWiseTable() {
                 {yearColumns.map((item) => (
                   <TableHead
                     key={item.key}
-                    className="w-[150px] text-purple-900 font-semibold py-4"
+                    className="w-[150px] text-purple-900 font-semibold py-4 text-center"
                   >
                     {item.label}
                   </TableHead>
@@ -63,7 +63,7 @@ export default function CourseYearWiseTable() {
               </TableRow>
             </TableHeader>
 
-            <TableBody>
+            <TableBody className="">
               {tableData.map((item) => (
                 <TableRow
                   key={item.course}
@@ -73,7 +73,7 @@ export default function CourseYearWiseTable() {
                     {item.course}
                   </TableCell>
                   {item.numberOfAdmissions.map((count, index) => (
-                    <TableCell key={index} className="py-4">
+                    <TableCell key={index} className="py-4 text-center">
                       {count}
                     </TableCell>
                   ))}
@@ -81,11 +81,11 @@ export default function CourseYearWiseTable() {
               ))}
             </TableBody>
 
-            <TableFooter>
+            <TableFooter className="sticky -bottom-2">
               <TableRow className="bg-purple-100">
                 <TableCell className="font-semibold">Total</TableCell>
                 {yearColumns.map((col) => (
-                  <TableCell key={col.key} className="font-semibold py-4">
+                  <TableCell key={col.key} className="font-semibold py-4 text-center">
                     {columnTotals[col.key]}
                   </TableCell>
                 ))}

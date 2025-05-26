@@ -1,10 +1,14 @@
 import { getOrdinal } from '@/lib/numbers';
 import { AdmissionAggregationItem } from '@/types/admissions';
+import { AdmissionAggregationType } from '@/types/enum';
+import { FaW } from 'react-icons/fa6';
 
 export const refineDataForDayWiseGraph = ({
-  data
+  data,
+  type
 }: {
   data: AdmissionAggregationItem[];
+  type: AdmissionAggregationType;
 }): {
   day: string;
   admissions: number;
@@ -17,7 +21,10 @@ export const refineDataForDayWiseGraph = ({
     const monthName = new Intl.DateTimeFormat('en-US', options).format(date);
 
     return {
-      day: `${getOrdinal(day)} ${monthName}`,
+      day:
+        type === AdmissionAggregationType.DATE_WISE
+          ? `${getOrdinal(day)} ${monthName}`
+          : `${monthName}`,
       admissions: item.count
     };
   });
