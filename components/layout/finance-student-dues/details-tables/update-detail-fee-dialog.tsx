@@ -21,6 +21,7 @@ import { getFinanceFeeTypeLabel } from '@/lib/enumDisplayMapper';
 import { updateFeeBreakUp } from '../helpers/fetch-data';
 import { toast } from 'sonner';
 import { SemesterBreakUp } from '@/types/finance';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 const feeSchema = z.object({
   amount: z.coerce
@@ -67,9 +68,8 @@ export default function UpdateFeeDetailDialog({
   });
 
   const handleDialogClose = () => {
-    // Don't close dialog if loading is in progress
     if (isLoading) return;
-    
+
     setAdjustmentAmount(0);
     setValidationError('');
     form.reset();
@@ -99,11 +99,11 @@ export default function UpdateFeeDetailDialog({
       toast.success(
         `${getFinanceFeeTypeLabel(feeDetail.feeCategory)} is updated for ${studentName}.`
       );
-      
+
       queryClient.invalidateQueries({
         queryKey: ['studentFeesInformation', studentId]
       });
-      
+
       handleDialogClose();
     } catch (error) {
       toast.error('Failed to update fee. Please try again.');
@@ -116,7 +116,6 @@ export default function UpdateFeeDetailDialog({
     const value = parseFloat(e.target.value) || 0;
     setAdjustmentAmount(value);
 
-    // Clear validation error if input is valid
     if (feeDetail.finalFee + value >= 0) {
       setValidationError('');
     } else {
@@ -125,16 +124,25 @@ export default function UpdateFeeDetailDialog({
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={(newOpen) => {
-      // Prevent closing dialog during loading
-      if (isLoading && !newOpen) return;
-      setOpen(newOpen);
-    }}>
-      <Dialog.Trigger asChild>
-        <Button variant="ghost" size="icon" disabled={disabled}>
-          <SquarePen className="h-4 w-4" />
-        </Button>
-      </Dialog.Trigger>
+    <Dialog.Root
+      open={open}
+      onOpenChange={(newOpen) => {
+        if (isLoading && !newOpen) return;
+        setOpen(newOpen);
+      }}
+    >
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Dialog.Trigger asChild>
+            <Button variant="ghost" size="icon" disabled={disabled}>
+              <SquarePen className="h-4 w-4" />
+            </Button>
+          </Dialog.Trigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Edit</p>
+        </TooltipContent>
+      </Tooltip>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed z-30 inset-0 bg-black/30" />
         <Dialog.Content className="bg-white sm:min-w-[500px] z-40 p-6 rounded-xl shadow-xl w-full max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
@@ -221,9 +229,9 @@ export default function UpdateFeeDetailDialog({
                 />
 
                 <div className="flex justify-end gap-3 mt-6">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={handleDialogClose}
                     disabled={isLoading}
                   >
@@ -231,7 +239,9 @@ export default function UpdateFeeDetailDialog({
                   </Button>
                   <Button
                     type="submit"
-                    disabled={!!validationError || feeDetail.finalFee + adjustmentAmount < 0 || isLoading}
+                    disabled={
+                      !!validationError || feeDetail.finalFee + adjustmentAmount < 0 || isLoading
+                    }
                     className="bg-[#5B31D1] text-white"
                   >
                     {isLoading ? (
@@ -240,7 +250,7 @@ export default function UpdateFeeDetailDialog({
                         Saving...
                       </>
                     ) : (
-                      "Save Changes"
+                      'Save Changes'
                     )}
                   </Button>
                 </div>

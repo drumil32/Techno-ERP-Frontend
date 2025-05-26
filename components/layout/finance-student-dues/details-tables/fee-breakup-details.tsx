@@ -1,67 +1,99 @@
-import { SemesterBreakUp } from "@/types/finance"
-import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useEffect, useState } from "react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { getFinanceFeeTypeLabel, getScheduleLabel } from "@/lib/enumDisplayMapper"
-import UpdateFeeDetailDialog from "./update-detail-fee-dialog"
-import ShowHistoryDialog from "./show-history-dialog"
+import { SemesterBreakUp } from '@/types/finance';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@/components/ui/table';
+import { useEffect, useState } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { getFinanceFeeTypeLabel, getScheduleLabel } from '@/lib/enumDisplayMapper';
+import UpdateFeeDetailDialog from './update-detail-fee-dialog';
+import ShowHistoryDialog from './show-history-dialog';
+import { sortFeeDetailsByOrder } from '../helpers/fee-order';
 
-export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { semFeesBreakUp: SemesterBreakUp[], studentName: string | undefined }) {
-  const [selectedSemester, setSelectedSemester] = useState(1)
-  const [semWiseFeesBreakUpDetails, setSemWiseFeesBreakUpDetails] = useState<SemesterBreakUp["details"]>([])
-  const [selectedSemesterId, setSelectedSemesterId] = useState("")
+export default function FeesBreakupDetails({
+  semFeesBreakUp,
+  studentName
+}: {
+  semFeesBreakUp: SemesterBreakUp[];
+  studentName: string | undefined;
+}) {
+  const [selectedSemester, setSelectedSemester] = useState(1);
+  const [semWiseFeesBreakUpDetails, setSemWiseFeesBreakUpDetails] = useState<
+    SemesterBreakUp['details']
+  >([]);
+  const [selectedSemesterId, setSelectedSemesterId] = useState('');
 
   useEffect(() => {
     if (semFeesBreakUp && semFeesBreakUp.length > 0) {
-      const initialSemData = semFeesBreakUp.find(
-        (item) => item.semesterNumber === selectedSemester
-      ) || semFeesBreakUp[0]
+      const initialSemData =
+        semFeesBreakUp.find((item) => item.semesterNumber === selectedSemester) ||
+        semFeesBreakUp[0];
 
-      setSelectedSemester(initialSemData.semesterNumber)
-      setSelectedSemesterId(initialSemData.semesterId)
+      setSelectedSemester(initialSemData.semesterNumber);
+      setSelectedSemesterId(initialSemData.semesterId);
 
-      setSemWiseFeesBreakUpDetails(
-        initialSemData?.details.map((item) => ({
+      const sortedDetails = sortFeeDetailsByOrder(
+        initialSemData.details
+      ) as SemesterBreakUp['details'];
+
+      const processedDetails =
+        sortedDetails.map((item, index) => ({
           ...item,
-          totalDues: item.finalFee - item.paidAmount,
-        })) ?? []
-      )
+          sno: index + 1,
+          totalDues: item.finalFee - item.paidAmount
+        })) ?? [];
+      setSemWiseFeesBreakUpDetails(processedDetails);
     }
-  }, [semFeesBreakUp])
-
+  }, [semFeesBreakUp]);
 
   useEffect(() => {
     if (semFeesBreakUp) {
       const selectedSemData = semFeesBreakUp.find(
         (item) => item.semesterNumber === selectedSemester
-      )
+      );
 
       if (selectedSemData) {
-        setSelectedSemesterId(selectedSemData.semesterId)
+        setSelectedSemesterId(selectedSemData.semesterId);
 
-        setSemWiseFeesBreakUpDetails(
-          selectedSemData.details.map((item) => ({
+        const sortedDetails = sortFeeDetailsByOrder(
+          selectedSemData.details
+        ) as SemesterBreakUp['details'];
+
+        const processedDetails =
+          sortedDetails.map((item, index) => ({
             ...item,
-            totalDues: item.finalFee - item.paidAmount,
-          })) ?? []
-        )
+            sno: index + 1,
+            totalDues: item.finalFee - item.paidAmount
+          })) ?? [];
+        setSemWiseFeesBreakUpDetails(processedDetails);
       }
     }
-  }, [selectedSemester, semFeesBreakUp])
+  }, [selectedSemester, semFeesBreakUp]);
 
   const feeTotals = semWiseFeesBreakUpDetails.reduce(
     (totals, item) => {
-      totals.finalFee += item.finalFee ?? 0
-      totals.paidAmount += item.paidAmount ?? 0
-      totals.totalDues += item.finalFee - item.paidAmount
-      return totals
+      totals.finalFee += item.finalFee ?? 0;
+      totals.paidAmount += item.paidAmount ?? 0;
+      totals.totalDues += item.finalFee - item.paidAmount;
+      return totals;
     },
     { finalFee: 0, paidAmount: 0, totalDues: 0 }
-  )
+  );
 
   const handleSemesterChange = (value: string) => {
-    setSelectedSemester(parseInt(value))
-  }
+    setSelectedSemester(parseInt(value));
+  };
 
   return (
     <div className="w-full p-3 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -71,72 +103,81 @@ export default function FeesBreakupDetails({ semFeesBreakUp, studentName }: { se
       </div>
       <div className="flex gap-2 mb-4 p-2 items-center">
         <div className="text-[#5F5F5F]">Select Semester</div>
-        <Select
-          value={selectedSemester.toString()}
-          onValueChange={handleSemesterChange}
-        >
-          <SelectTrigger >
+        <Select value={selectedSemester.toString()} onValueChange={handleSemesterChange}>
+          <SelectTrigger>
             <SelectValue placeholder="Select semester" />
           </SelectTrigger>
           <SelectContent>
-            {semFeesBreakUp && semFeesBreakUp.map((item) => (
-              <SelectItem key={item.semesterNumber} value={item.semesterNumber.toString()}>
-                {`Semester ${item.semesterNumber.toString().padStart(2, '0')}`}
-              </SelectItem>
-            ))}
+            {semFeesBreakUp &&
+              semFeesBreakUp.map((item) => (
+                <SelectItem key={item.semesterNumber} value={item.semesterNumber.toString()}>
+                  {`Semester ${item.semesterNumber.toString().padStart(2, '0')}`}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
       </div>
 
       <div className="w-full overflow-x-auto">
-        <Table className="w-auto">
+        <Table className="w-3/5">
           <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg [&_th]:!text-[#5B31D1] ">
             <TableRow>
-              <TableHead className="w-[150px] rounded-l-[5px]">Fees Category</TableHead>
-              <TableHead className="w-[110px]">Schedule</TableHead>
-              <TableHead className="w-[100px] text-right">Final Fees</TableHead>
-              <TableHead className="w-[100px] text-right">Fees paid</TableHead>
-              <TableHead className="w-[100px] text-right">Total Dues</TableHead>
-              <TableHead className=" rounded-r-[5px] ">Actions</TableHead>
+              <TableHead className="text-center rounded-l-[5px]">S No.</TableHead>
+              <TableHead>Fees Category</TableHead>
+              <TableHead className="">Schedule</TableHead>
+              <TableHead className="text-right">Final Fees</TableHead>
+              <TableHead className="text-right">Fees paid</TableHead>
+              <TableHead className="text-right">Total Dues</TableHead>
+              <TableHead className=" rounded-r-[5px] text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {semWiseFeesBreakUpDetails.map((item) => (
               <TableRow key={item.feeCategory}>
-                <TableCell className="w-[150px]">{getFinanceFeeTypeLabel(item.feeCategory)}</TableCell>
-                <TableCell className="w-[110px]">{getScheduleLabel(item.feeSchedule)}</TableCell>
-                <TableCell className="w-[100px] text-right">{item.finalFee != null ? `₹ ${item.finalFee.toLocaleString()}` : '--'}</TableCell>
-                <TableCell className="w-[100px] text-right">{item.paidAmount != null ? `₹ ${item.paidAmount.toLocaleString()}` : '--'}</TableCell>
-                <TableCell className="w-[100px] text-right">{item.totalDues != null ? `₹ ${item.totalDues.toLocaleString()}` : '--'}</TableCell>
-                <TableCell className="flex gap-2 items-center text-[#5B31D1]">
+                <TableCell className="text-center">{item.sno}</TableCell>
+                <TableCell className="">{getFinanceFeeTypeLabel(item.feeCategory)}</TableCell>
+                <TableCell className="">{getScheduleLabel(item.feeSchedule)}</TableCell>
+                <TableCell className="text-right">
+                  {item.finalFee != null ? `${item.finalFee.toLocaleString()}` : '--'}
+                </TableCell>
+                <TableCell className="text-right">
+                  {item.paidAmount != null ? `${item.paidAmount.toLocaleString()}` : '--'}
+                </TableCell>
+                <TableCell className="text-right">
+                  {item.totalDues != null ? `${item.totalDues.toLocaleString()}` : '--'}
+                </TableCell>
+                <TableCell className="flex gap-2 items-center justify-center text-[#5B31D1]">
                   <ShowHistoryDialog
                     semesterNumber={selectedSemester}
                     semesterId={selectedSemesterId}
                     feeDetail={item}
-                    studentName={studentName ?? ""}
+                    studentName={studentName ?? ''}
                   />
                   <UpdateFeeDetailDialog
                     semesterNumber={selectedSemester}
                     semesterId={selectedSemesterId}
                     feeDetail={item}
-                    studentName={studentName ?? ""}
+                    studentName={studentName ?? ''}
                   />
-
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell className="rounded-l-[5px]" colSpan={2}>Total</TableCell>
+          <TableFooter className="font-bold">
+            <TableRow className="bg-gray-300/70">
+              <TableCell className="rounded-l-[5px]" colSpan={3}>
+                Total
+              </TableCell>
               <TableCell className="text-right">₹{feeTotals?.finalFee.toLocaleString()}</TableCell>
-              <TableCell className="text-right">₹{feeTotals?.paidAmount.toLocaleString()}</TableCell>
-              <TableCell className="text-right rounded-r-[5px]">₹{feeTotals?.totalDues.toLocaleString()}</TableCell>
+              <TableCell className="text-right">
+                ₹{feeTotals?.paidAmount.toLocaleString()}
+              </TableCell>
+              <TableCell className="text-right">₹{feeTotals?.totalDues.toLocaleString()}</TableCell>
               <TableCell className="text-right rounded-r-[5px]"></TableCell>
             </TableRow>
           </TableFooter>
         </Table>
       </div>
     </div>
-  )
+  );
 }

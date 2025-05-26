@@ -7,6 +7,7 @@ import { FeeHistoryRequestType, FeeHistoryResponse, SemesterBreakUp } from '@/ty
 import { fetchFeeBreakUpHistory } from '../helpers/fetch-data';
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 export default function ShowHistoryDialog({
   semesterId,
@@ -47,11 +48,18 @@ export default function ShowHistoryDialog({
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger asChild>
-        <Button variant="ghost" size="icon">
-          <Info className="h-4 w-4" />
-        </Button>
-      </Dialog.Trigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Dialog.Trigger asChild>
+            <Button variant="ghost" size="icon">
+              <Info className="h-4 w-4" />
+            </Button>
+          </Dialog.Trigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Info</p>
+        </TooltipContent>
+      </Tooltip>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed z-30 inset-0 bg-black/30" />
         <Dialog.Content className="bg-white sm:min-w-[500px] z-40 p-6 rounded-xl shadow-xl w-full max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">

@@ -1,4 +1,12 @@
-import { Course, CourseYear, FeeActions, FeesPaidStatus, FinanceFeeSchedule, FinanceFeeType, TransactionTypes } from "./enum";
+import {
+  Course,
+  CourseYear,
+  FeeActions,
+  FeesPaidStatus,
+  FinanceFeeSchedule,
+  FinanceFeeType,
+  TransactionTypes
+} from './enum';
 
 export interface StudentDue {
   _id: string;
@@ -21,7 +29,7 @@ export interface StudentDuesApiResponse {
     limit: number;
     totalPages: number;
     totalCount: number;
-  }
+  };
 }
 
 export interface StudentFeeInformationResponse {
@@ -51,13 +59,14 @@ export interface SemesterBreakUp {
   semesterNumber: number;
   semesterId: string;
   details: {
+    sno?: number;
     feeCategory: FinanceFeeType;
     feeDetailId: string;
     feeSchedule: FinanceFeeSchedule;
     finalFee: number;
     paidAmount: number;
     totalDues?: number;
-  }[]
+  }[];
 }
 
 export interface Transaction {
@@ -86,7 +95,7 @@ export interface FeeHistoryItemType {
 }
 
 export interface FeeHistoryResponse {
-  feeUpdateHistory: FeeHistoryItemType[]
+  feeUpdateHistory: FeeHistoryItemType[];
 }
 
 export interface StudentDetails {
@@ -100,7 +109,6 @@ export interface StudentDetails {
   extraBalance?: number;
   universityId?: string;
 }
-
 
 // Course Dues
 
@@ -150,10 +158,9 @@ export interface MonthDayCollection {
   totalCollection: number;
 }
 
-
 export interface CourseCollection {
   courseCode: Course;
-  details: { courseYear: CourseYear; totalCollection: number }[],
+  details: { courseYear: CourseYear; totalCollection: number }[];
   totalCollection?: number;
 }
 
@@ -162,7 +169,6 @@ export interface DailyCollectionData {
   pastSevenDays: DayCollection[];
   courseWiseInformation: CourseCollection[];
 }
-
 
 export interface MonthlyCollectionData {
   totalCollection: number;
