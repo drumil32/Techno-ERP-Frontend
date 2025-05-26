@@ -22,7 +22,6 @@ export default function DateMonthYearNavigator({
   year = false,
   selectedDate,
   onDateChange,
-  label = 'Select Date',
   disableBefore,
   changeToDateTab,
   changeToMonthTab,
@@ -37,14 +36,16 @@ export default function DateMonthYearNavigator({
 
   const [activeMode, setActiveMode] = useState(getActiveMode());
 
+  // Updated: 4 previous dates + current date (start from 4 days ago)
   const [dateRangeStart, setDateRangeStart] = useState(() => {
     const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3);
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate() - 4);
   });
 
+  // Updated: 3 previous months + current month (start from 3 months ago)
   const [monthRangeStart, setMonthRangeStart] = useState(() => {
     const today = new Date();
-    return new Date(today.getFullYear(), today.getMonth() - 5, 1);
+    return new Date(today.getFullYear(), today.getMonth() - 3, 1);
   });
 
   const [yearRangeStart, setYearRangeStart] = useState(() => {
@@ -66,7 +67,7 @@ export default function DateMonthYearNavigator({
     const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
     const monthName = date.toLocaleDateString('en-US', { month: 'long' });
     return {
-      date: `${getOrdinal(parseInt(day))} ${monthName} ${year.slice(-2)}`,
+      date: `${getOrdinal(parseInt(day))} ${monthName}'${year.slice(-2)}`,
       day: dayName
     };
   };
@@ -102,7 +103,7 @@ export default function DateMonthYearNavigator({
 
   const generateDateRange = () => {
     const dates = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
       const newDate = new Date(dateRangeStart);
       newDate.setDate(dateRangeStart.getDate() + i);
 
@@ -123,7 +124,12 @@ export default function DateMonthYearNavigator({
 
   const generateMonthRange = () => {
     const months = [];
-    for (let i = 0; i < 8; i++) {
+    // Parse selected date to get month and year for comparison
+    const [selectedDay, selectedMonth, selectedYear] = selectedDate
+      .split('/')
+      .map((num) => parseInt(num));
+
+    for (let i = 0; i < 4; i++) {
       const newDate = new Date(monthRangeStart);
       newDate.setMonth(monthRangeStart.getMonth() + i);
 
@@ -131,10 +137,14 @@ export default function DateMonthYearNavigator({
       const monthDateStr = `01/${(newDate.getMonth() + 1).toString().padStart(2, '0')}/${newDate.getFullYear()}`;
       const disabled = isDateDisabled(firstDayOfMonth);
 
+      // Check if this month matches the selected date's month and year
+      const isSelected =
+        newDate.getMonth() + 1 === selectedMonth && newDate.getFullYear() === selectedYear;
+
       months.push({
         dateStr: monthDateStr,
-        display: `${getMonthName(newDate.getMonth() + 1)} ${newDate.getFullYear().toString().slice(-2)}`,
-        isSelected: monthDateStr === selectedDate,
+        display: `${getMonthName(newDate.getMonth() + 1)}'${newDate.getFullYear().toString().slice(-2)}`,
+        isSelected,
         disabled
       });
     }
@@ -191,7 +201,7 @@ export default function DateMonthYearNavigator({
   // tabs based on props
   const getAvailableTabs = () => {
     const tabs = [];
-    if (date) tabs.push({ value: 'date', label: 'Date', changeCallback: changeToDateTab });
+    if (date) tabs.push({ value: 'date', label: 'Day', changeCallback: changeToDateTab });
     if (month) tabs.push({ value: 'month', label: 'Month', changeCallback: changeToMonthTab });
     if (year) tabs.push({ value: 'year', label: 'Year', changeCallback: changeToYearsTab });
     return tabs;
@@ -202,13 +212,119 @@ export default function DateMonthYearNavigator({
   // Don't show tabs if there is only one way
   const showTabs = availableTabs.length > 1;
 
+  const daySelector = () => {
+    return (
+      <>
+        {generateDateRange().map((item, index) => (
+          <div
+            key={index}
+            onClick={() => handleItemClick(item.dateStr, item.disabled)}
+            className={`flex flex-col gap-1 min-w-24 p-2 rounded-[10px] transition-all ${
+              item.disabled
+                ? 'bg-gray-100 border-[1px] border-gray-200 cursor-not-allowed opacity-50'
+                : item.isSelected
+                  ? 'bg-[#F7F4FF] border-[1px] border-[#5B31D1] scale-110 cursor-pointer'
+                  : 'bg-[#FAFAFA] border-[1px] border-[#E2E2E2] hover:bg-gray-50 cursor-pointer'
+            }`}
+          >
+            <div
+              className={`text-sm font-medium ${
+                item.disabled
+                  ? 'text-gray-400'
+                  : item.isSelected
+                    ? 'text-[#5B31D1]'
+                    : 'text-gray-900'
+              }`}
+            >
+              {item.display}
+            </div>
+            <div
+              className={`text-sm ${
+                item.disabled
+                  ? 'text-gray-400'
+                  : item.isSelected
+                    ? 'text-[#5B31D1]'
+                    : 'text-gray-500'
+              }`}
+            >
+              {item.day}
+            </div>
+          </div>
+        ))}
+      </>
+    );
+  };
+
+  const monthSelector = () => {
+    return (
+      <>
+        {generateMonthRange().map((item, index) => (
+          <div
+            key={index}
+            onClick={() => handleItemClick(item.dateStr, item.disabled)}
+            className={`flex min-w-32 p-2 rounded-lg transition-all text-center ${
+              item.disabled
+                ? 'bg-gray-100 border-[1px] border-gray-200 cursor-not-allowed opacity-50'
+                : item.isSelected
+                  ? 'bg-[#F7F4FF] border-[1px] border-[#5B31D1] scale-110 cursor-pointer'
+                  : 'bg-[#FAFAFA] border-[1px] border-[#E2E2E2] hover:bg-gray-50 cursor-pointer'
+            }`}
+          >
+            <div
+              className={`text-sm font-medium w-full text-center ${
+                item.disabled
+                  ? 'text-gray-400'
+                  : item.isSelected
+                    ? 'text-[#5B31D1]'
+                    : 'text-gray-800'
+              }`}
+            >
+              {item.display}
+            </div>
+          </div>
+        ))}
+      </>
+    );
+  };
+
+  const yearSelector = () => {
+    return (
+      <>
+        {generateYearRange().map((item, index) => (
+          <div
+            key={index}
+            onClick={() => handleItemClick(item.dateStr, item.disabled)}
+            className={`flex min-w-32 p-2 rounded-lg transition-all ${
+              item.disabled
+                ? 'bg-gray-100 border-[1px] border-gray-200 cursor-not-allowed opacity-50'
+                : item.isSelected
+                  ? 'bg-[#F7F4FF] border-[1px] border-[#5B31D1] scale-110 cursor-pointer'
+                  : 'bg-[#FAFAFA] border-[1px] border-[#E2E2E2] hover:bg-gray-50 cursor-pointer'
+            }`}
+          >
+            <div
+              className={`text-[16px] font-medium ${
+                item.disabled
+                  ? 'text-gray-400'
+                  : item.isSelected
+                    ? 'text-[#5B31D1]'
+                    : 'text-gray-800'
+              }`}
+            >
+              {item.display}
+            </div>
+          </div>
+        ))}
+      </>
+    );
+  };
+
   return (
     <div className="flex items-center justify-between mb-4">
       <div className="w-full">
         {showTabs ? (
           <Tabs defaultValue={activeMode} className="w-full" onValueChange={handleTabChange}>
-            <div className="flex items-baseline mb-4 gap-4">
-              <div className="text-lg font-semibold">{label}</div>
+            <div className="flex items-baseline gap-4">
               <TabsList
                 className={`grid grid-cols-${availableTabs.length} mb-4`}
                 style={{ width: `${availableTabs.length * 120}px` }}
@@ -234,42 +350,7 @@ export default function DateMonthYearNavigator({
                   className="flex w-full justify-around items-center gap-4 overflow-x-auto py-2"
                   value="date"
                 >
-                  {generateDateRange().map((item, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleItemClick(item.dateStr, item.disabled)}
-                      className={`flex flex-col gap-1 min-w-32 p-2 rounded-[10px] transition-all ${
-                        item.disabled
-                          ? 'bg-gray-100 border-[1px] border-gray-200 cursor-not-allowed opacity-50'
-                          : item.isSelected
-                            ? 'bg-[#F7F4FF] border-[1px] border-[#5B31D1] scale-110 cursor-pointer'
-                            : 'bg-[#FAFAFA] border-[1px] border-[#E2E2E2] hover:bg-gray-50 cursor-pointer'
-                      }`}
-                    >
-                      <div
-                        className={`text-[16px] font-medium ${
-                          item.disabled
-                            ? 'text-gray-400'
-                            : item.isSelected
-                              ? 'text-[#5B31D1]'
-                              : 'text-gray-900'
-                        }`}
-                      >
-                        {item.display}
-                      </div>
-                      <div
-                        className={`text-[16px] ${
-                          item.disabled
-                            ? 'text-gray-400'
-                            : item.isSelected
-                              ? 'text-[#5B31D1]'
-                              : 'text-gray-500'
-                        }`}
-                      >
-                        {item.day}
-                      </div>
-                    </div>
-                  ))}
+                  {daySelector()}
                 </TabsContent>
               )}
 
@@ -278,31 +359,7 @@ export default function DateMonthYearNavigator({
                   className="flex w-full justify-around items-center gap-4 overflow-x-auto py-2"
                   value="month"
                 >
-                  {generateMonthRange().map((item, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleItemClick(item.dateStr, item.disabled)}
-                      className={`flex min-w-32 p-2 rounded-lg transition-all ${
-                        item.disabled
-                          ? 'bg-gray-100 border-[1px] border-gray-200 cursor-not-allowed opacity-50'
-                          : item.isSelected
-                            ? 'bg-[#F7F4FF] border-[1px] border-[#5B31D1] scale-110 cursor-pointer'
-                            : 'bg-[#FAFAFA] border-[1px] border-[#E2E2E2] hover:bg-gray-50 cursor-pointer'
-                      }`}
-                    >
-                      <div
-                        className={`text-[16px] font-medium ${
-                          item.disabled
-                            ? 'text-gray-400'
-                            : item.isSelected
-                              ? 'text-[#5B31D1]'
-                              : 'text-gray-800'
-                        }`}
-                      >
-                        {item.display}
-                      </div>
-                    </div>
-                  ))}
+                  {monthSelector()}
                 </TabsContent>
               )}
 
@@ -311,31 +368,7 @@ export default function DateMonthYearNavigator({
                   className="flex w-full justify-around items-center gap-4 overflow-x-auto py-2"
                   value="year"
                 >
-                  {generateYearRange().map((item, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleItemClick(item.dateStr, item.disabled)}
-                      className={`flex min-w-32 p-2 rounded-lg transition-all ${
-                        item.disabled
-                          ? 'bg-gray-100 border-[1px] border-gray-200 cursor-not-allowed opacity-50'
-                          : item.isSelected
-                            ? 'bg-[#F7F4FF] border-[1px] border-[#5B31D1] scale-110 cursor-pointer'
-                            : 'bg-[#FAFAFA] border-[1px] border-[#E2E2E2] hover:bg-gray-50 cursor-pointer'
-                      }`}
-                    >
-                      <div
-                        className={`text-[16px] font-medium ${
-                          item.disabled
-                            ? 'text-gray-400'
-                            : item.isSelected
-                              ? 'text-[#5B31D1]'
-                              : 'text-gray-800'
-                        }`}
-                      >
-                        {item.display}
-                      </div>
-                    </div>
-                  ))}
+                  {yearSelector()}
                 </TabsContent>
               )}
 
@@ -349,7 +382,6 @@ export default function DateMonthYearNavigator({
           </Tabs>
         ) : (
           <div className="w-full">
-            <div className="text-lg font-semibold mb-4">{label}</div>
             <div className="flex items-center gap-2 h-24">
               <button
                 onClick={() => navigateRange(-1)}
@@ -359,97 +391,11 @@ export default function DateMonthYearNavigator({
               </button>
 
               <div className="flex w-full justify-around items-center gap-4 overflow-x-auto py-2">
-                {activeMode === 'date' &&
-                  generateDateRange().map((item, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleItemClick(item.dateStr, item.disabled)}
-                      className={`flex flex-col gap-1 min-w-32 p-2 rounded-[10px] transition-all ${
-                        item.disabled
-                          ? 'bg-gray-100 border-[1px] border-gray-200 cursor-not-allowed opacity-50'
-                          : item.isSelected
-                            ? 'bg-[#F7F4FF] border-[1px] border-[#5B31D1] scale-110 cursor-pointer'
-                            : 'bg-[#FAFAFA] border-[1px] border-[#E2E2E2] hover:bg-gray-50 cursor-pointer'
-                      }`}
-                    >
-                      <div
-                        className={`text-[16px] font-medium ${
-                          item.disabled
-                            ? 'text-gray-400'
-                            : item.isSelected
-                              ? 'text-[#5B31D1]'
-                              : 'text-gray-900'
-                        }`}
-                      >
-                        {item.display}
-                      </div>
-                      <div
-                        className={`text-[16px] ${
-                          item.disabled
-                            ? 'text-gray-400'
-                            : item.isSelected
-                              ? 'text-[#5B31D1]'
-                              : 'text-gray-500'
-                        }`}
-                      >
-                        {item.day}
-                      </div>
-                    </div>
-                  ))}
+                {activeMode === 'date' && daySelector()}
 
-                {activeMode === 'month' &&
-                  generateMonthRange().map((item, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleItemClick(item.dateStr, item.disabled)}
-                      className={`flex min-w-32 p-2 rounded-lg transition-all ${
-                        item.disabled
-                          ? 'bg-gray-100 border-[1px] border-gray-200 cursor-not-allowed opacity-50'
-                          : item.isSelected
-                            ? 'bg-[#F7F4FF] border-[1px] border-[#5B31D1] scale-110 cursor-pointer'
-                            : 'bg-[#FAFAFA] border-[1px] border-[#E2E2E2] hover:bg-gray-50 cursor-pointer'
-                      }`}
-                    >
-                      <div
-                        className={`text-[16px] font-medium ${
-                          item.disabled
-                            ? 'text-gray-400'
-                            : item.isSelected
-                              ? 'text-[#5B31D1]'
-                              : 'text-gray-800'
-                        }`}
-                      >
-                        {item.display}
-                      </div>
-                    </div>
-                  ))}
+                {activeMode === 'month' && monthSelector()}
 
-                {activeMode === 'year' &&
-                  generateYearRange().map((item, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleItemClick(item.dateStr, item.disabled)}
-                      className={`flex min-w-32 p-2 rounded-lg transition-all ${
-                        item.disabled
-                          ? 'bg-gray-100 border-[1px] border-gray-200 cursor-not-allowed opacity-50'
-                          : item.isSelected
-                            ? 'bg-[#F7F4FF] border-[1px] border-[#5B31D1] scale-110 cursor-pointer'
-                            : 'bg-[#FAFAFA] border-[1px] border-[#E2E2E2] hover:bg-gray-50 cursor-pointer'
-                      }`}
-                    >
-                      <div
-                        className={`text-[16px] font-medium ${
-                          item.disabled
-                            ? 'text-gray-400'
-                            : item.isSelected
-                              ? 'text-[#5B31D1]'
-                              : 'text-gray-800'
-                        }`}
-                      >
-                        {item.display}
-                      </div>
-                    </div>
-                  ))}
+                {activeMode === 'year' && yearSelector()}
               </div>
 
               <button

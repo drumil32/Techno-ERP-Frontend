@@ -11,6 +11,8 @@ import {
 import RecordPaymentDialog from './record-payment-dialog';
 import { Course, CourseNameMapper } from '@/types/enum';
 import { format } from 'date-fns';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { HandCoins } from 'lucide-react';
 
 type ExtendedSemesterWiseFeeInformation = SemesterWiseFeeInformation & {
   sno: number;
@@ -42,67 +44,75 @@ export default function SemesterWiseFeesDetails({
   );
 
   return (
-    <div className="w-full p-3 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
-      <div className="w-full flex p-2 items-center mb-2">
-        <div className="font-semibold text-[16px]">Semester-wise Fees Details</div>
-      </div>
-      <div className="w-full flex justify-between overflow-x-auto">
-        <Table className="w-2/6">
-          <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg [&_th]:!text-[#5B31D1] ">
-            <TableRow>
-              <TableHead className="rounded-l-[5px] text-center">S. No</TableHead>
-              <TableHead>Academic Year</TableHead>
-              <TableHead className="text-center">Semester</TableHead>
-              <TableHead className="text-right">Final Fees</TableHead>
-              <TableHead className="text-right">Fees Paid</TableHead>
-              <TableHead className="text-right">Due Fees</TableHead>
-              <TableHead className="rounded-r-[5px]  pl-8">Due Date</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {extendedSemesterWiseFeesInformation.map((semFee) => (
-              <TableRow key={semFee.sno}>
-                <TableCell className="text-center">{semFee.sno}</TableCell>
-                <TableCell>{semFee.academicYear}</TableCell>
-                <TableCell className="text-center">0{semFee.semesterNumber}</TableCell>
-                <TableCell className="text-right">
-                  {semFee.finalFee != null && semFee.dueDate
-                    ? `${semFee.finalFee.toLocaleString()}`
-                    : '--'}
-                </TableCell>
-                <TableCell className="text-right">
-                  {semFee.paidAmount != null && semFee.dueDate
-                    ? `${semFee.paidAmount.toLocaleString()}`
-                    : '--'}
-                </TableCell>
-                <TableCell className="text-right">
-                  {semFee.dueFees != null && semFee.dueDate
-                    ? `${semFee.dueFees.toLocaleString()}`
-                    : '--'}
-                </TableCell>
-                <TableCell className=" pl-8">
-                  {semFee.dueDate ? format(semFee.dueDate, 'dd/MM/yyyy') : '--'}
-                </TableCell>
+    <Card>
+      <CardHeader className="">
+        <CardTitle className="flex items-center gap-3 text-xl font-semibold text-yellow-700 pb-3 border-b border-gray-100">
+          <HandCoins className="h-6 w-6 text-yellow-600" />
+          Semester-wise Fees Details
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex justify-between -mt-2">
+        <div className="rounded-[5px] w-[55%] overflow-auto border-2 border-gray-100 relative">
+          <Table className="w-full ">
+            <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg [&_th]:!text-[#5B31D1] ">
+              <TableRow>
+                <TableHead className=" text-center w-[8%]">S. No</TableHead>
+                <TableHead>Academic Year</TableHead>
+                <TableHead className="text-center w-[10%] px-0">Semester</TableHead>
+                <TableHead className="text-right w-[15%]">Final Fees</TableHead>
+                <TableHead className="text-right">Fees Paid</TableHead>
+                <TableHead className="text-right">Due Fees</TableHead>
+                <TableHead className="pl-8">Due Date</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter className="font-bold">
-            <TableRow className="bg-gray-300/70">
-              <TableCell className="rounded-l-[5px]" colSpan={3}>
-                Total
-              </TableCell>
-              <TableCell className="text-right">₹{feeTotals?.finalFee.toLocaleString()}</TableCell>
-              <TableCell className="text-right">
-                ₹{feeTotals?.paidAmount.toLocaleString()}
-              </TableCell>
-              <TableCell className="text-right">₹{feeTotals?.dueFees.toLocaleString()}</TableCell>
-              <TableCell className="rounded-r-[5px]">{''}</TableCell>
-            </TableRow>
-          </TableFooter>
-        </Table>
-
+            </TableHeader>
+            <TableBody>
+              {extendedSemesterWiseFeesInformation.map((semFee) => (
+                <TableRow key={semFee.sno}>
+                  <TableCell className="text-center">{semFee.sno}</TableCell>
+                  <TableCell>{semFee.academicYear}</TableCell>
+                  <TableCell className="text-center w-[2%] px-0">
+                    0{semFee.semesterNumber}
+                  </TableCell>
+                  <TableCell className="text-right pl-0">
+                    {semFee.finalFee != null && semFee.dueDate
+                      ? `${semFee.finalFee.toLocaleString()}`
+                      : '--'}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {semFee.paidAmount != null && semFee.dueDate
+                      ? `${semFee.paidAmount.toLocaleString()}`
+                      : '--'}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {semFee.dueFees != null && semFee.dueDate
+                      ? `${semFee.dueFees.toLocaleString()}`
+                      : '--'}
+                  </TableCell>
+                  <TableCell className=" pl-8">
+                    {semFee.dueDate ? format(semFee.dueDate, 'dd/MM/yyyy') : '--'}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+            <TableFooter className="font-bold">
+              <TableRow className="bg-gray-300/70">
+                <TableCell className="" colSpan={3}>
+                  Total
+                </TableCell>
+                <TableCell className="text-right">
+                  ₹{feeTotals?.finalFee.toLocaleString()}
+                </TableCell>
+                <TableCell className="text-right">
+                  ₹{feeTotals?.paidAmount.toLocaleString()}
+                </TableCell>
+                <TableCell className="text-right">₹{feeTotals?.dueFees.toLocaleString()}</TableCell>
+                <TableCell className="">{''}</TableCell>
+              </TableRow>
+            </TableFooter>
+          </Table>
+        </div>
         <RecordPaymentDialog studentDetails={studentDetails} />
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

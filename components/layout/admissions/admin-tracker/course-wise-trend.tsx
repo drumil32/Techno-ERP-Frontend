@@ -1,5 +1,5 @@
 'use client';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useState } from 'react';
 import DateMonthYearNavigator from './date-picker';
 import { AdmissionAggregationType } from '@/types/enum';
@@ -13,6 +13,7 @@ import { AdmissionAggregationResponse, AdmissionMonthCourseWiseResponse } from '
 import { DayWiseTrend } from './graphs/daywise-admissions';
 import CourseYearWiseTable from './graphs/course-year-wise-table';
 import { MonthWiseCourseTrend } from './graphs/month-wise-graph';
+import { ChartArea, ChartNoAxesColumn } from 'lucide-react';
 
 export default function CourseWiseAdmissionTrend() {
   const [selectedDate, setSelectedDate] = useState(() => {
@@ -49,34 +50,42 @@ export default function CourseWiseAdmissionTrend() {
   const chartData = data?.monthWise?.[0]?.courseWise ?? [];
 
   return (
-    <Card className="p-6 w-full">
-      <DateMonthYearNavigator
-        date={false}
-        month={true}
-        year={false}
-        selectedDate={selectedDate}
-        onDateChange={handleDateChange}
-        label="Course Wise Admission Trend "
-        disableBefore={'12/05/2024'}
-        changeToDateTab={tabsChangeToDate}
-        changeToMonthTab={tabsChangeToMonth}
-      />
-
-      <div className="w-full flex">
-        <div className="w-[60%] min-h-[720px]">
-          <MonthWiseCourseTrend
-            chartData={chartData}
-            heading="Month Wise Admissions"
-            headingFooter={
-              chartData.length > 0
-                ? `Total Courses: ${chartData.length}`
-                : isError
-                  ? 'Error loading data'
-                  : 'No data available'
-            }
+    <Card className="w-full">
+      <CardHeader className="-mb-6">
+        <CardTitle className="flex items-center gap-3 text-xl font-semibold text-orange-800">
+          <ChartArea className="h-6 w-6 text-orange-700" />
+          Course Wise Trend
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="w-1/2">
+          <DateMonthYearNavigator
+            date={false}
+            month={true}
+            year={false}
+            selectedDate={selectedDate}
+            onDateChange={handleDateChange}
+            disableBefore={'12/05/2024'}
+            changeToDateTab={tabsChangeToDate}
+            changeToMonthTab={tabsChangeToMonth}
           />
         </div>
-      </div>
+        <div className="w-full flex">
+          <div className="w-full">
+            <MonthWiseCourseTrend
+              chartData={chartData}
+              heading="Corse Wise Admissions"
+              headingFooter={
+                chartData.length > 0
+                  ? `Total Courses: ${chartData.length}`
+                  : isError
+                    ? 'Error loading data'
+                    : 'No data available'
+              }
+            />
+          </div>
+        </div>
+      </CardContent>
     </Card>
   );
 }
