@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface InfoGridProps {
   columns: number;
@@ -35,74 +35,65 @@ const DynamicInfoGrid: React.FC<InfoGridProps> = ({
   }
 
   const {
-    containerWidth = "1339px",
-    containerHeight = "119px",
-    containerPadding = "10px 595px 10px 16px",
-    columnWidth = "306px",
-    columnHeight = "96px",
-    columnGap = "85px",
-    rowGap = "12px",
-    keyWidth = "130px",
-    valueWidth = "140px",
-    fontSize = "14px"
+    containerWidth = '100%',
+    containerHeight = 'auto',
+    containerPadding = '1.5rem',
+    columnWidth = '100%',
+    columnHeight = 'auto',
+    columnGap = '2rem',
+    rowGap = '0.75rem',
+    keyWidth = '40%',
+    valueWidth = '60%',
+    fontSize = '0.875rem'
   } = design;
-
-  const keyW = parseInt(keyWidth);
-  const valueW = parseInt(valueWidth);
-  const totalW = parseInt(columnWidth);
-  const gapBetween = `${totalW - keyW - valueW}px`;
 
   return (
     <div
-      className="rounded-[10px] bg-white shadow-sm"
+      className="bg-white rounded-xl shadow-sm p-6 w-full max-w-6xl mx-auto my-4
+                 border border-gray-100 overflow-hidden transition-all duration-300
+                 hover:shadow-md"
       style={{
-        width: containerWidth,
-        height: containerHeight,
         padding: containerPadding,
-        display: "flex",
-        gap: columnGap,
-        
-        borderRadius: "12px",
-        backgroundColor: "white"
+        width: containerWidth,
+        height: containerHeight
       }}
     >
-      {columnData.map((column, i) => (
-        <div
-          key={i}
-          style={{
-            width: columnWidth,
-            height: columnHeight,
-            display: "flex",
-            flexDirection: "column",
-            gap: rowGap
-          }}
-        >
-          {column.map(([key, value]) => (
-            <div
-              key={key}
-              style={{ display: "flex", alignItems: "center" }}
-            >
-              <div className="text-[#666666] text-[14px] font-inter"
-                style={{
-                  width: keyWidth,
-                  color: "#666666",
-                }}
-              >
-                {key}
+      <div className="flex flex-col md:flex-row gap-8 w-full">
+        {columnData.map((column, i) => (
+          <div
+            key={i}
+            className="flex flex-col gap-3 w-full md:w-auto"
+            style={{
+              width: columnWidth,
+              height: columnHeight,
+              gap: rowGap
+            }}
+          >
+            {column.map(([key, value]) => (
+              <div key={key} className="flex items-start">
+                <div
+                  className="text-gray-500 font-medium pr-2 truncate"
+                  style={{
+                    width: keyWidth,
+                    fontSize: fontSize
+                  }}
+                >
+                  {key}
+                </div>
+                <div
+                  className="text-gray-800 font-semibold truncate"
+                  style={{
+                    width: valueWidth,
+                    fontSize: fontSize
+                  }}
+                >
+                  {value}
+                </div>
               </div>
-              <div style={{ width: gapBetween }} /> 
-              <div className="font-dark font-inter"
-                style={{
-                  width: valueWidth,
-                 
-                }}
-              >
-                {value}
-              </div>
-            </div>
-          ))}
-        </div>
-      ))}
+            ))}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

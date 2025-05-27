@@ -23,7 +23,8 @@ import {
   Star,
   ChevronRight,
   MoreHorizontal,
-  ArrowUpDown
+  ArrowUpDown,
+  Download
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -363,7 +364,7 @@ export function PerformanceDashboard() {
               </TabsTrigger>
             </TabsList>
             <Button variant="ghost" size="sm" className="ml-auto">
-              Export <ChevronRight className="h-4 w-4 ml-1" />
+              Download <Download className="h-4 w-4 ml-1" />
             </Button>
           </div>
 

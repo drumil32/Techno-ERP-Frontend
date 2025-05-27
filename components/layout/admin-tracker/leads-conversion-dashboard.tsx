@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/chart';
 import { CardItem } from '@/components/custom-ui/analytic-card/techno-analytic-cards-group';
 import { AlertCircle, Shrub } from 'lucide-react';
+import { Card } from '@/components/ui/card';
 
 const COLORS = {
   orange: '#ED8936',
@@ -228,7 +229,12 @@ export const LeadConversionDashboard = ({
                       />
                     ))}
                   </Pie>
-                  <ChartLegend layout="horizontal" verticalAlign="bottom" align="center" />
+                  <ChartLegend
+                    iconType="circle"
+                    layout="horizontal"
+                    verticalAlign="bottom"
+                    align="center"
+                  />
                   <ChartTooltip content={<CustomTooltip />} />
                 </PieChart>
               </ChartContainer>
