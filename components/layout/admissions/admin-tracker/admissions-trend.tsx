@@ -50,7 +50,7 @@ export default function AdmissionTrend() {
   });
 
   return (
-    <div className="flex w-full gap-6 items-stretch">
+    <div className="flex flex-col lg:flex-row w-full gap-6 items-stretch ">
       <Card className="flex-1 flex flex-col">
         <CardHeader className="">
           <CardTitle className="flex items-center gap-3 text-xl font-semibold text-green-900">

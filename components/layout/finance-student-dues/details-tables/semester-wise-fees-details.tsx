@@ -52,17 +52,17 @@ export default function SemesterWiseFeesDetails({
         </CardTitle>
       </CardHeader>
       <CardContent className="flex justify-between -mt-2">
-        <div className="rounded-[5px] w-[55%] overflow-auto border-2 border-gray-100 relative">
-          <Table className="w-full ">
+        <div className="rounded-[5px] w-[65%] overflow-auto border-2 border-gray-100 relative">
+          <Table className="w-full">
             <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg [&_th]:!text-[#5B31D1] ">
               <TableRow>
-                <TableHead className=" text-center w-[8%]">S. No</TableHead>
-                <TableHead>Academic Year</TableHead>
-                <TableHead className="text-center w-[10%] px-0">Semester</TableHead>
-                <TableHead className="text-right w-[15%]">Final Fees</TableHead>
-                <TableHead className="text-right">Fees Paid</TableHead>
-                <TableHead className="text-right">Due Fees</TableHead>
-                <TableHead className="pl-8">Due Date</TableHead>
+                <TableHead className="text-center w-[5%]">S. No</TableHead>
+                <TableHead className="w-[15%]">Academic Year</TableHead>
+                <TableHead className="text-center w-[7%] px-1">Semester</TableHead>
+                <TableHead className="text-right w-[17%]">Final Fees</TableHead>
+                <TableHead className="text-right w-[17%]">Fees Paid</TableHead>
+                <TableHead className="text-right w-[17%]">Due Fees</TableHead>
+                <TableHead className="text-left w-[17%] ">Due Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -88,7 +88,7 @@ export default function SemesterWiseFeesDetails({
                       ? `${semFee.dueFees.toLocaleString()}`
                       : '--'}
                   </TableCell>
-                  <TableCell className=" pl-8">
+                  <TableCell className=" ">
                     {semFee.dueDate ? format(semFee.dueDate, 'dd/MM/yyyy') : '--'}
                   </TableCell>
                 </TableRow>
