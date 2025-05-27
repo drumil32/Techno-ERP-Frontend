@@ -10,11 +10,11 @@ import { AdmissionAggregationResponse } from '@/types/admissions';
 import { DayWiseTrend } from './graphs/daywise-admissions';
 import CourseYearWiseTable from './graphs/course-year-wise-table';
 import { UserPlus2 } from 'lucide-react';
+import { format } from 'date-fns';
 
 export default function AdmissionTrend() {
   const [selectedDate, setSelectedDate] = useState(() => {
-    const today = new Date();
-    return `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear()}`;
+    return format(new Date(), 'dd/MM/yyyy');
   });
 
   const [admissionAggregationType, setAdmissionAggregationType] =
@@ -22,15 +22,16 @@ export default function AdmissionTrend() {
 
   const tabsChangeToMonth = () => {
     setAdmissionAggregationType(AdmissionAggregationType.MONTH_WISE);
+    setSelectedDate(format(new Date(), 'dd/MM/yyyy'));
   };
 
   const tabsChangeToDate = () => {
     setAdmissionAggregationType(AdmissionAggregationType.DATE_WISE);
+    setSelectedDate(format(new Date(), 'dd/MM/yyyy'));
   };
 
   const handleDateChange = (newDate: string) => {
     setSelectedDate(newDate);
-    console.log('Selected date:', newDate);
   };
 
   const {

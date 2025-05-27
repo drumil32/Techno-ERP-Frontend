@@ -1,122 +1,159 @@
-"use client"
+'use client';
 
-import { ExpandIcon } from "lucide-react"
+import { ExpandIcon } from 'lucide-react';
 import {
-  Bar, BarChart, CartesianGrid, Legend,
-  ResponsiveContainer, XAxis, YAxis
-} from "recharts"
+  Bar,
+  BarChart,
+  CartesianGrid,
+  LabelList,
+  ResponsiveContainer,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 import {
-  Card, CardContent, CardHeader, CardTitle
-} from "@/components/ui/card"
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card';
 
 import {
-  type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent
-} from "@/components/ui/chart"
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent
+} from '@/components/ui/chart';
 
-import { format, parse } from "date-fns"
+import { format, parse } from 'date-fns';
 
-// Utility to format numbers into lakhs
-const formatToLakhs = (num: number) => +(num / 100000).toFixed(1)
+const formatToLakhs = (num: number) => +(num / 100000).toFixed(1);
 
-// Utility to format date like "18/05/2024" => "18th May"
 const formatDate = (input: string): string => {
-  if (!input) return ""
-  // date is not valid
-  if (input.length !== 10) return ""
-  const parsed = parse(input, "dd/MM/yyyy", new Date())
-  const day = format(parsed, "do")
-  const month = format(parsed, "MMM")
-  return `${day} ${month}`
-}
+  if (!input || input.length !== 10) return '';
+  const parsed = parse(input, 'dd/MM/yyyy', new Date());
+  return `${format(parsed, 'do')} ${format(parsed, 'MMM')}`;
+};
 
 const chartConfig = {
   dailyCollection: {
-    label: "dailyCollection",
-    color: "hsl(265, 83%, 45%)",
-  },
-} satisfies ChartConfig
+    label: 'Daily Collection',
+    color: 'var(--chart-4)'
+  }
+} satisfies ChartConfig;
 
 export default function ChartDaySummary({
   title,
   chartData,
   chartFooterLabel
 }: {
-  title: string
-  chartData: { date: string, dailyCollection: number }[]
-  chartFooterLabel: string
+  title: string;
+  chartData: { date: string; dailyCollection: number }[];
+  chartFooterLabel: string;
 }) {
-  // Format and transform chart data
-  const formattedData = chartData.map(d => ({
+  const isEmpty = chartData.length === 0;
+
+  const formattedData = chartData.map((d) => ({
     date: formatDate(d.date),
-    dailyCollection: formatToLakhs(d.dailyCollection),
-  }))
+    dailyCollection: formatToLakhs(d.dailyCollection)
+  }));
 
-  console.log(chartData)
-
-  const firstDate = formatDate(chartData[0]?.date || "")
-  const lastDate = formatDate(chartData[chartData.length - 1]?.date || "")
+  const firstDate = formatDate(chartData[0]?.date || '');
+  const lastDate = formatDate(chartData[chartData.length - 1]?.date || '');
 
   return (
-    <Card className="border border-purple-200 border-dashed">
-      <CardHeader className="border-b border-dashed border-purple-200 pb-2">
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-xl font-bold">{title}</CardTitle>
-        </div>
-        <div className="flex justify-between items-center mt-2">
-          <span className="text-gray-700 font-medium">{firstDate} - {lastDate}</span>
-          <button className="flex items-center text-gray-600 hover:text-gray-900">
-            <span className="mr-1">Expand view</span>
-            <ExpandIcon className="h-4 w-4" />
-          </button>
-        </div>
+    <Card className="w-full">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg">{title}</CardTitle>
+        <CardDescription className="text-muted-foreground text-sm">
+          {firstDate && lastDate ? `${firstDate} - ${lastDate}` : 'No data range available'}
+        </CardDescription>
+        <button className="mt-2 flex items-center text-muted-foreground hover:text-foreground text-sm">
+          <span className="mr-1">Expand view</span>
+          <ExpandIcon className="h-4 w-4" />
+        </button>
       </CardHeader>
 
-      <CardContent className="pt-6 pb-2">
-        <div className="overflow-x-auto">
-          <div className="min-w-[600px]">
-            <ChartContainer config={chartConfig}>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={formattedData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
-                  <CartesianGrid horizontal={true} vertical={false} strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="date" axisLine={false} tickLine={false} tickMargin={10} stroke="#6b7280" />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
+      <CardContent className="pb-4">
+        {isEmpty ? (
+          <div className="flex flex-col h-96 justify-center items-center gap-6 text-muted-foreground text-sm">
+            <svg
+              className="w-16 h-16 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1}
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>No collection data available for the selected date range.</span>
+          </div>
+        ) : (
+          <div className="w-full h-96">
+            <ChartContainer config={chartConfig} className="w-full h-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={formattedData}
+                  barSize={40}
+                  margin={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                >
+                  <CartesianGrid vertical={false} strokeDasharray="4 4" />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={true}
+                    axisLine={true}
                     tickMargin={10}
+                    style={{ fontSize: 12 }}
+                    stroke="#374151"
+                    strokeWidth={1.5}
+                  />
+                  <YAxis
+                    tickLine={true}
+                    axisLine={true}
+                    tickMargin={10}
+                    style={{ fontSize: 12 }}
+                    stroke="#374151"
+                    strokeWidth={1.5}
                     tickFormatter={(value) => `${value}L`}
-                    stroke="#6b7280"
-                    domain={[0, 5]}
-                    ticks={[0, 1, 2, 3, 4, 5, 6]}
                   />
                   <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent />}
-                    formatter={(value) => [`${value}L`, "dailyCollection"]}
+                    cursor={{ fill: 'transparent' }}
+                    content={<ChartTooltipContent hideLabel />}
+                    formatter={(value) => [`${value}L`, 'Daily Collection']}
                   />
                   <Bar
                     dataKey="dailyCollection"
-                    fill="hsl(265, 83%, 45%)"
-                    radius={[4, 4, 0, 0]}
-                    barSize={40}
-                    name="dailyCollection"
-                    label={{
-                      position: "top",
-                      formatter: (value: any) => `${value}L`,
-                      fill: "hsl(265, 83%, 45%)",
-                      fontSize: 12,
-                      fontWeight: "bold",
-                    }}
-                  />
-                  <Legend verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: "20px" }} />
+                    fill="var(--chart-4)"
+                    radius={[8, 8, 0, 0]}
+                    name="Daily Collection"
+                  >
+                    <LabelList
+                      position="top"
+                      offset={8}
+                      className="fill-foreground"
+                      fontSize={12}
+                      formatter={(val: any) => `${val}L`}
+                    />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </ChartContainer>
           </div>
-        </div>
-
-        <div className="text-center text-gray-600 mt-2 mb-2">{chartFooterLabel}</div>
+        )}
       </CardContent>
+
+      <CardFooter className="pt-2">
+        <div className="text-sm leading-none text-muted-foreground">
+          {isEmpty ? 'Try selecting a different date or check back later.' : chartFooterLabel}
+        </div>
+      </CardFooter>
     </Card>
-  )
+  );
 }
