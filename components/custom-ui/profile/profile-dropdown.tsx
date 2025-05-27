@@ -12,7 +12,8 @@ import {
   ChevronDown,
   Settings,
   UserCog,
-  Sparkles
+  Sparkles,
+  Server
 } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { UserRoles } from '@/types/enum';
@@ -31,7 +32,8 @@ const RoleBadge = ({ role }: { role: UserRoles }) => {
     [UserRoles.COUNSELOR]: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
     [UserRoles.REGISTAR]: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
     [UserRoles.HOD]: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-    [UserRoles.INSTRUCTOR]: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200'
+    [UserRoles.INSTRUCTOR]: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
+    [UserRoles.SYSTEM_ADMIN]: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
   };
 
   const roleIcons = {
@@ -42,7 +44,8 @@ const RoleBadge = ({ role }: { role: UserRoles }) => {
     [UserRoles.COUNSELOR]: <MessageSquare className="h-3 w-3" />,
     [UserRoles.REGISTAR]: <ClipboardList className="h-3 w-3" />,
     [UserRoles.HOD]: <GraduationCap className="h-3 w-3" />,
-    [UserRoles.INSTRUCTOR]: <School className="h-3 w-3" />
+    [UserRoles.INSTRUCTOR]: <School className="h-3 w-3" />,
+    [UserRoles.SYSTEM_ADMIN]: <Server className="h-3 w-3" />
   };
 
   const formattedRole = role

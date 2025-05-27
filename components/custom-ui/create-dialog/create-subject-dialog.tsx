@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { createSubject, fetchInstructors } from "@/components/layout/courses/helpers/fetch-data";
-import { generateAcademicYearDropdown } from "@/lib/generateAcademicYearDropdown";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { createSubject, fetchInstructors } from '@/components/layout/courses/helpers/fetch-data';
+import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
+import { zodResolver } from '@hookform/resolvers/zod';
 import * as Dialog from '@radix-ui/react-dialog';
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useRef } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-import { BookOpen } from "lucide-react";
-import { queryClient } from "@/lib/queryClient";
-import { MultiSelectCustomDropdown } from "../custom-dropdown/multi-select-custom-dropdown";
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo, useRef } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { BookOpen } from 'lucide-react';
+import { queryClient } from '@/lib/queryClient';
+import { MultiSelectCustomDropdown } from '../custom-dropdown/multi-select-custom-dropdown';
 
 const academicYears = generateAcademicYearDropdown();
 
@@ -22,7 +22,6 @@ const academicYears = generateAcademicYearDropdown();
 //   startingYear: number
 // }
 
-
 interface SubjectData {
   departmentName: string;
   courseName: string;
@@ -30,12 +29,12 @@ interface SubjectData {
   semester: number;
   courseId: string;
   semesterId: string;
-};
+}
 
 interface CreateSubjectDialogProps {
   openDialog: boolean;
   onOpenChange: (open: boolean) => void;
-  data: SubjectData
+  data: SubjectData;
 }
 
 interface Instructor {
@@ -46,55 +45,78 @@ interface Instructor {
 }
 
 export const formatInstructors = (instructors: Instructor[]) => {
-  const inst = []
+  const inst = [];
   for (let ins of instructors) {
-    inst.push(`${ins.name} - ${ins.email}`)
+    inst.push(`${ins.name} - ${ins.email}`);
   }
   return inst;
-}
+};
 
 const createSubjectSchema = z.object({
-  courseId: z.string({ required_error: "Course ID is Required" }).nonempty("Course ID is Required."),
-  semesterId: z.string({ required_error: "Semester ID is Required" }).nonempty("Semester ID is Required."),
-  courseName: z.string({ required_error: "Course Name is Required" }).nonempty("Course Name is Required."),
-  academicYear: z.string({ required_error: "Academic Year is Required" }).nonempty("Academic Year is Required."),
-  semester: z.number({ required_error: "Semester Number is Required" }),
-  subjectName: z.string({ required_error: "Subject Name is Required" }).nonempty("Subject Name is Required."),
-  subjectCode: z.string({ required_error: "Subject Code is Required" }).nonempty("Subject Code is Required."),
-  instructor: z.array(z.string()).nonempty("At least one instructor is required.")
-})
+  courseId: z
+    .string({ required_error: 'Course ID is Required' })
+    .nonempty('Course ID is Required.'),
+  semesterId: z
+    .string({ required_error: 'Semester ID is Required' })
+    .nonempty('Semester ID is Required.'),
+  courseName: z
+    .string({ required_error: 'Course Name is Required' })
+    .nonempty('Course Name is Required.'),
+  academicYear: z
+    .string({ required_error: 'Academic Year is Required' })
+    .nonempty('Academic Year is Required.'),
+  semester: z.number({ required_error: 'Semester Number is Required' }),
+  subjectName: z
+    .string({ required_error: 'Subject Name is Required' })
+    .nonempty('Subject Name is Required.'),
+  subjectCode: z
+    .string({ required_error: 'Subject Code is Required' })
+    .nonempty('Subject Code is Required.'),
+  instructor: z.array(z.string()).nonempty('At least one instructor is required.')
+});
 
 type FormData = z.infer<typeof createSubjectSchema>;
 
-export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSubjectDialogProps) => {
+export const CreateSubjectDialog = ({
+  openDialog,
+  onOpenChange,
+  data
+}: CreateSubjectDialogProps) => {
   const open = openDialog;
-  const { control, handleSubmit, register, reset, formState: { errors }, } = useForm<FormData>({
+  const {
+    control,
+    handleSubmit,
+    register,
+    reset,
+    formState: { errors }
+  } = useForm<FormData>({
     resolver: zodResolver(createSubjectSchema),
     defaultValues: {
-      courseName: "",
-      academicYear: "",
+      courseName: '',
+      academicYear: '',
       semester: 0,
-      courseId: "",
-      semesterId: "",
+      courseId: '',
+      semesterId: '',
       instructor: [],
-      subjectName: "",
-      subjectCode: ""
-    },
+      subjectName: '',
+      subjectCode: ''
+    }
   });
 
-
-  const filterParams = useMemo(() => ({
-    departmentName: data.departmentName
-  }), [data.departmentName]);
-  
+  const filterParams = useMemo(
+    () => ({
+      departmentName: data.departmentName
+    }),
+    [data.departmentName]
+  );
 
   const instructorsQuery = useQuery({
     queryKey: ['instructorsmetadata', filterParams],
     queryFn: fetchInstructors,
     enabled: !!data?.departmentName
   });
-  
-  const instructors: Instructor[] = instructorsQuery.data as Instructor[] || [];
+
+  const instructors: Instructor[] = (instructorsQuery.data as Instructor[]) || [];
   // console.log("Instructors info : ", instructors)
   const instructorsInfo = formatInstructors(instructors);
 
@@ -130,12 +152,12 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
         });
         toastIdRef.current = null;
       }
-    } 
+    }
     // else if (hasError) {
     //   toastIdRef.current = toast.error('Failed to load instructors data', {
     //     duration: 3000
     //   });
-    // } 
+    // }
     else if (isLoading || isFetching) {
       toastIdRef.current = toast.loading('Loading instructors data...', {
         duration: Infinity
@@ -152,7 +174,7 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
     instructorsQuery.isLoading,
     instructorsQuery.isError,
     instructorsQuery.isSuccess,
-    instructorsQuery.isFetching,
+    instructorsQuery.isFetching
   ]);
 
   const toastIdRef = useRef<string | number | null>(null);
@@ -166,8 +188,8 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
         courseId: data.courseId,
         semesterId: data.semesterId,
         instructor: [],
-        subjectName: "",
-        subjectCode: ""
+        subjectName: '',
+        subjectCode: ''
       });
     }
   }, [data, reset]);
@@ -175,27 +197,26 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
   const createSubjectMutation = useMutation({
     mutationFn: createSubject,
     onMutate: () => {
-      toastIdRef.current = toast.loading("Creating subject...");
+      toastIdRef.current = toast.loading('Creating subject...');
     },
     onSuccess: () => {
-      toast.success("Subject created successfully!", {
-        id: toastIdRef.current || undefined,
+      toast.success('Subject created successfully!', {
+        id: toastIdRef.current || undefined
       });
       toastIdRef.current = null;
       onOpenChange(false);
 
       reset();
-      queryClient.invalidateQueries({ queryKey: ["subjectswiseinfo"] });
+      queryClient.invalidateQueries({ queryKey: ['subjectswiseinfo'] });
     },
     onError: (error: any) => {
-      toast.error("Failed to create subject", {
-        id: toastIdRef.current || undefined,
+      toast.error('Failed to create subject', {
+        id: toastIdRef.current || undefined
       });
       toastIdRef.current = null;
-      console.error("Create subject error:", error);
-    },
+      console.error('Create subject error:', error);
+    }
   });
-
 
   const handleFormSubmit = (data: FormData) => {
     // console.log("Form Data:", data);
@@ -206,15 +227,13 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
     //     dep.departmentHOD === data.departmentHOD
     // );
 
-
-    const instructorIds = data.instructor.map((value) => {
-      const [name, email] = value.split(" - ");
-      const matched = instructors.find(
-        (instr) => instr.name === name && instr.email === email
-      );
-      return matched?.instructorId;
-    }).filter(Boolean);
-
+    const instructorIds = data.instructor
+      .map((value) => {
+        const [name, email] = value.split(' - ');
+        const matched = instructors.find((instr) => instr.name === name && instr.email === email);
+        return matched?.instructorId;
+      })
+      .filter(Boolean);
 
     const requestObject = {
       subjectName: data.subjectName,
@@ -222,34 +241,37 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
       instructor: instructorIds,
       courseId: data.courseId,
       semesterId: data.semesterId
-    }
+    };
 
     // console.log("Created Request Object:", requestObject);
 
     createSubjectMutation.mutate(requestObject);
   };
 
-
   return (
-    <Dialog.Root open={open} onOpenChange={(isOpen) => {
-      onOpenChange(isOpen);
-      if (!isOpen) reset();
-    }}>
-
+    <Dialog.Root
+      open={open}
+      onOpenChange={(isOpen) => {
+        onOpenChange(isOpen);
+        if (!isOpen) reset();
+      }}
+    >
       <Dialog.Portal>
         <Dialog.Overlay className="fixed z-30 inset-0 bg-black/30" />
-        <Dialog.Content className="bg-white z-40 p-6 rounded-xl shadow-xl w-full max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <Dialog.Content className="bg-white z-40 p-6 rounded-xl shadow-xl w-1/2  md:w-full max-w-lg fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <div className="flex justify-between items-center mb-4">
             <Dialog.Title className="text-xl font-semibold flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-gray-500 text-xl" />
               &nbsp;Add Subject
             </Dialog.Title>
-            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold">&times;</Dialog.Close>
+            <Dialog.Close className="text-gray-500 hover:text-black text-xl font-bold">
+              &times;
+            </Dialog.Close>
           </div>
 
           <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-            <input type="hidden" {...register("courseId")} />
-            <input type="hidden" {...register("semesterId")} />
+            <input type="hidden" {...register('courseId')} />
+            <input type="hidden" {...register('semesterId')} />
 
             {/* College Name */}
             <div className="space-y-1">
@@ -269,7 +291,6 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
                 <p className="text-red-500 text-sm">{errors.courseName.message}</p>
               )}
             </div>
-
 
             {/* Academic Year & Semester */}
             <div className="grid grid-cols-2 gap-4">
@@ -321,8 +342,9 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
                     <input
                       {...field}
                       placeholder="Enter the subject name"
-                      className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${!field.value ? "form-field-input-init-text" : ""
-                        }`}
+                      className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${
+                        !field.value ? 'form-field-input-init-text' : ''
+                      }`}
                     />
                   )}
                 />
@@ -339,8 +361,9 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
                     <input
                       {...field}
                       placeholder="Enter the subject Code"
-                      className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${!field.value ? "form-field-input-init-text" : ""
-                        }`}
+                      className={`p-3 form-field-input-text border rounded-md w-full form-field-input-text ${
+                        !field.value ? 'form-field-input-init-text' : ''
+                      }`}
                     />
                   )}
                 />
@@ -384,9 +407,8 @@ export const CreateSubjectDialog = ({ openDialog, onOpenChange, data }: CreateSu
               </button>
             </div>
           </form>
-
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   );
-}
+};

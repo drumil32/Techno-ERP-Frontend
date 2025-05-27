@@ -455,7 +455,6 @@ export const SingleSubjectPage = () => {
     }, 500);
   };
 
-
   useEffect(() => {
     return () => {
       if (lectureSearchTimerRef.current) {
@@ -466,7 +465,6 @@ export const SingleSubjectPage = () => {
       }
     };
   }, []);
-
 
   const addLecturePlan = () => {
     console.log('Adding lecture plan!');
@@ -490,9 +488,8 @@ export const SingleSubjectPage = () => {
     queryKey: ['scheduleInfo', filterParams],
     queryFn: fetchSchedule,
     placeholderData: (previousData) => previousData,
-    enabled: true,
+    enabled: true
   });
-
 
   const scheduleResponse: ScheduleApiResponse = (subjectQuery.data as ScheduleApiResponse) || {};
 
@@ -501,7 +498,6 @@ export const SingleSubjectPage = () => {
       setFullSchedule(subjectQuery.data as ScheduleApiResponse);
     }
   }, [subjectQuery.data]);
-
 
   // setFullSchedule(scheduleResponse);
 
@@ -743,7 +739,7 @@ export const SingleSubjectPage = () => {
         selectedRowId={selectedRowId}
         setSelectedRowId={setSelectedRowId}
         // minVisibleRows={lecturePlan.length == 0 ? 14 : (lecturePlan.length + 2 < 5 ? lecturePlan.length + 2 : 7)}
-        minVisibleRows = {0}
+
         showAddButton={true}
         showEditButton={true}
         addButtonPlacement={'bottom'}
@@ -790,7 +786,7 @@ export const SingleSubjectPage = () => {
         showPagination={false}
         selectedRowId={selectedRowId}
         setSelectedRowId={setSelectedRowId}
-        minVisibleRows = {0}
+        minVisibleRows={0}
         // minVisibleRows={practicalPlan.length == 0 ? 14 : (practicalPlan.length + 2 < 5 ? practicalPlan.length + 2 : 7)}
         showAddButton={true}
         showEditButton={true}
