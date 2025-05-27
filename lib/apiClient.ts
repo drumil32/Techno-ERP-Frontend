@@ -60,7 +60,7 @@ export const apiRequest = async <T>(
 
   if (!response.ok || !responseBody.SUCCESS) {
     toast.error(responseBody.ERROR || responseBody.MESSAGE || `HTTP Error: ${response.status}`);
-    throw Error('Something went wrong');
+    // throw Error('Something went wrong');
   }
 
   return responseBody.DATA as T;
