@@ -68,7 +68,7 @@ export default function YellowLeadViewEdit({
   setSelectedRowId,
   setRefreshKey
 }: any) {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState<YellowLead | null>(null);
   const [originalData, setOriginalData] = useState<YellowLead | null>(null);
   // const [isEditing, toggleIsEditing] = useState(false);
@@ -360,7 +360,7 @@ export default function YellowLeadViewEdit({
           const queryCache = queryClient.getQueryCache();
           const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
 
-          leadQueries.forEach(query => {
+          leadQueries.forEach((query) => {
             queryClient.setQueryData(query.queryKey, (oldData: any) => {
               if (!oldData || !oldData.yellowLeads) return oldData;
 
@@ -372,8 +372,10 @@ export default function YellowLeadViewEdit({
 
               const assignedToUsers = Array.isArray(response.assignedTo)
                 ? response.assignedTo
-                  .map((id: string) => assignedToDropdownData?.find((user: any) => user._id === id))
-                  .filter(Boolean)
+                    .map((id: string) =>
+                      assignedToDropdownData?.find((user: any) => user._id === id)
+                    )
+                    .filter(Boolean)
                 : [];
 
               let assignedToName = 'N/A';
@@ -388,7 +390,6 @@ export default function YellowLeadViewEdit({
                   assignedToView += ` +${assignedToUsers.length - 1}`;
                 }
               }
-
 
               if (leadIndex !== -1) {
                 newData.yellowLeads[leadIndex] = {
@@ -409,38 +410,41 @@ export default function YellowLeadViewEdit({
                   courseView: response.course ?? '-',
                   footFall: response.footFall,
                   finalConversion:
-                    FinalConversionStatus[response.finalConversion as keyof typeof FinalConversionStatus] ??
-                    response.finalConversion,
+                    FinalConversionStatus[
+                      response.finalConversion as keyof typeof FinalConversionStatus
+                    ] ?? response.finalConversion,
                   assignedTo: response.assignedTo,
                   assignedToName: assignedToName,
                   followUpCount: response.followUpCount,
                   schoolName: response.schoolName,
                   degree: response.degree,
-                  remarks: response.remarks || newData.leads[leadIndex].remarks,
-                  remarksView: response.remarks && response.remarks.length > 0
-                    ? response.remarks[response.remarks.length - 1]
-                    : newData.leads[leadIndex].remarksView,
+                  remarks: response.remarks || newData.yellowLeads[leadIndex].remarks,
+                  remarksView:
+                    response.remarks && response.remarks.length > 0
+                      ? response.remarks[response.remarks.length - 1]
+                      : newData.yellowLeads[leadIndex].remarksView,
                   nextDueDate: response.nextDueDate,
-                  nextDueDateView: response.nextDueDate ? formatDateView(response.nextDueDate) : '-',
-                  leadTypeModifiedDate: response.leadTypeModifiedDate ?? newData.leads[leadIndex].leadTypeModifiedDate,
-                  leadTypeModifiedDateView: formatTimeStampView(response.leadTypeModifiedDate) ??
-                    newData.leads[leadIndex].leadTypeModifiedDateView,
+                  nextDueDateView: response.nextDueDate
+                    ? formatDateView(response.nextDueDate)
+                    : '-',
+                  leadTypeModifiedDate:
+                    response.leadTypeModifiedDate ??
+                    newData.yellowLeads[leadIndex].leadTypeModifiedDate,
+                  leadTypeModifiedDateView:
+                    formatTimeStampView(response.leadTypeModifiedDate) ??
+                    newData.yellowLeads[leadIndex].leadTypeModifiedDateView,
 
-                  updatedAt: response.updatedAt ?? 'N/A',
-
+                  updatedAt: response.updatedAt ?? 'N/A'
                 };
               }
 
               return newData;
             });
           });
+        };
 
-
-
-        }
-
-        updateLeadCache()
-        queryClient.invalidateQueries({queryKey: ['leadsAnalytics']});
+        updateLeadCache();
+        queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
 
         setOriginalData(formData);
         // setRefreshKey((prev: number) => prev + 1);
@@ -451,9 +455,8 @@ export default function YellowLeadViewEdit({
       } else {
         setFormData(originalData);
       }
-
     } catch (err) {
-      console.log(err)
+      console.log(err);
       console.error('Error updating lead:', err);
       toast.error('An error occurred while updating the lead');
     } finally {
@@ -730,9 +733,7 @@ export default function YellowLeadViewEdit({
           <EditLabel htmlFor="followUpCount" title={'Follow-ups'} />
           <Select
             defaultValue={formData.followUpCount?.toString() || ''}
-            onValueChange={(value) =>
-              handleFollowUpCountChange('followUpCount', Number(value))
-            }
+            onValueChange={(value) => handleFollowUpCountChange('followUpCount', Number(value))}
           >
             <SelectTrigger id="followUpCount" className="w-full">
               <SelectValue placeholder="Select follow-up count" />
