@@ -13,7 +13,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { UserPlus2, Users } from 'lucide-react';
+import { Group, UserPlus2, UserRound, Users, UsersRound } from 'lucide-react';
 
 export default function CourseYearWiseTable() {
   const courseWiseQuery = useQuery<AdmissionCourseYearWiseResponse, Error>({
@@ -36,16 +36,16 @@ export default function CourseYearWiseTable() {
   console.log(tableData, yearColumns, columnTotals, grandTotal);
 
   return (
-    <Card className="h-full col-span-2 col-start-1 bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg rounded-2xl ">
-      <CardHeader className="px-6 ">
+    <Card className="h-full col-span-2 col-start-1 rounded-2xl ">
+      <CardHeader className="">
         <CardTitle className="flex items-center gap-3 text-xl font-semibold text-purple-900">
-          <UserPlus2 className="h-6 w-6 text-purple-600" />
+          <UsersRound className="h-6 w-6 text-purple-600" />
           Admissions Summary
         </CardTitle>
       </CardHeader>
 
       <CardContent className="">
-        <div className="rounded-lg w-full overflow-auto h-[520px] border border-gray-100 relative">
+        <div className="rounded-lg w-full h-[740px]  overflow-auto border border-gray-100 relative">
           <Table>
             <TableHeader className="bg-purple-50 sticky top-0">
               <TableRow className="hover:bg-purple-50/50">

@@ -1,53 +1,72 @@
-import { Button } from "@/components/ui/button";
-import { StudentDetails } from "@/types/finance";
-import { BookOpen, Loader2 } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { StudentDetails } from '@/types/finance';
+import { BookOpen, CirclePlus, Loader2 } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
-import { Label } from "@/components/ui/label";
-import { FeeActions, TransactionTypes } from "@/types/enum";
-import { useState } from "react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import { format } from "date-fns";
-import { useParams } from "next/navigation";
-import { recordPayment } from "../helpers/fetch-data";
-import { getFeeActionLabel, getTransactionTypeLabel } from "@/lib/enumDisplayMapper";
-import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
-import { z } from "zod";
+import { Label } from '@/components/ui/label';
+import { FeeActions, TransactionTypes } from '@/types/enum';
+import { useState } from 'react';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Input } from '@/components/ui/input';
+import { format } from 'date-fns';
+import { useParams } from 'next/navigation';
+import { recordPayment } from '../helpers/fetch-data';
+import { getFeeActionLabel, getTransactionTypeLabel } from '@/lib/enumDisplayMapper';
+import { toast } from 'sonner';
+import { useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
 
 const feesActionMapping = {
-  [FeeActions.DEPOSIT]: "DEPOSIT",
-  [FeeActions.REFUND]: "REFUND"
+  [FeeActions.DEPOSIT]: 'DEPOSIT',
+  [FeeActions.REFUND]: 'REFUND'
 };
 
 const transactionTypeMapping = {
-  [TransactionTypes.CASH]: "CASH",
-  [TransactionTypes.NEFT_IMPS_RTGS]: "NEFT/RTGS/IMPS",
-  [TransactionTypes.UPI]: "UPI",
-  [TransactionTypes.CHEQUE]: "CHEQUE",
-  [TransactionTypes.OTHERS]: "OTHERS",
+  [TransactionTypes.CASH]: 'CASH',
+  [TransactionTypes.NEFT_IMPS_RTGS]: 'NEFT/RTGS/IMPS',
+  [TransactionTypes.UPI]: 'UPI',
+  [TransactionTypes.CHEQUE]: 'CHEQUE',
+  [TransactionTypes.OTHERS]: 'OTHERS'
 };
 
 const formSchema = z.object({
   feesAction: z.nativeEnum(FeeActions, {
-    required_error: "Please select a fees action"
+    required_error: 'Please select a fees action'
   }),
   transactionType: z.nativeEnum(TransactionTypes, {
-    required_error: "Please select a transaction type"
+    required_error: 'Please select a transaction type'
   }),
-  amount: z.coerce.number({
-    required_error: "Amount is required",
-    invalid_type_error: "Amount must be a number",
-  }).gt(0, { message: "Amount must be greater than 0" }),
+  amount: z.coerce
+    .number({
+      required_error: 'Amount is required',
+      invalid_type_error: 'Amount must be a number'
+    })
+    .gt(0, { message: 'Amount must be greater than 0' }),
   remark: z.string().optional()
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-export default function RecordPaymentDialog({ studentDetails }: { studentDetails: StudentDetails | undefined }) {
+export default function RecordPaymentDialog({
+  studentDetails
+}: {
+  studentDetails: StudentDetails | undefined;
+}) {
   const param = useParams();
   const studentId = param.studentId as string;
   const queryClient = useQueryClient();
@@ -61,7 +80,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
       feesAction: FeeActions.DEPOSIT,
       transactionType: TransactionTypes.CASH,
       amount: 0,
-      remark: ""
+      remark: ''
     }
   });
 
@@ -73,7 +92,7 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
       feeAction: feesActionMapping[values.feesAction],
       txnType: transactionTypeMapping[values.transactionType],
       amount: values.amount,
-      remark: values.remark || "",
+      remark: values.remark || '',
       date: new Date().toISOString()
     };
 
@@ -81,10 +100,10 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
       const res = await recordPayment(payload);
 
       if (res == null) {
-        throw new Error("Failed to record payment");
+        throw new Error('Failed to record payment');
       }
 
-      toast.success("Payment recorded successfully!");
+      toast.success('Payment recorded successfully!');
 
       // Reset form and invalidate queries
       form.reset();
@@ -101,12 +120,21 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={(newOpen) => {
-      if (isLoading && !newOpen) return;
-      setOpen(newOpen);
-    }}>
+    <Dialog.Root
+      open={open}
+      onOpenChange={(newOpen) => {
+        if (isLoading && !newOpen) return;
+        setOpen(newOpen);
+      }}
+    >
       <Dialog.Trigger asChild>
-        <Button className="ml-auto rounded-[10px]">Record a payment</Button>
+        <Button
+          variant="outline"
+          className="h-12 justify-start px-6 py-3 border-gray-200 hover:bg-gray-50 ring ring-yellow-600"
+        >
+          <CirclePlus className="size-6 mr-3 text-yellow-600" />
+          <span className="text-gray-700 font-medium">Record a payment</span>
+        </Button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed z-30 inset-0 bg-black/30" />
@@ -160,7 +188,11 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormLabel className="text-gray-500 text-md">Fees Action</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isLoading}
+                        >
                           <FormControl>
                             <SelectTrigger className="w-full text-md">
                               <SelectValue placeholder="Select a fees action" />
@@ -185,7 +217,11 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                     render={({ field }) => (
                       <FormItem className="flex-1">
                         <FormLabel className="text-gray-500 text-md">Transaction Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isLoading}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          disabled={isLoading}
+                        >
                           <FormControl>
                             <SelectTrigger className="w-full text-md">
                               <SelectValue placeholder="Select a transaction type" />
@@ -253,18 +289,14 @@ export default function RecordPaymentDialog({ studentDetails }: { studentDetails
                   >
                     Cancel
                   </Button>
-                  <Button
-                    type="submit"
-                    className="bg-[#5B31D1] text-white"
-                    disabled={isLoading}
-                  >
+                  <Button type="submit" className="bg-[#5B31D1] text-white" disabled={isLoading}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         Processing...
                       </>
                     ) : (
-                      "Record"
+                      'Record'
                     )}
                   </Button>
                 </div>

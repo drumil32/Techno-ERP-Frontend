@@ -2,12 +2,12 @@ import { FinanceFeeType } from '@/types/enum';
 
 export const FEE_CATEGORY_ORDER: FinanceFeeType[] = [
   FinanceFeeType.SEMESTERFEE,
-  FinanceFeeType.EXAMFEES,
   FinanceFeeType.PROSPECTUS, // ONE-TIME
   FinanceFeeType.STUDENTID, // ONE-TIME
   FinanceFeeType.UNIFORM, // ONE-TIME
   FinanceFeeType.STUDENTWELFARE, // YEARLY
   FinanceFeeType.BOOKBANK, // SEMESTERWISE
+  FinanceFeeType.EXAMFEES,
   FinanceFeeType.HOSTEL, // OPTIONAL
   FinanceFeeType.TRANSPORT, // OPTIONAL
   FinanceFeeType.MISCELLANEOUS // OTHERS

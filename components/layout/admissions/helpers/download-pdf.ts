@@ -505,6 +505,9 @@ export const downloadFeeReceipt = async (
           )
           .join('')}
         <tr>
+        <td style="height:10px; width:100%;"> </td>
+        </tr>
+        <tr>
           <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; font-weight: bold; border-right:none;">Total</td>
           <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; border-left:none;"></td>
         </tr>

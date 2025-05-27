@@ -1,7 +1,5 @@
 'use client';
-
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from 'recharts';
-
 import {
   Card,
   CardContent,
@@ -36,17 +34,17 @@ export function MonthWiseCourseTrend({
   const isEmpty = chartData.length === 0;
 
   return (
-    <Card className="h-full bg-gradient-to-br border border-gray-100 shadow-lg rounded-2xl">
-      <CardHeader>
-        <CardTitle>{heading}</CardTitle>
-        <CardDescription className="text-muted-foreground">{headingFooter}</CardDescription>
+    <Card className="w-full bg-gradient-to-br border border-gray-100 shadow-lg rounded-2xl">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg">{heading}</CardTitle>
+        <CardDescription className="text-muted-foreground text-sm">{headingFooter}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1">
+      <CardContent className="pb-4">
         {isEmpty ? (
-          <div className="flex flex-col h-full flex-1 justify-center items-center gap-6 text-muted-foreground text-sm py-12">
-            <div className="text-yellow-300">
+          <div className="flex flex-col h-64 justify-center items-center gap-4 text-muted-foreground text-sm">
+            <div className="text-gray-400">
               <svg
-                className="w-16 h-16 text-gray-400"
+                className="w-12 h-12"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -60,37 +58,48 @@ export function MonthWiseCourseTrend({
                 />
               </svg>
             </div>
-            No admission data available for the selected date.
+            <span>No admission data available for the selected date.</span>
           </div>
         ) : (
-          <ChartContainer config={chartConfig} className="h-full w-full">
-            <BarChart
-              data={chartData}
-              barSize={48}
-              margin={{ top: 20, bottom: 20, left: 20, right: 10 }}
-            >
-              <CartesianGrid vertical={false} strokeDasharray="4 4" />
-              <XAxis
-                dataKey="courseCode"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={10}
-                style={{ fontSize: 12 }}
-              />
-              <YAxis tickLine={false} axisLine={false} tickMargin={10} style={{ fontSize: 12 }} />
-              <ChartTooltip
-                cursor={{ fill: 'transparent' }}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Bar dataKey="count" fill="var(--color-admissions)" radius={[8, 8, 0, 0]}>
-                <LabelList position="top" offset={8} className="fill-foreground" fontSize={12} />
-              </Bar>
-            </BarChart>
-          </ChartContainer>
+          <div className="w-full h-64">
+            <ChartContainer config={chartConfig} className="w-full h-full">
+              <BarChart
+                data={chartData}
+                barSize={32}
+                margin={{ top: 20, bottom: 20, left: 20, right: 20 }}
+              >
+                <CartesianGrid vertical={false} strokeDasharray="4 4" />
+                <XAxis
+                  dataKey="courseCode"
+                  tickLine={true}
+                  axisLine={true}
+                  tickMargin={8}
+                  style={{ fontSize: 11 }}
+                  stroke="#374151"
+                  strokeWidth={1.5}
+                />
+                <YAxis
+                  tickLine={true}
+                  axisLine={true}
+                  tickMargin={8}
+                  style={{ fontSize: 11 }}
+                  stroke="#374151"
+                  strokeWidth={1.5}
+                />
+                <ChartTooltip
+                  cursor={{ fill: 'transparent' }}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Bar dataKey="count" fill="var(--color-admissions)" radius={[6, 6, 0, 0]}>
+                  <LabelList position="top" offset={6} className="fill-foreground" fontSize={11} />
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </div>
         )}
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="leading-none text-muted-foreground">
+      <CardFooter className="pt-2">
+        <div className="text-xs leading-none text-muted-foreground">
           {isEmpty
             ? 'Try selecting another month or check back later.'
             : 'Showing the course-wise admissions.'}
