@@ -123,7 +123,7 @@ export default function ChartDaySummary({
                   <ChartTooltip
                     cursor={{ fill: 'transparent' }}
                     content={<ChartTooltipContent hideLabel />}
-                    formatter={(value) => [`${value.toLocaleString()}L`, 'Daily Collection']}
+                    formatter={(value) => [`${value.toLocaleString()}L`, ' Daily Collection']}
                   />
                   <Bar
                     dataKey="dailyCollection"

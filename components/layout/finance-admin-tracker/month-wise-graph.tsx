@@ -115,7 +115,7 @@ export default function ChartMonthSummary({
                   <ChartTooltip
                     cursor={{ fill: 'transparent' }}
                     content={<ChartTooltipContent hideLabel />}
-                    formatter={(value) => [`${value.toLocaleString()}L`, 'Monthly Collection']}
+                    formatter={(value) => [`${value.toLocaleString()}L`, ' Monthly Collection']}
                   />
                   <Bar
                     dataKey="totalCollection"
