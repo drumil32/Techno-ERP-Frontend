@@ -3,7 +3,9 @@
 import TechnoAnalyticCardsGroup from '../../custom-ui/analytic-card/techno-analytic-cards-group';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
-import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
+import TechnoDataTable, {
+  TruncatedCell
+} from '@/components/custom-ui/data-table/techno-data-table';
 import { use, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';

@@ -40,14 +40,14 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
         lead.finalConversion,
       followUpCount: lead.followUpCount,
       remarks: lead.remarks,
-      remarksView: lead.remarks[lead.remarks.length-1] ?? '-',
+      remarksView: lead.remarks ? [...lead.remarks].reverse().join(' | ') : '-',
       date: lead.date,
       leadTypeModifiedDate:
         formatTimeStampView(lead.leadTypeModifiedDate) ?? formatDateView(lead.date),
       nextDueDate: lead.nextDueDate,
       nextDueDateView: formatDateView(lead.nextDueDate) ?? '-',
       createdAt: new Date(lead.createdAt).toLocaleString(),
-      updatedAt: lead.updatedAt ?? 'N/A',
+      updatedAt: lead.updatedAt ?? 'N/A'
     };
   });
   return {
