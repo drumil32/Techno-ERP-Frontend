@@ -1,28 +1,27 @@
-import React from "react";
-import { Upload, X } from "lucide-react";
-import { AddMoreDataBtn } from "../add-more-data-btn/add-data-btn";
-import { CourseMaterialType } from "@/types/enum";
-
+import React from 'react';
+import { BookCheck, File, FileBadge, FileBadge2, FileBarChart, Pin, Upload, X } from 'lucide-react';
+import { AddMoreDataBtn } from '../add-more-data-btn/add-data-btn';
+import { CourseMaterialType } from '@/types/enum';
+import { motion } from 'framer-motion';
 interface SubjectMaterial {
-  courseId: string,
-  semesterId: string,
-  subjectId: string,
-  planId?: string,
-  type: CourseMaterialType,
-  link: string,
-  name: string,
+  courseId: string;
+  semesterId: string;
+  subjectId: string;
+  planId?: string;
+  type: CourseMaterialType;
+  link: string;
+  name: string;
   metaData: {
-      topic: string
-  }
+    topic: string;
+  };
 }
 
-
-type Props = { 
+type Props = {
   materials: SubjectMaterial[];
   nameFontSize?: string;
   metadataFontSize?: string;
-  onRemove : (index:number, materials :SubjectMaterial[]) => void
-  onUpload : () => void
+  onRemove: (index: number, materials: SubjectMaterial[]) => void;
+  onUpload: () => void;
 };
 
 // const onRemove = (index : number, materials: SubjectMaterial[]) => {
@@ -31,15 +30,12 @@ type Props = {
 
 export default function SubjectMaterialsSection({
   materials,
-  nameFontSize = "text-sm",
-  metadataFontSize = "text-xs",
+  nameFontSize = 'text-sm',
+  metadataFontSize = 'text-xs',
   onRemove,
   onUpload
-} : Props) {
-
+}: Props) {
   return (
-
-    
     <div className="w-full mb-10 bg-white space-y-4 my-[16px] px-4 py-3 shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="flex w-full items-center py-2 px-1">
         <div className="flex items-center">
@@ -53,12 +49,13 @@ export default function SubjectMaterialsSection({
             key={index}
             className={`flex items-center justify-between border border-[#c1c1c1] px-3 py-2 rounded-[10px] bg-white transition hover:shadow-sm  cursor-pointer hover:border-[#5b31d1]`}
             style={{
-              minWidth: "243px",
-              maxWidth: "350px",
-              minHeight: "50px",
-              paddingRight: "0.5rem",
+              minWidth: '243px',
+              maxWidth: '350px',
+              minHeight: '50px',
+              paddingRight: '0.5rem'
             }}
           >
+            <BookCheck className="mr-3 text-primary/80" />
             <div className="flex flex-col overflow-hidden pr-2">
               <a
                 href={material.link}
@@ -81,12 +78,19 @@ export default function SubjectMaterialsSection({
               onClick={() => onRemove(index, materials)}
               className="ml-2 text-gray-400 hover:text-red-500 flex-shrink-0"
             >
-              <X size={16} onClick={()=>onRemove(index, materials)}/>
+              <X size={16} onClick={() => onRemove(index, materials)} />
             </button>
           </div>
         ))}
       </div>
-      <AddMoreDataBtn icon={<Upload />} label={"Upload Subject Materials"} onClick={ onUpload } btnClassName="upload-materials-border-box" iconClassName="upload-materials-heading" labelClassName="upload-materials-heading" />  
+      <AddMoreDataBtn
+        icon={<Upload />}
+        label={'Upload Subject Materials'}
+        onClick={onUpload}
+        btnClassName="upload-materials-border-box"
+        iconClassName="upload-materials-heading"
+        labelClassName="upload-materials-heading"
+      />
     </div>
   );
 }

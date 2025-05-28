@@ -49,7 +49,7 @@ const DynamicInfoGrid: React.FC<InfoGridProps> = ({
 
   return (
     <div
-      className="bg-white rounded-xl shadow-sm p-6 w-full max-w-6xl mx-auto my-4
+      className="bg-white rounded-xl shadow-sm p-6 w-full mx-auto my-4
                  border border-gray-100 overflow-hidden transition-all duration-300
                  hover:shadow-md"
       style={{
