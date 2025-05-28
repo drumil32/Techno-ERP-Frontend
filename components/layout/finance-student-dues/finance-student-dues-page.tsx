@@ -27,6 +27,13 @@ import { toWordsOrdinal } from 'number-to-words';
 import { capitalize } from '@/lib/capitalize';
 import AdvancedTechnoBreadcrumb from '@/components/custom-ui/breadcrump/advanced-techno-breadcrumb';
 import Loading from '@/app/c/marketing/loading';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { ChevronDown } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function StudentDuesPage() {
   const [academicYear, setAcademicYear] = useState(getCurrentAcademicYear());
@@ -168,19 +175,28 @@ export default function StudentDuesPage() {
       <TechnoPageHeading title="Student Dues" />
       <span>
         <div className="flex items-center gap-4">
-          <span>Academic Year</span>
-          <Select value={academicYear.toString()} onValueChange={handleAcademicYearChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Academic Year" />
-            </SelectTrigger>
-            <SelectContent>
+          <span className="font-[500]">Academic Year: </span>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="min-w-[200px] justify-between">
+                {academicYear || 'Select Academic Year'}
+                <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-auto min-w-[200px] max-h-[300px] overflow-y-auto">
               {academicYearDropdownData.map((item: string) => (
-                <SelectItem key={item} value={item.toString()}>
-                  {item}
-                </SelectItem>
+                <div
+                  key={item}
+                  onClick={() => handleAcademicYearChange(item)}
+                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer"
+                >
+                  <Checkbox checked={academicYear === item} />
+                  <span>{item}</span>
+                </div>
               ))}
-            </SelectContent>
-          </Select>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </span>
       <TechnoDataTable

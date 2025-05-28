@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchAdmissionsCourseYearAnalyticsData } from '../../helpers/fetch-data';
 import { AdmissionAggregationType } from '@/types/enum';
 import { format } from 'date-fns';
+import { useState, useMemo } from 'react';
 import {
   Table,
   TableBody,
@@ -13,9 +14,12 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Group, UserPlus2, UserRound, Users, UsersRound } from 'lucide-react';
+import { UsersRound, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
 
 export default function CourseYearWiseTable() {
+  const [activeSortColumn, setActiveSortColumn] = useState('course');
+  const [sortDirection, setSortDirection] = useState('asc');
+
   const courseWiseQuery = useQuery<AdmissionCourseYearWiseResponse, Error>({
     queryKey: ['admission-course-wise'],
     queryFn: () =>
@@ -33,7 +37,50 @@ export default function CourseYearWiseTable() {
     totalAdmissions: grandTotal
   } = transformDataForTable(courseWiseQuery.data ?? { yearWise: [] });
 
-  console.log(tableData, yearColumns, columnTotals, grandTotal);
+  const sortedTableData = useMemo(() => {
+    if (!tableData.length) return tableData;
+
+    return [...tableData].sort((a, b) => {
+      let compareValue = 0;
+
+      if (activeSortColumn === 'course') {
+        compareValue = a.course.localeCompare(b.course);
+      } else {
+        const columnIndex = yearColumns.findIndex((col) => col.key === activeSortColumn);
+        if (columnIndex !== -1) {
+          const aValue = a.numberOfAdmissions[columnIndex] || 0;
+          const bValue = b.numberOfAdmissions[columnIndex] || 0;
+          compareValue = aValue - bValue;
+        }
+      }
+
+      return sortDirection === 'asc' ? compareValue : -compareValue;
+    });
+  }, [tableData, activeSortColumn, sortDirection, yearColumns]);
+
+  const handleSort = (columnName: string) => {
+    if (activeSortColumn === columnName) {
+      const newDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+      setSortDirection(newDirection);
+    } else {
+      setActiveSortColumn(columnName);
+      setSortDirection(columnName === 'course' ? 'asc' : 'desc');
+    }
+  };
+
+  const getSortIcon = (columnName: string) => {
+    console.log('Column: ', columnName);
+    if (activeSortColumn === columnName) {
+      return sortDirection === 'asc' ? (
+        <ArrowUp className="w-4 h-4 text-purple-700" />
+      ) : (
+        <ArrowDown className="w-4 h-4 text-purple-700" />
+      );
+    }
+    return <ArrowUpDown className="w-4 h-4 text-purple-400 opacity-60" />;
+  };
+
+  console.log(sortedTableData, yearColumns, columnTotals, grandTotal);
 
   return (
     <Card className="h-full col-span-2 col-start-1 rounded-2xl ">
@@ -49,31 +96,39 @@ export default function CourseYearWiseTable() {
           <Table>
             <TableHeader className="bg-purple-50 sticky top-0">
               <TableRow className="hover:bg-purple-50/50">
-                <TableHead className="w-[150px] text-purple-900 font-semibold py-4">
-                  Course
+                <TableHead
+                  className="w-[150px] text-purple-900 font-semibold py-4 cursor-pointer select-none hover:bg-purple-100/50 transition-colors"
+                  onClick={() => handleSort('course')}
+                >
+                  <div className="flex items-center gap-2">
+                    Course
+                    {getSortIcon('course')}
+                  </div>
                 </TableHead>
                 {yearColumns.map((item) => (
                   <TableHead
                     key={item.key}
-                    className="w-[150px] text-purple-900 font-semibold py-4 text-center"
+                    className="w-[150px] text-purple-900 font-semibold py-4 text-center cursor-pointer select-none hover:bg-purple-100/50 transition-colors"
+                    onClick={() => handleSort(item.key)}
                   >
-                    {item.label}
+                    <div className="flex items-center justify-center gap-2">
+                      {item.label}
+                      {getSortIcon(item.key)}
+                    </div>
                   </TableHead>
                 ))}
               </TableRow>
             </TableHeader>
 
             <TableBody className="">
-              {tableData.map((item) => (
+              {sortedTableData.map((item) => (
                 <TableRow
                   key={item.course}
                   className="border-b border-gray-100 hover:bg-purple-50/30 transition-colors"
                 >
-                  <TableCell className="font-medium flex items-center gap-3 py-4">
-                    {item.course}
-                  </TableCell>
+                  <TableCell className="font-medium py-4 px-4">{item.course}</TableCell>
                   {item.numberOfAdmissions.map((count, index) => (
-                    <TableCell key={index} className="py-4 text-center">
+                    <TableCell key={index} className="py-4 px-4 text-center">
                       {count}
                     </TableCell>
                   ))}
@@ -82,10 +137,10 @@ export default function CourseYearWiseTable() {
             </TableBody>
 
             <TableFooter className="sticky -bottom-2">
-              <TableRow className="bg-purple-100">
-                <TableCell className="font-semibold">Total</TableCell>
+              <TableRow className="bg-gray-300">
+                <TableCell className="font-semibold py-4 px-4">Total</TableCell>
                 {yearColumns.map((col) => (
-                  <TableCell key={col.key} className="font-semibold py-4 text-center">
+                  <TableCell key={col.key} className="font-semibold py-4 px-4 text-center">
                     {columnTotals[col.key]}
                   </TableCell>
                 ))}
@@ -103,12 +158,10 @@ function transformDataForTable(data: AdmissionCourseYearWiseResponse) {
     return { tableData: [], yearColumns: [], columnTotals: {}, totalAdmissions: 0 };
   }
 
-  // Extract all unique course codes
   const allCourses = Array.from(
     new Set(data.yearWise.flatMap((year) => year.courseWise.map((course) => course.courseCode)))
   ).sort();
 
-  // Prepare yearColumns
   const yearColumns = data.yearWise
     .map((year) => {
       const yearFromDate = new Date(year.date).getFullYear();
@@ -120,7 +173,6 @@ function transformDataForTable(data: AdmissionCourseYearWiseResponse) {
     })
     .reverse();
 
-  // Prepare table data with numberOfAdmissions array
   const tableData = allCourses.map((courseCode) => {
     const numberOfAdmissions: number[] = [];
 
@@ -135,7 +187,6 @@ function transformDataForTable(data: AdmissionCourseYearWiseResponse) {
     };
   });
 
-  // Column totals (for footer)
   const columnTotals: Record<string, number> = {};
   let grandTotal = 0;
 
