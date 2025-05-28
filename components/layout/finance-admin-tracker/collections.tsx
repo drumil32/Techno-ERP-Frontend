@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
-import { DailyCollectionData, MonthlyCollectionData } from '@/types/finance';
+import {
+  DailyCollectionData,
+  DayCollection,
+  MonthDayCollection,
+  MonthlyCollectionData
+} from '@/types/finance';
 import { fetchDailyCollections, fetchMonthlyCollections } from './helpers/fetch-data';
 import CollectionSummary from './collections-summary';
 import CourseWiseCollections from './collections-course-wise';
@@ -9,6 +14,7 @@ import DateMonthYearNavigator from '../admissions/admin-tracker/date-picker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PiggyBank } from 'lucide-react';
 import { format, parse } from 'date-fns';
+import ChartMonthSummary from './month-wise-graph';
 
 export enum ViewMode {
   DAY = 'day',
@@ -81,7 +87,7 @@ export default function Collections() {
       return (
         monthlyData?.map((d) => ({
           date: d.date,
-          dailyCollection: d.totalCollection
+          totalCollection: d.totalCollection
         })) || []
       );
     }
@@ -99,15 +105,15 @@ export default function Collections() {
 
   return (
     <>
-      <Card>
+      <Card className="mb-4">
         <CardHeader className="">
           <CardTitle className="flex items-center gap-3 text-xl font-semibold text-purple-700 pb-3 border-b border-gray-100">
             <PiggyBank className="size-7 text-purple-600" />
-            Semester-wise Fees Details
+            Collections Trend
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="w-1/2">
+          <div className="w-[45%]">
             <DateMonthYearNavigator
               date={true}
               month={true}
@@ -117,39 +123,53 @@ export default function Collections() {
               changeToMonthTab={tabsChangeToMonth}
             />
           </div>
+
+          {collectionData && (
+            <div className="w-full flex gap-6 my-4">
+              <div className="flex flex-col w-[60%] gap-6">
+                <CollectionSummary
+                  label={
+                    viewMode === ViewMode.DAY
+                      ? selectedDate
+                      : `${months[selectedMonth - 1]} ${selectedYear}`
+                  }
+                  totalCollections={
+                    viewMode === ViewMode.DAY
+                      ? (collectionData as DailyCollectionData).totalCollectionForThisDay
+                      : (collectionData as MonthlyCollectionData).totalCollectionForThisMonth
+                  }
+                  viewMode={viewMode}
+                />
+
+                {viewMode == ViewMode.DAY ? (
+                  <ChartDaySummary
+                    chartData={normalizedChartData as DayCollection[]}
+                    chartFooterLabel={'Last 7-Day Summary'}
+                    title={'Last 7-Day Summary'}
+                  />
+                ) : (
+                  <ChartMonthSummary
+                    chartData={normalizedChartData as MonthDayCollection[]}
+                    chartFooterLabel={'Monthly Summary'}
+                    title={'Monthly Summary'}
+                  />
+                )}
+              </div>
+              <div className="w-[40%]">
+                <CourseWiseCollections
+                  courseWiseCollection={
+                    viewMode === ViewMode.DAY
+                      ? (collectionData as DailyCollectionData)?.courseWiseCollectionForThisDay ||
+                        []
+                      : (collectionData as MonthlyCollectionData)
+                          ?.courseWiseCollectionForThisMonth || []
+                  }
+                />
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
-      {collectionData && (
-        <div className="w-full flex gap-6 my-4">
-          <div className="flex flex-col w-[60%] gap-6">
-            <CollectionSummary
-              label={
-                viewMode === ViewMode.DAY
-                  ? selectedDate
-                  : `${months[selectedMonth - 1]} ${selectedYear}`
-              }
-              totalCollections={collectionData?.totalCollection || 0}
-              viewMode={viewMode}
-            />
-            <ChartDaySummary
-              chartData={normalizedChartData}
-              chartFooterLabel={
-                viewMode === ViewMode.DAY ? 'Last 7-Day Summary' : 'Monthly Summary'
-              }
-              title={viewMode === ViewMode.DAY ? 'Last 7-Day Summary' : 'Monthly Summary'}
-            />
-          </div>
-          <div className="w-[40%]">
-            <CourseWiseCollections
-              courseWiseCollection={
-                viewMode === ViewMode.DAY
-                  ? (collectionData as DailyCollectionData)?.courseWiseInformation || []
-                  : (collectionData as MonthlyCollectionData)?.courseWiseCollection || []
-              }
-            />
-          </div>
-        </div>
-      )}
     </>
   );
 }

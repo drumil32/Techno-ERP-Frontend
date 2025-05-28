@@ -60,16 +60,18 @@ export default function AdmissionTrend() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <DateMonthYearNavigator
-            date={true}
-            month={true}
-            year={false}
-            selectedDate={selectedDate}
-            onDateChange={handleDateChange}
-            disableBefore={'12/05/2024'}
-            changeToDateTab={tabsChangeToDate}
-            changeToMonthTab={tabsChangeToMonth}
-          />
+          <div className="w-[80%]">
+            <DateMonthYearNavigator
+              date={true}
+              month={true}
+              year={false}
+              selectedDate={selectedDate}
+              onDateChange={handleDateChange}
+              disableBefore={'12/05/2024'}
+              changeToDateTab={tabsChangeToDate}
+              changeToMonthTab={tabsChangeToMonth}
+            />
+          </div>
           <div className="min-h-[520px] flex-1">
             <DayWiseTrend
               chartData={chartData.reverse()}
@@ -88,7 +90,7 @@ export default function AdmissionTrend() {
         </CardContent>
       </Card>
 
-      <div className="flex-1 flex flex-col">
+      <div className="w-full lg:w-[35%] flex flex-col">
         <CourseYearWiseTable />
       </div>
     </div>

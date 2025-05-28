@@ -137,7 +137,7 @@ export default function CourseYearWiseTable() {
             </TableBody>
 
             <TableFooter className="sticky -bottom-2">
-              <TableRow className="bg-purple-100">
+              <TableRow className="bg-gray-300">
                 <TableCell className="font-semibold py-4 px-4">Total</TableCell>
                 {yearColumns.map((col) => (
                   <TableCell key={col.key} className="font-semibold py-4 px-4 text-center">
