@@ -160,18 +160,18 @@ export interface MonthDayCollection {
 
 export interface CourseCollection {
   courseCode: Course;
-  details: { courseYear: CourseYear; totalCollection: number }[];
+  details?: { courseYear: CourseYear; totalCollection: number }[];
   totalCollection?: number;
 }
 
 export interface DailyCollectionData {
-  totalCollection: number;
+  totalCollectionForThisDay: number;
   pastSevenDays: DayCollection[];
-  courseWiseInformation: CourseCollection[];
+  courseWiseCollectionForThisDay: CourseCollection[];
 }
 
 export interface MonthlyCollectionData {
-  totalCollection: number;
+  totalCollectionForThisMonth: number;
   monthWiseData: MonthDayCollection[];
-  courseWiseCollection: CourseCollection[];
+  courseWiseCollectionForThisMonth: CourseCollection[];
 }

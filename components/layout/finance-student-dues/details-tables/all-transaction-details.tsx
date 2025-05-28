@@ -63,7 +63,7 @@ export default function AllTransactionsDetails({
         </CardTitle>
       </CardHeader>
       <CardContent className="w-full overflow-x-auto -mt-2">
-        <div className="rounded-[5px] w-[55%] overflow-auto border-2 border-gray-100 relative">
+        <div className="rounded-[5px] w-[65%] overflow-auto border-2 border-gray-100 relative">
           <Table className="w-full">
             <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg [&_th]:!text-[#5B31D1] ">
               <TableRow>

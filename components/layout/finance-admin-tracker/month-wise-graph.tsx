@@ -26,50 +26,42 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from '@/components/ui/chart';
-
-import { format, parse } from 'date-fns';
-import { DayCollection } from '@/types/finance';
+import { MonthDayCollection } from '@/types/finance';
 
 const formatToLakhs = (num: number) => +(num / 100000).toFixed(1);
 
-const formatDate = (input: string): string => {
-  if (!input || input.length !== 10) return '';
-  const parsed = parse(input, 'dd/MM/yyyy', new Date());
-  return `${format(parsed, 'do')} ${format(parsed, 'MMM')}`;
-};
-
 const chartConfig = {
-  dailyCollection: {
-    label: 'Daily Collection',
-    color: 'var(--chart-4)'
+  totalCollection: {
+    label: 'Monthly Collection',
+    color: 'var(--chart-5)'
   }
 } satisfies ChartConfig;
 
-export default function ChartDaySummary({
+export default function ChartMonthSummary({
   title,
   chartData,
   chartFooterLabel
 }: {
   title: string;
-  chartData: DayCollection[];
+  chartData: MonthDayCollection[];
   chartFooterLabel: string;
 }) {
   const isEmpty = chartData.length === 0;
 
   const formattedData = chartData.map((d) => ({
-    date: formatDate(d.date),
-    dailyCollection: formatToLakhs(d.dailyCollection)
+    ...d,
+    totalCollection: formatToLakhs(d.totalCollection)
   }));
 
-  const firstDate = formatDate(chartData[0]?.date || '');
-  const lastDate = formatDate(chartData[chartData.length - 1]?.date || '');
+  const firstMonth = chartData[0]?.date || '';
+  const lastMonth = chartData[chartData.length - 1]?.date || '';
 
   return (
     <Card className="w-full">
       <CardHeader className="pb-4">
         <CardTitle className="text-lg">{title}</CardTitle>
         <CardDescription className="text-muted-foreground text-sm">
-          {firstDate && lastDate ? `${firstDate} - ${lastDate}` : 'No data range available'}
+          {firstMonth && lastMonth ? `${firstMonth} - ${lastMonth}` : 'No data range available'}
         </CardDescription>
       </CardHeader>
 
@@ -123,13 +115,13 @@ export default function ChartDaySummary({
                   <ChartTooltip
                     cursor={{ fill: 'transparent' }}
                     content={<ChartTooltipContent hideLabel />}
-                    formatter={(value) => [`${value}L`, 'Daily Collection']}
+                    formatter={(value) => [`${value}L`, 'Monthly Collection']}
                   />
                   <Bar
-                    dataKey="dailyCollection"
-                    fill="var(--chart-4)"
+                    dataKey="totalCollection"
+                    fill="var(--chart-5)"
                     radius={[8, 8, 0, 0]}
-                    name="Daily Collection"
+                    name="Monthly Collection"
                   >
                     <LabelList
                       position="top"
@@ -148,7 +140,7 @@ export default function ChartDaySummary({
 
       <CardFooter className="pt-2">
         <div className="text-sm leading-none text-muted-foreground">
-          {isEmpty ? 'Try selecting a different date or check back later.' : chartFooterLabel}
+          {isEmpty ? 'Try selecting a different month or check back later.' : chartFooterLabel}
         </div>
       </CardFooter>
     </Card>
