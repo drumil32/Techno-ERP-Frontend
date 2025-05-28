@@ -110,12 +110,12 @@ export default function ChartMonthSummary({
                     style={{ fontSize: 12 }}
                     stroke="#374151"
                     strokeWidth={1.5}
-                    tickFormatter={(value) => `${value}L`}
+                    tickFormatter={(value) => `${value.toLocaleString()}L`}
                   />
                   <ChartTooltip
                     cursor={{ fill: 'transparent' }}
                     content={<ChartTooltipContent hideLabel />}
-                    formatter={(value) => [`${value}L`, 'Monthly Collection']}
+                    formatter={(value) => [`${value.toLocaleString()}L`, 'Monthly Collection']}
                   />
                   <Bar
                     dataKey="totalCollection"
@@ -128,7 +128,7 @@ export default function ChartMonthSummary({
                       offset={8}
                       className="fill-foreground"
                       fontSize={12}
-                      formatter={(val: any) => `${val}L`}
+                      formatter={(val: any) => `${val.toLocaleString()}L`}
                     />
                   </Bar>
                 </BarChart>

@@ -68,6 +68,7 @@ export default function CourseWiseAdmissionTrend() {
             disableBefore={'12/05/2024'}
             changeToDateTab={tabsChangeToDate}
             changeToMonthTab={tabsChangeToMonth}
+            startFromMonths={4}
           />
         </div>
         <div className="w-full flex">

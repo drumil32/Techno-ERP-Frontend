@@ -62,6 +62,7 @@ export default function SemesterWiseFeesDetails({
                 <TableHead className="text-right w-[17%]">Final Fees</TableHead>
                 <TableHead className="text-right w-[17%]">Fees Paid</TableHead>
                 <TableHead className="text-right w-[17%]">Due Fees</TableHead>
+                <TableHead></TableHead>
                 <TableHead className="text-left w-[17%] ">Due Date</TableHead>
               </TableRow>
             </TableHeader>
@@ -88,6 +89,7 @@ export default function SemesterWiseFeesDetails({
                       ? `${semFee.dueFees.toLocaleString()}`
                       : '--'}
                   </TableCell>
+                  <TableCell></TableCell>
                   <TableCell className=" ">
                     {semFee.dueDate ? format(semFee.dueDate, 'dd/MM/yyyy') : '--'}
                   </TableCell>
@@ -106,7 +108,9 @@ export default function SemesterWiseFeesDetails({
                   ₹{feeTotals?.paidAmount.toLocaleString()}
                 </TableCell>
                 <TableCell className="text-right">₹{feeTotals?.dueFees.toLocaleString()}</TableCell>
-                <TableCell className="">{''}</TableCell>
+                <TableCell className="" colSpan={2}>
+                  {''}
+                </TableCell>
               </TableRow>
             </TableFooter>
           </Table>

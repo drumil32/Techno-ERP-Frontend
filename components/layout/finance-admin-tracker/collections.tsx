@@ -69,8 +69,6 @@ export default function Collections() {
   const collectionData = collectionsQuery.data;
   const isLoading = collectionsQuery.isLoading;
 
-  console.log(collectionData);
-
   const normalizedChartData = useMemo(() => {
     if (!collectionData) return [];
 
@@ -113,7 +111,7 @@ export default function Collections() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="w-[45%]">
+          <div className="w-[60%]">
             <DateMonthYearNavigator
               date={true}
               month={true}
@@ -121,6 +119,8 @@ export default function Collections() {
               onDateChange={handleDateChange}
               changeToDateTab={tabsChangeToDate}
               changeToMonthTab={tabsChangeToMonth}
+              startFromDays={6}
+              startFromMonths={5}
             />
           </div>
 

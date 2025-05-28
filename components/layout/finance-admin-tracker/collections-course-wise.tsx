@@ -82,7 +82,7 @@ export default function CourseWiseCollections({
       </CardHeader>
       <CardContent>
         {courseWiseCollection.length > 0 ? (
-          <div className="rounded-[5px] h-[480px] overflow-auto border-2 border-gray-100 relative ">
+          <div className="rounded-[5px] h-[660px] overflow-auto border-2 border-gray-100 relative ">
             <Table className="w-full">
               <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg [&_th]:!text-[#5B31D1] sticky top-0">
                 <TableRow>
