@@ -47,7 +47,7 @@ import {
 import { LuDownload, LuUpload } from 'react-icons/lu';
 import { AddMoreDataBtn } from '../add-more-data-btn/add-data-btn';
 import { LectureConfirmation } from '@/types/enum';
-import { CustomStyledDropdown } from '../custom-dropdown/custom-styled-dropdown';
+import { CustomDropdown as CustomStyledDropdown } from '../custom-dropdown/custom-styled-dropdown';
 import {
   IScheduleSchema,
   scheduleSchema
@@ -203,7 +203,7 @@ export default function TechnoDataTableAdvanced({
     if (!isNaN(classStrength) && !isNaN(absent)) {
       return Math.max(classStrength - absent, 0);
     }
-    return '';
+    return 0;
   };
 
   const parseDateFromAPI = (dateString: string | undefined): Date | undefined => {
@@ -408,7 +408,7 @@ export default function TechnoDataTableAdvanced({
                                 return (
                                   <CustomStyledDropdown
                                     value={value}
-                                    onChange={(newValue) =>
+                                    onChange={(newValue: any) =>
                                       editing
                                         ? handleEditedChange(rowIndex, 'confirmation', newValue)
                                         : handleNewRowChange('confirmation', newValue)
@@ -436,11 +436,7 @@ export default function TechnoDataTableAdvanced({
                                 const parsedDate = parseDateFromAPI(value?.toString());
 
                                 return (
-                                  <div
-                                    className={clsx('flex flex-col items-center', {
-                                      errorMsg: 'border border-red-500 rounded-lg'
-                                    })}
-                                  >
+                                  <div className={clsx('flex flex-col items-center')}>
                                     <SimpleDatePicker
                                       value={parsedDate ? formatDateForAPI(parsedDate) : undefined}
                                       onChange={(newDateStr: string | undefined) => {
@@ -455,7 +451,9 @@ export default function TechnoDataTableAdvanced({
                                       }}
                                       placeholder="Pick a Date"
                                       showYearMonthDropdowns
-                                      className="w-[200px]"
+                                      className={clsx('w-[200px]', {
+                                        'border border-red-400 rounded-lg': errorMsg
+                                      })}
                                     />
                                     {/* {errorMsg && (
                                       <span className="text-xs text-red-500">{errorMsg}</span>
@@ -596,11 +594,16 @@ export default function TechnoDataTableAdvanced({
                                       setBatchValidationErrors(updatedErrors);
                                     }}
                                   />
-                                  {/* {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>} */}
+                                  {/* {errorMsg && (
+                                    <span className="text-xs text-red-500">{errorMsg}</span>
+                                  )} */}
                                 </div>
                               );
                             }
-                            return flexRender(cell.column.columnDef.cell, cell.getContext());
+
+                            if (value)
+                              return flexRender(cell.column.columnDef.cell, cell.getContext());
+                            else return '-';
                           })()}
                         </TableCell>
                       );
@@ -642,7 +645,7 @@ export default function TechnoDataTableAdvanced({
                       <TableCell key={idx} className={`h-[${rowHeight}px] text-center`}>
                         <CustomStyledDropdown
                           value={defaultValue}
-                          onChange={(newValue) => handleNewRowChange(columnId, newValue)}
+                          onChange={(newValue: any) => handleNewRowChange(columnId, newValue)}
                           data={confirmationStatus}
                         />
                       </TableCell>
@@ -653,11 +656,7 @@ export default function TechnoDataTableAdvanced({
 
                     return (
                       <TableCell key={idx} className={`h-[${rowHeight}px] text-center`}>
-                        <div
-                          className={clsx('flex flex-col items-center ', {
-                            'border border-red-400 rounded-lg': errorMsg
-                          })}
-                        >
+                        <div className={clsx('flex flex-col items-center ')}>
                           <SimpleDatePicker
                             value={parsedDate ? formatDateForAPI(parsedDate) : undefined}
                             onChange={(newDateStr: string | undefined) => {
@@ -665,10 +664,12 @@ export default function TechnoDataTableAdvanced({
                               handleNewRowChange(columnId, newDateStr);
                               setValidationErrors((prev) => ({ ...prev, [columnId]: '' }));
                             }}
+                            className={clsx('w-[200px]', {
+                              'border border-red-400 rounded-lg': errorMsg
+                            })}
                             dateFormat="dd/MM/yyyy"
                             placeholder="Pick a Date"
                             showYearMonthDropdowns
-                            className="w-[200px]"
                           />
                           {/* {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>} */}
                         </div>
@@ -704,15 +705,17 @@ export default function TechnoDataTableAdvanced({
                               const classStrength = parseInt(
                                 columnId === 'classStrength'
                                   ? newValue
-                                  : (newRow.classStrength ?? ''),
+                                  : (newRow.classStrength ?? undefined),
                                 10
                               );
                               const attendance = parseInt(
-                                columnId === 'attendance' ? newValue : (newRow.attendance ?? ''),
+                                columnId === 'attendance'
+                                  ? newValue
+                                  : (newRow.attendance ?? undefined),
                                 10
                               );
                               const absent = parseInt(
-                                columnId === 'absent' ? newValue : (newRow.absent ?? ''),
+                                columnId === 'absent' ? newValue : (newRow.absent ?? undefined),
                                 10
                               );
 
@@ -788,7 +791,9 @@ export default function TechnoDataTableAdvanced({
                             }}
                           />
                           {/* {validationErrors[columnId] && (
-                            <span className="text-xs text-red-500">{validationErrors[columnId]}</span>
+                            <span className="text-xs text-red-500">
+                              {validationErrors[columnId]}
+                            </span>
                           )} */}
                         </div>
                       </TableCell>
@@ -850,7 +855,7 @@ export default function TechnoDataTableAdvanced({
 
           {/* Adding/Editing Mode */}
           {!addViaDialog && (addingRow || editing) && (
-            <div className="flex gap-2 justify-end ml-4">
+            <div className="flex gap-2 h-[35px] justify-end ml-4">
               {/* Save button */}
               <AddMoreDataBtn
                 onClick={() => {
@@ -864,7 +869,7 @@ export default function TechnoDataTableAdvanced({
                       setNewRow({});
                     }
                   } else {
-                    // console.log("Updated data : ", editedData);
+                    console.log('Updated data : ', editedData);
                     const isValid = validateAllEditedRows(editedData);
                     if (isValid) {
                       handleBatchEdit?.(editedData);
@@ -872,7 +877,7 @@ export default function TechnoDataTableAdvanced({
                     }
                   }
                 }}
-                btnClassName=" font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn"
+                btnClassName=" font-inter font-semibold p-2 pr-3 saveDataBtn"
                 icon={<Check></Check>}
                 label={'Save'}
               />
@@ -882,9 +887,12 @@ export default function TechnoDataTableAdvanced({
                 onClick={() => {
                   if (addingRow) {
                     setAddingRow(false);
+                    setEditedData([...data]);
                     setNewRow({});
                   } else {
                     setBatchValidationErrors([]);
+                    setEditedData([...data]);
+
                     setEditing(false);
                   }
                 }}

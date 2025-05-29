@@ -1,51 +1,125 @@
-import * as DropdownMenuNew from '@radix-ui/react-dropdown-menu';
-import { ChevronDown } from 'lucide-react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { ChevronDown, Check } from 'lucide-react';
 
-export const CustomStyledDropdown = ({
+interface DropdownOption {
+  name: string;
+  bgStyle: string;
+  textStyle: string;
+}
+
+interface CustomDropdownProps<T extends string> {
+  value: T;
+  onChange: (newValue: T) => void;
+  data: Record<T, DropdownOption>;
+  isDisabled?: boolean;
+  className?: string;
+  buttonClassName?: string;
+  dropdownClassName?: string;
+}
+
+export function CustomDropdown<T extends string>({
   value,
   onChange,
   data,
-}: {
-  value: string;
-  onChange: (newValue: string) => void;
-  data: Record<string, { name: string; bgStyle: string; textStyle: string }>;
-}) => {
-  const current = data[value];
+  isDisabled = false,
+  className = '',
+  buttonClassName = '',
+  dropdownClassName = ''
+}: CustomDropdownProps<T>) {
+  const [isOpen, setIsOpen] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ top: 0, left: 0, width: 0 });
+
+  const currentOption = data[value];
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleScroll = () => setIsOpen(false);
+    window.addEventListener('scroll', handleScroll, true);
+    return () => window.removeEventListener('scroll', handleScroll, true);
+  }, [isOpen]);
+
+  useLayoutEffect(() => {
+    if (isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      const dropdownHeight = Object.keys(data).length * 36 + 16; // Approximate height
+      const spaceBelow = window.innerHeight - rect.bottom;
+
+      setPosition({
+        top: spaceBelow > dropdownHeight ? rect.bottom : rect.top - dropdownHeight,
+        left: rect.left,
+        width: rect.width
+      });
+    }
+  }, [isOpen, data]);
+
+  useEffect(() => {
+    if (!isOpen || isDisabled) return;
+    const handleClick = (e: MouseEvent) => {
+      if (
+        !buttonRef.current?.contains(e.target as Node) &&
+        !dropdownRef.current?.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [isOpen, isDisabled]);
+
+  const handleOptionClick = (key: T) => {
+    onChange(key);
+    setIsOpen(false);
+  };
 
   return (
-    <DropdownMenuNew.Root>
-      <DropdownMenuNew.Trigger asChild>
-        <button
-          className={`
-            flex items-center justify-between w-50 px-4 py-2 text-sm font-medium rounded-md 
-            border border-gray-300 transition shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300
-            ${current?.bgStyle || 'bg-white'} ${current?.textStyle || 'text-black'} w-50
-          `}
-        >
-          <span className="truncate">{current?.name || value}</span>
-          <ChevronDown className="ml-2 h-4 w-4 text-gray-500" />
-        </button>
-      </DropdownMenuNew.Trigger>
-
-      <DropdownMenuNew.Content
-        sideOffset={4}
-        className="w-50 mt-2 rounded-md border border-gray-200 bg-white shadow-lg focus:outline-none max-h-[250px] overflow-auto"
+    <div className={`relative ${className}`}>
+      <button
+        ref={buttonRef}
+        onClick={() => !isDisabled && setIsOpen(!isOpen)}
+        disabled={isDisabled}
+        className={`flex items-center justify-between  rounded-md text-sm font-medium px-2 py-1 w-full
+          ${currentOption?.bgStyle || 'bg-white'} 
+          ${currentOption?.textStyle || 'text-gray-800'}
+          ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90 cursor-pointer'}
+          border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-300
+          ${buttonClassName}`}
       >
-        {Object.entries(data).map(([key, val]) => (
-          <DropdownMenuNew.Item
-            key={key}
-            onSelect={() => onChange(key)}
-            className={`
-              w-49 px-4 py-2 text-sm font-medium cursor-pointer transition truncate
-              ${val.bgStyle} ${val.textStyle}
-              hover:bg-gray-200 hover:text-black hover:font-bold focus:outline-none
-              ${key === value ? 'ring-1 ring-inset ring-gray-400 rounded-md' : ''}
-            `}
+        <span className="truncate">{currentOption?.name || value}</span>
+        {!isDisabled && (
+          <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        )}
+      </button>
+
+      {isOpen &&
+        createPortal(
+          <div
+            ref={dropdownRef}
+            className={`fixed z-50 bg-white rounded-md shadow-lg border border-gray-200 py-1 overflow-auto max-h-[250px] ${dropdownClassName}`}
+            style={{
+              top: `${position.top}px`,
+              left: `${position.left}px`,
+              width: `${position.width}px`
+            }}
           >
-            {val.name}
-          </DropdownMenuNew.Item>
-        ))}
-      </DropdownMenuNew.Content>
-    </DropdownMenuNew.Root>
+            {Object.entries<DropdownOption>(data).map(([key, option]) => (
+              <div
+                key={key}
+                onClick={() => handleOptionClick(key as T)}
+                className={`flex items-center justify-between px-2 py-1 mx-1 rounded-md text-sm font-medium cursor-pointer
+                  ${option.bgStyle} ${option.textStyle}
+                  hover:opacity-80 transition-colors
+                  ${value === key ? 'ring-1 ring-inset ring-gray-400' : ''}`}
+              >
+                <span className="truncate">{option.name}</span>
+                {value === key && <Check className="w-4 h-4" />}
+              </div>
+            ))}
+          </div>,
+          document.body
+        )}
+    </div>
   );
-};
+}

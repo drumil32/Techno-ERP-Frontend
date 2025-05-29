@@ -3,6 +3,7 @@ import { BookCheck, File, FileBadge, FileBadge2, FileBarChart, Pin, Upload, X } 
 import { AddMoreDataBtn } from '../add-more-data-btn/add-data-btn';
 import { CourseMaterialType } from '@/types/enum';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 interface SubjectMaterial {
   courseId: string;
   semesterId: string;
@@ -57,14 +58,15 @@ export default function SubjectMaterialsSection({
           >
             <BookCheck className="mr-3 text-primary/80" />
             <div className="flex flex-col overflow-hidden pr-2">
-              <a
+              <Link
                 href={material.link}
                 target="_blank"
-                rel="noopener noreferrer"
+                onClick={() => console.log('clicked me')}
+                rel="noopener"
                 className={`font-inter documentHeading truncate hover:underline ${nameFontSize}`}
               >
                 {material.name}
-              </a>
+              </Link>
               <span
                 className={`documentMetaDataText font-inter truncate pt-1 ${metadataFontSize}`}
                 title={material.metaData.topic}
