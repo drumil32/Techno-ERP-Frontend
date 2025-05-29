@@ -156,6 +156,7 @@ export const SingleSubjectPage = () => {
   } | null>(null);
 
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   const handleFileAccepted = (files: File[]) => {
     console.log('Accepted files:', files);
@@ -284,6 +285,7 @@ export const SingleSubjectPage = () => {
     }
 
     try {
+      setDeleteLoading(true);
       const response = await axios.delete(API_ENDPOINTS.deleteFileUsingURL, {
         data: payload,
         withCredentials: true
@@ -299,6 +301,8 @@ export const SingleSubjectPage = () => {
     } catch (error) {
       toast.error('An error occurred while deleting the document.');
       console.error(error);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -360,6 +364,7 @@ export const SingleSubjectPage = () => {
     };
 
     try {
+      setDeleteLoading(true);
       const response = await axios.delete(API_ENDPOINTS.deletePlan, {
         data: payload,
         withCredentials: true
@@ -375,6 +380,8 @@ export const SingleSubjectPage = () => {
     } catch (error) {
       toast.error('An error occurred while deleting the document.');
       console.error(error);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -830,6 +837,8 @@ export const SingleSubjectPage = () => {
         open={!!deletePlanInfo}
         icon={<Trash2 className=" pb-1 text-gray-500" />}
         title="Deleting a Plan?"
+        isLoading={deleteLoading}
+        loadingTitle="Deleting Plan...."
         description={
           <div className="flex items-center gap-2">
             <FaRegCircleQuestion className="text-red-500" size={20} />
@@ -846,6 +855,8 @@ export const SingleSubjectPage = () => {
         open={!!deleteInfo}
         icon={<Trash2 className=" pb-1 text-gray-500" />}
         title="Deleting a Document?"
+        isLoading={deleteLoading}
+        loadingTitle="Deleting Document..."
         description={
           <>
             Are you sure you want to delete the document{' '}

@@ -357,7 +357,7 @@ export function LeadTables() {
                       )}
                     </TableCell>
                     <TableCell className="text-center font-bold ">
-                      {onlineData.reduce(
+                      {offlineData.reduce(
                         (sum: number, item: any) => sum + item.data.neutralLeads,
                         0
                       )}

@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table';
-import { z } from "zod";
+import { z } from 'zod';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,29 +48,35 @@ import { LuDownload, LuUpload } from 'react-icons/lu';
 import { AddMoreDataBtn } from '../add-more-data-btn/add-data-btn';
 import { LectureConfirmation } from '@/types/enum';
 import { CustomStyledDropdown } from '../custom-dropdown/custom-styled-dropdown';
-import { IScheduleSchema, scheduleSchema } from '@/components/layout/courses/schemas/scheduleSchema';
+import {
+  IScheduleSchema,
+  scheduleSchema
+} from '@/components/layout/courses/schemas/scheduleSchema';
 import { DatePicker } from '@/components/ui/date-picker';
 import { SimpleDatePicker } from '@/components/ui/simple-date-picker';
 import { formatDateForAPI } from '../filter/techno-filter';
 import { isValid, parse } from 'date-fns';
 import clsx from 'clsx';
 
-const confirmationStatus: Record<LectureConfirmation, { name: string; textStyle: string; bgStyle: string }> = {
+const confirmationStatus: Record<
+  LectureConfirmation,
+  { name: string; textStyle: string; bgStyle: string }
+> = {
   [LectureConfirmation.TO_BE_DONE]: {
-    name: "To Be Done",
-    textStyle: "text-yellow-800",
-    bgStyle: "bg-yellow-100",
+    name: 'To Be Done',
+    textStyle: 'text-yellow-800',
+    bgStyle: 'bg-yellow-100'
   },
   [LectureConfirmation.CONFIRMED]: {
-    name: "Confirmed",
-    textStyle: "text-green-800",
-    bgStyle: "bg-green-100",
+    name: 'Confirmed',
+    textStyle: 'text-green-800',
+    bgStyle: 'bg-green-100'
   },
   [LectureConfirmation.DELAYED]: {
-    name: "Delayed",
-    textStyle: "text-red-800",
-    bgStyle: "bg-red-100",
-  },
+    name: 'Delayed',
+    textStyle: 'text-red-800',
+    bgStyle: 'bg-red-100'
+  }
 };
 
 interface AttendanceRow {
@@ -103,15 +109,14 @@ export default function TechnoDataTableAdvanced({
   showEditButton = false,
   minVisibleRows = 10,
   maxVisibleRows = 10,
-  addButtonPlacement = "top",
-  addBtnLabel = "Add",
+  addButtonPlacement = 'top',
+  addBtnLabel = 'Add',
   addViaDialog = false,
   onAddClick,
   onSaveNewRow,
   handleBatchEdit,
   rowHeight = 39
 }: any) {
-
   // console.log("Columns are : ", columns)
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
@@ -129,7 +134,6 @@ export default function TechnoDataTableAdvanced({
   // console.log("Adding Row : ", addingRow);
   // console.log("Editing : ", editing);
 
-
   const validateAllEditedRows = (rows: any[]): boolean => {
     const allErrors: Record<string, string>[] = [];
     let isValid = true;
@@ -144,8 +148,7 @@ export default function TechnoDataTableAdvanced({
       try {
         scheduleSchema.parse(newRow);
         allErrors[index] = {};
-      }
-      catch (err) {
+      } catch (err) {
         isValid = false;
         if (err instanceof z.ZodError) {
           const rowErrors: Record<string, string> = {};
@@ -164,26 +167,20 @@ export default function TechnoDataTableAdvanced({
     return isValid;
   };
 
-
   const validateRow = (row: any): boolean => {
     try {
-      // console.log("Row to be validated : ", row);
-      if (row.unit)
-        row.unit = parseInt(row.unit);
-      if (row.lectureNumber)
-        row.lectureNumber = parseInt(row.lectureNumber);
-      if (row.classStrength)
-        row.classStrength = parseInt(row.classStrength);
-      if (row.attendance)
-        row.attendance = parseInt(row.attendance);
-      if (row.absent)
-        row.absent = parseInt(row.absent);
+      console.log('Row to be validated : ', row);
+      if (row.unit) row.unit = parseInt(row.unit);
+      if (row.lectureNumber) row.lectureNumber = parseInt(row.lectureNumber);
+      if (row.classStrength) row.classStrength = parseInt(row.classStrength);
+      if (row.attendance) row.attendance = parseInt(row.attendance);
+      if (row.absent) row.absent = parseInt(row.absent);
       const validation = scheduleSchema.parse(row);
-      // console.log("Validation result : ", validation);
+      console.log('Validation result : ', validation);
       setValidationErrors({});
       return true;
-    }
-    catch (err) {
+    } catch (err) {
+      console.log('validation errors', err);
       if (err instanceof z.ZodError) {
         const errors: Record<string, string> = {};
         err.errors.forEach((e) => {
@@ -193,6 +190,7 @@ export default function TechnoDataTableAdvanced({
           }
         });
         // console.log("Errors are : ", errors);
+
         setValidationErrors(errors);
       }
       return false;
@@ -259,17 +257,16 @@ export default function TechnoDataTableAdvanced({
       globalFilter,
       pagination: {
         pageIndex: currentPage - 1,
-        pageSize,
-      },
+        pageSize
+      }
     },
     manualPagination: true,
-    pageCount: totalPages,
+    pageCount: totalPages
   });
 
   return (
     <div className="w-full mb-3 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="flex w-full items-center py-4 px-4">
-
         {/* Table Header */}
         <div className="flex items-center">
           <h2 className="text-xl font-bold">{tableName}</h2>
@@ -277,7 +274,7 @@ export default function TechnoDataTableAdvanced({
         </div>
 
         {/* Edit Button, always on top */}
-        <div className="flex items-center space-x-2 ml-auto" >
+        <div className="flex items-center space-x-2 ml-auto">
           {showEditButton && (
             <Button
               variant="outline"
@@ -289,7 +286,7 @@ export default function TechnoDataTableAdvanced({
             </Button>
           )}
 
-          {showAddButton && addButtonPlacement === "top" && (
+          {showAddButton && addButtonPlacement === 'top' && (
             <Button
               variant="outline"
               className="h-8 btnLabelAdd font-inter bg-white text-black hover:bg-gray-200"
@@ -318,7 +315,12 @@ export default function TechnoDataTableAdvanced({
             </span>
           </div>
 
-          <Button variant="outline" disabled className="h-8 w-[85px] rounded-[10px] border" icon={LuUpload}>
+          <Button
+            variant="outline"
+            disabled
+            className="h-8 w-[85px] rounded-[10px] border"
+            icon={LuUpload}
+          >
             <span className="font-inter font-medium text-[12px]">Upload</span>
           </Button>
           <Button disabled className="h-8 w-[103px] rounded-[10px] border" icon={LuDownload}>
@@ -327,7 +329,10 @@ export default function TechnoDataTableAdvanced({
         </div>
       </div>
 
-      <div className={`relative overflow-auto`} style={{ maxHeight: `${maxVisibleRows * 39}px`, minHeight: `${minVisibleRows * 39}px`}}>
+      <div
+        className={`relative overflow-auto`}
+        style={{ maxHeight: `${maxVisibleRows * 39}px`, minHeight: `${minVisibleRows * 39}px` }}
+      >
         <Table className="w-full">
           <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg font-bolds sticky top-0 z-10">
             <TableRow>
@@ -335,8 +340,10 @@ export default function TechnoDataTableAdvanced({
                 <TableHead
                   key={idx}
                   className={clsx('text-[#5B31D1] font-semibold h-10 text-center')}
-                  
-                > {column.header}</TableHead>
+                >
+                  {' '}
+                  {column.header}
+                </TableHead>
               ))}
             </TableRow>
           </TableHeader>
@@ -352,11 +359,12 @@ export default function TechnoDataTableAdvanced({
                         handleViewMore(row.original);
                       }
                     }}
-                    className={`h-[${rowHeight}px] ${row.original.disabled
+                    className={`h-[${rowHeight}px] ${
+                      row.original.disabled
                         ? 'bg-gray-100 cursor-not-allowed  opacity-50'
-                        : 'cursor-pointer'}`}
+                        : 'cursor-pointer'
+                    }`}
                   >
-
                     {row.getVisibleCells().map((cell: any) => {
                       // const isExcluded = nonClickableColumns.includes(cell.column.id);
                       return (
@@ -375,10 +383,18 @@ export default function TechnoDataTableAdvanced({
                               if (editing || addingRow) {
                                 return (
                                   <div className="flex justify-center items-center">
-                                    <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
+                                    <Button
+                                      variant="ghost"
+                                      disabled
+                                      className="font-light hover:text-gray-500 disabled"
+                                    >
                                       <Trash2 size={20} className="text-gray-400" />
                                     </Button>
-                                    <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
+                                    <Button
+                                      variant="ghost"
+                                      disabled
+                                      className="font-light hover:text-gray-500 disabled"
+                                    >
                                       <Upload size={20} className="text-gray-400" />
                                     </Button>
                                   </div>
@@ -402,9 +418,12 @@ export default function TechnoDataTableAdvanced({
                                 );
                               }
 
-                              const style = confirmationStatus[value as keyof typeof confirmationStatus];
+                              const style =
+                                confirmationStatus[value as keyof typeof confirmationStatus];
                               return (
-                                <span className={`w-25 inline-block rounded-md px-3 py-1 text-sm font-medium ${style?.bgStyle} ${style?.textStyle}`}>
+                                <span
+                                  className={`w-25 inline-block rounded-md px-3 py-1 text-sm font-medium ${style?.bgStyle} ${style?.textStyle}`}
+                                >
                                   {style?.name || value}
                                 </span>
                               );
@@ -417,7 +436,11 @@ export default function TechnoDataTableAdvanced({
                                 const parsedDate = parseDateFromAPI(value?.toString());
 
                                 return (
-                                  <div className="flex flex-col items-center">
+                                  <div
+                                    className={clsx('flex flex-col items-center', {
+                                      errorMsg: 'border border-red-500 rounded-lg'
+                                    })}
+                                  >
                                     <SimpleDatePicker
                                       value={parsedDate ? formatDateForAPI(parsedDate) : undefined}
                                       onChange={(newDateStr: string | undefined) => {
@@ -434,7 +457,9 @@ export default function TechnoDataTableAdvanced({
                                       showYearMonthDropdowns
                                       className="w-[200px]"
                                     />
-                                    {/* {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>} */}
+                                    {/* {errorMsg && (
+                                      <span className="text-xs text-red-500">{errorMsg}</span>
+                                    )} */}
                                   </div>
                                 );
                               }
@@ -446,57 +471,80 @@ export default function TechnoDataTableAdvanced({
                                     value={value ?? ''}
                                     onChange={(e) => {
                                       const newValue = e.target.value;
-                                      const numericFields = ['classStrength', 'attendance', 'absent', 'unitNumber', 'lectureNumber'];
-                                      const isNumeric = /^\d*$/.test(newValue); 
-                                
+                                      const numericFields = [
+                                        'classStrength',
+                                        'attendance',
+                                        'absent',
+                                        'unitNumber',
+                                        'lectureNumber'
+                                      ];
+                                      const isNumeric = /^\d*$/.test(newValue);
+
                                       if (numericFields.includes(columnId) && !isNumeric) {
                                         return;
                                       }
-                                
+
                                       const updatedErrors = [...batchValidationErrors];
                                       if (!updatedErrors[rowIndex]) updatedErrors[rowIndex] = {};
-                                     
-                                      const row = (table.getRowModel().rows[rowIndex]?.original ?? {}) as AttendanceRow;
-                                      
-                            
+
+                                      const row = (table.getRowModel().rows[rowIndex]?.original ??
+                                        {}) as AttendanceRow;
+
                                       const updatedRow = { ...row, [columnId]: newValue };
 
                                       const classStrength = parseInt(
-                                        columnId === 'classStrength' ? newValue : (updatedRow?.classStrength ?? ''),
+                                        columnId === 'classStrength'
+                                          ? newValue
+                                          : (updatedRow?.classStrength ?? ''),
                                         10
                                       );
 
                                       const attendance = parseInt(
-                                        columnId === 'attendance' ? newValue : updatedRow?.attendance ?? '',
+                                        columnId === 'attendance'
+                                          ? newValue
+                                          : (updatedRow?.attendance ?? ''),
                                         10
                                       );
                                       const absent = parseInt(
-                                        columnId === 'absent' ? newValue : updatedRow?.absent ?? '',
+                                        columnId === 'absent'
+                                          ? newValue
+                                          : (updatedRow?.absent ?? ''),
                                         10
                                       );
 
-                                      const isValidNumber = (num: number) => !isNaN(num) && num >= 0;
+                                      const isValidNumber = (num: number) =>
+                                        !isNaN(num) && num >= 0;
 
                                       updatedErrors[rowIndex][columnId] = '';
 
-                            
                                       if (columnId === 'classStrength') {
                                         if (!isValidNumber(classStrength)) {
-                                          updatedErrors[rowIndex][columnId] = 'Class strength must be a non-negative number';
+                                          updatedErrors[rowIndex][columnId] =
+                                            'Class strength must be a non-negative number';
                                         } else {
                                           if (isValidNumber(attendance)) {
                                             if (attendance > classStrength) {
-                                              updatedErrors[rowIndex]['attendance'] = 'Attendance cannot exceed class strength';
+                                              updatedErrors[rowIndex]['attendance'] =
+                                                'Attendance cannot exceed class strength';
                                             } else {
-                                              handleEditedChange(rowIndex, 'absent', classStrength - attendance);
+                                              handleEditedChange(
+                                                rowIndex,
+                                                'absent',
+                                                classStrength - attendance
+                                              );
                                               updatedErrors[rowIndex]['attendance'] = '';
                                               updatedErrors[rowIndex]['absent'] = '';
                                             }
                                           } else if (isValidNumber(absent)) {
                                             if (absent > classStrength) {
-                                              updatedErrors[rowIndex]['absent'] = 'Absent cannot exceed class strength';
+                                              updatedErrors[rowIndex]['absent'] =
+                                                'Absent cannot exceed class strength';
                                             } else {
-                                              handleEditedChange(rowIndex, 'attendance', classStrength - absent);
+                                              handleEditedChange(
+                                                rowIndex,
+                                                'attendance',
+                                                classStrength - absent
+                                              );
                                               updatedErrors[rowIndex]['attendance'] = '';
                                               updatedErrors[rowIndex]['absent'] = '';
                                             }
@@ -506,22 +554,40 @@ export default function TechnoDataTableAdvanced({
 
                                       if (columnId === 'attendance') {
                                         if (!isValidNumber(attendance)) {
-                                          updatedErrors[rowIndex][columnId] = 'Attendance must be a non-negative number';
-                                        } else if (isValidNumber(classStrength) && attendance > classStrength) {
-                                          updatedErrors[rowIndex][columnId] = 'Attendance cannot exceed class strength';
+                                          updatedErrors[rowIndex][columnId] =
+                                            'Attendance must be a non-negative number';
+                                        } else if (
+                                          isValidNumber(classStrength) &&
+                                          attendance > classStrength
+                                        ) {
+                                          updatedErrors[rowIndex][columnId] =
+                                            'Attendance cannot exceed class strength';
                                         } else {
-                                          handleEditedChange(rowIndex, 'absent', classStrength - attendance);
+                                          handleEditedChange(
+                                            rowIndex,
+                                            'absent',
+                                            classStrength - attendance
+                                          );
                                           updatedErrors[rowIndex]['absent'] = '';
                                         }
                                       }
 
                                       if (columnId === 'absent') {
                                         if (!isValidNumber(absent)) {
-                                          updatedErrors[rowIndex][columnId] = 'Absent must be a non-negative number';
-                                        } else if (isValidNumber(classStrength) && absent > classStrength) {
-                                          updatedErrors[rowIndex][columnId] = 'Absent cannot exceed class strength';
+                                          updatedErrors[rowIndex][columnId] =
+                                            'Absent must be a non-negative number';
+                                        } else if (
+                                          isValidNumber(classStrength) &&
+                                          absent > classStrength
+                                        ) {
+                                          updatedErrors[rowIndex][columnId] =
+                                            'Absent cannot exceed class strength';
                                         } else {
-                                          handleEditedChange(rowIndex, 'attendance', classStrength - absent);
+                                          handleEditedChange(
+                                            rowIndex,
+                                            'attendance',
+                                            classStrength - absent
+                                          );
                                           updatedErrors[rowIndex]['attendance'] = '';
                                         }
                                       }
@@ -532,7 +598,6 @@ export default function TechnoDataTableAdvanced({
                                   />
                                   {/* {errorMsg && <span className="text-xs text-red-500">{errorMsg}</span>} */}
                                 </div>
-
                               );
                             }
                             return flexRender(cell.column.columnDef.cell, cell.getContext());
@@ -541,7 +606,6 @@ export default function TechnoDataTableAdvanced({
                       );
                     })}
                   </TableRow>
-
                 ))}
                 {/* Here */}
               </>
@@ -555,18 +619,24 @@ export default function TechnoDataTableAdvanced({
                     return (
                       <TableCell key={idx} className={`h-[${rowHeight}px] text-center`}>
                         <div className="flex justify-center items-center gap-2">
-                          <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
+                          <Button
+                            variant="ghost"
+                            disabled
+                            className="font-light hover:text-gray-500 disabled"
+                          >
                             <Trash2 size={20} className="text-gray-400" />
                           </Button>
-                          <Button variant="ghost" disabled className="font-light hover:text-gray-500 disabled">
+                          <Button
+                            variant="ghost"
+                            disabled
+                            className="font-light hover:text-gray-500 disabled"
+                          >
                             <Upload size={20} className="text-gray-400" />
                           </Button>
                         </div>
                       </TableCell>
                     );
-                  }
-
-                  else if (columnId === 'confirmation') {
+                  } else if (columnId === 'confirmation') {
                     const defaultValue = newRow[columnId] ?? `${LectureConfirmation.TO_BE_DONE}`; // adjust the default key if needed
                     return (
                       <TableCell key={idx} className={`h-[${rowHeight}px] text-center`}>
@@ -577,15 +647,17 @@ export default function TechnoDataTableAdvanced({
                         />
                       </TableCell>
                     );
-                  }
-
-                  else if (columnId === 'actualDate' || columnId === 'plannedDate') {
+                  } else if (columnId === 'actualDate' || columnId === 'plannedDate') {
                     const errorMsg = validationErrors[columnId];
                     const parsedDate = parseDateFromAPI(newRow[columnId]);
 
                     return (
                       <TableCell key={idx} className={`h-[${rowHeight}px] text-center`}>
-                        <div className="flex flex-col items-center">
+                        <div
+                          className={clsx('flex flex-col items-center ', {
+                            'border border-red-400 rounded-lg': errorMsg
+                          })}
+                        >
                           <SimpleDatePicker
                             value={parsedDate ? formatDateForAPI(parsedDate) : undefined}
                             onChange={(newDateStr: string | undefined) => {
@@ -602,19 +674,26 @@ export default function TechnoDataTableAdvanced({
                         </div>
                       </TableCell>
                     );
-                  }
-                  else {
+                  } else {
                     return (
                       <TableCell key={idx} className={`h-[${rowHeight}px]`}>
                         <div className="flex flex-col items-center">
                           <Input
-                             className={`bg-white editable-cell px-2 py-2 border rounded-md ${
-                              validationErrors[columnId] ? 'border-red-500 ring-1 ring-red-500' : 'border-gray-300'
+                            className={`bg-white editable-cell px-2 py-2 border rounded-md ${
+                              validationErrors[columnId]
+                                ? 'border-red-500 ring-1 ring-red-500'
+                                : 'border-gray-300'
                             }`}
                             value={newRow[columnId] || ''}
                             onChange={(e) => {
                               const newValue = e.target.value;
-                              const numericOnlyFields = ['classStrength', 'attendance', 'unitNumber', 'lectureNumber', 'absent'];
+                              const numericOnlyFields = [
+                                'classStrength',
+                                'attendance',
+                                'unitNumber',
+                                'lectureNumber',
+                                'absent'
+                              ];
                               if (numericOnlyFields.includes(columnId) && !/^\d*$/.test(newValue)) {
                                 return; // Do not update value if not numeric
                               }
@@ -623,15 +702,17 @@ export default function TechnoDataTableAdvanced({
                               const newErrors = { ...validationErrors };
 
                               const classStrength = parseInt(
-                                columnId === 'classStrength' ? newValue : newRow.classStrength ?? '',
+                                columnId === 'classStrength'
+                                  ? newValue
+                                  : (newRow.classStrength ?? ''),
                                 10
                               );
                               const attendance = parseInt(
-                                columnId === 'attendance' ? newValue : newRow.attendance ?? '',
+                                columnId === 'attendance' ? newValue : (newRow.attendance ?? ''),
                                 10
                               );
                               const absent = parseInt(
-                                columnId === 'absent' ? newValue : newRow.absent ?? '',
+                                columnId === 'absent' ? newValue : (newRow.absent ?? ''),
                                 10
                               );
 
@@ -649,11 +730,13 @@ export default function TechnoDataTableAdvanced({
 
                               if (columnId === 'classStrength') {
                                 if (!isValidNumber(classStrength)) {
-                                  newErrors[columnId] = 'Class strength must be a non-negative number';
+                                  newErrors[columnId] =
+                                    'Class strength must be a non-negative number';
                                 } else {
                                   if (isValidNumber(attendance)) {
                                     if (attendance > classStrength) {
-                                      newErrors['attendance'] = 'Attendance cannot exceed class strength';
+                                      newErrors['attendance'] =
+                                        'Attendance cannot exceed class strength';
                                     } else {
                                       updatedRow.absent = classStrength - attendance;
                                       newErrors['attendance'] = '';
@@ -674,10 +757,15 @@ export default function TechnoDataTableAdvanced({
                               if (columnId === 'attendance') {
                                 if (!isValidNumber(attendance)) {
                                   newErrors[columnId] = 'Attendance must be a non-negative number';
-                                } else if (isValidNumber(classStrength) && attendance > classStrength) {
+                                } else if (
+                                  isValidNumber(classStrength) &&
+                                  attendance > classStrength
+                                ) {
                                   newErrors[columnId] = 'Attendance cannot exceed class strength';
                                 } else {
-                                  updatedRow.absent = isValidNumber(classStrength) ? classStrength - attendance : '';
+                                  updatedRow.absent = isValidNumber(classStrength)
+                                    ? classStrength - attendance
+                                    : '';
                                   newErrors['absent'] = '';
                                 }
                               }
@@ -688,7 +776,9 @@ export default function TechnoDataTableAdvanced({
                                 } else if (isValidNumber(classStrength) && absent > classStrength) {
                                   newErrors[columnId] = 'Absent cannot exceed class strength';
                                 } else {
-                                  updatedRow.attendance = isValidNumber(classStrength) ? classStrength - absent : '';
+                                  updatedRow.attendance = isValidNumber(classStrength)
+                                    ? classStrength - absent
+                                    : '';
                                   newErrors['attendance'] = '';
                                 }
                               }
@@ -704,9 +794,6 @@ export default function TechnoDataTableAdvanced({
                       </TableCell>
                     );
                   }
-
-
-
                 })}
               </TableRow>
             )}
@@ -715,44 +802,58 @@ export default function TechnoDataTableAdvanced({
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-[450px] text-center">
                   <div className="flex flex-col items-center justify-center h-full">
-                    <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <svg
+                      className="w-16 h-16 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1}
+                        d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
                     </svg>
                     <h3 className="mt-4 text-lg font-medium text-gray-900">No Results Found</h3>
-                    <p className="mt-1 text-sm text-gray-500">Try adjusting your search or filter to find what you're looking for.</p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Try adjusting your search or filter to find what you're looking for.
+                    </p>
                   </div>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+      </div>
+      {addButtonPlacement === 'bottom' && (
+        <div className="h-[50px] flex justify-between items-center pt-2 w-full">
+          <Button
+            variant="outline"
+            className="h-[40px] p-2 pr-3 upload-materials-border-box transition btnLabelAdd font-inter bg-white text-black hover:bg-gray-200"
+            onClick={() => {
+              setValidationErrors({});
+              if (addViaDialog && onAddClick) {
+                onAddClick();
+              } else {
+                setAddingRow(true);
+                setNewRow({});
+              }
+            }}
+            disabled={addingRow || editing}
+          >
+            <span className="font-inter">
+              <FolderPlus className="text-xl" />
+            </span>
+            <p className="font-inter btnLabelAdd text-md">{addBtnLabel}</p>
+          </Button>
 
-        {addButtonPlacement === "bottom" && (
-          <div className="h-[50px] flex justify-between items-center pt-2 w-full">
-            <Button
-              variant="outline"
-              className="h-[40px] p-2 pr-3 upload-materials-border-box transition btnLabelAdd font-inter bg-white text-black hover:bg-gray-200"
-              onClick={() => {
-                setValidationErrors({});
-                if (addViaDialog && onAddClick) {
-                  onAddClick();
-                } else {
-                  setAddingRow(true);
-                  setNewRow({});
-                }
-              }}
-              disabled={addingRow || editing}
-            >
-              <span className='font-inter'><FolderPlus className='text-xl' /></span>
-              <p className='font-inter btnLabelAdd text-md'>{addBtnLabel}</p>
-            </Button>
-
-
-            {/* Adding/Editing Mode */}
-            {!addViaDialog && (addingRow || editing) && (
-              <div className="flex gap-2 justify-end ml-4">
-                {/* Save button */}
-                <AddMoreDataBtn onClick={() => {
+          {/* Adding/Editing Mode */}
+          {!addViaDialog && (addingRow || editing) && (
+            <div className="flex gap-2 justify-end ml-4">
+              {/* Save button */}
+              <AddMoreDataBtn
+                onClick={() => {
                   if (addingRow) {
                     const isValid = validateRow(newRow);
                     // console.log("Is valid : ", isValid);
@@ -762,8 +863,7 @@ export default function TechnoDataTableAdvanced({
                       setAddingRow(false);
                       setNewRow({});
                     }
-                  }
-                  else {
+                  } else {
                     // console.log("Updated data : ", editedData);
                     const isValid = validateAllEditedRows(editedData);
                     if (isValid) {
@@ -772,12 +872,14 @@ export default function TechnoDataTableAdvanced({
                     }
                   }
                 }}
-                  btnClassName=" font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn"
-                  icon={<Check></Check>}
-                  label={"Save"} />
+                btnClassName=" font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn"
+                icon={<Check></Check>}
+                label={'Save'}
+              />
 
-                {/* Discard button */}
-                <AddMoreDataBtn onClick={() => {
+              {/* Discard button */}
+              <AddMoreDataBtn
+                onClick={() => {
                   if (addingRow) {
                     setAddingRow(false);
                     setNewRow({});
@@ -786,35 +888,62 @@ export default function TechnoDataTableAdvanced({
                     setEditing(false);
                   }
                 }}
-                  btnClassName="upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200"
-                  icon={<X></X>}
-                  label={"Discard"} />
+                btnClassName="upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200"
+                icon={<X></X>}
+                label={'Discard'}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
-              </div>
-            )}
-          </div>
-        )}
-
-
-
-        {addButtonPlacement !== "bottom" && (
-          <>
-            {!addViaDialog && addingRow && (
-              <div className="flex gap-2 justify-end mt-2">
-                <AddMoreDataBtn onClick={() => { data.push(newRow); setAddingRow(false); setNewRow({}); }} btnClassName='font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn' icon={<Check></Check>} label={"Save"} />
-                <AddMoreDataBtn onClick={() => { setAddingRow(false); setNewRow({}); }} btnClassName='upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200 h-[40px] p-2 pr-3' icon={<X />} label={"Discard"} />
-              </div>
-            )}
-            {!addViaDialog && editing && (
-              <div className="flex gap-2 justify-end mt-2">
-                <AddMoreDataBtn onClick={() => { setEditing(false); }} btnClassName='font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn' icon={<Check></Check>} label={"Save"} />
-                <AddMoreDataBtn onClick={() => { setEditing(false); }} btnClassName='upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200 h-[40px] p-2 pr-3' icon={<X />} label={"Discard"} />
-              </div>
-            )}
-          </>
-        )}
-
-      </div>
+      {addButtonPlacement !== 'bottom' && (
+        <>
+          {!addViaDialog && addingRow && (
+            <div className="flex gap-2 justify-end mt-2">
+              <AddMoreDataBtn
+                onClick={() => {
+                  data.push(newRow);
+                  setAddingRow(false);
+                  setNewRow({});
+                }}
+                btnClassName="font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn"
+                icon={<Check></Check>}
+                label={'Save'}
+              />
+              <AddMoreDataBtn
+                onClick={() => {
+                  setAddingRow(false);
+                  setNewRow({});
+                }}
+                btnClassName="upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200 h-[40px] p-2 pr-3"
+                icon={<X />}
+                label={'Discard'}
+              />
+            </div>
+          )}
+          {!addViaDialog && editing && (
+            <div className="flex gap-2 justify-end mt-2">
+              <AddMoreDataBtn
+                onClick={() => {
+                  setEditing(false);
+                }}
+                btnClassName="font-inter font-semibold h-[40px] p-2 pr-3 saveDataBtn"
+                icon={<Check></Check>}
+                label={'Save'}
+              />
+              <AddMoreDataBtn
+                onClick={() => {
+                  setEditing(false);
+                }}
+                btnClassName="upload-materials-border-box font-inter font-normal bg-white text-black hover:bg-gray-200 h-[40px] p-2 pr-3"
+                icon={<X />}
+                label={'Discard'}
+              />
+            </div>
+          )}
+        </>
+      )}
 
       {showPagination && (
         <div className="flex items-center justify-between py-4">

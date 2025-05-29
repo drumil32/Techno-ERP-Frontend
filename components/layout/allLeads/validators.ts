@@ -14,9 +14,7 @@ export const requestDateSchema = z
   .string()
   .regex(/^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/, 'Date must be in DD/MM/YYYY format');
 
-export const contactNumberSchema = z
-  .string()
-  .regex(/^[1-9]\d{9}$/, 'Invalid contact number format. Expected: 1234567890');
+export const contactNumberSchema = z.string();
 
 export const leadMasterSchema = z.object({
   date: z.date(),
@@ -41,20 +39,18 @@ export const leadMasterSchema = z.object({
     .optional()
     .default(FinalConversionStatus.NO_FOOTFALL),
   remarks: z.array(z.string()).optional(),
-  followUpCount: z.number().optional().default(0),
+  followUpCount: z.number().optional().default(0)
 });
 
 export const leadSchema = leadMasterSchema
   .omit({
     finalConversion: true,
     remarks: true,
-    footFall: true,
+    footFall: true
   })
   .strict();
 
-export const yellowLeadSchema = leadMasterSchema
-  .omit({ leadType: true })
-  .strict();
+export const yellowLeadSchema = leadMasterSchema.omit({ leadType: true }).strict();
 
 export const leadRequestSchema = leadSchema.extend({
   date: requestDateSchema,

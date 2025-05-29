@@ -105,7 +105,9 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       createdAt: new Date(lead.createdAt).toLocaleString(),
       updatedAt: lead.updatedAt ?? 'N/A',
       remarks: lead.remarks,
-      remarksView: lead.remarks[lead.remarks.length - 1] ?? '-',
+
+      remarksView: lead.remarks ? [...lead.remarks].reverse().join(' | ') : '-',
+
       leadTypeModifiedDate: lead.leadTypeModifiedDate ?? 'N/A',
       leadTypeModifiedDateView: formatTimeStampView(lead.leadTypeModifiedDate) ?? 'N/A'
     };

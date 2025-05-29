@@ -87,14 +87,6 @@ const FilterBadges = ({
       });
     }
 
-    if (appliedFilters.semester) {
-      newBadges.push({
-        key: 'semester',
-        label: 'Semester',
-        value: appliedFilters.semester
-      });
-    }
-
     if (appliedFilters.courseYear) {
       newBadges.push({
         key: 'courseYear',
