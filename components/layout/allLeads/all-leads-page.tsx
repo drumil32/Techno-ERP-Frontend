@@ -7,11 +7,22 @@ import TechnoDataTable, {
   TruncatedCell
 } from '@/components/custom-ui/data-table/techno-data-table';
 import { use, useEffect, useRef, useState } from 'react';
-import { useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import {
+  QueryFunctionContext,
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery
+} from '@tanstack/react-query';
 import TechnoRightDrawer from '../../custom-ui/drawer/techno-right-drawer';
 import LeadViewEdit, { LeadData } from './leads-view-edit';
 import { Course, LeadType, Locations, UserRoles } from '@/types/enum';
-import { fetchLeads, fetchAssignedToDropdown, fetchLeadsAnalytics } from './helpers/fetch-data';
+import {
+  fetchLeads,
+  fetchAssignedToDropdown,
+  fetchLeadsAnalytics,
+  fetchAvailableSheets,
+  uploadSheetRequest
+} from './helpers/fetch-data';
 import { refineLeads, refineAnalytics, formatTimeStampView } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
 1;
@@ -45,9 +56,16 @@ import {
 import { FaCircleExclamation } from 'react-icons/fa6';
 import { format, formatDate } from 'date-fns';
 import { Popover, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, ChevronDown } from 'lucide-react';
 import { PopoverContent } from '@radix-ui/react-popover';
 import { Calendar } from '@/components/ui/calendar';
+import { SheetItem } from '@/types/marketing';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function AllLeadsPage() {
   const queryClient = useQueryClient();
@@ -781,23 +799,30 @@ export function TableActionButton() {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [selectedSheet, setSelectedSheet] = useState<string | null>(null);
+
+  const availableSheetsQuery = useQuery<SheetItem[]>({
+    queryKey: ['available-sheets'],
+    queryFn: (context) =>
+      fetchAvailableSheets(context as QueryFunctionContext<readonly [string, any]>),
+    refetchOnWindowFocus: false,
+    placeholderData: (previousData) => previousData
+  });
+
+  const sheetDropdownData = availableSheetsQuery.data;
+
+  console.log(sheetDropdownData);
 
   const uploadAction = async () => {
     setIsUploading(true);
     try {
-      const response = await fetch(API_ENDPOINTS.uploadMarketingData, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
+      await uploadSheetRequest({
+        id: selectedSheet,
+        name: sheetDropdownData?.find((sheet) => sheet.id === selectedSheet)?.name
       });
-
-      const data = await response.json();
-      if (response.ok && data.SUCCESS) {
-        toast.success(data.MESSAGE || 'Marketing Data Uploaded Successfully');
-        setUploadOpen(false);
-      } else {
-        throw new Error(data.ERROR || data.MESSAGE);
-      }
+      toast.success('Marketing Data Uploaded Successfully');
+      setSelectedSheet(null);
+      setUploadOpen(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Upload failed');
     } finally {
@@ -812,15 +837,6 @@ export function TableActionButton() {
         method: 'GET',
         credentials: 'include'
       });
-
-      if (!response.ok) {
-        try {
-          const errorData = await response.json();
-          throw new Error(errorData.ERROR || errorData.MESSAGE || 'Download failed');
-        } catch {
-          throw new Error('Download failed');
-        }
-      }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -873,13 +889,44 @@ export function TableActionButton() {
               Are you sure you want to upload marketing data?
             </DialogDescription>
           </DialogHeader>
+          <div className="flex items-center gap-4 mt-3 mb-6">
+            <span className="font-[500]">Select Sheet: </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="min-w-[200px] justify-between">
+                  {(selectedSheet &&
+                    sheetDropdownData?.find((sheet) => sheet.id === selectedSheet)?.name) ||
+                    'Select Sheet'}
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-auto min-w-[200px] max-h-[300px] overflow-y-auto">
+                {sheetDropdownData?.map((item: SheetItem) => (
+                  <div
+                    key={item._id}
+                    onClick={() => {
+                      setSelectedSheet(item.id);
+                    }}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    <Checkbox checked={selectedSheet === item.id} />
+                    <span>{item.name}</span>
+                  </div>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <DialogFooter className="flex justify-end gap-2 sm:justify-end">
             <DialogClose asChild disabled={isUploading}>
               <Button variant="outline" className="font-inter text-sm" disabled={isUploading}>
                 Cancel
               </Button>
             </DialogClose>
-            <Button onClick={uploadAction} className="font-inter text-sm" disabled={isUploading}>
+            <Button
+              onClick={uploadAction}
+              className="font-inter text-sm"
+              disabled={isUploading || !selectedSheet}
+            >
               {isUploading ? 'Uploading...' : 'Confirm Upload'}
             </Button>
           </DialogFooter>
