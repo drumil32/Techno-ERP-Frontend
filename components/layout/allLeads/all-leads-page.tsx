@@ -66,6 +66,7 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
+import UserAnalytics from './user-analytics';
 
 export default function AllLeadsPage() {
   const queryClient = useQueryClient();
@@ -734,12 +735,14 @@ export default function AllLeadsPage() {
     leads?.leads &&
     analytics && (
       <>
-        <TechnoFiltersGroup
-          filters={getFiltersData()}
-          handleFilters={applyFilter}
-          clearFilters={clearFilters}
-        />
-
+        <div className="flex justify-between w-full items-center pr-2">
+          <TechnoFiltersGroup
+            filters={getFiltersData()}
+            handleFilters={applyFilter}
+            clearFilters={clearFilters}
+          />
+          <UserAnalytics />
+        </div>
         {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
 
         {leads?.leads && (
