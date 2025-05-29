@@ -1,7 +1,7 @@
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { apiRequest } from '@/lib/apiClient';
-import { SheetItem } from '@/types/marketing';
+import { SheetItem, UserAnalyticsData } from '@/types/marketing';
 import { QueryFunctionContext } from '@tanstack/react-query';
 
 export const fetchLeads = async ({ queryKey }: any) => {
@@ -36,5 +36,13 @@ export const uploadSheetRequest = async (data: any) => {
 
 export const downloadSheetRequest = async () => {
   const res = await apiRequest(API_METHODS.GET, API_ENDPOINTS.downloadMarketingData);
+  return res;
+};
+
+export const fetchUserAnalytics = async (
+  context: QueryFunctionContext<readonly [string, any]>
+): Promise<UserAnalyticsData> => {
+  const res = await apiRequest<UserAnalyticsData>(API_METHODS.GET, API_ENDPOINTS.getUserAnalytics);
+  if (!res) throw new Error('Failed to fetch Student Fees Information');
   return res;
 };

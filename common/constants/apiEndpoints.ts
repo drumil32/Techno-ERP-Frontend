@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
   updateLead: `${API_DOMAIN}/crm/edit`,
 
   getAvailableSheets: `${API_DOMAIN}/crm/assigned-sheets`,
+  getUserAnalytics: `${API_DOMAIN}/crm/user-daily-analytics`,
 
   // Marketing Analytics
 
