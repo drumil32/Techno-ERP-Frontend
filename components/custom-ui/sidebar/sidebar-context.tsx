@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 
 interface SidebarContextType {
   sidebarActiveItem: string;
@@ -13,13 +13,16 @@ const SidebarContext = createContext({
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [sidebarActiveItem, setSidebarActiveItem] = useState('');
 
-  return (
-    <SidebarContext.Provider value={{ sidebarActiveItem, setSidebarActiveItem }}>
-      {children}
-    </SidebarContext.Provider>
+  const value = useMemo(
+    () => ({
+      sidebarActiveItem,
+      setSidebarActiveItem
+    }),
+    [sidebarActiveItem]
   );
-}
 
+  return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;
+}
 export function useSidebarContext(): SidebarContextType {
   const context = useContext(SidebarContext);
   if (!context) {

@@ -19,6 +19,7 @@ import { IFetchScheduleSchema, IScheduleSchema } from './schemas/scheduleSchema'
 import TechnoTopHeader from '@/components/custom-ui/top-header/techno-top-header';
 import TechnoPageHeading from '@/components/custom-ui/page-heading/techno-page-heading';
 import { FaRegCircleQuestion } from 'react-icons/fa6';
+import SubjectDetails from './subject-details';
 
 export interface Plan {
   _id: string;
@@ -204,38 +205,45 @@ export const SingleSubjectPage = () => {
   ) => {
     console.log('Handling Batch Update');
 
-    const sanitizedData = batchUpdateData.map((row: IFetchScheduleSchema) => {
-      return {
-        ...row,
-        classStrength: row.classStrength ? parseInt(row.classStrength) : row.classStrength,
-        attendance: row.attendance ? parseInt(row.attendance) : row.attendance,
-        absent: row.absent ? parseInt(row.absent) : row.absent
+    const toastId = toast.loading('Processing batch update...');
+
+    try {
+      const sanitizedData = batchUpdateData.map((row: IFetchScheduleSchema) => {
+        return {
+          ...row,
+          classStrength: row.classStrength ? parseInt(row.classStrength) : row.classStrength,
+          attendance: row.attendance ? parseInt(row.attendance) : row.attendance,
+          absent: row.absent ? parseInt(row.absent) : row.absent
+        };
+      });
+
+      const updateObject = {
+        courseId: courseId,
+        semesterId: semesterId,
+        subjectId: subjectId,
+        instructorId: instructorId,
+        type: type,
+        data: sanitizedData
       };
-    });
 
-    const updateObject = {
-      courseId: courseId,
-      semesterId: semesterId,
-      subjectId: subjectId,
-      instructorId: instructorId,
-      type: type,
-      data: sanitizedData
-    };
+      console.log('Update Object : ', updateObject);
 
-    console.log('Update Object : ', updateObject);
+      const response = await axios.put(API_ENDPOINTS.batchUpdatePlan, updateObject, {
+        headers: {
+          // No need to handle headers, it will be done by axios
+        },
+        withCredentials: true
+      });
 
-    const response = await axios.put(API_ENDPOINTS.batchUpdatePlan, updateObject, {
-      headers: {
-        // No need to handle headers, it will be done by axios
-      },
-      withCredentials: true
-    });
-
-    if (response.data.SUCCESS) {
-      toast.success(response.data.MESSAGE);
-      queryClient.invalidateQueries({ queryKey: ['scheduleInfo'] });
-    } else {
-      toast.error(response.data.ERROR);
+      if (response.data.SUCCESS) {
+        toast.success(response.data.MESSAGE, { id: toastId });
+        queryClient.invalidateQueries({ queryKey: ['scheduleInfo'] });
+      } else {
+        toast.error(response.data.ERROR, { id: toastId });
+      }
+    } catch (error) {
+      console.error('Batch update failed:', error);
+      toast.error('Failed to perform batch update', { id: toastId });
     }
   };
 
@@ -495,7 +503,8 @@ export const SingleSubjectPage = () => {
     queryKey: ['scheduleInfo', filterParams],
     queryFn: fetchSchedule,
     placeholderData: (previousData) => previousData,
-    enabled: true
+    enabled: true,
+    refetchOnWindowFocus: false
   });
 
   const scheduleResponse: ScheduleApiResponse = (subjectQuery.data as ScheduleApiResponse) || {};
@@ -712,22 +721,7 @@ export const SingleSubjectPage = () => {
   return (
     <>
       <div className="pb-6">
-        <DynamicInfoGrid
-          columns={3}
-          rowsPerColumn={rows}
-          data={subjectData}
-          design={{
-            containerWidth: 'full',
-            containerHeight: 'full',
-            columnWidth: 'full',
-            columnHeight: 'full',
-            columnGap: '65px',
-            rowGap: '12px',
-            keyWidth: '125px',
-            valueWidth: '333px',
-            fontSize: '14px'
-          }}
-        />
+        <SubjectDetails subjectData={subjectData} />
       </div>
 
       {/* Header */}
@@ -746,7 +740,8 @@ export const SingleSubjectPage = () => {
         selectedRowId={selectedRowId}
         setSelectedRowId={setSelectedRowId}
         // minVisibleRows={lecturePlan.length == 0 ? 14 : (lecturePlan.length + 2 < 5 ? lecturePlan.length + 2 : 7)}
-
+        minVisibleRows={8}
+        maxVisibleRows={10}
         showAddButton={true}
         showEditButton={true}
         addButtonPlacement={'bottom'}
@@ -793,7 +788,8 @@ export const SingleSubjectPage = () => {
         showPagination={false}
         selectedRowId={selectedRowId}
         setSelectedRowId={setSelectedRowId}
-        minVisibleRows={0}
+        minVisibleRows={8}
+        maxVisibleRows={10}
         // minVisibleRows={practicalPlan.length == 0 ? 14 : (practicalPlan.length + 2 < 5 ? practicalPlan.length + 2 : 7)}
         showAddButton={true}
         showEditButton={true}

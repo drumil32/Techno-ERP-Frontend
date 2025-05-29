@@ -3,11 +3,11 @@
 import { useRouter, usePathname } from 'next/navigation';
 import TechnoIcon from '../icon/TechnoIcon';
 import { useHoverContext } from './hover-context';
-import { useSidebarContext } from './sidebar-context';
 import { SIDEBAR_ITEMS } from '@/common/constants/sidebarItems';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { useEffect, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { useSidebarStore } from '@/stores/sidebar-item';
 
 export default function TechnoSidebarItem({
   icon: Icon,
@@ -21,7 +21,7 @@ export default function TechnoSidebarItem({
   const hovered = useHoverContext();
   const router = useRouter();
   const pathname = usePathname();
-  const { sidebarActiveItem, setSidebarActiveItem } = useSidebarContext();
+  const { sidebarActiveItem, setSidebarActiveItem } = useSidebarStore();
   const [isLargeScreen, setIsLargeScreen] = useState(false);
 
   useEffect(() => {
@@ -57,8 +57,9 @@ export default function TechnoSidebarItem({
   const isActive = (route && pathname.startsWith(route)) || sidebarActiveItem === text;
 
   const handleClick = () => {
+    setSidebarActiveItem(text); // This will now update immediately
+
     if (route) {
-      setSidebarActiveItem(text);
       router.push(route);
     }
     if (onClick) onClick();
