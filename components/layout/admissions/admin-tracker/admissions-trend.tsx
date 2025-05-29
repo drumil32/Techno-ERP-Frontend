@@ -70,6 +70,8 @@ export default function AdmissionTrend() {
               disableBefore={'12/05/2024'}
               changeToDateTab={tabsChangeToDate}
               changeToMonthTab={tabsChangeToMonth}
+              startFromDays={5}
+              startFromMonths={4}
             />
           </div>
           <div className="min-h-[520px] flex-1">

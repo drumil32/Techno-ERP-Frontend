@@ -22,6 +22,8 @@ export const API_ENDPOINTS = {
   fetchAssignedToDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=MARKETING`,
   updateLead: `${API_DOMAIN}/crm/edit`,
 
+  getAvailableSheets: `${API_DOMAIN}/crm/assigned-sheets`,
+
   // Marketing Analytics
 
   sourceAnalytics: `${API_DOMAIN}/crm/source-analytics`,

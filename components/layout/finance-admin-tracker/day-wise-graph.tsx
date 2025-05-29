@@ -118,12 +118,12 @@ export default function ChartDaySummary({
                     style={{ fontSize: 12 }}
                     stroke="#374151"
                     strokeWidth={1.5}
-                    tickFormatter={(value) => `${value}L`}
+                    tickFormatter={(value) => `${value.toLocaleString()}L`}
                   />
                   <ChartTooltip
                     cursor={{ fill: 'transparent' }}
                     content={<ChartTooltipContent hideLabel />}
-                    formatter={(value) => [`${value}L`, 'Daily Collection']}
+                    formatter={(value) => [`${value.toLocaleString()}L`, ' Daily Collection']}
                   />
                   <Bar
                     dataKey="dailyCollection"
@@ -136,7 +136,7 @@ export default function ChartDaySummary({
                       offset={8}
                       className="fill-foreground"
                       fontSize={12}
-                      formatter={(val: any) => `${val}L`}
+                      formatter={(val: any) => `${val.toLocaleString()}L`}
                     />
                   </Bar>
                 </BarChart>

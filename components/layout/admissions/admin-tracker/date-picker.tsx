@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getOrdinal } from '@/lib/numbers';
+import { startOfMonth } from 'date-fns';
 
 interface DateMonthYearNavigatorProps {
   date?: boolean;
@@ -14,6 +15,8 @@ interface DateMonthYearNavigatorProps {
   changeToYearsTab?: () => void;
   changeToMonthTab?: () => void;
   changeToDateTab?: () => void;
+  startFromDays?: number;
+  startFromMonths?: number;
 }
 
 export default function DateMonthYearNavigator({
@@ -25,7 +28,9 @@ export default function DateMonthYearNavigator({
   disableBefore,
   changeToDateTab,
   changeToMonthTab,
-  changeToYearsTab
+  changeToYearsTab,
+  startFromDays = 4,
+  startFromMonths = 3
 }: DateMonthYearNavigatorProps) {
   const getActiveMode = () => {
     if (date) return 'date';
@@ -36,13 +41,11 @@ export default function DateMonthYearNavigator({
 
   const [activeMode, setActiveMode] = useState(getActiveMode());
 
-  // Updated: 4 previous dates + current date (start from 4 days ago)
   const [dateRangeStart, setDateRangeStart] = useState(() => {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), today.getDate() - 4);
   });
 
-  // Updated: 3 previous months + current month (start from 3 months ago)
   const [monthRangeStart, setMonthRangeStart] = useState(() => {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth() - 3, 1);
@@ -103,7 +106,7 @@ export default function DateMonthYearNavigator({
 
   const generateDateRange = () => {
     const dates = [];
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < startFromDays; i++) {
       const newDate = new Date(dateRangeStart);
       newDate.setDate(dateRangeStart.getDate() + i);
 
@@ -129,7 +132,7 @@ export default function DateMonthYearNavigator({
       .split('/')
       .map((num) => parseInt(num));
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < startFromMonths; i++) {
       const newDate = new Date(monthRangeStart);
       newDate.setMonth(monthRangeStart.getMonth() + i);
 
