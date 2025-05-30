@@ -71,6 +71,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
     }
     const originalLeadTypeKey = lead._leadType || lead.leadType;
 
+    const assignedTo = assignedToDropdownData.find((item:any) => item._id == lead.assignedTo)?.name || 'Not Provided'
+
     return {
       _id: lead._id,
       id: index + 1,
@@ -97,8 +99,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       assignedTo: lead.assignedTo,
       degree: lead.degree,
       schoolName: lead.schoolName,
-      assignedToView: assignedToView,
-      assignedToName: assignedToName,
+      assignedToView: assignedTo,
+      assignedToName: assignedTo,
       nextDueDate: lead.nextDueDate,
       nextDueDateView: formatDateView(lead.nextDueDate) ?? '-',
       followUpCount: lead.followUpCount ?? 0,

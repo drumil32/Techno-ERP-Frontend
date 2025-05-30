@@ -501,7 +501,7 @@ export default function YellowLeadsTracker() {
           {
             accessorKey: 'assignedToName',
             header: 'Assigned To',
-            meta: { align: 'center', maxWidth: 140, fixedWidth: 140 }
+            meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
           }
         ]
       : [])

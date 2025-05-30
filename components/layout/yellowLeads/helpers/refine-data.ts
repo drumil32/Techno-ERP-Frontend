@@ -14,6 +14,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
         ? `${assignedToUsers[0].name}${assignedToUsers.length > 1 ? ` +${assignedToUsers.length - 1}` : ''}`
         : 'N/A';
 
+    const assignedTo = assignedToDropdownData.find((item:any) => item._id == lead.assignedTo)?.name || 'Not Provided'
+
     return {
       _id: lead._id,
       id: index + 1,
@@ -25,7 +27,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       gender: lead.gender,
       genderView: toPascal(lead.gender),
       assignedTo: lead.assignedTo,
-      assignedToName: assignedToName,
+      assignedToName: assignedTo,
       area: lead.area,
       areaView: !lead.area || lead.area === '' ? '-' : lead.area,
       city: lead.city,
