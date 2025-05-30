@@ -5,7 +5,7 @@ import { TechnoFilterProvider } from '@/components/custom-ui/filter/filter-conte
 export default function AllLeads() {
   return (
     <CRMLayout>
-      <TechnoFilterProvider key="all-leads">
+      <TechnoFilterProvider key="all-leads" sectionKey="all-leads">
         <AllLeadsPage />
       </TechnoFilterProvider>
     </CRMLayout>
