@@ -229,27 +229,27 @@ export function PerformanceDashboard() {
     );
   };
 
-  const isLoading = 
-    (activeTab === 'day' && todayLoading) || 
+  const isLoading =
+    (activeTab === 'day' && todayLoading) ||
     (activeTab === 'week' && weekLoading) ||
     (activeTab === 'month' && monthLoading) ||
     (activeTab === 'all' && allTimeLoading);
 
 
-    const applyColumnWidths = (sheet: XLSX.WorkSheet, includeRemarks: boolean) => {
-      sheet['!cols'] = [
-        { wch: 6 },
-        { wch: 20 },
-        { wch: 12 },
-        { wch: 15 },
-        { wch: 18 },
-        { wch: 22 },
-        { wch: 16 },
-        { wch: 18 },
-        ...(includeRemarks ? [{ wch: 30 }] : [])
-      ];
-    };
-    
+  const applyColumnWidths = (sheet: XLSX.WorkSheet, includeRemarks: boolean) => {
+    sheet['!cols'] = [
+      { wch: 6 },
+      { wch: 20 },
+      { wch: 12 },
+      { wch: 15 },
+      { wch: 18 },
+      { wch: 22 },
+      { wch: 16 },
+      { wch: 18 },
+      ...(includeRemarks ? [{ wch: 30 }] : [])
+    ];
+  };
+
 
   const formatDataForExcel = (data: DurationUserStats[], includeRemarks = false) => {
     const formattedData = data.map((member, index) => ({
@@ -282,7 +282,7 @@ export function PerformanceDashboard() {
 
   const handleDownload = async () => {
     setIsDownloading(true);
-    
+
     try {
       // Prepare data for all periods
       const dayData = (todayAnalytics?.data || []).map((item) => ({
@@ -332,7 +332,7 @@ export function PerformanceDashboard() {
 
       // Save file
       XLSX.writeFile(workbook, filename);
-      
+
     } catch (error) {
       console.error('Error downloading file:', error);
       alert('Error occurred while downloading the file. Please try again.');
@@ -389,7 +389,7 @@ export function PerformanceDashboard() {
                 <BarChart2 className="h-3 w-3 mr-1" /> All Time
               </TabsTrigger>
             </TabsList>
-            
+
             <Dialog open={isDownloadDialogOpen} onOpenChange={setIsDownloadDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="ghost" size="sm" className="ml-auto">
@@ -403,7 +403,7 @@ export function PerformanceDashboard() {
                     This will download a comprehensive Excel report containing team performance data for all time periods (Today, This Week, This Month, and All Time) in separate tabs.
                   </DialogDescription>
                 </DialogHeader>
-                
+
                 <div className="py-4">
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-3 border rounded-lg">
@@ -417,7 +417,7 @@ export function PerformanceDashboard() {
                         </p>
                       </div>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                       <div>
                         <p className="font-medium">File Format:</p>
@@ -428,14 +428,14 @@ export function PerformanceDashboard() {
                 </div>
 
                 <DialogFooter>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setIsDownloadDialogOpen(false)}
                     disabled={isDownloading}
                   >
                     Cancel
                   </Button>
-                  <Button 
+                  <Button
                     onClick={handleDownload}
                     disabled={isDownloading}
                   >
@@ -569,7 +569,7 @@ export function PerformanceDashboard() {
                               </Badge>
                             </TableCell>
                             <TableCell className="text-center">
-                              <TruncatedCell value={!member.analyticsRemark || member.analyticsRemark == "" ? "--" : member.analyticsRemark} maxWidth={80}/>
+                              <TruncatedCell value={!member.analyticsRemark || member.analyticsRemark == "" ? "--" : member.analyticsRemark} maxWidth={80} />
                             </TableCell>
                           </TableRow>
                         ))}
