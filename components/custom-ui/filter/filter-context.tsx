@@ -15,7 +15,7 @@ const TechnoFilterProvider = ({
   sectionKey
 }: {
   children: ReactNode;
-  sectionKey: string;
+  sectionKey?: string;
 }) => {
   const [filters, setFilters] = useState<Record<string, any>>(() => {
     if (typeof window === 'undefined') return {};
