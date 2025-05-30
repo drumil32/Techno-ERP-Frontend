@@ -31,12 +31,22 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { useQuery } from '@tanstack/react-query';
 import { durationBasedSourceAnalytics, todaySourceAnalytics } from './helpers/fetch-data';
 import { useEffect, useState } from 'react';
 import { format, startOfWeek, startOfMonth, startOfYear, endOfDay } from 'date-fns';
 import { NoDataPreview } from '@/components/custom-ui/no-data-preview/no-data-preview';
 import { TruncatedCell } from '@/components/custom-ui/data-table/techno-data-table';
+import * as XLSX from 'xlsx';
 
 type DurationUserStats = {
   _id: string;
@@ -48,6 +58,7 @@ type DurationUserStats = {
   totalFootFall: number;
   totalAdmissions: number;
   nonActiveLeadCalls: number;
+  analyticsRemark?: string;
 };
 
 export function PerformanceDashboard() {
@@ -60,13 +71,15 @@ export function PerformanceDashboard() {
   });
 
   const [activeTab, setActiveTab] = useState<'day' | 'week' | 'month' | 'all'>('day');
+  const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const today = endOfDay(new Date());
   const formatDate = (date: Date) => format(date, 'dd/MM/yyyy');
 
-  const getDuration = () => {
-    console.log('Getting duration for:', activeTab);
-    switch (activeTab) {
+  const getDuration = (period: 'day' | 'week' | 'month' | 'all') => {
+    console.log('Getting duration for:', period);
+    switch (period) {
       case 'week':
         return { startDate: formatDate(startOfWeek(new Date())), endDate: formatDate(today) };
       case 'month':
@@ -78,37 +91,58 @@ export function PerformanceDashboard() {
     }
   };
 
+  // Queries for all periods (for download functionality)
   const { data: todayAnalytics, isLoading: todayLoading } = useQuery({
     queryKey: ['todaySourceAnalytics'],
     queryFn: todaySourceAnalytics,
-    enabled: activeTab === 'day'
   });
 
-  const { data: durationAnalytics, isLoading: durationLoading } = useQuery({
-    queryKey: ['durationBasedSourceAnalytics', activeTab],
-    queryFn: () => durationBasedSourceAnalytics(getDuration()),
-    enabled: activeTab === 'week' || activeTab === 'month' || activeTab === 'all'
+  const { data: weekAnalytics, isLoading: weekLoading } = useQuery({
+    queryKey: ['durationBasedSourceAnalytics', 'week'],
+    queryFn: () => durationBasedSourceAnalytics(getDuration('week')),
+  });
+
+  const { data: monthAnalytics, isLoading: monthLoading } = useQuery({
+    queryKey: ['durationBasedSourceAnalytics', 'month'],
+    queryFn: () => durationBasedSourceAnalytics(getDuration('month')),
+  });
+
+  const { data: allTimeAnalytics, isLoading: allTimeLoading } = useQuery({
+    queryKey: ['durationBasedSourceAnalytics', 'all'],
+    queryFn: () => durationBasedSourceAnalytics(getDuration('all')),
   });
 
   useEffect(() => {
     console.log('Active Tab Changed:', activeTab);
   }, [activeTab]);
 
-  const currentData =
-    activeTab === 'day'
-      ? (todayAnalytics?.data || []).map((item) => ({
-        _id: item.userId,
-        userFirstName: item.userFirstName,
-        userLastName: item.userLastName,
-        totalCalls: item.totalCalls,
-        newLeadCalls: item.newLeadCalls,
-        activeLeadCalls: item.activeLeadCalls,
-        nonActiveLeadCalls: item.nonActiveLeadCalls,
-        totalFootFall: item.totalFootFall,
-        totalAdmissions: item.totalAdmissions,
-        analyticsRemark: item.analyticsRemark,
-      }))
-      : durationAnalytics || [];
+  const getCurrentData = () => {
+    switch (activeTab) {
+      case 'day':
+        return (todayAnalytics?.data || []).map((item) => ({
+          _id: item.userId,
+          userFirstName: item.userFirstName,
+          userLastName: item.userLastName,
+          totalCalls: item.totalCalls,
+          newLeadCalls: item.newLeadCalls,
+          activeLeadCalls: item.activeLeadCalls,
+          nonActiveLeadCalls: item.nonActiveLeadCalls,
+          totalFootFall: item.totalFootFall,
+          totalAdmissions: item.totalAdmissions,
+          analyticsRemark: item.analyticsRemark,
+        }));
+      case 'week':
+        return weekAnalytics || [];
+      case 'month':
+        return monthAnalytics || [];
+      case 'all':
+        return allTimeAnalytics || [];
+      default:
+        return [];
+    }
+  };
+
+  const currentData = getCurrentData();
 
   const sortedData = [...currentData].sort((a, b) => {
     if (sortConfig.key === 'userFirstName' || sortConfig.key === 'userLastName') {
@@ -195,8 +229,118 @@ export function PerformanceDashboard() {
     );
   };
 
-  const isLoading =
-    (activeTab === 'day' && todayLoading) || (activeTab !== 'day' && durationLoading);
+  const isLoading = 
+    (activeTab === 'day' && todayLoading) || 
+    (activeTab === 'week' && weekLoading) ||
+    (activeTab === 'month' && monthLoading) ||
+    (activeTab === 'all' && allTimeLoading);
+
+
+    const applyColumnWidths = (sheet: XLSX.WorkSheet, includeRemarks: boolean) => {
+      sheet['!cols'] = [
+        { wch: 6 },
+        { wch: 20 },
+        { wch: 12 },
+        { wch: 15 },
+        { wch: 18 },
+        { wch: 22 },
+        { wch: 16 },
+        { wch: 18 },
+        ...(includeRemarks ? [{ wch: 30 }] : [])
+      ];
+    };
+    
+
+  const formatDataForExcel = (data: DurationUserStats[], includeRemarks = false) => {
+    const formattedData = data.map((member, index) => ({
+      'S.No': index + 1,
+      'Name': `${member.userFirstName} ${member.userLastName}`,
+      'Total Calls': member.totalCalls,
+      'New Lead Calls': member.newLeadCalls,
+      'Active Lead Calls': member.activeLeadCalls,
+      'Non Active Lead Calls': member.nonActiveLeadCalls,
+      'Total Footfall': member.totalFootFall,
+      'Total Admissions': member.totalAdmissions,
+      ...(includeRemarks && { 'Remarks': member.analyticsRemark || '--' })
+    }));
+
+    // Add totals row
+    const totalsRow = {
+      'S.No': '',
+      'Name': 'TOTAL',
+      'Total Calls': data.reduce((sum, member) => sum + member.totalCalls, 0),
+      'New Lead Calls': data.reduce((sum, member) => sum + member.newLeadCalls, 0),
+      'Active Lead Calls': data.reduce((sum, member) => sum + member.activeLeadCalls, 0),
+      'Non Active Lead Calls': data.reduce((sum, member) => sum + member.nonActiveLeadCalls, 0),
+      'Total Footfall': data.reduce((sum, member) => sum + member.totalFootFall, 0),
+      'Total Admissions': data.reduce((sum, member) => sum + member.totalAdmissions, 0),
+      ...(includeRemarks && { 'Remarks': '' })
+    };
+
+    return [...formattedData, totalsRow];
+  };
+
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    
+    try {
+      // Prepare data for all periods
+      const dayData = (todayAnalytics?.data || []).map((item) => ({
+        _id: item.userId,
+        userFirstName: item.userFirstName,
+        userLastName: item.userLastName,
+        totalCalls: item.totalCalls,
+        newLeadCalls: item.newLeadCalls,
+        activeLeadCalls: item.activeLeadCalls,
+        nonActiveLeadCalls: item.nonActiveLeadCalls,
+        totalFootFall: item.totalFootFall,
+        totalAdmissions: item.totalAdmissions,
+        analyticsRemark: item.analyticsRemark,
+      }));
+
+      // Create workbook
+      const workbook = XLSX.utils.book_new();
+
+      // Add worksheets for each period
+      if (dayData.length > 0) {
+        const daySheet = XLSX.utils.json_to_sheet(formatDataForExcel(dayData, true));
+        applyColumnWidths(daySheet, true);
+        XLSX.utils.book_append_sheet(workbook, daySheet, "Today");
+      }
+
+      if (weekAnalytics && weekAnalytics.length > 0) {
+        const weekSheet = XLSX.utils.json_to_sheet(formatDataForExcel(weekAnalytics, true));
+        applyColumnWidths(weekSheet, true);
+        XLSX.utils.book_append_sheet(workbook, weekSheet, "This Week");
+      }
+
+      if (monthAnalytics && monthAnalytics.length > 0) {
+        const monthSheet = XLSX.utils.json_to_sheet(formatDataForExcel(monthAnalytics, true));
+        applyColumnWidths(monthSheet, true);
+        XLSX.utils.book_append_sheet(workbook, monthSheet, "This Month");
+      }
+
+      if (allTimeAnalytics && allTimeAnalytics.length > 0) {
+        const allTimeSheet = XLSX.utils.json_to_sheet(formatDataForExcel(allTimeAnalytics, true));
+        applyColumnWidths(allTimeSheet, true);
+        XLSX.utils.book_append_sheet(workbook, allTimeSheet, "All Time");
+      }
+
+      // Generate filename with current date
+      const currentDate = format(new Date(), 'yyyy-MM-dd');
+      const filename = `Team_Performance_Report_${currentDate}.xlsx`;
+
+      // Save file
+      XLSX.writeFile(workbook, filename);
+      
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      alert('Error occurred while downloading the file. Please try again.');
+    } finally {
+      setIsDownloading(false);
+      setIsDownloadDialogOpen(false);
+    }
+  };
 
   return (
     <Card className="p-4 max-w-7xl">
@@ -226,129 +370,6 @@ export function PerformanceDashboard() {
           </div>
         </div>
 
-        {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {metrics.map((metric, i) => (
-            <Card key={i} className="hover:shadow-md">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {metric.title}
-                </CardTitle>
-                <div className="h-4 w-4 text-muted-foreground">{metric.icon}</div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{metric.value.toLocaleString()}</div>
-                <div className="flex items-center justify-between mt-2">
-                  <div className="flex items-center text-xs text-muted-foreground">
-                    {metric.trend === 'up' ? (
-                      <ArrowUp className="h-3 w-3 text-green-500 mr-1" />
-                    ) : (
-                      <ArrowDown className="h-3 w-3 text-red-500 mr-1" />
-                    )}
-                    {metric.trend === 'up' ? '+12.3%' : '-2.4%'} from last
-                  </div>
-                  <Badge
-                    variant={metric.trend === 'up' ? 'default' : 'destructive'}
-                    className="h-5 text-xs"
-                  >
-                    {metric.trend === 'up' ? 'Positive' : 'Negative'}
-                  </Badge>
-                </div>
-                <Progress value={metric.progress} className="h-2 mt-3" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="md:col-span-2 lg:col-span-3">
-            <CardHeader>
-              <CardTitle>Top Performers</CardTitle>
-              <CardDescription>Leading team members this period</CardDescription>
-            </CardHeader>
-            <CardContent className="h-[300px] overflow-y-auto">
-              {isLoading ? (
-                <div className="flex items-center justify-center h-full">Loading...</div>
-              ) : topPerformers.length === 0 ? (
-                <>
-                  <NoDataPreview
-                    message="No top performers found for the selected period."
-                    className="w-full h-full"
-                  />
-                </>
-              ) : (
-                <div className="space-y-6">
-                  {topPerformers.map((member) => (
-                    <div key={member._id} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <Avatar>
-                          <AvatarFallback>
-                            {member.userFirstName[0]}
-                            {member.userLastName[0]}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-sm font-medium">
-                            {member.userFirstName} {member.userLastName}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {member.totalAdmissions} admissions
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center">
-                        {member === topPerformers[0] ? (
-                          <Trophy className="h-5 w-5 text-yellow-500" />
-                        ) : (
-                          <Star className="h-5 w-5 text-blue-500" />
-                        )}
-                        <ChevronRight className="h-4 w-4 text-muted-foreground ml-2" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-          <Card className="md:col-span-2 lg:col-span-4">
-            <CardHeader>
-              <CardTitle>Team Progress</CardTitle>
-              <CardDescription>Performance overview for this period</CardDescription>
-            </CardHeader>
-            <CardContent className="h-[300px] overflow-y-auto">
-              {isLoading ? (
-                <div className="flex items-center justify-center h-full">Loading...</div>
-              ) : teamWithProgress.length === 0 ? (
-                <>
-                  <NoDataPreview
-                    message="No team members found for the selected period."
-                    className="w-full h-full"
-                  />
-                </>
-              ) : (
-                <div className="space-y-4">
-                  {teamWithProgress.map((member) => (
-                    <div key={member._id} className="flex items-center">
-                      <div className="w-[150px]">
-                        <p className="text-sm font-medium">
-                          {member.userFirstName} {member.userLastName}
-                        </p>
-                      </div>
-                      <div className="flex-1">
-                        <Progress value={member.progress} className="h-2" />
-                      </div>
-                      <div className="w-[60px] text-right">
-                        <Badge variant="outline" className="px-2 py-0.5 text-xs">
-                          {member.progress}%
-                        </Badge>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div> */}
-
         <Tabs
           value={activeTab}
           onValueChange={(value) => setActiveTab(value as 'day' | 'week' | 'month' | 'all')}
@@ -368,9 +389,71 @@ export function PerformanceDashboard() {
                 <BarChart2 className="h-3 w-3 mr-1" /> All Time
               </TabsTrigger>
             </TabsList>
-            <Button variant="ghost" size="sm" className="ml-auto">
-              Download <Download className="h-4 w-4 ml-1" />
-            </Button>
+            
+            <Dialog open={isDownloadDialogOpen} onOpenChange={setIsDownloadDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" size="sm" className="ml-auto">
+                  Download <Download className="h-4 w-4 ml-1" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[620px]">
+                <DialogHeader>
+                  <DialogTitle>Download Performance Report</DialogTitle>
+                  <DialogDescription>
+                    This will download a comprehensive Excel report containing team performance data for all time periods (Today, This Week, This Month, and All Time) in separate tabs.
+                  </DialogDescription>
+                </DialogHeader>
+                
+                <div className="py-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <p className="font-medium">Report Contents:</p>
+                        <p className="text-sm text-muted-foreground">
+                          • Today's Performance Data<br />
+                          • This Week's Performance Data<br />
+                          • This Month's Performance Data<br />
+                          • All Time Performance Data
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                      <div>
+                        <p className="font-medium">File Format:</p>
+                        <p className="text-sm text-muted-foreground">Excel (.xlsx) with multiple tabs</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <DialogFooter>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsDownloadDialogOpen(false)}
+                    disabled={isDownloading}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleDownload}
+                    disabled={isDownloading}
+                  >
+                    {isDownloading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Downloading...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="h-4 w-4 mr-2" />
+                        Download Report
+                      </>
+                    )}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <TabsContent value={activeTab}>
@@ -426,7 +509,7 @@ export function PerformanceDashboard() {
                           </TableHead>
                           <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
                             <button
-                              onClick={() => requestSort('activeLeadCalls')}
+                              onClick={() => requestSort('nonActiveLeadCalls')}
                               className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
                               Non Active Lead Calls {getSortIcon('nonActiveLeadCalls')}
@@ -472,14 +555,6 @@ export function PerformanceDashboard() {
                                   <p className="font-medium">
                                     {member.userFirstName} {member.userLastName}
                                   </p>
-                                  <p className="text-xs text-muted-foreground">
-                                    {member.totalAdmissions === topPerformers[0]?.totalAdmissions
-                                      ? 'Top performer'
-                                      : member.totalAdmissions >=
-                                        (topPerformers[1]?.totalAdmissions || 0)
-                                        ? 'Meeting targets'
-                                        : 'Needs improvement'}
-                                  </p>
                                 </div>
                               </div>
                             </TableCell>
@@ -495,8 +570,7 @@ export function PerformanceDashboard() {
                             </TableCell>
                             <TableCell className="text-center">
                               <TruncatedCell value={!member.analyticsRemark || member.analyticsRemark == "" ? "--" : member.analyticsRemark} maxWidth={80}/>
-                              </TableCell>
-
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
