@@ -370,6 +370,7 @@ export default function LeadViewEdit({
         toast.error('Please fix the errors in the form');
         return;
       }
+      delete toBeUpdatedData.assignedTo;
 
       const response: LeadData | null = await apiRequest(
         API_METHODS.PUT,

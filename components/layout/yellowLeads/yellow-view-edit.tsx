@@ -345,6 +345,8 @@ export default function YellowLeadViewEdit({
 
       const { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
 
+      delete toBeUpdatedData.assignedTo;
+
       const response: YellowLead | null = await apiRequest(
         API_METHODS.PUT,
         API_ENDPOINTS.updateYellowLead,
