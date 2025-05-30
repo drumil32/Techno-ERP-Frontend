@@ -84,31 +84,6 @@ export default function AllLeadsPage() {
   const authStore = useAuthStore();
   const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING);
 
-  // const handleSortChange = (column: string, order: string) => {
-  //   if (column === 'nextDueDateView') {
-  //     column = 'nextDueDate';
-  //   }
-  //   if (column === 'dateView') {
-  //     column = 'date';
-  //   }
-
-  //   setSortState((prevState: any) => {
-  //     const currentIndex = prevState.sortBy.indexOf(column);
-  //     let newOrderBy = [...prevState.orderBy];
-  //     if (currentIndex != -1) {
-  //       newOrderBy[currentIndex] = prevState.orderBy[currentIndex] == 'asc' ? 'desc' : 'asc';
-  //     }
-
-  //     return {
-  //       ...prevState,
-  //       orderBy: newOrderBy
-  //     };
-  //   });
-
-  //   setPage(1);
-  //   setRefreshKey((prevKey) => prevKey + 1);
-  // };
-
   const handleSortChange = (column: string, order: string) => {
     if (column === 'nextDueDateView') {
       column = 'nextDueDate';
@@ -208,7 +183,7 @@ export default function AllLeadsPage() {
   }, []);
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(50);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
 
@@ -695,8 +670,8 @@ export default function AllLeadsPage() {
       },
       {
         filterKey: 'leadType',
-        label: 'Lead Status',
-        placeholder: 'Lead Status',
+        label: 'Lead Type',
+        placeholder: 'Lead Type',
         options: Object.values(LeadType),
         multiSelect: true
       },
@@ -731,6 +706,20 @@ export default function AllLeadsPage() {
     return <Loading />;
   }
 
+  const handleDateFilter = (columnId: string, startDate: Date | undefined, endDate: Date | undefined) => {
+    if (columnId === 'nextDueDateView') {
+      if (startDate) {
+        updateFilter('startNextDueDate', format(startDate, "dd/MM/yyyy"));
+        updateFilter('endNextDueDate', format(startDate, "dd/MM/yyyy"));
+      } else {
+        updateFilter('startNextDueDate', undefined);
+        updateFilter('endNextDueDate', undefined);
+      }
+      
+      applyFilter();
+    }
+  };
+
   return (
     leads?.leads &&
     analytics && (
@@ -764,6 +753,7 @@ export default function AllLeadsPage() {
             tableActionButton={<TableActionButton />}
             setSelectedRowId={setSelectedRowId}
             searchBarPlaceholder="Search student name or number"
+            onDateFilter={handleDateFilter} 
           >
             <FilterBadges
               onFilterRemove={handleFilterRemove}

@@ -39,6 +39,7 @@ import Loading from '@/app/loading';
 import { FilterData } from '@/components/custom-ui/filter/type';
 import useAuthStore from '@/stores/auth-store';
 import { FinalConversionStatus, UserRoles } from '@/types/enum';
+import { format } from 'date-fns';
 
 export default function YellowLeadsTracker() {
   const queryClient = useQueryClient();
@@ -120,7 +121,7 @@ export default function YellowLeadsTracker() {
   }, []);
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
+  const [limit, setLimit] = useState(50);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
 
@@ -444,12 +445,12 @@ export default function YellowLeadsTracker() {
     },
     {
       accessorKey: 'nextDueDateView',
-      header: 'Next Call Date',
+      header: 'Next Due Date',
       meta: { align: 'center', maxWidth: 160, fixedWidth: 160 }
     },
     {
       accessorKey: 'finalConversion',
-      header: 'Final Conversion',
+      header: 'Lead Type',
       meta: { align: 'center', maxWidth: 170, fixedWidth: 190 },
       cell: ({ row }: any) => {
         const value = row.original.finalConversion as FinalConversionStatus;
@@ -488,7 +489,7 @@ export default function YellowLeadsTracker() {
 
             updateLeadCache();
             queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
-            toast.success('Final conversion updated successfully');
+            toast.success('Lead Type updated successfully');
           }
         };
 
@@ -571,8 +572,8 @@ export default function YellowLeadsTracker() {
       },
       {
         filterKey: 'finalConversionType',
-        label: 'Final Conversion',
-        placeholder: 'Final Conversion',
+        label: 'Lead Type',
+        placeholder: 'Lead Type',
         options: Object.values(FinalConversionStatus),
         multiSelect: true
       },
@@ -633,6 +634,20 @@ export default function YellowLeadsTracker() {
   if (!leads?.leads || !analytics) {
     return <Loading />;
   }
+  
+  const handleDateFilter = (columnId: string, startDate: Date | undefined, endDate: Date | undefined) => {
+    if (columnId === 'nextDueDateView') {
+      if (startDate) {
+        updateFilter('startNextDueDate', format(startDate, "dd/MM/yyyy"));
+        updateFilter('endNextDueDate', format(startDate, "dd/MM/yyyy"));
+      } else {
+        updateFilter('startNextDueDate', undefined);
+        updateFilter('endNextDueDate', undefined);
+      }
+      
+      applyFilter();
+    }
+  };
 
   return (
     leads?.leads &&
@@ -662,6 +677,7 @@ export default function YellowLeadsTracker() {
             selectedRowId={selectedRowId}
             setSelectedRowId={setSelectedRowId}
             searchBarPlaceholder="Search student name or number"
+            onDateFilter={handleDateFilter} 
           >
             <FilterBadges
               onFilterRemove={handleFilterRemove}

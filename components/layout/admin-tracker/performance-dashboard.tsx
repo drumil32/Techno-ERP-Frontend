@@ -36,6 +36,7 @@ import { durationBasedSourceAnalytics, todaySourceAnalytics } from './helpers/fe
 import { useEffect, useState } from 'react';
 import { format, startOfWeek, startOfMonth, startOfYear, endOfDay } from 'date-fns';
 import { NoDataPreview } from '@/components/custom-ui/no-data-preview/no-data-preview';
+import { TruncatedCell } from '@/components/custom-ui/data-table/techno-data-table';
 
 type DurationUserStats = {
   _id: string;
@@ -46,6 +47,7 @@ type DurationUserStats = {
   activeLeadCalls: number;
   totalFootFall: number;
   totalAdmissions: number;
+  nonActiveLeadCalls: number;
 };
 
 export function PerformanceDashboard() {
@@ -95,15 +97,17 @@ export function PerformanceDashboard() {
   const currentData =
     activeTab === 'day'
       ? (todayAnalytics?.data || []).map((item) => ({
-          _id: item.userId,
-          userFirstName: item.userFirstName,
-          userLastName: item.userLastName,
-          totalCalls: item.totalCalls,
-          newLeadCalls: item.newLeadCalls,
-          activeLeadCalls: item.activeLeadCalls,
-          totalFootFall: item.totalFootFall,
-          totalAdmissions: item.totalAdmissions
-        }))
+        _id: item.userId,
+        userFirstName: item.userFirstName,
+        userLastName: item.userLastName,
+        totalCalls: item.totalCalls,
+        newLeadCalls: item.newLeadCalls,
+        activeLeadCalls: item.activeLeadCalls,
+        nonActiveLeadCalls: item.nonActiveLeadCalls,
+        totalFootFall: item.totalFootFall,
+        totalAdmissions: item.totalAdmissions,
+        analyticsRemark: item.analyticsRemark,
+      }))
       : durationAnalytics || [];
 
   const sortedData = [...currentData].sort((a, b) => {
@@ -128,9 +132,10 @@ export function PerformanceDashboard() {
       newLeadCalls: acc.newLeadCalls + curr.newLeadCalls,
       activeLeadCalls: acc.activeLeadCalls + curr.activeLeadCalls,
       totalFootFall: acc.totalFootFall + curr.totalFootFall,
+      nonActiveLeadCalls: acc.nonActiveLeadCalls + curr.nonActiveLeadCalls,
       totalAdmissions: acc.totalAdmissions + curr.totalAdmissions
     }),
-    { totalCalls: 0, newLeadCalls: 0, activeLeadCalls: 0, totalFootFall: 0, totalAdmissions: 0 }
+    { totalCalls: 0, newLeadCalls: 0, nonActiveLeadCalls: 0, activeLeadCalls: 0, totalFootFall: 0, totalAdmissions: 0 }
   );
 
   const topPerformers = [...sortedData]
@@ -421,6 +426,14 @@ export function PerformanceDashboard() {
                           </TableHead>
                           <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
                             <button
+                              onClick={() => requestSort('activeLeadCalls')}
+                              className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
+                            >
+                              Non Active Lead Calls {getSortIcon('nonActiveLeadCalls')}
+                            </button>
+                          </TableHead>
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
+                            <button
                               onClick={() => requestSort('totalFootFall')}
                               className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
@@ -433,6 +446,13 @@ export function PerformanceDashboard() {
                               className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
                               Total Admissions {getSortIcon('totalAdmissions')}
+                            </button>
+                          </TableHead>
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
+                            <button
+                              className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
+                            >
+                              Remarks
                             </button>
                           </TableHead>
                         </TableRow>
@@ -456,7 +476,7 @@ export function PerformanceDashboard() {
                                     {member.totalAdmissions === topPerformers[0]?.totalAdmissions
                                       ? 'Top performer'
                                       : member.totalAdmissions >=
-                                          (topPerformers[1]?.totalAdmissions || 0)
+                                        (topPerformers[1]?.totalAdmissions || 0)
                                         ? 'Meeting targets'
                                         : 'Needs improvement'}
                                   </p>
@@ -466,12 +486,17 @@ export function PerformanceDashboard() {
                             <TableCell className="text-center">{member.totalCalls}</TableCell>
                             <TableCell className="text-center">{member.newLeadCalls}</TableCell>
                             <TableCell className="text-center">{member.activeLeadCalls}</TableCell>
+                            <TableCell className="text-center">{member.nonActiveLeadCalls}</TableCell>
                             <TableCell className="text-center">{member.totalFootFall}</TableCell>
                             <TableCell className="text-center">
                               <Badge variant="secondary" className="px-2">
                                 {member.totalAdmissions}
                               </Badge>
                             </TableCell>
+                            <TableCell className="text-center">
+                              <TruncatedCell value={!member.analyticsRemark || member.analyticsRemark == "" ? "--" : member.analyticsRemark} maxWidth={80}/>
+                              </TableCell>
+
                           </TableRow>
                         ))}
                       </TableBody>
@@ -481,12 +506,14 @@ export function PerformanceDashboard() {
                           <TableCell className="text-center">{totals.totalCalls}</TableCell>
                           <TableCell className="text-center">{totals.newLeadCalls}</TableCell>
                           <TableCell className="text-center">{totals.activeLeadCalls}</TableCell>
+                          <TableCell className="text-center">{totals.nonActiveLeadCalls}</TableCell>
                           <TableCell className="text-center">{totals.totalFootFall}</TableCell>
                           <TableCell className="text-center">
                             <Badge variant="default" className="px-2">
                               {totals.totalAdmissions}
                             </Badge>
                           </TableCell>
+                          <TableCell></TableCell>
                         </TableRow>
                       </tfoot>
                     </Table>

@@ -46,6 +46,7 @@ export type DailyStatsResponse = {
   data: DailyUserStats[];
 };
 export type DailyUserStats = {
+  analyticsRemark?: string;
   userId: string;
   userFirstName: string;
   userLastName: string;
@@ -58,6 +59,7 @@ export type DailyUserStats = {
 };
 export type DurationUserStats = {
   _id: string;
+  analyticsRemark?: string;
   userFirstName: string;
   userLastName: string;
   totalCalls: number;

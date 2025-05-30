@@ -34,7 +34,8 @@ import {
   ChevronRight,
   ChevronsRight,
   ChevronsLeft,
-  User
+  User,
+  CalendarIcon,
 } from 'lucide-react';
 import { LuDownload, LuUpload } from 'react-icons/lu';
 import clsx from 'clsx';
@@ -45,6 +46,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import Loading from '@/app/loading';
 import { cn } from '@/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { Calendar } from '@/components/ui/calendar';
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends unknown, TValue> {
@@ -90,6 +94,77 @@ export const TruncatedCell = ({ value, maxWidth }: { value: any; maxWidth?: numb
   );
 };
 
+interface DateSortableColumnProps {
+  columnId: string;
+  selectedDates: Record<string, Date | undefined>;
+  onDateSelect: (columnId: string, date: Date | undefined) => void;
+}
+
+const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSortableColumnProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const selectedDate = selectedDates[columnId];
+
+  const handleDateSelect = (date: Date | undefined) => {
+    onDateSelect(columnId, date);
+    setIsOpen(false);
+  };
+
+  const handleClearDate = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDateSelect(columnId, undefined);
+    setIsOpen(false);
+  };
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn(
+            "h-6 w-6 p-0 hover:bg-transparent",
+            selectedDate ? "opacity-100" : "opacity-50"
+          )}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsOpen(!isOpen);
+          }}
+        >
+          <CalendarIcon className="h-4 w-4" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="center">
+        <div className="p-3">
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={handleDateSelect}
+            captionLayout={'dropdown-buttons'}
+            fromYear={new Date().getFullYear() - 100}
+            toYear={new Date().getFullYear() + 10}
+            initialFocus
+          />
+          {selectedDate && (
+            <div className="flex justify-between items-center mt-3 pt-3 border-t">
+              <span className="text-sm text-gray-600">
+                {format(selectedDate, 'MMM dd, yyyy')}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleClearDate}
+                className="h-7 px-2 text-xs"
+              >
+                Clear
+              </Button>
+            </div>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+};
+
 export default function TechnoDataTable({
   columns,
   data,
@@ -111,6 +186,7 @@ export default function TechnoDataTable({
   tableActionButton,
   searchBarPlaceholder = 'Search here',
   tableStyles = '',
+  onDateFilter,
   children
 }: any) {
   const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -119,6 +195,8 @@ export default function TechnoDataTable({
 
   const [activeSortColumn, setActiveSortColumn] = useState('dateView');
   const [sortDirection, setSortDirection] = useState('desc');
+
+  const [selectedDates, setSelectedDates] = useState<Record<string, Date | undefined>>({});
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
@@ -163,6 +241,19 @@ export default function TechnoDataTable({
       if (onSort) onSort(columnName, 'desc');
     }
   };
+
+  const handleDateSelect = (columnId: string, date: Date | undefined) => {
+    setSelectedDates(prev => ({
+      ...prev,
+      [columnId]: date
+    }));
+
+    // Call the date filter function passed from parent
+    if (onDateFilter) {
+      onDateFilter(columnId, date, date); // startDate and endDate are the same
+    }
+  };
+
 
   const getSortIcon = (columnName: string) => {
     const iconStyle = { minWidth: '16px', minHeight: '16px', width: '16px', height: '16px' };
@@ -209,7 +300,9 @@ export default function TechnoDataTable({
     return <Loading />;
   }
 
-  const sortableColumns = ['dateView', 'nextDueDateView', 'leadTypeModifiedDate', 'followUpCount'];
+  const sortableColumns = ['dateView', 'leadTypeModifiedDate', 'followUpCount'];
+
+  const dateSortableColumns = ['nextDueDateView']
 
   return (
     <div className="w-full mb-10 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -268,6 +361,7 @@ export default function TechnoDataTable({
                     const columnId = header.column.id;
                     const isSortable = sortableColumns.includes(columnId);
                     const isNonClickable = nonClickableColumns.includes(columnId);
+                    const isDateSortable = dateSortableColumns.includes(columnId)
                     const align = header.column.columnDef.meta?.align || 'left';
                     const fixedWidth = header.column.columnDef.meta?.fixedWidth;
                     const maxWidth = header.column.columnDef.meta?.maxWidth;
@@ -275,10 +369,10 @@ export default function TechnoDataTable({
                     // Style for fixed width columns
                     const widthStyle = fixedWidth
                       ? {
-                          width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                          minWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                          maxWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
-                        }
+                        width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                        minWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                        maxWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
+                      }
                       : {};
 
                     return (
@@ -294,7 +388,7 @@ export default function TechnoDataTable({
                         style={widthStyle}
                       >
                         <div
-                          className={clsx('w-full overflow-hidden', {
+                          className={clsx('w-full overflow-hidden flex items-center', {
                             'text-left': align === 'left',
                             'text-center': align === 'center',
                             'text-right': align === 'right'
@@ -327,6 +421,13 @@ export default function TechnoDataTable({
                               maxWidth={maxWidth}
                             />
                           )}
+                          {isDateSortable && (
+                              <DateSortableColumn
+                                columnId={columnId}
+                                selectedDates={selectedDates}
+                                onDateSelect={handleDateSelect}
+                              />
+                          )}
                         </div>
                       </TableHead>
                     );
@@ -357,12 +458,12 @@ export default function TechnoDataTable({
                       // Style for fixed width columns
                       const widthStyle = fixedWidth
                         ? {
-                            width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                            minWidth:
-                              typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                            maxWidth:
-                              typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
-                          }
+                          width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                          minWidth:
+                            typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                          maxWidth:
+                            typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
+                        }
                         : {};
 
                       return (

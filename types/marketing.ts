@@ -5,6 +5,7 @@ export type SheetItem = {
 };
 
 export type UserAnalyticsData = {
+  analyticsRemark: string;
   userId: string;
   userFirstName: string;
   userLastName: string;

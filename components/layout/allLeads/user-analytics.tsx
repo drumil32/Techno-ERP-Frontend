@@ -12,9 +12,9 @@ import {
 import { UserAnalyticsData } from '@/types/marketing';
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
 import { ChartBar, ChartPie } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaCircleExclamation } from 'react-icons/fa6';
-import { fetchUserAnalytics } from './helpers/fetch-data';
+import { fetchUserAnalytics, updateAnalyticsRemarks } from './helpers/fetch-data';
 import CountUp from 'react-countup';
 import {
   Phone,
@@ -24,9 +24,13 @@ import {
   Footprints,
   GraduationCap
 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { toast } from 'sonner';
 
 export default function UserAnalytics() {
   const [open, setOpen] = useState(false);
+  const [analyticsRemark, setAnalyticsRemark] = useState('');
+
 
   const userAnalyticsQuery = useQuery<UserAnalyticsData>({
     queryKey: ['user-analytics', open],
@@ -35,8 +39,26 @@ export default function UserAnalytics() {
     placeholderData: (previousData) => previousData
   });
 
+  const handleSave = async () => {
+    console.log('Analytics Remark:', analyticsRemark);
+    try {
+      setOpen(false);
+      await updateAnalyticsRemarks({analyticsRemark: analyticsRemark})
+      toast.success("Successfully saved remarks.")
+    } catch (e) {
+      toast.error("Error in the saving remarks.")
+    } finally {
+
+    }
+  };
+
   const userAnalyticsData = userAnalyticsQuery.data;
-  console.log(userAnalyticsData);
+
+  useEffect(() => {
+    if(userAnalyticsData){
+    setAnalyticsRemark(userAnalyticsData?.analyticsRemark)
+    }
+  }, [userAnalyticsData])
 
   return (
     <>
@@ -85,6 +107,16 @@ export default function UserAnalytics() {
                   <StatCard label="Total Admissions" value={userAnalyticsData.totalAdmissions} />
                 </div>
               </div>
+
+              <div>
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Remark</h4>
+                  <Input
+                    type="text"
+                    value={analyticsRemark}
+                    onChange={(e) => setAnalyticsRemark(e.target.value)}
+                    placeholder="Enter your analytics remark..."
+                  />
+                </div>
             </div>
           ) : (
             <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 p-3 rounded-md">
@@ -95,8 +127,8 @@ export default function UserAnalytics() {
 
           <DialogFooter className="flex justify-end gap-2 sm:justify-end mt-6">
             <DialogClose asChild>
-              <Button variant="outline" className="font-inter text-sm">
-                Close
+              <Button variant="outline" className="font-inter text-sm ring ring-purple-400 text-purple-600 px-10" onClick={handleSave}>
+                Save
               </Button>
             </DialogClose>
           </DialogFooter>
