@@ -336,12 +336,14 @@ const AdminTracker = () => {
               </p>
             </div>
             {/* Total Leads Reached Section */}
-            <div className="ml-[32px] mt-[32px]">
+            <div className="ml-[32px] ">
               <TechnoFiltersGroup
                 filters={getFiltersData()}
                 handleFilters={applyFilter}
                 clearFilters={clearFilters}
               />
+            </div>
+            <div className="ml-[32px] ">
               <FilterBadges
                 onFilterRemove={handleFilterRemove}
                 assignedToData={assignedToDropdownData}

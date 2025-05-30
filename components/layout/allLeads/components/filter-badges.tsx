@@ -95,8 +95,17 @@ const FilterBadges = ({
       });
     }
 
+    if (appliedFilters.courseCode) {
+      newBadges.push({
+        key: 'courseCode',
+        label: 'Course Code',
+        value: appliedFilters.courseCode
+      });
+    }
+
     Object.entries(appliedFilters).forEach(([key, value]) => {
       if (key === 'startDate' || key === 'endDate') return; // Skip startDate and endDate because handled above
+      // Ensure you are not misunderstanding this config with normal single valued filter config !
       if (Array.isArray(value) && value.length > 0) {
         let displayValue: string;
         let getLabel;
@@ -104,6 +113,7 @@ const FilterBadges = ({
         if (key === 'location') {
           getLabel = (val: string) => Locations[val as keyof typeof Locations] || val;
         } else if (key === 'courseCode') {
+          console.log('I am here my man fixing this shit');
           getLabel = (val: string) => CourseNameMapper[val as Course] || val;
         } else if (key === 'assignedTo') {
           getLabel = getAssignedToLabel;
