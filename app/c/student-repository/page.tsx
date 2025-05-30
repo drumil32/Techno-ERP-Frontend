@@ -6,8 +6,8 @@ import React from 'react';
 const StudentRepository = () => {
   return (
     <StudentRepositoryLayout>
-      <TechnoFilterProvider key="student-repository">
-      <StudentRepositoryPage />
+      <TechnoFilterProvider key="student-repository" sectionKey="student-repository">
+        <StudentRepositoryPage />
       </TechnoFilterProvider>
     </StudentRepositoryLayout>
   );

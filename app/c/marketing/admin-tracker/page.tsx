@@ -10,7 +10,7 @@ export default function AdminTrackerPage() {
   return (
     <RoleGuard allowedRoles={[UserRoles.ADMIN]} fallbackPath={SITE_MAP.ADMISSIONS.DEFAULT}>
       <CRMLayout>
-        <TechnoFilterProvider key="admin-tracker">
+        <TechnoFilterProvider key="admin-tracker" sectionKey="admin-tracker">
           <AdminTrackerProvider key="admin-tracker">
             <AdminTracker />
           </AdminTrackerProvider>

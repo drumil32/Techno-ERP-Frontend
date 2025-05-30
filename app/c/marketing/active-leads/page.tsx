@@ -7,7 +7,7 @@ import { UserRoles } from '@/types/enum';
 export default function YellowLeads() {
   return (
     <CRMLayout>
-      <TechnoFilterProvider key="yellow-leads">
+      <TechnoFilterProvider key="yellow-leads" sectionKey="yellow-leads">
         <YellowLeadsTracker />
       </TechnoFilterProvider>
     </CRMLayout>
