@@ -140,8 +140,8 @@ const FilterBadges = ({
           onClick={() => onFilterRemove(badge.key)}
           key={badge.key}
         >
-          <Badge variant="secondary" className="py-1 px-2 flex items-center gap-1 cursor-pointer">
-            <span className="font-medium">{badge.label}:</span> {badge.value}
+          <Badge variant="secondary" className="py-1 px-2 flex items-center gap-1 cursor-pointer font-bold bg-gray-400/20">
+            <span className="">{badge.label}:</span> {badge.value}
             {crossVisible && <X size={16} className="ml-1 cursor-pointer" />}
           </Badge>
         </div>

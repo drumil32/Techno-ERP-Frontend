@@ -46,3 +46,9 @@ export const fetchUserAnalytics = async (
   if (!res) throw new Error('Failed to fetch Student Fees Information');
   return res;
 };
+
+
+export const updateAnalyticsRemarks = async (data:any) => {
+  const res = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateAnalyticsRemarks, data);
+  return res;
+}

@@ -279,7 +279,7 @@ export default function TechnoFilter({
                 </span>
               </div>
             )}
-            <div className="max-h-[300px] overflow-y-auto">
+            <div className="max-h-[540px] overflow-y-auto">
               {filteredOptions.map((option, index) => (
                 <div
                   key={index}

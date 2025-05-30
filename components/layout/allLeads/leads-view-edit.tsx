@@ -91,6 +91,7 @@ export default function LeadViewEdit({
 }: any) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState<LeadData | null>(null);
+  console.log(formData)
   const [originalData, setOriginalData] = useState<LeadData | null>(null);
   // const [isEditing, toggleIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -394,10 +395,10 @@ export default function LeadViewEdit({
 
               const assignedToUsers = Array.isArray(response.assignedTo)
                 ? response.assignedTo
-                    .map((id: string) =>
-                      assignedToDropdownData?.find((user: any) => user._id === id)
-                    )
-                    .filter(Boolean)
+                  .map((id: string) =>
+                    assignedToDropdownData?.find((user: any) => user._id === id)
+                  )
+                  .filter(Boolean)
                 : [];
 
               let assignedToName = 'N/A';
@@ -859,101 +860,21 @@ export default function LeadViewEdit({
         )}
       </div>
 
-      {hasRole(UserRoles.LEAD_MARKETING) && (
-        <div className="space-y-2 w-full">
-          <EditLabel htmlFor="assignedTo" title="Assigned To" />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant="outline"
-                role="combobox"
-                disabled={!(hasRole(UserRoles.LEAD_MARKETING) || hasRole(UserRoles.ADMIN))}
-                className={cn(
-                  'w-full justify-between rounded-[5px] min-h-10',
-                  !formData.assignedTo?.length && 'text-muted-foreground'
-                )}
-              >
-                <div className="flex gap-1 flex-wrap overflow-hidden max-w-[calc(100%-30px)]">
-                  {formData.assignedTo?.length > 0 ? (
-                    assignedToDropdownData
-                      .filter((user) => formData.assignedTo.includes(user._id))
-                      .map((user) => (
-                        <div
-                          key={user._id}
-                          className="inline-flex items-center"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Badge variant="secondary" className="mb-0.5 max-w-full truncate pr-1">
-                            <span className="truncate">{user.name}</span>
-                            <span
-                              role="button"
-                              tabIndex={0}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                  e.preventDefault();
-                                  handleSelectChange(
-                                    'assignedTo',
-                                    formData.assignedTo.filter((id) => id !== user._id)
-                                  );
-                                }
-                              }}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                handleSelectChange(
-                                  'assignedTo',
-                                  formData.assignedTo.filter((id) => id !== user._id)
-                                );
-                              }}
-                              className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                            >
-                              <X className="h-3 w-3" />
-                            </span>
-                          </Badge>
-                        </div>
-                      ))
-                  ) : (
-                    <span className="truncate">Select Assigned To</span>
-                  )}
-                </div>
-                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-full p-0" align="start">
-              <Command shouldFilter={true}>
-                <CommandInput placeholder="Search users..." />
-                <CommandEmpty>No users found.</CommandEmpty>
-                <CommandGroup>
-                  <ScrollArea className="h-48">
-                    {assignedToDropdownData.map((user: { _id: string; name: string }) => (
-                      <CommandItem
-                        key={user._id}
-                        value={`${user.name}${user._id}`}
-                        onSelect={() => {
-                          const currentAssigned = formData.assignedTo || [];
-                          const newAssigned = currentAssigned.includes(user._id)
-                            ? currentAssigned.filter((id) => id !== user._id)
-                            : [...currentAssigned, user._id];
-                          handleSelectChange('assignedTo', newAssigned);
-                        }}
-                        className="cursor-pointer aria-selected:bg-accent aria-selected:text-accent-foreground"
-                        data-user-id={user._id}
-                      >
-                        <Check
-                          className={cn(
-                            'mr-2 h-4 w-4',
-                            formData.assignedTo?.includes(user._id) ? 'opacity-100' : 'opacity-0'
-                          )}
-                        />
-                        <span className="truncate">{user.name}</span>
-                      </CommandItem>
-                    ))}
-                  </ScrollArea>
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
+      <div className='flex gap-5'>
+        {hasRole(UserRoles.LEAD_MARKETING) && (
+          <div className="space-y-2 w-full flex-1">
+            <EditLabel htmlFor="assignedTo" title="Assigned To" />
+            <p className="font-medium">{formData.assignedTo
+              ? assignedToDropdownData.find((item) => item._id == formData.assignedTo)?.name || 'Not Provided'
+              : 'Not Provided'
+            }</p>
+          </div>
+        )}
+        <div className='flex-1 space-y-2'>
+          <EditLabel className="text-[#666666]" title="Source" />
+          <p className="font-medium">{formData.source ?? 'Not Provided'}</p>
         </div>
-      )}
+      </div>
 
       <div className="flex flex-col gap-2">
         <EditLabel className="text-[#666666]" title="Lead Modified Date" />

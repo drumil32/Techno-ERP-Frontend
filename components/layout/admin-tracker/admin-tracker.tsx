@@ -373,7 +373,7 @@ const AdminTracker = () => {
             {/* Final Campus Conversion Section */}
             <div className="ml-[32px] mt-[32px] mb-[68px]">
               <h1 className="font-inter font-semibold text-[20px] mb-2 text-[#4E4E4E]">
-                Final conversion from those who visited the campus
+                Lead Type from those who visited the campus
               </h1>
               {finalCampusConversion && <AdminTrackerCardGroup cardsData={finalCampusConversion} />}
             </div>

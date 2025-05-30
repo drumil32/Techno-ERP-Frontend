@@ -29,7 +29,7 @@ export const leadMasterSchema = z.object({
   area: z.string().optional(),
   city: z.string().optional(),
   course: z.string().optional(),
-  assignedTo: objectIdSchema.array(),
+  assignedTo: objectIdSchema.optional(),
   leadType: z.nativeEnum(LeadType).default(LeadType.LEFT_OVER),
   leadTypeModifiedDate: z.string().optional(),
   nextDueDate: z.date().optional(),
@@ -65,7 +65,7 @@ export const updateLeadRequestSchema = leadRequestSchema
     phoneNumber: contactNumberSchema.optional(),
     gender: z.nativeEnum(Gender).optional(),
     leadType: z.nativeEnum(LeadType).optional(),
-    assignedTo: objectIdSchema.array().optional(),
+    assignedTo: objectIdSchema.optional(), 
     nextDueDate: requestDateSchema.optional()
   })
   .omit({ source: true })
@@ -77,7 +77,7 @@ export const yellowLeadUpdateSchema = yellowLeadSchema
     name: z.string().optional(),
     phoneNumber: contactNumberSchema.optional(),
     footFall: z.boolean().optional(),
-    assignedTo: objectIdSchema.array().optional(),
+    assignedTo: objectIdSchema.optional(),
     date: requestDateSchema.optional(),
     nextDueDate: requestDateSchema.optional()
   })
