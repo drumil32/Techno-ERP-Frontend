@@ -36,6 +36,7 @@ import { durationBasedSourceAnalytics, todaySourceAnalytics } from './helpers/fe
 import { useEffect, useState } from 'react';
 import { format, startOfWeek, startOfMonth, startOfYear, endOfDay } from 'date-fns';
 import { NoDataPreview } from '@/components/custom-ui/no-data-preview/no-data-preview';
+import { TruncatedCell } from '@/components/custom-ui/data-table/techno-data-table';
 
 type DurationUserStats = {
   _id: string;
@@ -492,7 +493,9 @@ export function PerformanceDashboard() {
                                 {member.totalAdmissions}
                               </Badge>
                             </TableCell>
-                            <TableCell className="text-center">{!member.analyticsRemark || member.analyticsRemark == "" ? "--" : member.analyticsRemark}</TableCell>
+                            <TableCell className="text-center">
+                              <TruncatedCell value={!member.analyticsRemark || member.analyticsRemark == "" ? "--" : member.analyticsRemark} maxWidth={80}/>
+                              </TableCell>
 
                           </TableRow>
                         ))}
