@@ -861,8 +861,8 @@ export default function LeadViewEdit({
         )}
       </div>
 
-      <div className='flex gap-5'>
-        {hasRole(UserRoles.LEAD_MARKETING) && (
+      {hasRole(UserRoles.LEAD_MARKETING) && (
+        <div className='flex gap-5'>
           <div className="space-y-2 w-full flex-1">
             <EditLabel htmlFor="assignedTo" title="Assigned To" />
             <p className="font-medium">{formData.assignedTo
@@ -870,12 +870,12 @@ export default function LeadViewEdit({
               : 'Not Provided'
             }</p>
           </div>
-        )}
-        <div className='flex-1 space-y-2'>
-          <EditLabel className="text-[#666666]" title="Source" />
-          <p className="font-medium">{formData.source ?? 'Not Provided'}</p>
+          <div className='flex-1 space-y-2'>
+            <EditLabel className="text-[#666666]" title="Source" />
+            <p className="font-medium">{formData.source ?? 'Not Provided'}</p>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="flex flex-col gap-2">
         <EditLabel className="text-[#666666]" title="Lead Modified Date" />
