@@ -174,12 +174,12 @@ export function PerformanceDashboard() {
 
   const totals = sortedData.reduce(
     (acc, curr) => ({
-      totalCalls: acc.totalCalls + curr.totalCalls,
-      newLeadCalls: acc.newLeadCalls + curr.newLeadCalls,
-      activeLeadCalls: acc.activeLeadCalls + curr.activeLeadCalls,
-      totalFootFall: acc.totalFootFall + curr.totalFootFall,
-      nonActiveLeadCalls: acc.nonActiveLeadCalls + curr.nonActiveLeadCalls,
-      totalAdmissions: acc.totalAdmissions + curr.totalAdmissions
+      totalCalls: acc.totalCalls + (curr.totalCalls ?? 0),
+      newLeadCalls: acc.newLeadCalls + (curr.newLeadCalls ?? 0),
+      activeLeadCalls: acc.activeLeadCalls + (curr.activeLeadCalls ?? 0),
+      totalFootFall: acc.totalFootFall + (curr.totalFootFall ?? 0),
+      nonActiveLeadCalls: acc.nonActiveLeadCalls + (curr.nonActiveLeadCalls ?? 0),
+      totalAdmissions: acc.totalAdmissions + (curr.totalAdmissions ?? 0)
     }),
     {
       totalCalls: 0,
@@ -557,35 +557,35 @@ export function PerformanceDashboard() {
                               <div className="flex items-center">
                                 <Avatar className="h-8 w-8 mr-3">
                                   <AvatarFallback>
-                                    {member.userFirstName[0]}
-                                    {member.userLastName[0]}
+                                    {member.userFirstName[0] ?? 'N'}
+                                    {member.userLastName[0] ?? 'A'}
                                   </AvatarFallback>
                                 </Avatar>
                                 <div>
                                   <p className="font-medium">
-                                    {member.userFirstName} {member.userLastName}
+                                    {member.userFirstName ?? 'N/A'} {member.userLastName ?? ''}
                                   </p>
                                 </div>
                               </div>
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
-                              {member.totalCalls}
+                              {member.totalCalls ?? '--'}
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
-                              {member.newLeadCalls}
+                              {member.newLeadCalls ?? '--'}
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
-                              {member.activeLeadCalls}
+                              {member.activeLeadCalls ?? '--'}
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
-                              {member.nonActiveLeadCalls}
+                              {member.nonActiveLeadCalls ?? '--'}
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
-                              {member.totalFootFall}
+                              {member.totalFootFall ?? '--'}
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
                               <Badge variant="secondary" className="px-2">
-                                {member.totalAdmissions}
+                                {member.totalAdmissions ?? '--'}
                               </Badge>
                             </TableCell>
                             <TableCell className="w-[300px] px-4">
@@ -607,23 +607,23 @@ export function PerformanceDashboard() {
                         <TableRow className="font-bold bg-primary/10 hover:bg-primary/10 backdrop-blur-3xl">
                           <TableCell className="w-[150px]">Team Total</TableCell>
                           <TableCell className="text-center w-[100px]">
-                            {totals.totalCalls}
+                            {totals.totalCalls ?? '--'}
                           </TableCell>
                           <TableCell className="text-center w-[100px]">
-                            {totals.newLeadCalls}
+                            {totals.newLeadCalls ?? '--'}
                           </TableCell>
                           <TableCell className="text-center w-[100px]">
-                            {totals.activeLeadCalls}
+                            {totals.activeLeadCalls ?? '--'}
                           </TableCell>
                           <TableCell className="text-center w-[100px]">
-                            {totals.nonActiveLeadCalls}
+                            {totals.nonActiveLeadCalls ?? '--'}
                           </TableCell>
                           <TableCell className="text-center w-[100px]">
-                            {totals.totalFootFall}
+                            {totals.totalFootFall ?? '--'}
                           </TableCell>
                           <TableCell className="text-center w-[100px]">
                             <Badge variant="default" className="px-2">
-                              {totals.totalAdmissions}
+                              {totals.totalAdmissions ?? '--'}
                             </Badge>
                           </TableCell>
                           <TableCell className="w-[300px]"></TableCell>

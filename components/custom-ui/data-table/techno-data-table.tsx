@@ -168,7 +168,11 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
           )}
         >
           <span>Next Due Date</span>
-          <CalendarIcon className="h-4 w-4 mr-2" />
+          {selectedDate ?
+          <CalendarIcon className="h-4 w-4 mr-2 text-primary" />
+            :
+          <CalendarIcon className="h-4 w-4 mr-2 text-primary/50" />
+          }
         </Button>
       </PopoverTrigger>
       <PopoverContent className=" mx-auto w-auto p-0" align="center">

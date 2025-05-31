@@ -27,7 +27,7 @@ export const API_ENDPOINTS = {
   updateAnalyticsRemarks: `${API_DOMAIN}/crm/update-marketing-remark`,
 
   // Marketing Analytics
-  sourceAnalytics: `${API_DOMAIN}/crm/source-analytics`,
+  sourceAnalytics: `${API_DOMAIN}/v1/crm/source-analytics`,
   durationBasedSourceAnalytics: `${API_DOMAIN}/crm/user-wise-analytics-duration`,
   todaySourceAnalytics: `${API_DOMAIN}/crm/user-wise-analytics-daily`,
 
