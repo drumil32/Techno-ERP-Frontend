@@ -29,7 +29,7 @@ export const MultiSelectPopoverCheckbox: React.FC<MultiSelectPopoverCheckboxProp
       name={name}
       render={({ field }) => (
         <FormItem className={`${className}`}>
-          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
             {label}
           </FormLabel>
           <FormControl>

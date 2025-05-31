@@ -38,10 +38,12 @@ export default function RootLayout({
     <html lang="en">
       <head></head>
       <body
-        className={` ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
+        className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
         <Suspense>
           <ProgressBar />
+
+          <h2 className=""></h2>
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
           <NavigationEvents />
           <Toaster richColors theme="light" position="top-center" />

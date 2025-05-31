@@ -150,6 +150,11 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .techno-form-fields{
+    @apply text-primary font-semibold;
+  }
+
 }
 
 #nprogress {

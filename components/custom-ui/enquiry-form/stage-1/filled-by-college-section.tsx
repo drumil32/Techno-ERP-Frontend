@@ -93,7 +93,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                 name="reference"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                       Reference
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
@@ -150,7 +150,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                 name="remarks"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-2 col-start-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Remarks
                     </FormLabel>
                     <FormControl>

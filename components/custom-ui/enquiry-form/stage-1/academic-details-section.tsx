@@ -94,7 +94,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
               {/* 10th */}
               <div className="space-y-4">
                 {/* Subheading */}
-                <h4 className="font-inter text-[16px] font-semibold">10th</h4>
+                <h4 className="font-inter text-[16px] text-primary font-semibold">10th</h4>
 
                 <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-1 gap-x-[32px]">
                   <FormField
@@ -103,7 +103,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     name="academicDetails.0.schoolCollegeName"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           School/College Name
                         </FormLabel>
                         <FormControl>
@@ -127,7 +127,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     name="academicDetails.0.universityBoardName"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           University/Board Name
                         </FormLabel>
                         <FormControl>
@@ -153,7 +153,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         name="academicDetails.0.passingYear"
                         render={({ field }) => (
                           <FormItem className={`w-[36%] gap-y-0`}>
-                            <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
+                            <FormLabel className="font-inter font-semibold text-[14px] text-primary w-full">
                               Passing Year
                             </FormLabel>
                             <FormControl>
@@ -188,7 +188,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         name="academicDetails.0.percentageObtained"
                         render={({ field }) => (
                           <FormItem className="w-[64%] gap-y-0">
-                            <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                            <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                               Percentage Obtained
                             </FormLabel>
                             <FormControl>
@@ -247,7 +247,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     name="academicDetails.0.subjects"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           Mention Subjects
                         </FormLabel>
                         <FormControl>
@@ -271,7 +271,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
               {/* 12th */}
               <div className="space-y-4">
                 {/* Subheading */}
-                <h4 className="font-inter  text-[16px] font-semibold">12th</h4>
+                <h4 className="font-inter text-primary text-[16px] font-semibold">12th</h4>
 
                 <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-1 gap-x-[32px]">
                   <FormField
@@ -280,7 +280,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     name="academicDetails.1.schoolCollegeName"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           School/College Name
                         </FormLabel>
                         <FormControl>
@@ -304,7 +304,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     name="academicDetails.1.universityBoardName"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           University/Board Name
                         </FormLabel>
                         <FormControl>
@@ -312,7 +312,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                             {...field}
                             value={field.value ?? ''}
                             className={commonFieldClass}
-                            placeholder="Enter university/board Name"
+                            placeholder="Enter university/board Nam e"
                           />
                         </FormControl>
                         <div className="h-[20px]">
@@ -330,7 +330,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         name="academicDetails.1.passingYear"
                         render={({ field }) => (
                           <FormItem className={`w-[36%] gap-y-0`}>
-                            <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
+                            <FormLabel className="font-inter font-semibold text-[14px] text-primary w-full">
                               Passing Year
                             </FormLabel>
                             <FormControl>
@@ -365,7 +365,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         name="academicDetails.1.percentageObtained"
                         render={({ field }) => (
                           <FormItem className="w-[64%] gap-y-0">
-                            <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                            <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                               Percentage Obtained
                             </FormLabel>
                             <FormControl>
@@ -424,7 +424,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     name="academicDetails.1.subjects"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           Mention Subjects
                         </FormLabel>
                         <FormControl>
@@ -453,7 +453,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
               {/* Graduation */}
               <div className="space-y-4">
                 {/* Subheading */}
-                <h4 className="font-inter  text-[16px] font-semibold">Graduation</h4>
+                <h4 className="font-inter text-primary text-[16px] font-semibold">Graduation</h4>
 
                 <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-1 gap-x-[32px]">
                   <FormField
@@ -462,7 +462,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     name="academicDetails.2.schoolCollegeName"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           School/College Name
                         </FormLabel>
                         <FormControl>
@@ -486,7 +486,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     name="academicDetails.2.universityBoardName"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           University/Board Name
                         </FormLabel>
                         <FormControl>
@@ -512,7 +512,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         name="academicDetails.2.passingYear"
                         render={({ field }) => (
                           <FormItem className={`w-[36%] gap-y-0 `}>
-                            <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
+                            <FormLabel className="font-inter font-semibold text-[14px] text-primary w-full">
                               Passing Year
                             </FormLabel>
                             <FormControl>
@@ -547,7 +547,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                         name="academicDetails.2.percentageObtained"
                         render={({ field }) => (
                           <FormItem className="w-[64%] gap-y-0">
-                            <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                            <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                               Percentage Obtained
                             </FormLabel>
                             <FormControl>
@@ -606,7 +606,7 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
                     name="academicDetails.2.subjects"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           Mention Stream
                         </FormLabel>
                         <FormControl>
