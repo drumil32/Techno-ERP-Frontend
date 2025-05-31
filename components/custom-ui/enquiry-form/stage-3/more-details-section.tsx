@@ -135,7 +135,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                 name="stateOfDomicile"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       State Of Domicile
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
@@ -170,7 +170,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                 name="areaType"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Area Type
                     </FormLabel>
                     <FormControl>
@@ -204,7 +204,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                 name="nationality"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Nationality
                     </FormLabel>
                     <FormControl>
@@ -238,7 +238,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                 name="religion"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Religion
                     </FormLabel>
                     <FormControl>
@@ -272,7 +272,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                 name="category"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                       Category
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
@@ -307,7 +307,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                 name="bloodGroup"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Blood Group
                     </FormLabel>
                     <FormControl>
@@ -341,7 +341,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                 name="aadharNumber"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1 `}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Aadhaar Number
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>

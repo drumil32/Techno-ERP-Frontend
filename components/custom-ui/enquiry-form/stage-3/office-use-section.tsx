@@ -81,7 +81,7 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
                 name="reference"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                       Reference
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
@@ -133,7 +133,7 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
                 name="remarks"
                 render={({ field }) => (
                   <FormItem className="col-span-3">
-                    <FormLabel className="font-inter font-normal text-sm text-gray-600">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Remarks
                     </FormLabel>
                     <FormControl>

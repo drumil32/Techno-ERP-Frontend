@@ -48,7 +48,7 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                 name="entranceExamDetails.nameOfExamination"
                 render={({ field }) => (
                   <FormItem className={`col-span-1 gap-x-2 gap-y-0`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Name of the Examination
                     </FormLabel>
                     <FormControl>
@@ -73,7 +73,7 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                 name="entranceExamDetails.rollNumber"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1 `}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Roll Number
                     </FormLabel>
                     <FormControl>
@@ -98,7 +98,7 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                 name="entranceExamDetails.rank"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Rank
                     </FormLabel>
                     <FormControl>
@@ -124,7 +124,7 @@ const EntranceExamDetailsSection: React.FC<EntranceExamDetailsSectionInterface> 
                 name="entranceExamDetails.qualified"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass} col-span-1`}>
-                    <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Qualified
                     </FormLabel>
                     <FormControl>

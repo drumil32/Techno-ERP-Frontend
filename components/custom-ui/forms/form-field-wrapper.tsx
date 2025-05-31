@@ -15,7 +15,7 @@ export const FormFieldWrapper = ({
 }: FormFieldWrapperProps) => {
   return (
     <div className={`grid grid-rows-[auto,1fr,auto] gap-1 ${className}`}>
-      <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+      <FormLabel className="font-inter font-semibold text-[14px] text-primary">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </FormLabel>

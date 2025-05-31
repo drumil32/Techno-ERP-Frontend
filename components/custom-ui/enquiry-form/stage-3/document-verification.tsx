@@ -204,7 +204,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
         <AccordionContent className="p-6 bg-white rounded-[10px] space-y-8">
           {documents.map((doc) => (
             <div key={doc.id} className="space-y-2">
-              <div className="text-sm font-semibold text-gray-800">
+              <div className="text-sm font-semibold text-primary">
                 {doc.type.replace(/_/g, ' ')}
               </div>
               <div className="flex flex-row items-center">

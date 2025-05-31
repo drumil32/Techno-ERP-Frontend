@@ -74,6 +74,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     setFinalApproval(true);
     try {
       const result = await onSubmit();
+      console.log('Submission result:', result);
       if (result !== false) {
         setSubmitDialogOpen(false);
         setSuccessDialogOpen(true);

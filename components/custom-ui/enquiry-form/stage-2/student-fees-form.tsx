@@ -898,7 +898,7 @@ export const StudentFeesForm = () => {
                     name="isFeeApplicable"
                     render={({ field }) => (
                       <>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Fees Applicable <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
                         <FormItem className="h-[36px] z-50 w-full sm:w-[300px] rounded-md border">

@@ -117,7 +117,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="studentName"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-start-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Student Name
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -143,7 +143,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="studentPhoneNumber"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Student Phone Number
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -169,7 +169,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="emailId"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           Email ID
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -196,7 +196,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="studentID"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Student ID
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -223,7 +223,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="formNo"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Form No.
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -249,7 +249,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="lurnRegistrationNo"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           LURN/Pre-registration No
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -275,7 +275,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="fatherName"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Father's Name
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -301,7 +301,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="fatherPhoneNumber"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Father's Phone Number
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -327,7 +327,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="fatherOccupation"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Father's Occupation
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -353,7 +353,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="motherName"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Mother's Name
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -379,7 +379,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="motherPhoneNumber"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Mother's Phone Number
                         </FormLabel>
                         <FormControl>
@@ -404,7 +404,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="motherOccupation"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Mother's Occupation
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -430,7 +430,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="gender"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Gender
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -470,7 +470,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="religion"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-start-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           Religion
                         </FormLabel>
                         <FormControl>
@@ -500,7 +500,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="category"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass}`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666] gap-x-1">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                           Category
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -534,7 +534,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="bloodGroup"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-start-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           Blood Group
                         </FormLabel>
                         <FormControl>
@@ -564,7 +564,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="aadharNumber"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1 `}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           Aadhaar Number
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -589,7 +589,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="stateOfDomicile"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-start-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           State Of Domicile
                           <span className="text-red-500 pl-0">*</span>
                         </FormLabel>
@@ -620,7 +620,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="areaType"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           Area Type
                         </FormLabel>
                         <FormControl>
@@ -650,7 +650,7 @@ const PersonalDetailsSection: React.FC<PersonalDetailsFormProps> = ({
                     name="nationality"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           Nationality
                         </FormLabel>
                         <FormControl>

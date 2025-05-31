@@ -148,7 +148,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                       name="academicDetails.0.schoolCollegeName"
                       render={({ field }) => (
                         <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                             School/College Name
                           </FormLabel>
                           <FormControl>
@@ -181,7 +181,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                       name="academicDetails.0.universityBoardName"
                       render={({ field }) => (
                         <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                             University/Board Name
                           </FormLabel>
                           <FormControl>
@@ -216,7 +216,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                           name="academicDetails.0.passingYear"
                           render={({ field }) => (
                             <FormItem className={`w-[36%]`}>
-                              <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
+                              <FormLabel className="font-inter font-semibold text-[14px] text-primary w-full">
                                 Passing Year
                               </FormLabel>
                               <FormControl>
@@ -248,7 +248,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                           name="academicDetails.0.percentageObtained"
                           render={({ field }) => (
                             <FormItem className="w-[64%]">
-                              <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                              <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                                 Percentage Obtained
                               </FormLabel>
                               <FormControl>
@@ -307,7 +307,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                       name="academicDetails.0.subjects"
                       render={({ field }) => (
                         <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                             Subjects
                           </FormLabel>
                           <FormControl>
@@ -346,7 +346,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                       name="academicDetails.1.schoolCollegeName"
                       render={({ field }) => (
                         <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                             School/College Name
                           </FormLabel>
                           <FormControl>
@@ -379,7 +379,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                       name="academicDetails.1.universityBoardName"
                       render={({ field }) => (
                         <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                             University/Board Name
                           </FormLabel>
                           <FormControl>
@@ -414,7 +414,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                           name="academicDetails.1.passingYear"
                           render={({ field }) => (
                             <FormItem className={`w-[36%]`}>
-                              <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
+                              <FormLabel className="font-inter font-semibold text-[14px] text-primary w-full">
                                 Passing Year
                               </FormLabel>
                               <FormControl>
@@ -446,7 +446,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                           name="academicDetails.1.percentageObtained"
                           render={({ field }) => (
                             <FormItem className="w-[64%]">
-                              <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                              <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                                 Percentage Obtained
                               </FormLabel>
                               <FormControl>
@@ -499,7 +499,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                       name="academicDetails.1.subjects"
                       render={({ field }) => (
                         <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                             Subjects
                           </FormLabel>
                           <FormControl>
@@ -538,7 +538,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                       name="academicDetails.2.schoolCollegeName"
                       render={({ field }) => (
                         <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                             School/College Name
                           </FormLabel>
                           <FormControl>
@@ -571,7 +571,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                       name="academicDetails.2.universityBoardName"
                       render={({ field }) => (
                         <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                             University/Board Name
                           </FormLabel>
                           <FormControl>
@@ -606,7 +606,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                           name="academicDetails.2.passingYear"
                           render={({ field }) => (
                             <FormItem className={`w-[36%]`}>
-                              <FormLabel className="font-inter font-normal text-[12px] text-[#666666] w-full">
+                              <FormLabel className="font-inter font-semibold text-[14px] text-primary w-full">
                                 Passing Year
                               </FormLabel>
                               <FormControl>
@@ -638,7 +638,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                           name="academicDetails.2.percentageObtained"
                           render={({ field }) => (
                             <FormItem className="w-[64%]">
-                              <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                              <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                                 Percentage Obtained
                               </FormLabel>
                               <FormControl>
@@ -691,7 +691,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                       name="academicDetails.2.subjects"
                       render={({ field }) => (
                         <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                             Subjects
                           </FormLabel>
                           <FormControl>
@@ -729,7 +729,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                       name="entranceExamDetails.nameOfExamination"
                       render={({ field }) => (
                         <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                             Name of Examination
                           </FormLabel>
                           <FormControl>
@@ -762,7 +762,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                       name="entranceExamDetails.rollNumber"
                       render={({ field }) => (
                         <FormItem className={`${commonFormItemClass} col-span-1`}>
-                          <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                          <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                             Roll Number
                           </FormLabel>
                           <FormControl>
@@ -794,7 +794,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                         name="entranceExamDetails.rank"
                         render={({ field }) => (
                           <FormItem className={`${commonFormItemClass} col-span-1 col-start-1`}>
-                            <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                            <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                               Rank
                             </FormLabel>
                             <FormControl>
@@ -826,7 +826,7 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                     name="entranceExamDetails.qualified"
                     render={({ field }) => (
                       <FormItem className={`${commonFormItemClass} col-span-1`}>
-                        <FormLabel className="font-inter font-normal text-[12px] text-[#666666]">
+                        <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                           Qualified
                         </FormLabel>
                         <FormControl>
