@@ -36,6 +36,7 @@ import {
   ChevronsLeft,
   User,
   CalendarIcon,
+  X
 } from 'lucide-react';
 import { LuDownload, LuUpload } from 'react-icons/lu';
 import clsx from 'clsx';
@@ -49,6 +50,7 @@ import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
+import { Badge } from '@/components/ui/badge';
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData extends unknown, TValue> {
@@ -100,16 +102,55 @@ interface DateSortableColumnProps {
   onDateSelect: (columnId: string, date: Date | undefined) => void;
 }
 
+const DateFilterBadge = ({
+  selectedDates,
+  onRemove
+}: {
+  selectedDates: Record<string, Date | undefined>;
+  onRemove: (columnId: string) => void;
+}) => {
+  const hasDates = Object.values(selectedDates).some((date) => date !== undefined);
+
+  if (!hasDates) return null;
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {Object.entries(selectedDates).map(([columnId, date]) => {
+        if (!date) return null;
+
+        return (
+          <div
+            key={columnId}
+            className="flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-sm text-blue-800 border border-blue-100"
+          >
+            <span className="font-medium capitalize">{columnId.replace('Date', '')}:</span>
+            <span>{format(date, 'MMM dd, yyyy')}</span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onRemove(columnId);
+              }}
+              className="ml-1 rounded-full p-0.5 hover:bg-blue-100 transition-colors"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
 const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSortableColumnProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const selectedDate = selectedDates[columnId];
 
-  const handleDateSelect = (date: Date | undefined) => {
+  const handleSelect = (date: Date | undefined) => {
     onDateSelect(columnId, date);
     setIsOpen(false);
   };
 
-  const handleClearDate = (e: React.MouseEvent) => {
+  const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     onDateSelect(columnId, undefined);
     setIsOpen(false);
@@ -122,48 +163,35 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
           variant="ghost"
           size="sm"
           className={cn(
-            "h-6 w-6 p-0 hover:bg-transparent",
-            selectedDate ? "opacity-100" : "opacity-50"
+            'h-8  hover:bg-primary/10 hover:text-primary',
+            selectedDate ? 'border border-primary text-primary' : 'text-primary border border-none'
           )}
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsOpen(!isOpen);
-          }}
         >
-          <CalendarIcon className="h-4 w-4" />
+          <CalendarIcon className="h-4 w-4 mr-2" />
+
+          <span>Next Due Date</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="center">
-        <div className="p-3">
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={handleDateSelect}
-            captionLayout={'dropdown-buttons'}
-            fromYear={new Date().getFullYear() - 100}
-            toYear={new Date().getFullYear() + 10}
-            initialFocus
-          />
-          {selectedDate && (
-            <div className="flex justify-between items-center mt-3 pt-3 border-t">
-              <span className="text-sm text-gray-600">
-                {format(selectedDate, 'MMM dd, yyyy')}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleClearDate}
-                className="h-7 px-2 text-xs"
-              >
-                Clear
-              </Button>
-            </div>
-          )}
-        </div>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar mode="single" selected={selectedDate} onSelect={handleSelect} initialFocus />
+        {selectedDate && (
+          <div className="p-3 border-t flex justify-between items-center">
+            <span className="text-sm">{format(selectedDate, 'PPP')}</span>
+            <Button variant="ghost" size="sm" onClick={handleClear}>
+              Clear
+            </Button>
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );
 };
+
+interface DateSortableColumnProps {
+  columnId: string;
+  selectedDates: Record<string, Date | undefined>;
+  onDateSelect: (columnId: string, date: Date | undefined) => void;
+}
 
 export default function TechnoDataTable({
   columns,
@@ -196,14 +224,28 @@ export default function TechnoDataTable({
   const [activeSortColumn, setActiveSortColumn] = useState('dateView');
   const [sortDirection, setSortDirection] = useState('desc');
 
-  const [selectedDates, setSelectedDates] = useState<Record<string, Date | undefined>>({});
-
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
+  const [selectedDates, setSelectedDates] = useState<Record<string, Date | undefined>>(() => {
+    if (typeof window === 'undefined') return {};
+    const saved = localStorage.getItem('dateFilters');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  const handleRemoveDate = (columnId: string) => {
+    setSelectedDates((prev) => ({ ...prev, [columnId]: undefined }));
+    if (columnId && onDateFilter) {
+      onDateFilter(columnId, undefined, undefined);
+    }
+  };
 
   useEffect(() => {
     setGlobalFilter(searchTerm);
   }, [searchTerm]);
+
+  useEffect(() => {
+    localStorage.setItem('dateFilters', JSON.stringify(selectedDates));
+  }, [selectedDates]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -243,17 +285,16 @@ export default function TechnoDataTable({
   };
 
   const handleDateSelect = (columnId: string, date: Date | undefined) => {
-    setSelectedDates(prev => ({
+    setSelectedDates((prev) => ({
       ...prev,
       [columnId]: date
     }));
 
-    // Call the date filter function passed from parent
     if (onDateFilter) {
-      onDateFilter(columnId, date, date); // startDate and endDate are the same
+      onDateFilter(columnId, date, date);
+    } else {
     }
   };
-
 
   const getSortIcon = (columnName: string) => {
     const iconStyle = { minWidth: '16px', minHeight: '16px', width: '16px', height: '16px' };
@@ -302,7 +343,7 @@ export default function TechnoDataTable({
 
   const sortableColumns = ['dateView', 'leadTypeModifiedDate', 'followUpCount'];
 
-  const dateSortableColumns = ['nextDueDateView']
+  const dateSortableColumns = ['nextDueDateView'];
 
   return (
     <div className="w-full mb-10 bg-white space-y-4 my-[8px] px-4 py-2 shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -347,11 +388,10 @@ export default function TechnoDataTable({
           )}
         </div>
       </div>
-
       <div className="relative">
         <div
           ref={tableContainerRef}
-          className="min-h-[580px] h-[240px] overflow-auto custom-scrollbar relative"
+          className="min-h-[900px] h-[240px] overflow-auto custom-scrollbar relative"
         >
           <Table ref={tableRef} className={cn('w-full', tableStyles)}>
             <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg font-bolds sticky top-0 z-10">
@@ -361,7 +401,7 @@ export default function TechnoDataTable({
                     const columnId = header.column.id;
                     const isSortable = sortableColumns.includes(columnId);
                     const isNonClickable = nonClickableColumns.includes(columnId);
-                    const isDateSortable = dateSortableColumns.includes(columnId)
+                    const isDateSortable = dateSortableColumns.includes(columnId);
                     const align = header.column.columnDef.meta?.align || 'left';
                     const fixedWidth = header.column.columnDef.meta?.fixedWidth;
                     const maxWidth = header.column.columnDef.meta?.maxWidth;
@@ -369,10 +409,10 @@ export default function TechnoDataTable({
                     // Style for fixed width columns
                     const widthStyle = fixedWidth
                       ? {
-                        width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                        minWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                        maxWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
-                      }
+                          width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                          minWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                          maxWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
+                        }
                       : {};
 
                     return (
@@ -394,7 +434,16 @@ export default function TechnoDataTable({
                             'text-right': align === 'right'
                           })}
                         >
-                          {isSortable && !isNonClickable ? (
+                          {isDateSortable && (
+                            <>
+                              <DateSortableColumn
+                                columnId={columnId}
+                                selectedDates={selectedDates}
+                                onDateSelect={handleDateSelect}
+                              />
+                            </>
+                          )}
+                          {isSortable && !isDateSortable && !isNonClickable ? (
                             <div
                               className={clsx('flex items-center cursor-pointer w-full', {
                                 'justify-start': align === 'left',
@@ -413,20 +462,15 @@ export default function TechnoDataTable({
                               {getSortIcon(columnId)}
                             </div>
                           ) : (
-                            <TruncatedCell
-                              value={flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                              maxWidth={maxWidth}
-                            />
-                          )}
-                          {isDateSortable && (
-                              <DateSortableColumn
-                                columnId={columnId}
-                                selectedDates={selectedDates}
-                                onDateSelect={handleDateSelect}
+                            !isDateSortable && (
+                              <TruncatedCell
+                                value={flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext()
+                                )}
+                                maxWidth={maxWidth}
                               />
+                            )
                           )}
                         </div>
                       </TableHead>
@@ -458,12 +502,12 @@ export default function TechnoDataTable({
                       // Style for fixed width columns
                       const widthStyle = fixedWidth
                         ? {
-                          width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                          minWidth:
-                            typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                          maxWidth:
-                            typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
-                        }
+                            width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                            minWidth:
+                              typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                            maxWidth:
+                              typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
+                          }
                         : {};
 
                       return (
@@ -503,26 +547,28 @@ export default function TechnoDataTable({
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-[580px] text-center">
-                    <div className="flex flex-col items-center justify-center h-full">
-                      <svg
-                        className="w-16 h-16 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1}
-                          d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <h3 className="mt-4 text-lg font-medium text-gray-900">No Results Found</h3>
-                      <p className="mt-1 text-sm text-gray-500">
-                        Try adjusting your search or filter to find what you're looking for.
-                      </p>
+                  <TableCell colSpan={columns.length} className="h-[900px] text-center p-0">
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="flex flex-col items-center justify-center py-10">
+                        <svg
+                          className="w-16 h-16 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1}
+                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        <h3 className="mt-4 text-lg font-medium text-gray-900">No Results Found</h3>
+                        <p className="mt-1 text-sm text-gray-500">
+                          Try adjusting your search or filter to find what you're looking for.
+                        </p>
+                      </div>
                     </div>
                   </TableCell>
                 </TableRow>

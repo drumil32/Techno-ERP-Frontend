@@ -91,7 +91,7 @@ export default function LeadViewEdit({
 }: any) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState<LeadData | null>(null);
-  console.log(formData)
+  console.log(formData);
   const [originalData, setOriginalData] = useState<LeadData | null>(null);
   // const [isEditing, toggleIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -396,10 +396,10 @@ export default function LeadViewEdit({
 
               const assignedToUsers = Array.isArray(response.assignedTo)
                 ? response.assignedTo
-                  .map((id: string) =>
-                    assignedToDropdownData?.find((user: any) => user._id === id)
-                  )
-                  .filter(Boolean)
+                    .map((id: string) =>
+                      assignedToDropdownData?.find((user: any) => user._id === id)
+                    )
+                    .filter(Boolean)
                 : [];
 
               let assignedToName = 'N/A';
@@ -861,17 +861,19 @@ export default function LeadViewEdit({
         )}
       </div>
 
-      <div className='flex gap-5'>
+      <div className="flex gap-5">
         {hasRole(UserRoles.LEAD_MARKETING) && (
           <div className="space-y-2 w-full flex-1">
             <EditLabel htmlFor="assignedTo" title="Assigned To" />
-            <p className="font-medium">{formData.assignedTo
-              ? assignedToDropdownData.find((item) => item._id == formData.assignedTo)?.name || 'Not Provided'
-              : 'Not Provided'
-            }</p>
+            <p className="font-medium">
+              {formData.assignedTo
+                ? assignedToDropdownData.find((item) => item._id == formData.assignedTo)?.name ||
+                  'Not Provided'
+                : 'Not Provided'}
+            </p>
           </div>
         )}
-        <div className='flex-1 space-y-2'>
+        <div className="flex-1 space-y-2">
           <EditLabel className="text-[#666666]" title="Source" />
           <p className="font-medium">{formData.source ?? 'Not Provided'}</p>
         </div>
@@ -920,7 +922,7 @@ export default function LeadViewEdit({
 
 function EditLabel({ htmlFor, title }: any) {
   return (
-    <Label htmlFor={htmlFor} className="font-normal text-[#666666]">
+    <Label htmlFor={htmlFor} className=" text-primary font-semibold">
       {title}
     </Label>
   );

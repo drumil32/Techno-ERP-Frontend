@@ -87,7 +87,7 @@
   --chart-5: #f5b74b;
 
   --radius: 0.625rem;
-
+  --form: var(--primary);
   --sidebar: #fcfcfc;
   --sidebar-foreground: #252525;
   --sidebar-primary: #2f2f2f;
@@ -124,6 +124,7 @@
   --border: #444444;
   --input: #444444;
   --ring: #707070;
+  --form: var(--primary);
 
   --chart-1: #8565ec;
   --chart-2: #5fb9c2;

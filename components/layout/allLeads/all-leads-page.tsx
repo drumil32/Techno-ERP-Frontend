@@ -129,7 +129,16 @@ export default function AllLeadsPage() {
     const updatedFilters = { ...appliedFilters };
 
     if (filterKey === 'date' || filterKey.includes('Date')) {
-      const dateKeys = ['startDate', 'endDate', 'startLTCDate', 'endLTCDate', 'date'];
+      const dateKeys = [
+        'startDate',
+        'endDate',
+        'startLTCDate',
+        'endLTCDate',
+        'date',
+        'nextDueDate',
+        'startNextDueDate',
+        'endNextDueDate'
+      ];
 
       dateKeys.forEach((key) => {
         delete updatedFilters[key];
@@ -501,6 +510,7 @@ export default function AllLeadsPage() {
             dateView,
             source,
             sourceView,
+            assignedTo,
             cityView,
             assignedToView,
             assignedToName,
@@ -597,7 +607,7 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'nextDueDateView',
       header: 'Next Due Date',
-      meta: { align: 'center', maxWidth: 160, fixedWidth: 160 }
+      meta: { align: 'center', maxWidth: 160, fixedWidth: 180 }
     },
     ...(isRoleLeadMarketing
       ? [
@@ -706,16 +716,20 @@ export default function AllLeadsPage() {
     return <Loading />;
   }
 
-  const handleDateFilter = (columnId: string, startDate: Date | undefined, endDate: Date | undefined) => {
+  const handleDateFilter = (
+    columnId: string,
+    startDate: Date | undefined,
+    endDate: Date | undefined
+  ) => {
     if (columnId === 'nextDueDateView') {
       if (startDate) {
-        updateFilter('startNextDueDate', format(startDate, "dd/MM/yyyy"));
-        updateFilter('endNextDueDate', format(startDate, "dd/MM/yyyy"));
+        updateFilter('startNextDueDate', format(startDate, 'dd/MM/yyyy'));
+        updateFilter('endNextDueDate', format(startDate, 'dd/MM/yyyy'));
       } else {
         updateFilter('startNextDueDate', undefined);
         updateFilter('endNextDueDate', undefined);
       }
-      
+
       applyFilter();
     }
   };
@@ -753,7 +767,7 @@ export default function AllLeadsPage() {
             tableActionButton={<TableActionButton />}
             setSelectedRowId={setSelectedRowId}
             searchBarPlaceholder="Search student name or number"
-            onDateFilter={handleDateFilter} 
+            onDateFilter={handleDateFilter}
           >
             <FilterBadges
               onFilterRemove={handleFilterRemove}

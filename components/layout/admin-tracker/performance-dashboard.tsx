@@ -38,7 +38,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from '@/components/ui/dialog';
 import { useQuery } from '@tanstack/react-query';
 import { durationBasedSourceAnalytics, todaySourceAnalytics } from './helpers/fetch-data';
@@ -70,16 +70,24 @@ export function PerformanceDashboard() {
     direction: 'ascending'
   });
 
-  const [activeTab, setActiveTab] = useState<'day' | 'week' | 'month' | 'all'>('day');
+  const [activeTab, setActiveTab] = useState<'day' | 'yesterday' | 'week' | 'month' | 'all'>('day');
   const [isDownloadDialogOpen, setIsDownloadDialogOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
   const today = endOfDay(new Date());
   const formatDate = (date: Date) => format(date, 'dd/MM/yyyy');
 
-  const getDuration = (period: 'day' | 'week' | 'month' | 'all') => {
+  const getDuration = (period: 'day' | 'week' | 'month' | 'all' | 'yesterday') => {
     console.log('Getting duration for:', period);
+
     switch (period) {
+      case 'yesterday':
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        return {
+          startDate: formatDate(yesterday),
+          endDate: formatDate(yesterday)
+        };
       case 'week':
         return { startDate: formatDate(startOfWeek(new Date())), endDate: formatDate(today) };
       case 'month':
@@ -90,26 +98,28 @@ export function PerformanceDashboard() {
         return { startDate: formatDate(today), endDate: formatDate(today) };
     }
   };
-
-  // Queries for all periods (for download functionality)
+  const { data: yesterdayAnalytics, isLoading: yesterdayLoading } = useQuery({
+    queryKey: ['yesterdaySourceAnalytics'],
+    queryFn: () => durationBasedSourceAnalytics(getDuration('yesterday'))
+  });
   const { data: todayAnalytics, isLoading: todayLoading } = useQuery({
     queryKey: ['todaySourceAnalytics'],
-    queryFn: todaySourceAnalytics,
+    queryFn: todaySourceAnalytics
   });
 
   const { data: weekAnalytics, isLoading: weekLoading } = useQuery({
     queryKey: ['durationBasedSourceAnalytics', 'week'],
-    queryFn: () => durationBasedSourceAnalytics(getDuration('week')),
+    queryFn: () => durationBasedSourceAnalytics(getDuration('week'))
   });
 
   const { data: monthAnalytics, isLoading: monthLoading } = useQuery({
     queryKey: ['durationBasedSourceAnalytics', 'month'],
-    queryFn: () => durationBasedSourceAnalytics(getDuration('month')),
+    queryFn: () => durationBasedSourceAnalytics(getDuration('month'))
   });
 
   const { data: allTimeAnalytics, isLoading: allTimeLoading } = useQuery({
     queryKey: ['durationBasedSourceAnalytics', 'all'],
-    queryFn: () => durationBasedSourceAnalytics(getDuration('all')),
+    queryFn: () => durationBasedSourceAnalytics(getDuration('all'))
   });
 
   useEffect(() => {
@@ -129,8 +139,10 @@ export function PerformanceDashboard() {
           nonActiveLeadCalls: item.nonActiveLeadCalls,
           totalFootFall: item.totalFootFall,
           totalAdmissions: item.totalAdmissions,
-          analyticsRemark: item.analyticsRemark,
+          analyticsRemark: item.analyticsRemark
         }));
+      case 'yesterday':
+        return yesterdayAnalytics || [];
       case 'week':
         return weekAnalytics || [];
       case 'month':
@@ -169,7 +181,14 @@ export function PerformanceDashboard() {
       nonActiveLeadCalls: acc.nonActiveLeadCalls + curr.nonActiveLeadCalls,
       totalAdmissions: acc.totalAdmissions + curr.totalAdmissions
     }),
-    { totalCalls: 0, newLeadCalls: 0, nonActiveLeadCalls: 0, activeLeadCalls: 0, totalFootFall: 0, totalAdmissions: 0 }
+    {
+      totalCalls: 0,
+      newLeadCalls: 0,
+      nonActiveLeadCalls: 0,
+      activeLeadCalls: 0,
+      totalFootFall: 0,
+      totalAdmissions: 0
+    }
   );
 
   const topPerformers = [...sortedData]
@@ -231,10 +250,10 @@ export function PerformanceDashboard() {
 
   const isLoading =
     (activeTab === 'day' && todayLoading) ||
+    (activeTab === 'yesterday' && yesterdayLoading) ||
     (activeTab === 'week' && weekLoading) ||
     (activeTab === 'month' && monthLoading) ||
     (activeTab === 'all' && allTimeLoading);
-
 
   const applyColumnWidths = (sheet: XLSX.WorkSheet, includeRemarks: boolean) => {
     sheet['!cols'] = [
@@ -250,31 +269,30 @@ export function PerformanceDashboard() {
     ];
   };
 
-
   const formatDataForExcel = (data: DurationUserStats[], includeRemarks = false) => {
     const formattedData = data.map((member, index) => ({
       'S.No': index + 1,
-      'Name': `${member.userFirstName} ${member.userLastName}`,
+      Name: `${member.userFirstName} ${member.userLastName}`,
       'Total Calls': member.totalCalls,
       'New Lead Calls': member.newLeadCalls,
       'Active Lead Calls': member.activeLeadCalls,
       'Non Active Lead Calls': member.nonActiveLeadCalls,
       'Total Footfall': member.totalFootFall,
       'Total Admissions': member.totalAdmissions,
-      ...(includeRemarks && { 'Remarks': member.analyticsRemark || '--' })
+      ...(includeRemarks && { Remarks: member.analyticsRemark || '--' })
     }));
 
     // Add totals row
     const totalsRow = {
       'S.No': '',
-      'Name': 'TOTAL',
+      Name: 'TOTAL',
       'Total Calls': data.reduce((sum, member) => sum + member.totalCalls, 0),
       'New Lead Calls': data.reduce((sum, member) => sum + member.newLeadCalls, 0),
       'Active Lead Calls': data.reduce((sum, member) => sum + member.activeLeadCalls, 0),
       'Non Active Lead Calls': data.reduce((sum, member) => sum + member.nonActiveLeadCalls, 0),
       'Total Footfall': data.reduce((sum, member) => sum + member.totalFootFall, 0),
       'Total Admissions': data.reduce((sum, member) => sum + member.totalAdmissions, 0),
-      ...(includeRemarks && { 'Remarks': '' })
+      ...(includeRemarks && { Remarks: '' })
     };
 
     return [...formattedData, totalsRow];
@@ -284,6 +302,8 @@ export function PerformanceDashboard() {
     setIsDownloading(true);
 
     try {
+      const yesterdayData = yesterdayAnalytics || [];
+
       // Prepare data for all periods
       const dayData = (todayAnalytics?.data || []).map((item) => ({
         _id: item.userId,
@@ -295,35 +315,40 @@ export function PerformanceDashboard() {
         nonActiveLeadCalls: item.nonActiveLeadCalls,
         totalFootFall: item.totalFootFall,
         totalAdmissions: item.totalAdmissions,
-        analyticsRemark: item.analyticsRemark,
+        analyticsRemark: item.analyticsRemark
       }));
 
       // Create workbook
       const workbook = XLSX.utils.book_new();
 
+      if (yesterdayData.length > 0) {
+        const yesterdaySheet = XLSX.utils.json_to_sheet(formatDataForExcel(yesterdayData, true));
+        applyColumnWidths(yesterdaySheet, true);
+        XLSX.utils.book_append_sheet(workbook, yesterdaySheet, 'Yesterday');
+      }
       // Add worksheets for each period
       if (dayData.length > 0) {
         const daySheet = XLSX.utils.json_to_sheet(formatDataForExcel(dayData, true));
         applyColumnWidths(daySheet, true);
-        XLSX.utils.book_append_sheet(workbook, daySheet, "Today");
+        XLSX.utils.book_append_sheet(workbook, daySheet, 'Today');
       }
 
       if (weekAnalytics && weekAnalytics.length > 0) {
         const weekSheet = XLSX.utils.json_to_sheet(formatDataForExcel(weekAnalytics, true));
         applyColumnWidths(weekSheet, true);
-        XLSX.utils.book_append_sheet(workbook, weekSheet, "This Week");
+        XLSX.utils.book_append_sheet(workbook, weekSheet, 'This Week');
       }
 
       if (monthAnalytics && monthAnalytics.length > 0) {
         const monthSheet = XLSX.utils.json_to_sheet(formatDataForExcel(monthAnalytics, true));
         applyColumnWidths(monthSheet, true);
-        XLSX.utils.book_append_sheet(workbook, monthSheet, "This Month");
+        XLSX.utils.book_append_sheet(workbook, monthSheet, 'This Month');
       }
 
       if (allTimeAnalytics && allTimeAnalytics.length > 0) {
         const allTimeSheet = XLSX.utils.json_to_sheet(formatDataForExcel(allTimeAnalytics, true));
         applyColumnWidths(allTimeSheet, true);
-        XLSX.utils.book_append_sheet(workbook, allTimeSheet, "All Time");
+        XLSX.utils.book_append_sheet(workbook, allTimeSheet, 'All Time');
       }
 
       // Generate filename with current date
@@ -332,7 +357,6 @@ export function PerformanceDashboard() {
 
       // Save file
       XLSX.writeFile(workbook, filename);
-
     } catch (error) {
       console.error('Error downloading file:', error);
       alert('Error occurred while downloading the file. Please try again.');
@@ -343,30 +367,12 @@ export function PerformanceDashboard() {
   };
 
   return (
-    <Card className="p-4 max-w-7xl">
+    <Card className="p-4 w-full">
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold">Team Performance</h2>
             <p className="text-muted-foreground">Track and analyze team performance metrics</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" className="gap-1">
-              <Calendar className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">
-                {activeTab === 'day'
-                  ? 'Today'
-                  : activeTab === 'week'
-                    ? 'This Week'
-                    : activeTab === 'month'
-                      ? 'This Month'
-                      : 'This Year'}
-              </span>
-            </Button>
-            <Button variant="outline" size="sm" className="gap-1">
-              <Users className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">All Members</span>
-            </Button>
           </div>
         </div>
 
@@ -376,6 +382,9 @@ export function PerformanceDashboard() {
         >
           <div className="flex items-center">
             <TabsList>
+              <TabsTrigger value="yesterday" className="text-xs">
+                <Clock className="h-3 w-3 mr-1" /> Yesterday
+              </TabsTrigger>
               <TabsTrigger value="day" className="text-xs">
                 <Clock className="h-3 w-3 mr-1" /> Day
               </TabsTrigger>
@@ -400,7 +409,9 @@ export function PerformanceDashboard() {
                 <DialogHeader>
                   <DialogTitle>Download Performance Report</DialogTitle>
                   <DialogDescription>
-                    This will download a comprehensive Excel report containing team performance data for all time periods (Today, This Week, This Month, and All Time) in separate tabs.
+                    This will download a comprehensive Excel report containing team performance data
+                    for all time periods (Today, This Week, This Month, and All Time) in separate
+                    tabs.
                   </DialogDescription>
                 </DialogHeader>
 
@@ -410,10 +421,12 @@ export function PerformanceDashboard() {
                       <div>
                         <p className="font-medium">Report Contents:</p>
                         <p className="text-sm text-muted-foreground">
-                          • Today's Performance Data<br />
-                          • This Week's Performance Data<br />
-                          • This Month's Performance Data<br />
-                          • All Time Performance Data
+                          • Today's Performance Data
+                          <br />
+                          • This Week's Performance Data
+                          <br />
+                          • This Month's Performance Data
+                          <br />• All Time Performance Data
                         </p>
                       </div>
                     </div>
@@ -421,7 +434,9 @@ export function PerformanceDashboard() {
                     <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                       <div>
                         <p className="font-medium">File Format:</p>
-                        <p className="text-sm text-muted-foreground">Excel (.xlsx) with multiple tabs</p>
+                        <p className="text-sm text-muted-foreground">
+                          Excel (.xlsx) with multiple tabs
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -435,10 +450,7 @@ export function PerformanceDashboard() {
                   >
                     Cancel
                   </Button>
-                  <Button
-                    onClick={handleDownload}
-                    disabled={isDownloading}
-                  >
+                  <Button onClick={handleDownload} disabled={isDownloading}>
                     {isDownloading ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -472,10 +484,10 @@ export function PerformanceDashboard() {
                   />
                 ) : (
                   <div className="overflow-auto max-h-[500px] relative">
-                    <Table className="border-collapse">
+                    <Table className="border-collapse w-full">
                       <TableHeader className="sticky top-0 z-10">
                         <TableRow className="bg-primary/10 hover:bg-primary/10 backdrop-blur-lg">
-                          <TableHead className="font-semibold text-primary dark:text-gray-100">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 w-[150px]">
                             <button
                               onClick={() => requestSort('userFirstName')}
                               className="flex items-center w-full hover:text-primary cursor-pointer"
@@ -483,58 +495,56 @@ export function PerformanceDashboard() {
                               Individual Level {getSortIcon('userFirstName')}
                             </button>
                           </TableHead>
-                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center w-[100px]">
                             <button
                               onClick={() => requestSort('totalCalls')}
                               className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
-                              Total No. Of Calls {getSortIcon('totalCalls')}
+                              Total Calls {getSortIcon('totalCalls')}
                             </button>
                           </TableHead>
-                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center w-[100px]">
                             <button
                               onClick={() => requestSort('newLeadCalls')}
                               className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
-                              New Lead Calls {getSortIcon('newLeadCalls')}
+                              New Leads {getSortIcon('newLeadCalls')}
                             </button>
                           </TableHead>
-                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center w-[100px]">
                             <button
                               onClick={() => requestSort('activeLeadCalls')}
                               className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
-                              Active Lead Calls {getSortIcon('activeLeadCalls')}
+                              Active Leads {getSortIcon('activeLeadCalls')}
                             </button>
                           </TableHead>
-                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center w-[100px]">
                             <button
                               onClick={() => requestSort('nonActiveLeadCalls')}
                               className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
-                              Non Active Lead Calls {getSortIcon('nonActiveLeadCalls')}
+                              Non-Active {getSortIcon('nonActiveLeadCalls')}
                             </button>
                           </TableHead>
-                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center w-[100px]">
                             <button
                               onClick={() => requestSort('totalFootFall')}
                               className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
-                              Total Footfall {getSortIcon('totalFootFall')}
+                              Footfall {getSortIcon('totalFootFall')}
                             </button>
                           </TableHead>
-                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center w-[100px]">
                             <button
                               onClick={() => requestSort('totalAdmissions')}
                               className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
-                              Total Admissions {getSortIcon('totalAdmissions')}
+                              Admissions {getSortIcon('totalAdmissions')}
                             </button>
                           </TableHead>
-                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center">
-                            <button
-                              className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
-                            >
+                          <TableHead className="font-semibold text-primary dark:text-gray-100 text-center w-[300px]">
+                            <button className="flex items-center justify-center w-full hover:text-primary cursor-pointer">
                               Remarks
                             </button>
                           </TableHead>
@@ -543,7 +553,7 @@ export function PerformanceDashboard() {
                       <TableBody>
                         {sortedData.map((member) => (
                           <TableRow key={member._id} className="hover:bg-muted/50">
-                            <TableCell>
+                            <TableCell className="w-[150px]">
                               <div className="flex items-center">
                                 <Avatar className="h-8 w-8 mr-3">
                                   <AvatarFallback>
@@ -558,36 +568,65 @@ export function PerformanceDashboard() {
                                 </div>
                               </div>
                             </TableCell>
-                            <TableCell className="text-center">{member.totalCalls}</TableCell>
-                            <TableCell className="text-center">{member.newLeadCalls}</TableCell>
-                            <TableCell className="text-center">{member.activeLeadCalls}</TableCell>
-                            <TableCell className="text-center">{member.nonActiveLeadCalls}</TableCell>
-                            <TableCell className="text-center">{member.totalFootFall}</TableCell>
-                            <TableCell className="text-center">
+                            <TableCell className="text-center w-[100px]">
+                              {member.totalCalls}
+                            </TableCell>
+                            <TableCell className="text-center w-[100px]">
+                              {member.newLeadCalls}
+                            </TableCell>
+                            <TableCell className="text-center w-[100px]">
+                              {member.activeLeadCalls}
+                            </TableCell>
+                            <TableCell className="text-center w-[100px]">
+                              {member.nonActiveLeadCalls}
+                            </TableCell>
+                            <TableCell className="text-center w-[100px]">
+                              {member.totalFootFall}
+                            </TableCell>
+                            <TableCell className="text-center w-[100px]">
                               <Badge variant="secondary" className="px-2">
                                 {member.totalAdmissions}
                               </Badge>
                             </TableCell>
-                            <TableCell className="text-center">
-                              <TruncatedCell value={!member.analyticsRemark || member.analyticsRemark == "" ? "--" : member.analyticsRemark} maxWidth={80} />
+                            <TableCell className="w-[300px] px-4">
+                              <div className="flex justify-center">
+                                <TruncatedCell
+                                  value={
+                                    !member.analyticsRemark || member.analyticsRemark == ''
+                                      ? '--'
+                                      : member.analyticsRemark
+                                  }
+                                  maxWidth={280}
+                                />
+                              </div>
                             </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
                       <tfoot className="sticky bottom-0 z-10">
                         <TableRow className="font-bold bg-primary/10 hover:bg-primary/10 backdrop-blur-3xl">
-                          <TableCell>Team Total</TableCell>
-                          <TableCell className="text-center">{totals.totalCalls}</TableCell>
-                          <TableCell className="text-center">{totals.newLeadCalls}</TableCell>
-                          <TableCell className="text-center">{totals.activeLeadCalls}</TableCell>
-                          <TableCell className="text-center">{totals.nonActiveLeadCalls}</TableCell>
-                          <TableCell className="text-center">{totals.totalFootFall}</TableCell>
-                          <TableCell className="text-center">
+                          <TableCell className="w-[150px]">Team Total</TableCell>
+                          <TableCell className="text-center w-[100px]">
+                            {totals.totalCalls}
+                          </TableCell>
+                          <TableCell className="text-center w-[100px]">
+                            {totals.newLeadCalls}
+                          </TableCell>
+                          <TableCell className="text-center w-[100px]">
+                            {totals.activeLeadCalls}
+                          </TableCell>
+                          <TableCell className="text-center w-[100px]">
+                            {totals.nonActiveLeadCalls}
+                          </TableCell>
+                          <TableCell className="text-center w-[100px]">
+                            {totals.totalFootFall}
+                          </TableCell>
+                          <TableCell className="text-center w-[100px]">
                             <Badge variant="default" className="px-2">
                               {totals.totalAdmissions}
                             </Badge>
                           </TableCell>
-                          <TableCell></TableCell>
+                          <TableCell className="w-[300px]"></TableCell>
                         </TableRow>
                       </tfoot>
                     </Table>

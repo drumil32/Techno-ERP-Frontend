@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
-import { format, parse } from 'date-fns';
+import { format, formatDate, parse } from 'date-fns';
 import { Course, CourseNameMapper, LeadType, LeadTypeMapper, Locations } from '@/types/enum';
 import { Badge } from '@/components/ui/badge';
 import { toPascal } from '@/lib/utils';
@@ -87,6 +87,18 @@ const FilterBadges = ({
       });
     }
 
+    if (appliedFilters.startNextDueDate || appliedFilters.endNextDueDate) {
+      newBadges.push({
+        key: 'nextDueDate',
+        label: 'Next Due Date',
+        value:
+          appliedFilters.startNextDueDate || appliedFilters.endNextDueDate
+            ? formatDate(appliedFilters.startNextDueDate, 'dd/MM/yyyy') ||
+              formatDate(appliedFilters.endNextDueDate, 'dd/MM/yyyy')
+            : ''
+      });
+    }
+
     if (appliedFilters.courseYear) {
       newBadges.push({
         key: 'courseYear',
@@ -150,7 +162,10 @@ const FilterBadges = ({
           onClick={() => onFilterRemove(badge.key)}
           key={badge.key}
         >
-          <Badge variant="secondary" className="py-1 px-2 flex items-center gap-1 cursor-pointer font-bold bg-gray-400/20">
+          <Badge
+            variant="secondary"
+            className="py-1 px-2 text-[14px] flex items-center gap-1 cursor-pointer font-bold bg-gray-400/20"
+          >
             <span className="">{badge.label}:</span> {badge.value}
             {crossVisible && <X size={16} className="ml-1 cursor-pointer" />}
           </Badge>

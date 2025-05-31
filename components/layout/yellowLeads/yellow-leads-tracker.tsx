@@ -446,7 +446,7 @@ export default function YellowLeadsTracker() {
     {
       accessorKey: 'nextDueDateView',
       header: 'Next Due Date',
-      meta: { align: 'center', maxWidth: 160, fixedWidth: 160 }
+      meta: { align: 'center', maxWidth: 160, fixedWidth: 180 }
     },
     {
       accessorKey: 'finalConversion',
@@ -634,17 +634,21 @@ export default function YellowLeadsTracker() {
   if (!leads?.leads || !analytics) {
     return <Loading />;
   }
-  
-  const handleDateFilter = (columnId: string, startDate: Date | undefined, endDate: Date | undefined) => {
+
+  const handleDateFilter = (
+    columnId: string,
+    startDate: Date | undefined,
+    endDate: Date | undefined
+  ) => {
     if (columnId === 'nextDueDateView') {
       if (startDate) {
-        updateFilter('startNextDueDate', format(startDate, "dd/MM/yyyy"));
-        updateFilter('endNextDueDate', format(startDate, "dd/MM/yyyy"));
+        updateFilter('startNextDueDate', format(startDate, 'dd/MM/yyyy'));
+        updateFilter('endNextDueDate', format(startDate, 'dd/MM/yyyy'));
       } else {
         updateFilter('startNextDueDate', undefined);
         updateFilter('endNextDueDate', undefined);
       }
-      
+
       applyFilter();
     }
   };
@@ -677,7 +681,7 @@ export default function YellowLeadsTracker() {
             selectedRowId={selectedRowId}
             setSelectedRowId={setSelectedRowId}
             searchBarPlaceholder="Search student name or number"
-            onDateFilter={handleDateFilter} 
+            onDateFilter={handleDateFilter}
           >
             <FilterBadges
               onFilterRemove={handleFilterRemove}

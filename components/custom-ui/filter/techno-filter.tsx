@@ -19,6 +19,7 @@ import FinalConversionTag from '@/components/layout/yellowLeads/final-conversion
 import { Course, CourseNameMapper, FinalConversionStatus } from '@/types/enum';
 import { toPascal } from '@/lib/utils';
 import { LeadType } from '@/types/enum';
+import { TruncatedCell } from '../data-table/techno-data-table';
 
 export interface FilterOption {
   id: string | number;
@@ -196,7 +197,7 @@ export default function TechnoFilter({
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-auto min-w-[200px] max-w-[400px]">
+      <DropdownMenuContent className="w-auto min-w-[200px] p-4 max-w-[400px]">
         {isDateFilter ? (
           <div className="p-2 space-y-4">
             <div className="flex items-center space-x-2 cursor-pointer" onClick={handleThisMonth}>
@@ -312,9 +313,15 @@ export default function TechnoFilter({
                       }
                     />
                   ) : filterKey === 'source' ? (
-                    <span>{typeof option === 'string' ? option : option.label}</span>
+                    <TruncatedCell
+                      value={typeof option === 'string' ? option : option.label}
+                      maxWidth={180}
+                    />
                   ) : (
-                    <span>{typeof option === 'string' ? option : option.label}</span>
+                    <TruncatedCell
+                      value={typeof option === 'string' ? option : option.label}
+                      maxWidth={180}
+                    />
                   )}
                 </div>
               ))}
