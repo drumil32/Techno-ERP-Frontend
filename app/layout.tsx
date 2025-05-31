@@ -42,7 +42,6 @@ export default function RootLayout({
       >
         <Suspense>
           <ProgressBar />
-
           <h2 className=""></h2>
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
           <NavigationEvents />
