@@ -607,7 +607,7 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'nextDueDateView',
       header: 'Next Due Date',
-      meta: { align: 'center', maxWidth: 160, fixedWidth: 180 }
+      meta: { align: 'center', maxWidth: 160, fixedWidth: 190 }
     },
     ...(isRoleLeadMarketing
       ? [

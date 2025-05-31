@@ -167,12 +167,11 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
             selectedDate ? 'border border-primary text-primary' : 'text-primary border border-none'
           )}
         >
-          <CalendarIcon className="h-4 w-4 mr-2" />
-
           <span>Next Due Date</span>
+          <CalendarIcon className="h-4 w-4 mr-2" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
+      <PopoverContent className=" mx-auto w-auto p-0" align="center">
         <Calendar mode="single" selected={selectedDate} onSelect={handleSelect} initialFocus />
         {selectedDate && (
           <div className="p-3 border-t flex justify-between items-center">

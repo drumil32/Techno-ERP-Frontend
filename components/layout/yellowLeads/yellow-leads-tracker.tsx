@@ -40,6 +40,7 @@ import { FilterData } from '@/components/custom-ui/filter/type';
 import useAuthStore from '@/stores/auth-store';
 import { FinalConversionStatus, UserRoles } from '@/types/enum';
 import { format } from 'date-fns';
+import UserAnalytics from '../allLeads/user-analytics';
 
 export default function YellowLeadsTracker() {
   const queryClient = useQueryClient();
@@ -446,7 +447,7 @@ export default function YellowLeadsTracker() {
     {
       accessorKey: 'nextDueDateView',
       header: 'Next Due Date',
-      meta: { align: 'center', maxWidth: 160, fixedWidth: 180 }
+      meta: { align: 'center', maxWidth: 160, fixedWidth: 190 }
     },
     {
       accessorKey: 'finalConversion',
@@ -599,7 +600,16 @@ export default function YellowLeadsTracker() {
     const updatedFilters = { ...appliedFilters };
 
     if (filterKey === 'date' || filterKey.includes('Date')) {
-      const dateKeys = ['startDate', 'endDate', 'startLTCDate', 'endLTCDate', 'date'];
+      const dateKeys = [
+        'startDate',
+        'endDate',
+        'startLTCDate',
+        'endLTCDate',
+        'date',
+        'nextDueDate',
+        'startNextDueDate',
+        'endNextDueDate'
+      ];
 
       dateKeys.forEach((key) => {
         delete updatedFilters[key];
@@ -657,11 +667,14 @@ export default function YellowLeadsTracker() {
     leads?.leads &&
     analytics && (
       <>
-        <TechnoFiltersGroup
-          filters={getFiltersData()}
-          handleFilters={applyFilter}
-          clearFilters={clearFilters}
-        />
+        <div className="flex justify-between w-full items-center pr-2">
+          <TechnoFiltersGroup
+            filters={getFiltersData()}
+            handleFilters={applyFilter}
+            clearFilters={clearFilters}
+          />
+          <UserAnalytics />
+        </div>
         {analytics && <TechnoAnalyticCardsGroup cardsData={analytics} />}
         {leads?.leads && (
           <TechnoDataTable

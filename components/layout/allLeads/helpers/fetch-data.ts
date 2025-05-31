@@ -39,16 +39,13 @@ export const downloadSheetRequest = async () => {
   return res;
 };
 
-export const fetchUserAnalytics = async (
-  context: QueryFunctionContext<readonly [string, any]>
-): Promise<UserAnalyticsData> => {
+export const fetchUserAnalytics = async (): Promise<UserAnalyticsData> => {
   const res = await apiRequest<UserAnalyticsData>(API_METHODS.GET, API_ENDPOINTS.getUserAnalytics);
-  if (!res) throw new Error('Failed to fetch Student Fees Information');
+  if (!res) throw new Error('Failed to fetch User Analytics');
   return res;
 };
 
-
-export const updateAnalyticsRemarks = async (data:any) => {
+export const updateAnalyticsRemarks = async (data: any) => {
   const res = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateAnalyticsRemarks, data);
   return res;
-}
+};

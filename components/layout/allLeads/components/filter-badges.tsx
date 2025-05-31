@@ -93,8 +93,7 @@ const FilterBadges = ({
         label: 'Next Due Date',
         value:
           appliedFilters.startNextDueDate || appliedFilters.endNextDueDate
-            ? formatDate(appliedFilters.startNextDueDate, 'dd/MM/yyyy') ||
-              formatDate(appliedFilters.endNextDueDate, 'dd/MM/yyyy')
+            ? appliedFilters.startNextDueDate || appliedFilters.endNextDueDate
             : ''
       });
     }
