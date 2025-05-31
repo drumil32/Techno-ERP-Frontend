@@ -23,13 +23,50 @@ import {
   PlusCircle,
   Home,
   WifiOffIcon,
-  Sparkle
+  Sparkle,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { sourceAnalytics } from './helpers/fetch-data';
 import { NoDataPreview } from '@/components/custom-ui/no-data-preview/no-data-preview';
+import { useState } from 'react';
+
+type LeadData = {
+  source: string;
+  data: {
+    totalLeads: number;
+    activeLeads: number;
+    neutralLeads: number;
+    didNotPickLeads: number;
+    others: number;
+    footFall: number;
+    totalAdmissions: number;
+  };
+};
+
+type SortConfig = {
+  key: keyof LeadData['data'] | 'source';
+  direction: 'ascending' | 'descending';
+};
 
 export function LeadTables() {
+  const [allLeadsSortConfig, setAllLeadsSortConfig] = useState<SortConfig>({
+    key: 'source',
+    direction: 'ascending'
+  });
+
+  const [onlineSortConfig, setOnlineSortConfig] = useState<SortConfig>({
+    key: 'source',
+    direction: 'ascending'
+  });
+
+  const [offlineSortConfig, setOfflineSortConfig] = useState<SortConfig>({
+    key: 'source',
+    direction: 'ascending'
+  });
+
   const { data } = useQuery({
     queryKey: ['sourceAnalytics'],
     queryFn: sourceAnalytics
@@ -40,8 +77,68 @@ export function LeadTables() {
   const onlineData = sourceData?.find((item) => item.type === 'online-data')?.details || [];
   const allLeads = sourceData?.find((item) => item.type === 'all-leads')?.details || [];
 
-  const getTotal = (key: string) =>
-    allLeads.reduce((sum: number, item: any) => sum + (item.data[key] || 0), 0);
+  const getTotal = (key: keyof LeadData['data']) =>
+    allLeads.reduce((sum: number, item: LeadData) => sum + (item.data?.[key] ?? 0), 0);
+
+  const sortData = (data: LeadData[], sortConfig: SortConfig): LeadData[] => {
+    return [...data].sort((a, b) => {
+      if (sortConfig.key === 'source') {
+        const aValue = a.source.toLowerCase();
+        const bValue = b.source.toLowerCase();
+        return sortConfig.direction === 'ascending'
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      } else {
+        const aValue = a.data?.[sortConfig.key] ?? 0;
+        const bValue = b.data?.[sortConfig.key] ?? 0;
+        return sortConfig.direction === 'ascending'
+          ? Number(aValue) - Number(bValue)
+          : Number(bValue) - Number(aValue);
+      }
+    });
+  };
+
+  const requestSort = (
+    key: keyof LeadData['data'] | 'source',
+    table: 'allLeads' | 'online' | 'offline'
+  ) => {
+    const currentConfig =
+      table === 'allLeads'
+        ? allLeadsSortConfig
+        : table === 'online'
+          ? onlineSortConfig
+          : offlineSortConfig;
+
+    const newConfig: SortConfig = {
+      key,
+      direction:
+        currentConfig?.key === key && currentConfig.direction === 'ascending'
+          ? 'descending'
+          : 'ascending'
+    };
+
+    if (table === 'allLeads') {
+      setAllLeadsSortConfig(newConfig);
+    } else if (table === 'online') {
+      setOnlineSortConfig(newConfig);
+    } else {
+      setOfflineSortConfig(newConfig);
+    }
+  };
+
+  const getSortIcon = (key: keyof LeadData['data'] | 'source', sortConfig: SortConfig) => {
+    if (!sortConfig || sortConfig.key !== key)
+      return <ArrowUpDown className="h-3 w-3 ml-1 opacity-50" />;
+    return sortConfig.direction === 'ascending' ? (
+      <ArrowUp className="h-3 w-3 ml-1" />
+    ) : (
+      <ArrowDown className="h-3 w-3 ml-1" />
+    );
+  };
+
+  const sortedAllLeads = sortData(allLeads, allLeadsSortConfig);
+  const sortedOnlineData = sortData(onlineData, onlineSortConfig);
+  const sortedOfflineData = sortData(offlineData, offlineSortConfig);
 
   return (
     <Card className="md:w-7xl w-full">
@@ -66,33 +163,73 @@ export function LeadTables() {
                   <TableHeader className="bg-purple-50/50">
                     <TableRow className="hover:bg-purple-50/50">
                       <TableHead className="w-[150px] text-purple-900 font-semibold py-4">
-                        Source
+                        <button
+                          onClick={() => requestSort('source', 'allLeads')}
+                          className="flex items-center w-full hover:text-purple-700 cursor-pointer"
+                        >
+                          Source {getSortIcon('source', allLeadsSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-purple-900 font-semibold">
-                        Total
+                        <button
+                          onClick={() => requestSort('totalLeads', 'allLeads')}
+                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
+                        >
+                          Total {getSortIcon('totalLeads', allLeadsSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-purple-900 font-semibold">
-                        Active
+                        <button
+                          onClick={() => requestSort('activeLeads', 'allLeads')}
+                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
+                        >
+                          Active {getSortIcon('activeLeads', allLeadsSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-purple-900 font-semibold">
-                        Neutral
+                        <button
+                          onClick={() => requestSort('neutralLeads', 'allLeads')}
+                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
+                        >
+                          Neutral {getSortIcon('neutralLeads', allLeadsSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-purple-900 font-semibold">
-                        No Pickup
+                        <button
+                          onClick={() => requestSort('didNotPickLeads', 'allLeads')}
+                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
+                        >
+                          No Pickup {getSortIcon('didNotPickLeads', allLeadsSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-purple-900 font-semibold">
-                        Others
+                        <button
+                          onClick={() => requestSort('others', 'allLeads')}
+                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
+                        >
+                          Others {getSortIcon('others', allLeadsSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-purple-900 font-semibold">
-                        Footfall
+                        <button
+                          onClick={() => requestSort('footFall', 'allLeads')}
+                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
+                        >
+                          Footfall {getSortIcon('footFall', allLeadsSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-purple-900 font-semibold">
-                        Admissions
+                        <button
+                          onClick={() => requestSort('totalAdmissions', 'allLeads')}
+                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
+                        >
+                          Admissions {getSortIcon('totalAdmissions', allLeadsSortConfig)}
+                        </button>
                       </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {allLeads.map((lead: any) => (
+                    {sortedAllLeads.map((lead: LeadData) => (
                       <TableRow
                         key={lead.source}
                         className="border-b border-gray-100 hover:bg-purple-50/30 transition-colors"
@@ -110,25 +247,25 @@ export function LeadTables() {
                           </span>
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {lead.data.totalLeads}
+                          {lead.data.totalLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {lead.data.activeLeads}
+                          {lead.data.activeLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {lead.data.neutralLeads}
+                          {lead.data.neutralLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {lead.data.didNotPickLeads}
+                          {lead.data.didNotPickLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {lead.data.others}
+                          {lead.data.others ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {lead.data.footFall}
+                          {lead.data.footFall ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {lead.data.totalAdmissions}
+                          {lead.data.totalAdmissions ?? '--'}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -179,33 +316,73 @@ export function LeadTables() {
                   <TableHeader className="bg-blue-50/50">
                     <TableRow className="hover:bg-blue-50/50">
                       <TableHead className="w-[200px] text-blue-900 font-semibold py-4">
-                        Channel
+                        <button
+                          onClick={() => requestSort('source', 'online')}
+                          className="flex items-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Channel {getSortIcon('source', onlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Total
+                        <button
+                          onClick={() => requestSort('totalLeads', 'online')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Total {getSortIcon('totalLeads', onlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Active
+                        <button
+                          onClick={() => requestSort('activeLeads', 'online')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Active {getSortIcon('activeLeads', onlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Neutral
+                        <button
+                          onClick={() => requestSort('neutralLeads', 'online')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Neutral {getSortIcon('neutralLeads', onlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        No Pickup
+                        <button
+                          onClick={() => requestSort('didNotPickLeads', 'online')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          No Pickup {getSortIcon('didNotPickLeads', onlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Others
+                        <button
+                          onClick={() => requestSort('others', 'online')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Others {getSortIcon('others', onlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Footfall
+                        <button
+                          onClick={() => requestSort('footFall', 'online')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Footfall {getSortIcon('footFall', onlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Admissions
+                        <button
+                          onClick={() => requestSort('totalAdmissions', 'online')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Admissions {getSortIcon('totalAdmissions', onlineSortConfig)}
+                        </button>
                       </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {onlineData.map((item: any) => (
+                    {sortedOnlineData.map((item: LeadData) => (
                       <TableRow
                         key={item.source}
                         className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors"
@@ -221,25 +398,25 @@ export function LeadTables() {
                           <span className="text-gray-800">{item.source.split('- ')[1]}</span>
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.totalLeads}
+                          {item.data.totalLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.activeLeads}
+                          {item.data.activeLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.neutralLeads}
+                          {item.data.neutralLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.didNotPickLeads}
+                          {item.data.didNotPickLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.others}
+                          {item.data.others ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.footFall}
+                          {item.data.footFall ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.totalAdmissions}
+                          {item.data.totalAdmissions ?? '--'}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -247,37 +424,43 @@ export function LeadTables() {
                       <TableCell className="text-blue-900 font-semibold py-4">Total</TableCell>
                       <TableCell className="text-center font-bold ">
                         {onlineData.reduce(
-                          (sum: number, item: any) => sum + item.data.totalLeads,
+                          (sum: number, item: LeadData) => sum + (item.data.totalLeads ?? 0),
                           0
                         )}
                       </TableCell>
                       <TableCell className="text-center font-bold ">
                         {onlineData.reduce(
-                          (sum: number, item: any) => sum + item.data.activeLeads,
+                          (sum: number, item: LeadData) => sum + (item.data.activeLeads ?? 0),
                           0
                         )}
                       </TableCell>
                       <TableCell className="text-center font-bold ">
                         {onlineData.reduce(
-                          (sum: number, item: any) => sum + item.data.neutralLeads,
+                          (sum: number, item: LeadData) => sum + (item.data.neutralLeads ?? 0),
                           0
                         )}
                       </TableCell>
                       <TableCell className="text-center font-bold ">
                         {onlineData.reduce(
-                          (sum: number, item: any) => sum + item.data.didNotPickLeads,
+                          (sum: number, item: LeadData) => sum + (item.data.didNotPickLeads ?? 0),
                           0
                         )}
                       </TableCell>
                       <TableCell className="text-center font-bold ">
-                        {onlineData.reduce((sum: number, item: any) => sum + item.data.others, 0)}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {onlineData.reduce((sum: number, item: any) => sum + item.data.footFall, 0)}
+                        {onlineData.reduce(
+                          (sum: number, item: LeadData) => sum + (item.data.others ?? 0),
+                          0
+                        )}
                       </TableCell>
                       <TableCell className="text-center font-bold ">
                         {onlineData.reduce(
-                          (sum: number, item: any) => sum + item.data.totalAdmissions,
+                          (sum: number, item: LeadData) => sum + (item.data.footFall ?? 0),
+                          0
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center font-bold ">
+                        {onlineData.reduce(
+                          (sum: number, item: LeadData) => sum + (item.data.totalAdmissions ?? 0),
                           0
                         )}
                       </TableCell>
@@ -307,33 +490,73 @@ export function LeadTables() {
                   <TableHeader className="bg-blue-50/50">
                     <TableRow className="hover:bg-blue-50/50">
                       <TableHead className="w-[200px] text-blue-900 font-semibold py-4">
-                        Source
+                        <button
+                          onClick={() => requestSort('source', 'offline')}
+                          className="flex items-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Source {getSortIcon('source', offlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Total
+                        <button
+                          onClick={() => requestSort('totalLeads', 'offline')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Total {getSortIcon('totalLeads', offlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Active
+                        <button
+                          onClick={() => requestSort('activeLeads', 'offline')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Active {getSortIcon('activeLeads', offlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Neutral
+                        <button
+                          onClick={() => requestSort('neutralLeads', 'offline')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Neutral {getSortIcon('neutralLeads', offlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Did Not Pick
+                        <button
+                          onClick={() => requestSort('didNotPickLeads', 'offline')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Did Not Pick {getSortIcon('didNotPickLeads', offlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Others
+                        <button
+                          onClick={() => requestSort('others', 'offline')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Others {getSortIcon('others', offlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Footfall
+                        <button
+                          onClick={() => requestSort('footFall', 'offline')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Footfall {getSortIcon('footFall', offlineSortConfig)}
+                        </button>
                       </TableHead>
                       <TableHead className="text-center text-blue-900 font-semibold">
-                        Admissions
+                        <button
+                          onClick={() => requestSort('totalAdmissions', 'offline')}
+                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
+                        >
+                          Admissions {getSortIcon('totalAdmissions', offlineSortConfig)}
+                        </button>
                       </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {offlineData.map((item: any) => (
+                    {sortedOfflineData.map((item: LeadData) => (
                       <TableRow
                         key={item.source}
                         className="border-b border-gray-100 hover:bg-amber-50/30 transition-colors"
@@ -349,25 +572,25 @@ export function LeadTables() {
                           <span className="text-gray-800">{item.source}</span>
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.totalLeads}
+                          {item.data.totalLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.activeLeads}
+                          {item.data.activeLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.neutralLeads}
+                          {item.data.neutralLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.didNotPickLeads}
+                          {item.data.didNotPickLeads ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.others}
+                          {item.data.others ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.footFall}
+                          {item.data.footFall ?? '--'}
                         </TableCell>
                         <TableCell className="text-center font-medium ">
-                          {item.data.totalAdmissions}
+                          {item.data.totalAdmissions ?? '--'}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -375,40 +598,43 @@ export function LeadTables() {
                       <TableCell className="text-blue-900 font-semibold py-4">Total</TableCell>
                       <TableCell className="text-center font-bold ">
                         {offlineData.reduce(
-                          (sum: number, item: any) => sum + item.data.totalLeads,
+                          (sum: number, item: LeadData) => sum + (item.data.totalLeads ?? 0),
                           0
                         )}
                       </TableCell>
                       <TableCell className="text-center font-bold ">
                         {offlineData.reduce(
-                          (sum: number, item: any) => sum + item.data.activeLeads,
+                          (sum: number, item: LeadData) => sum + (item.data.activeLeads ?? 0),
                           0
                         )}
                       </TableCell>
                       <TableCell className="text-center font-bold ">
                         {offlineData.reduce(
-                          (sum: number, item: any) => sum + item.data.neutralLeads,
+                          (sum: number, item: LeadData) => sum + (item.data.neutralLeads ?? 0),
                           0
                         )}
                       </TableCell>
                       <TableCell className="text-center font-bold ">
                         {offlineData.reduce(
-                          (sum: number, item: any) => sum + item.data.didNotPickLeads,
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {offlineData.reduce((sum: number, item: any) => sum + item.data.others, 0)}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {offlineData.reduce(
-                          (sum: number, item: any) => sum + item.data.footFall,
+                          (sum: number, item: LeadData) => sum + (item.data.didNotPickLeads ?? 0),
                           0
                         )}
                       </TableCell>
                       <TableCell className="text-center font-bold ">
                         {offlineData.reduce(
-                          (sum: number, item: any) => sum + item.data.totalAdmissions,
+                          (sum: number, item: LeadData) => sum + (item.data.others ?? 0),
+                          0
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center font-bold ">
+                        {offlineData.reduce(
+                          (sum: number, item: LeadData) => sum + (item.data.footFall ?? 0),
+                          0
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center font-bold ">
+                        {offlineData.reduce(
+                          (sum: number, item: LeadData) => sum + (item.data.totalAdmissions ?? 0),
                           0
                         )}
                       </TableCell>
