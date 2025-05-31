@@ -18,7 +18,7 @@ export const API_ENDPOINTS = {
   uploadMarketingData: `${API_DOMAIN}/crm/upload`,
   downloadMarketingData: `${API_DOMAIN}/crm/export-data`,
   getAllLeads: `${API_DOMAIN}/crm/fetch-data`,
-  getAllLeadsAnalytics: `${API_DOMAIN}/crm/analytics`,
+  getAllLeadsAnalytics: `${API_DOMAIN}/v1/crm/analytics`,
   fetchAssignedToDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=MARKETING`,
   updateLead: `${API_DOMAIN}/crm/edit`,
 
@@ -26,17 +26,15 @@ export const API_ENDPOINTS = {
   getUserAnalytics: `${API_DOMAIN}/crm/user-daily-analytics`,
   updateAnalyticsRemarks: `${API_DOMAIN}/crm/update-marketing-remark`,
 
-
   // Marketing Analytics
-
   sourceAnalytics: `${API_DOMAIN}/crm/source-analytics`,
   durationBasedSourceAnalytics: `${API_DOMAIN}/crm/user-wise-analytics-duration`,
   todaySourceAnalytics: `${API_DOMAIN}/crm/user-wise-analytics-daily`,
 
-  getAdminAnalytics: `${API_DOMAIN}/crm/admin/analytics`,
+  getAdminAnalytics: `${API_DOMAIN}/v1/crm/admin/analytics`,
 
   getYellowLeads: `${API_DOMAIN}/crm/yellow-lead`,
-  getYellowLeadsAnalytics: `${API_DOMAIN}/crm/yellow-lead-analytics`,
+  getYellowLeadsAnalytics: `${API_DOMAIN}/v1/crm/yellow-lead-analytics`,
   updateYellowLead: `${API_DOMAIN}/crm/update-yellow-lead`,
 
   // Admissions

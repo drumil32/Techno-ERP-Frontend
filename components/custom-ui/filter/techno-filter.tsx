@@ -17,7 +17,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import FinalConversionTag from '@/components/layout/yellowLeads/final-conversion-tag';
 import { Course, CourseNameMapper, FinalConversionStatus } from '@/types/enum';
-import { toPascal } from '@/lib/utils';
 import { LeadType } from '@/types/enum';
 import { TruncatedCell } from '../data-table/techno-data-table';
 
