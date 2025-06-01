@@ -327,7 +327,7 @@ const AdminTracker = () => {
 
           <LeadTables />
 
-          <Card className="w-7xl">
+          <Card className="w-7xl mb-8">
             <div className="ml-5">
               <h2 className="text-2xl font-bold">Overall Leads Performance</h2>
               <p className="text-muted-foreground">
