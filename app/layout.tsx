@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import ProgressBar from '@/components/custom-ui/progress-bar/progress-bar';
 import { NavigationEvents } from '@/components/custom-ui/router-events/router-event';
 import { Suspense } from 'react';
+import { DevBadge } from '@/components/ui/dev-badge';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body
         className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
+        <DevBadge />
         <Suspense>
           <ProgressBar />
           <h2 className=""></h2>

@@ -7,6 +7,7 @@ import {
   TableRow
 } from '@/components/ui/table';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Users,
   Activity,
@@ -22,7 +23,6 @@ import {
   Cpu,
   PlusCircle,
   Home,
-  WifiOffIcon,
   Sparkle,
   ArrowUp,
   ArrowDown,
@@ -67,6 +67,10 @@ export function LeadTables() {
     direction: 'ascending'
   });
 
+  const [allLeadsTab, setAllLeadsTab] = useState('numbers');
+  const [onlineTab, setOnlineTab] = useState('numbers');
+  const [offlineTab, setOfflineTab] = useState('numbers');
+
   const { data } = useQuery({
     queryKey: ['sourceAnalytics'],
     queryFn: sourceAnalytics
@@ -79,6 +83,25 @@ export function LeadTables() {
 
   const getTotal = (key: keyof LeadData['data']) =>
     allLeads.reduce((sum: number, item: LeadData) => sum + (item.data?.[key] ?? 0), 0);
+
+  const getOnlineTotal = (key: keyof LeadData['data']) =>
+    onlineData.reduce((sum: number, item: LeadData) => sum + (item.data?.[key] ?? 0), 0);
+
+  const getOfflineTotal = (key: keyof LeadData['data']) =>
+    offlineData.reduce((sum: number, item: LeadData) => sum + (item.data?.[key] ?? 0), 0);
+
+  const calculatePercentage = (value: number, total: number) => {
+    if (!total || total === 0) return '0%';
+    return `${Math.round((value / total) * 100)}%`;
+  };
+
+  const formatValue = (value: number, showPercentage: boolean, totalValue?: number) => {
+    if (value === null || value === undefined) return '--';
+    if (showPercentage && totalValue) {
+      return calculatePercentage(value, totalValue);
+    }
+    return value.toString();
+  };
 
   const sortData = (data: LeadData[], sortConfig: SortConfig): LeadData[] => {
     return [...data].sort((a, b) => {
@@ -140,6 +163,203 @@ export function LeadTables() {
   const sortedOnlineData = sortData(onlineData, onlineSortConfig);
   const sortedOfflineData = sortData(offlineData, offlineSortConfig);
 
+  const renderTable = (
+    leads: LeadData[],
+    sortConfig: SortConfig,
+    tableType: 'allLeads' | 'online' | 'offline',
+    showPercentage: boolean,
+    getTotalFn: (key: keyof LeadData['data']) => number,
+    colorScheme: 'purple' | 'blue'
+  ) => {
+    const totalLeadsValue = getTotalFn('totalLeads');
+
+    return (
+      <Table>
+        <TableHeader
+          className={`${colorScheme === 'purple' ? 'bg-purple-50/50' : 'bg-blue-50/50'}`}
+        >
+          <TableRow
+            className={`hover:${colorScheme === 'purple' ? 'bg-purple-50/50' : 'bg-blue-50/50'}`}
+          >
+            <TableHead
+              className={`w-[150px] ${colorScheme === 'purple' ? 'text-purple-900' : 'text-blue-900'} font-semibold py-4`}
+            >
+              <button
+                onClick={() => requestSort('source', tableType)}
+                className={`flex items-center w-full hover:${colorScheme === 'purple' ? 'text-purple-700' : 'text-blue-700'} cursor-pointer`}
+              >
+                {tableType === 'online' ? 'Channel' : 'Source'} {getSortIcon('source', sortConfig)}
+              </button>
+            </TableHead>
+            <TableHead
+              className={`text-center ${colorScheme === 'purple' ? 'text-purple-900' : 'text-blue-900'} font-semibold`}
+            >
+              <button
+                onClick={() => requestSort('totalLeads', tableType)}
+                className={`flex items-center justify-center w-full hover:${colorScheme === 'purple' ? 'text-purple-700' : 'text-blue-700'} cursor-pointer`}
+              >
+                Total {getSortIcon('totalLeads', sortConfig)}
+              </button>
+            </TableHead>
+            <TableHead
+              className={`text-center ${colorScheme === 'purple' ? 'text-purple-900' : 'text-blue-900'} font-semibold`}
+            >
+              <button
+                onClick={() => requestSort('activeLeads', tableType)}
+                className={`flex items-center justify-center w-full hover:${colorScheme === 'purple' ? 'text-purple-700' : 'text-blue-700'} cursor-pointer`}
+              >
+                Active {getSortIcon('activeLeads', sortConfig)}
+              </button>
+            </TableHead>
+            <TableHead
+              className={`text-center ${colorScheme === 'purple' ? 'text-purple-900' : 'text-blue-900'} font-semibold`}
+            >
+              <button
+                onClick={() => requestSort('neutralLeads', tableType)}
+                className={`flex items-center justify-center w-full hover:${colorScheme === 'purple' ? 'text-purple-700' : 'text-blue-700'} cursor-pointer`}
+              >
+                Neutral {getSortIcon('neutralLeads', sortConfig)}
+              </button>
+            </TableHead>
+            <TableHead
+              className={`text-center ${colorScheme === 'purple' ? 'text-purple-900' : 'text-blue-900'} font-semibold`}
+            >
+              <button
+                onClick={() => requestSort('didNotPickLeads', tableType)}
+                className={`flex items-center justify-center w-full hover:${colorScheme === 'purple' ? 'text-purple-700' : 'text-blue-700'} cursor-pointer`}
+              >
+                {tableType === 'offline' ? 'Did Not Pick' : 'No Pickup'}{' '}
+                {getSortIcon('didNotPickLeads', sortConfig)}
+              </button>
+            </TableHead>
+            <TableHead
+              className={`text-center ${colorScheme === 'purple' ? 'text-purple-900' : 'text-blue-900'} font-semibold`}
+            >
+              <button
+                onClick={() => requestSort('others', tableType)}
+                className={`flex items-center justify-center w-full hover:${colorScheme === 'purple' ? 'text-purple-700' : 'text-blue-700'} cursor-pointer`}
+              >
+                Others {getSortIcon('others', sortConfig)}
+              </button>
+            </TableHead>
+            <TableHead
+              className={`text-center ${colorScheme === 'purple' ? 'text-purple-900' : 'text-blue-900'} font-semibold`}
+            >
+              <button
+                onClick={() => requestSort('footFall', tableType)}
+                className={`flex items-center justify-center w-full hover:${colorScheme === 'purple' ? 'text-purple-700' : 'text-blue-700'} cursor-pointer`}
+              >
+                Footfall {getSortIcon('footFall', sortConfig)}
+              </button>
+            </TableHead>
+            <TableHead
+              className={`text-center ${colorScheme === 'purple' ? 'text-purple-900' : 'text-blue-900'} font-semibold`}
+            >
+              <button
+                onClick={() => requestSort('totalAdmissions', tableType)}
+                className={`flex items-center justify-center w-full hover:${colorScheme === 'purple' ? 'text-purple-700' : 'text-blue-700'} cursor-pointer`}
+              >
+                Admissions {getSortIcon('totalAdmissions', sortConfig)}
+              </button>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {leads.map((lead: LeadData) => (
+            <TableRow
+              key={lead.source}
+              className={`border-b border-gray-100 hover:${colorScheme === 'purple' ? 'bg-purple-50/30' : colorScheme === 'blue' ? 'bg-blue-50/30' : 'bg-amber-50/30'} transition-colors`}
+            >
+              <TableCell className="font-medium flex items-center gap-3 py-4">
+                {tableType === 'allLeads' ? (
+                  lead.source === 'online' ? (
+                    <Smartphone className="h-5 w-5 text-blue-500" />
+                  ) : lead.source === 'offline' ? (
+                    <Home className="h-5 w-5 text-amber-500" />
+                  ) : (
+                    <PlusCircle className="h-5 w-5 text-gray-500" />
+                  )
+                ) : tableType === 'online' ? (
+                  lead.source.includes('Google') ? (
+                    <Globe className="h-5 w-5 text-blue-400" />
+                  ) : lead.source.includes('Website') ? (
+                    <Laptop className="h-5 w-5 text-indigo-400" />
+                  ) : (
+                    <PlusCircle className="h-5 w-5 text-gray-400" />
+                  )
+                ) : lead.source === 'Student Reference' ? (
+                  <UserCheck className="h-5 w-5 text-amber-500" />
+                ) : lead.source === 'Technoligence' ? (
+                  <Cpu className="h-5 w-5 text-teal-500" />
+                ) : (
+                  <PlusCircle className="h-5 w-5 text-gray-500" />
+                )}
+                <span className="text-gray-800">
+                  {tableType === 'allLeads'
+                    ? lead.source.charAt(0).toUpperCase() + lead.source.slice(1)
+                    : tableType === 'online'
+                      ? lead.source.split('- ')[1] || lead.source
+                      : lead.source}
+                </span>
+              </TableCell>
+              <TableCell className="text-center font-medium">
+                {formatValue(lead.data.totalLeads, false)}
+              </TableCell>
+              <TableCell className="text-center font-medium">
+                {formatValue(lead.data.activeLeads, showPercentage, lead.data.totalLeads)}
+              </TableCell>
+              <TableCell className="text-center font-medium">
+                {formatValue(lead.data.neutralLeads, showPercentage, lead.data.totalLeads)}
+              </TableCell>
+              <TableCell className="text-center font-medium">
+                {formatValue(lead.data.didNotPickLeads, showPercentage, lead.data.totalLeads)}
+              </TableCell>
+              <TableCell className="text-center font-medium">
+                {formatValue(lead.data.others, showPercentage, lead.data.totalLeads)}
+              </TableCell>
+              <TableCell className="text-center font-medium">
+                {formatValue(lead.data.footFall, showPercentage, lead.data.totalLeads)}
+              </TableCell>
+              <TableCell className="text-center font-medium">
+                {formatValue(lead.data.totalAdmissions, showPercentage, lead.data.totalLeads)}
+              </TableCell>
+            </TableRow>
+          ))}
+          <TableRow
+            className={`${colorScheme === 'purple' ? 'bg-purple-50/50' : 'bg-blue-50/50'} font-semibold hover:${colorScheme === 'purple' ? 'bg-purple-50/50' : 'bg-blue-50/50'}`}
+          >
+            <TableCell
+              className={`${colorScheme === 'purple' ? 'text-purple-900' : 'text-blue-900'} font-semibold py-4`}
+            >
+              Total
+            </TableCell>
+            <TableCell className="text-center font-bold text-gray-800">
+              {getTotalFn('totalLeads')}
+            </TableCell>
+            <TableCell className="text-center font-bold">
+              {formatValue(getTotalFn('activeLeads'), showPercentage, totalLeadsValue)}
+            </TableCell>
+            <TableCell className="text-center font-bold">
+              {formatValue(getTotalFn('neutralLeads'), showPercentage, totalLeadsValue)}
+            </TableCell>
+            <TableCell className="text-center font-bold">
+              {formatValue(getTotalFn('didNotPickLeads'), showPercentage, totalLeadsValue)}
+            </TableCell>
+            <TableCell className="text-center font-bold">
+              {formatValue(getTotalFn('others'), showPercentage, totalLeadsValue)}
+            </TableCell>
+            <TableCell className="text-center font-bold">
+              {formatValue(getTotalFn('footFall'), showPercentage, totalLeadsValue)}
+            </TableCell>
+            <TableCell className="text-center font-bold">
+              {formatValue(getTotalFn('totalAdmissions'), showPercentage, totalLeadsValue)}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    );
+  };
+
   return (
     <Card className="md:w-7xl w-full">
       <div className="ml-5">
@@ -149,150 +369,45 @@ export function LeadTables() {
         </p>
       </div>
       <div className="grid gap-6 p-6 w-max-6xl grid-cols-2 lg:grid-cols-3">
-        <Card className="col-span-3 col-start-1 bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg rounded-2xl ">
-          <CardHeader className="px-6 ">
-            <CardTitle className="flex items-center gap-3 text-xl font-semibold text-purple-900">
-              <Users className="h-6 w-6 text-purple-600" />
-              Leads Summary
-            </CardTitle>
+        {/* All Leads Summary */}
+        <Card className="col-span-3 col-start-1 bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg rounded-2xl">
+          <CardHeader className="px-6">
+            <div className="flex items-center gap-5">
+              <CardTitle className="flex items-center gap-3 text-xl font-semibold text-purple-900">
+                <Users className="h-6 w-6 text-purple-600" />
+                Leads Summary
+              </CardTitle>
+              <Tabs defaultValue="numbers">
+                <TabsList>
+                  <TabsTrigger
+                    value="numbers"
+                    className="text-xs"
+                    onClick={() => setAllLeadsTab('numbers')}
+                  >
+                    Numbers
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="percentage"
+                    className="text-xs"
+                    onClick={() => setAllLeadsTab('percentage')}
+                  >
+                    Percentage
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
           </CardHeader>
-          <CardContent className="">
-            <div className="rounded-lg overflow-auto  border border-gray-100">
+          <CardContent>
+            <div className="rounded-lg overflow-auto border border-gray-100">
               {allLeads.length !== 0 ? (
-                <Table>
-                  <TableHeader className="bg-purple-50/50">
-                    <TableRow className="hover:bg-purple-50/50">
-                      <TableHead className="w-[150px] text-purple-900 font-semibold py-4">
-                        <button
-                          onClick={() => requestSort('source', 'allLeads')}
-                          className="flex items-center w-full hover:text-purple-700 cursor-pointer"
-                        >
-                          Source {getSortIcon('source', allLeadsSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-purple-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('totalLeads', 'allLeads')}
-                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
-                        >
-                          Total {getSortIcon('totalLeads', allLeadsSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-purple-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('activeLeads', 'allLeads')}
-                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
-                        >
-                          Active {getSortIcon('activeLeads', allLeadsSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-purple-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('neutralLeads', 'allLeads')}
-                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
-                        >
-                          Neutral {getSortIcon('neutralLeads', allLeadsSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-purple-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('didNotPickLeads', 'allLeads')}
-                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
-                        >
-                          No Pickup {getSortIcon('didNotPickLeads', allLeadsSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-purple-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('others', 'allLeads')}
-                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
-                        >
-                          Others {getSortIcon('others', allLeadsSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-purple-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('footFall', 'allLeads')}
-                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
-                        >
-                          Footfall {getSortIcon('footFall', allLeadsSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-purple-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('totalAdmissions', 'allLeads')}
-                          className="flex items-center justify-center w-full hover:text-purple-700 cursor-pointer"
-                        >
-                          Admissions {getSortIcon('totalAdmissions', allLeadsSortConfig)}
-                        </button>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedAllLeads.map((lead: LeadData) => (
-                      <TableRow
-                        key={lead.source}
-                        className="border-b border-gray-100 hover:bg-purple-50/30 transition-colors"
-                      >
-                        <TableCell className="font-medium flex items-center gap-3 py-4">
-                          {lead.source === 'online' ? (
-                            <Smartphone className="h-5 w-5 text-blue-500" />
-                          ) : lead.source === 'offline' ? (
-                            <Home className="h-5 w-5 text-amber-500" />
-                          ) : (
-                            <PlusCircle className="h-5 w-5 text-gray-500" />
-                          )}
-                          <span className="text-gray-800">
-                            {lead.source.charAt(0).toUpperCase() + lead.source.slice(1)}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {lead.data.totalLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {lead.data.activeLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {lead.data.neutralLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {lead.data.didNotPickLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {lead.data.others ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {lead.data.footFall ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {lead.data.totalAdmissions ?? '--'}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow className="bg-purple-50/50 font-semibold hover:bg-purple-50/50">
-                      <TableCell className="text-purple-900 font-semibold py-4">Total</TableCell>
-                      <TableCell className="text-center font-bold text-gray-800">
-                        {getTotal('totalLeads')}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {getTotal('activeLeads')}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {getTotal('neutralLeads')}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {getTotal('didNotPickLeads')}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">{getTotal('others')}</TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {getTotal('footFall')}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {getTotal('totalAdmissions')}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                renderTable(
+                  sortedAllLeads,
+                  allLeadsSortConfig,
+                  'allLeads',
+                  allLeadsTab === 'percentage',
+                  getTotal,
+                  'purple'
+                )
               ) : (
                 <div className="w-full">
                   <NoDataPreview />
@@ -302,171 +417,45 @@ export function LeadTables() {
           </CardContent>
         </Card>
 
-        <Card className=" col-start-1 col-span-3 bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg rounded-2xl ">
-          <CardHeader className=" px-6 ">
-            <CardTitle className="flex items-center gap-3 text-xl font-semibold text-blue-900">
-              <Globe className="h-6 w-6 text-blue-500" />
-              Online Data
-            </CardTitle>
+        {/* Online Data */}
+        <Card className="col-start-1 col-span-3 bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg rounded-2xl">
+          <CardHeader className="px-6">
+            <div className="flex items-center gap-5">
+              <CardTitle className="flex items-center gap-3 text-xl font-semibold text-blue-900">
+                <Globe className="h-6 w-6 text-blue-500" />
+                Online Data
+              </CardTitle>
+              <Tabs defaultValue="numbers">
+                <TabsList>
+                  <TabsTrigger
+                    value="numbers"
+                    className="text-xs"
+                    onClick={() => setOnlineTab('numbers')}
+                  >
+                    Numbers
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="percentage"
+                    className="text-xs"
+                    onClick={() => setOnlineTab('percentage')}
+                  >
+                    Percentage
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
           </CardHeader>
-          <CardContent className="">
-            <div className="overflow-auto rounded-lg  border border-gray-100">
+          <CardContent>
+            <div className="overflow-auto rounded-lg border border-gray-100">
               {onlineData.length !== 0 ? (
-                <Table>
-                  <TableHeader className="bg-blue-50/50">
-                    <TableRow className="hover:bg-blue-50/50">
-                      <TableHead className="w-[200px] text-blue-900 font-semibold py-4">
-                        <button
-                          onClick={() => requestSort('source', 'online')}
-                          className="flex items-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Channel {getSortIcon('source', onlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('totalLeads', 'online')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Total {getSortIcon('totalLeads', onlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('activeLeads', 'online')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Active {getSortIcon('activeLeads', onlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('neutralLeads', 'online')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Neutral {getSortIcon('neutralLeads', onlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('didNotPickLeads', 'online')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          No Pickup {getSortIcon('didNotPickLeads', onlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('others', 'online')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Others {getSortIcon('others', onlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('footFall', 'online')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Footfall {getSortIcon('footFall', onlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('totalAdmissions', 'online')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Admissions {getSortIcon('totalAdmissions', onlineSortConfig)}
-                        </button>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedOnlineData.map((item: LeadData) => (
-                      <TableRow
-                        key={item.source}
-                        className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors"
-                      >
-                        <TableCell className="font-medium flex items-center gap-3 py-4">
-                          {item.source.includes('Google') ? (
-                            <Globe className="h-5 w-5 text-blue-400" />
-                          ) : item.source.includes('Website') ? (
-                            <Laptop className="h-5 w-5 text-indigo-400" />
-                          ) : (
-                            <PlusCircle className="h-5 w-5 text-gray-400" />
-                          )}
-                          <span className="text-gray-800">{item.source.split('- ')[1]}</span>
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.totalLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.activeLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.neutralLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.didNotPickLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.others ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.footFall ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.totalAdmissions ?? '--'}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow className="bg-blue-50/50 font-semibold hover:bg-blue-50/50">
-                      <TableCell className="text-blue-900 font-semibold py-4">Total</TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {onlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.totalLeads ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {onlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.activeLeads ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {onlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.neutralLeads ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {onlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.didNotPickLeads ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {onlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.others ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {onlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.footFall ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {onlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.totalAdmissions ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                renderTable(
+                  sortedOnlineData,
+                  onlineSortConfig,
+                  'online',
+                  onlineTab === 'percentage',
+                  getOnlineTotal,
+                  'blue'
+                )
               ) : (
                 <div className="w-full">
                   <NoDataPreview />
@@ -476,171 +465,45 @@ export function LeadTables() {
           </CardContent>
         </Card>
 
-        <Card className="col-start-1 col-span-3  bg-gradient-to-br from-white to-gray-50 border  border-gray-100 shadow-lg rounded-2xl">
-          <CardHeader className="px-6 ">
-            <CardTitle className="flex items-center gap-3 text-xl font-semibold text-blue-900">
-              <Home className="h-6 w-6 text-blue-500" />
-              Offline Data
-            </CardTitle>
+        {/* Offline Data */}
+        <Card className="col-start-1 col-span-3 bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-lg rounded-2xl">
+          <CardHeader className="px-6">
+            <div className="flex items-center gap-5">
+              <CardTitle className="flex items-center gap-3 text-xl font-semibold text-blue-900">
+                <Home className="h-6 w-6 text-blue-500" />
+                Offline Data
+              </CardTitle>
+              <Tabs defaultValue="numbers">
+                <TabsList>
+                  <TabsTrigger
+                    value="numbers"
+                    className="text-xs"
+                    onClick={() => setOfflineTab('numbers')}
+                  >
+                    Numbers
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="percentage"
+                    className="text-xs"
+                    onClick={() => setOfflineTab('percentage')}
+                  >
+                    Percentage
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
           </CardHeader>
-          <CardContent className="">
+          <CardContent>
             <div className="rounded-lg border overflow-auto border-gray-100">
               {offlineData.length !== 0 ? (
-                <Table>
-                  <TableHeader className="bg-blue-50/50">
-                    <TableRow className="hover:bg-blue-50/50">
-                      <TableHead className="w-[200px] text-blue-900 font-semibold py-4">
-                        <button
-                          onClick={() => requestSort('source', 'offline')}
-                          className="flex items-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Source {getSortIcon('source', offlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('totalLeads', 'offline')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Total {getSortIcon('totalLeads', offlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('activeLeads', 'offline')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Active {getSortIcon('activeLeads', offlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('neutralLeads', 'offline')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Neutral {getSortIcon('neutralLeads', offlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('didNotPickLeads', 'offline')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Did Not Pick {getSortIcon('didNotPickLeads', offlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('others', 'offline')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Others {getSortIcon('others', offlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('footFall', 'offline')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Footfall {getSortIcon('footFall', offlineSortConfig)}
-                        </button>
-                      </TableHead>
-                      <TableHead className="text-center text-blue-900 font-semibold">
-                        <button
-                          onClick={() => requestSort('totalAdmissions', 'offline')}
-                          className="flex items-center justify-center w-full hover:text-blue-700 cursor-pointer"
-                        >
-                          Admissions {getSortIcon('totalAdmissions', offlineSortConfig)}
-                        </button>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedOfflineData.map((item: LeadData) => (
-                      <TableRow
-                        key={item.source}
-                        className="border-b border-gray-100 hover:bg-amber-50/30 transition-colors"
-                      >
-                        <TableCell className="font-medium flex items-center gap-3 py-4">
-                          {item.source === 'Student Reference' ? (
-                            <UserCheck className="h-5 w-5 text-amber-500" />
-                          ) : item.source === 'Technoligence' ? (
-                            <Cpu className="h-5 w-5 text-teal-500" />
-                          ) : (
-                            <PlusCircle className="h-5 w-5 text-gray-500" />
-                          )}
-                          <span className="text-gray-800">{item.source}</span>
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.totalLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.activeLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.neutralLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.didNotPickLeads ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.others ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.footFall ?? '--'}
-                        </TableCell>
-                        <TableCell className="text-center font-medium ">
-                          {item.data.totalAdmissions ?? '--'}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                    <TableRow className="bg-blue-50/50 font-semibold hover:bg-blue-50/50">
-                      <TableCell className="text-blue-900 font-semibold py-4">Total</TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {offlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.totalLeads ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {offlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.activeLeads ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {offlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.neutralLeads ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {offlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.didNotPickLeads ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {offlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.others ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {offlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.footFall ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                      <TableCell className="text-center font-bold ">
-                        {offlineData.reduce(
-                          (sum: number, item: LeadData) => sum + (item.data.totalAdmissions ?? 0),
-                          0
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                renderTable(
+                  sortedOfflineData,
+                  offlineSortConfig,
+                  'offline',
+                  offlineTab === 'percentage',
+                  getOfflineTotal,
+                  'blue'
+                )
               ) : (
                 <div className="w-full">
                   <NoDataPreview />
