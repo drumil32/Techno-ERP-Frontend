@@ -103,7 +103,8 @@ export default function CourseDuesDetails() {
   const courseDuesQuery = useQuery<CourseDues[], Error>({
     queryKey: ['courseDues', queryParams],
     queryFn: (context) => fetchCourseDues(context as QueryFunctionContext<readonly [string, any]>),
-    placeholderData: (previousData) => previousData
+    placeholderData: (previousData) => previousData,
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
