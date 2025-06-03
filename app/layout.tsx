@@ -69,7 +69,7 @@ export default function RootLayout({
         <DevBadge />
         <Suspense>
           <ProgressBar />
-          <h2 className="">This is head</h2>
+          <h2 className=""></h2>
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
           <NavigationEvents />
           <Toaster richColors theme="light" position="top-center" />
