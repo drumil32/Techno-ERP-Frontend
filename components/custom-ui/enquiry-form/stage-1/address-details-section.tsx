@@ -186,11 +186,13 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                           <SelectValue placeholder="Select the state" />
                         </SelectTrigger>
                         <SelectContent>
-                          {Object.values(StatesOfIndia).map((state) => (
-                            <SelectItem key={state} value={state}>
-                              {state}
-                            </SelectItem>
-                          ))}
+                          {Object.values(StatesOfIndia)
+                            .sort((a, b) => a.localeCompare(b))
+                            .map((state) => (
+                              <SelectItem key={state} value={state}>
+                                {state}
+                              </SelectItem>
+                            ))}
                         </SelectContent>
                       </Select>
                     </FormControl>

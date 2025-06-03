@@ -163,16 +163,16 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
           variant="ghost"
           size="sm"
           className={cn(
-            'h-8  hover:bg-primary/10 hover:text-primary',
+            'h-8  hover:bg-primary/10 hover:text-primary font-semibold',
             selectedDate ? 'border border-primary text-primary' : 'text-primary border border-none'
           )}
         >
           <span>Next Due Date</span>
-          {selectedDate ?
-          <CalendarIcon className="h-4 w-4 mr-2 text-primary" />
-            :
-          <CalendarIcon className="h-4 w-4 mr-2 text-primary/50" />
-          }
+          {selectedDate ? (
+            <CalendarIcon className="h-4 w-4 mr-2 text-primary" />
+          ) : (
+            <CalendarIcon className="h-4 w-4 mr-2 text-primary/50" />
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className=" mx-auto w-auto p-0" align="center">
@@ -421,9 +421,9 @@ export default function TechnoDataTable({
                     return (
                       <TableHead
                         key={header.id}
-                        className={clsx('text-[#5B31D1] font-semibold h-10', {
+                        className={clsx('text-[#5B31D1] font-semibold h-10 items-center', {
                           'text-left': align === 'left',
-                          'text-center': !align || align === 'center',
+                          'text-center': align === 'center',
                           'text-right': align === 'right',
                           'rounded-l-[5px]': index === 0,
                           'rounded-r-[5px]': index === headerGroup.headers.length - 1
@@ -432,9 +432,9 @@ export default function TechnoDataTable({
                       >
                         <div
                           className={clsx('w-full overflow-hidden flex items-center', {
-                            'text-left': align === 'left',
-                            'text-center': align === 'center',
-                            'text-right': align === 'right'
+                            'justify-start': align === 'left',
+                            'justify-center': align === 'center',
+                            'justify-end': align === 'right'
                           })}
                         >
                           {isDateSortable && (

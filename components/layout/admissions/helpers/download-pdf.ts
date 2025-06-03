@@ -308,20 +308,20 @@ export const downloadAdmissionForm = async (
 
 <p style="font-size: 12px; font-weight: 600; margin-top: 10px; margin-bottom: 8px;">Confirmed by Student/Guardian (Via
     OTP):</p>
-<div style="font-size: 12px; display: flex; justify-content: space-between; width: 100%; align-items: baseline">
-    <div style="display: flex; align-items: baseline; gap: 5px; width: calc(50% - 10px);">
-        <p style="font-size: 14px; line-height: 1; vertical-align: center;">🗹</p>
-        <p style="color: #666666; font-weight: 400; flex-shrink: 0;">Email ID :</p>
-        <p
-            style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.emailId ?? '--')}</p>
+    <div style="font-size: 12px; display: flex; justify-content: space-between; width: 100%; align-items: baseline">
+        <div style="display: flex; align-items: baseline; gap: 5px; width: calc(50% - 10px);">
+            <p style="font-size: 14px; line-height: 1; vertical-align: center;">🗹</p>
+            <p style="color: #666666; font-weight: 400; flex-shrink: 0;">Email ID :</p>
+            <p
+                style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.emailId ?? '--')}</p>
+        </div>
+        <div style="display: flex; align-items: baseline; gap: 5px; width: calc(50% - 10px);">
+            <p style="font-size: 16px; line-height: 1; vertical-align: center;">□</p>
+            <p style="color: #666666; font-weight: 400; flex-shrink: 0;">Phone Number :</p>
+            <p
+                style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.studentPhoneNumber ?? '--')}</p>
+        </div>
     </div>
-    <div style="display: flex; align-items: baseline; gap: 5px; width: calc(50% - 10px);">
-        <p style="font-size: 16px; line-height: 1; vertical-align: middle; margin-top:-2px;">□</p>
-        <p style="color: #666666; font-weight: 400; flex-shrink: 0;">Phone Number :</p>
-        <p
-            style="font-weight: normal; white-space: nowrap;">${escapeHtml(data.studentPhoneNumber ?? '--')}</p>
-    </div>
-</div>
 
 <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
     <p style="font-size: 12px; color: #333333; margin: 0;">Date: ____________________</p>
