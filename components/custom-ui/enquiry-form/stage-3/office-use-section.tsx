@@ -55,10 +55,13 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
       }
     ]
   });
-  const telecallers = Array.isArray(results[0].data) ? results[0].data : [];
+  const telecallers: { _id: string; name: string }[] = Array.isArray(results[0].data)
+  ? results[0].data.map((name: string) => ({ _id: name, name }))
+  : [];
 
-  const counsellors = Array.isArray(results[1].data) ? results[1].data : [];
-
+const counsellors: { _id: string; name: string }[] = Array.isArray(results[1].data)
+  ? results[1].data.map((name: string) => ({ _id: name, name }))
+  : [];
   return (
     <>
       <Accordion
