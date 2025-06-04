@@ -65,8 +65,13 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
     ]
   });
 
-  const telecallers: UserRoleInterface[] = Array.isArray(results[0].data) ? results[0].data : [];
-  const counsellors: UserRoleInterface[] = Array.isArray(results[1].data) ? results[1].data : [];
+  const telecallers: { _id: string; name: string }[] = Array.isArray(results[0].data)
+    ? results[0].data.map((name: string) => ({ _id: name, name }))
+    : [];
+
+  const counsellors: { _id: string; name: string }[] = Array.isArray(results[1].data)
+    ? results[1].data.map((name: string) => ({ _id: name, name }))
+    : [];
 
   useEffect(() => {
     console.log('Telecallers:', telecallers);
