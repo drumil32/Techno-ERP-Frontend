@@ -27,7 +27,22 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'Techno ERP',
-  description: 'Enterprise-Resource-Planning for Techno'
+  description: 'Enterprise-Resource-Planning for Techno',
+  openGraph: {
+    title: 'Techno ERP',
+    description: 'Enterprise-Resource-Planning for Techno',
+    url: 'https://techno.sprintup.in',
+    siteName: 'Techno ERP',
+    images: [
+      {
+        url: 'https://nextjs.org/og.png',
+        width: 800,
+        height: 600
+      }
+    ],
+    locale: 'en_US',
+    type: 'website'
+  }
 };
 
 export default function RootLayout({

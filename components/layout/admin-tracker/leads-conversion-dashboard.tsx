@@ -130,7 +130,7 @@ export const LeadConversionDashboard = ({
         textAnchor="middle"
         dominantBaseline="central"
       >
-        {`${value}`}
+        {`${Intl.NumberFormat().format(value)}`}
       </text>
     );
   };
@@ -189,7 +189,9 @@ export const LeadConversionDashboard = ({
                 <TableRow key={row.id} className="border-t hover:bg-gray-400/20">
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="py-3 mx-auto text-center">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {cell.column.columnDef.header === 'No. of Leads'
+                        ? new Intl.NumberFormat().format(Number(cell.getValue()))
+                        : flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>

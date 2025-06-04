@@ -100,7 +100,7 @@ export function LeadTables() {
     if (showPercentage && totalValue) {
       return calculatePercentage(value, totalValue);
     }
-    return value.toString();
+    return Intl.NumberFormat().format(Number(value.toString()));
   };
 
   const sortData = (data: LeadData[], sortConfig: SortConfig): LeadData[] => {
@@ -334,7 +334,7 @@ export function LeadTables() {
               Total
             </TableCell>
             <TableCell className="text-center font-bold text-gray-800">
-              {getTotalFn('totalLeads')}
+              {Intl.NumberFormat().format(Number(getTotalFn('totalLeads')))}
             </TableCell>
             <TableCell className="text-center font-bold">
               {formatValue(getTotalFn('activeLeads'), showPercentage, totalLeadsValue)}
