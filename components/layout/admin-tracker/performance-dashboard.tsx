@@ -569,23 +569,23 @@ export function PerformanceDashboard() {
                               </div>
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
-                              {member.totalCalls ?? '--'}
+                              {Intl.NumberFormat().format(Number(member.totalCalls)) ?? '--'}
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
-                              {member.newLeadCalls ?? '--'}
+                              {Intl.NumberFormat().format(member.newLeadCalls) ?? '--'}
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
-                              {member.activeLeadCalls ?? '--'}
+                              {Intl.NumberFormat().format(member.activeLeadCalls) ?? '--'}
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
-                              {member.nonActiveLeadCalls ?? '--'}
+                              {Intl.NumberFormat().format(member.nonActiveLeadCalls) ?? '--'}
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
-                              {member.totalFootFall ?? '--'}
+                              {Intl.NumberFormat().format(member.totalFootFall) ?? '--'}
                             </TableCell>
                             <TableCell className="text-center w-[100px]">
                               <Badge variant="secondary" className="px-2">
-                                {member.totalAdmissions ?? '--'}
+                                {Intl.NumberFormat().format(member.totalAdmissions) ?? '--'}
                               </Badge>
                             </TableCell>
                             <TableCell className="w-[300px] px-4">
@@ -607,23 +607,23 @@ export function PerformanceDashboard() {
                         <TableRow className="font-bold bg-primary/10 hover:bg-primary/10 backdrop-blur-3xl">
                           <TableCell className="w-[150px]">Team Total</TableCell>
                           <TableCell className="text-center w-[100px]">
-                            {totals.totalCalls ?? '--'}
+                            {Intl.NumberFormat().format(totals.totalCalls) ?? '--'}
                           </TableCell>
                           <TableCell className="text-center w-[100px]">
-                            {totals.newLeadCalls ?? '--'}
+                            {Intl.NumberFormat().format(totals.newLeadCalls) ?? '--'}
                           </TableCell>
                           <TableCell className="text-center w-[100px]">
-                            {totals.activeLeadCalls ?? '--'}
+                            {Intl.NumberFormat().format(totals.activeLeadCalls) ?? '--'}
                           </TableCell>
                           <TableCell className="text-center w-[100px]">
-                            {totals.nonActiveLeadCalls ?? '--'}
+                            {Intl.NumberFormat().format(totals.nonActiveLeadCalls) ?? '--'}
                           </TableCell>
                           <TableCell className="text-center w-[100px]">
-                            {totals.totalFootFall ?? '--'}
+                            {Intl.NumberFormat().format(totals.totalFootFall) ?? '--'}
                           </TableCell>
                           <TableCell className="text-center w-[100px]">
                             <Badge variant="default" className="px-2">
-                              {totals.totalAdmissions ?? '--'}
+                              {Intl.NumberFormat().format(totals.totalAdmissions) ?? '--'}
                             </Badge>
                           </TableCell>
                           <TableCell className="w-[300px]"></TableCell>

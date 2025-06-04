@@ -51,8 +51,8 @@ export const API_ENDPOINTS = {
   updateEnquiryStatus: `${API_DOMAIN}/admission/enquiry/update-status`,
 
   // Dropdowns
-  fetchTeleCallersDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=EMPLOYEE_MARKETING&moduleName=ADMISSION`,
-  fetchCounsellorsDropdown: `${API_DOMAIN}/user/fetch-dropdown?role=COUNSELOR&moduleName=ADMISSION`,
+  fetchTeleCallersDropdown: `${API_DOMAIN}/dropdown/TELECALLER`,
+  fetchCounsellorsDropdown: `${API_DOMAIN}/dropdown/COUNSELLOR`,
   fetchMarketingSourcesDropdown: `${API_DOMAIN}/dropdown/${DropDownType.MARKETING_SOURCE}`,
   fetchCityDropdown: `${API_DOMAIN}/dropdown/${DropDownType.MARKETING_CITY}`,
   fetchFixCityDropdown: `${API_DOMAIN}/dropdown/${DropDownType.FIX_MARKETING_CITY}`,

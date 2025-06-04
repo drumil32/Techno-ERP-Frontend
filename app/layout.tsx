@@ -29,28 +29,15 @@ export const metadata: Metadata = {
   title: 'Techno ERP',
   description:
     'A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges. We empower institutions to streamline admissions, enhance academic quality, optimize faculty workload, and maintain data seamlessly — all in one integrated platform.',
+  metadataBase: new URL('https://techno.sprintup.in'),
   openGraph: {
     title: 'Techno ERP',
     description:
       'A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges.',
-    url: 'https://techno.sprintup.in', // Replace with your actual domain
-    siteName: 'Techno ERP',
-    images: [
-      {
-        url: 'https://techno.sprintup.in/favicon.ico', // Replace with your image URL
-        width: 1200,
-        height: 630,
-        alt: 'Techno ERP Preview'
-      }
-    ],
+    images: '/og-image.png',
+    url: 'https://example.com',
+    locale: 'en_US',
     type: 'website'
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Techno ERP',
-    description:
-      'A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges.',
-    images: ['https://techno.sprintup.in/favicon.ico'] // Same image for Twitter
   }
 };
 
