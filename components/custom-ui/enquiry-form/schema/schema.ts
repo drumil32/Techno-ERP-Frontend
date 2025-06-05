@@ -203,7 +203,7 @@ export const enquirySchema = z.object({
   entranceExamDetails: entranceExamDetailSchema.optional(),
   admittedBy: z.union([z.string(), z.enum(['other'])]).optional(),
   isFeeApplicable: z.boolean().default(true).optional(),
-  srAmount: z.number().min(0, '')
+  srAmount: z.number().min(0)
 });
 
 export enum Qualification {

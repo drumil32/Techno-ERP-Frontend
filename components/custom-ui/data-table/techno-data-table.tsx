@@ -537,7 +537,7 @@ export default function TechnoDataTable({
                               {cell.column.id === 'id' ? (
                                 <div className="flex items-center justify-start gap-1">
                                   <span>{row.index + 1}</span>
-                                  {data[row.index]?.isOlderThan7Days && (
+                                  {data[row.index]?.isOlderThan7Days == false && (
                                     <span className="text-green-500 ml-1 t" title="Older than 7 days">
                                       ✔
                                     </span>

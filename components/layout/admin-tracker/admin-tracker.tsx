@@ -25,6 +25,8 @@ import { LeadTables } from './analytics-tables';
 import { PerformanceDashboard } from './performance-dashboard';
 import { Card } from '@/components/ui/card';
 import AdminTrackerCardGroup, { CardItem } from './admin-tracker-cards-group';
+import { useSidebarContext } from '@/components/custom-ui/sidebar/sidebar-context';
+import { SIDEBAR_ITEMS } from '@/common/constants/sidebarItems';
 // import { FilterData } from '@/components/custom-ui/student-repository/helpers/interface';
 
 const AdminTracker = () => {
@@ -35,6 +37,11 @@ const AdminTracker = () => {
   const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
   const authStore = useAuthStore();
   const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING);
+  const {setSidebarActiveItem} = useSidebarContext();
+
+  useEffect(() => {
+    setSidebarActiveItem(SIDEBAR_ITEMS.MARKETING)
+  }, [])
 
   const getQueryParams = () => {
     const params: { [key: string]: any } = {
@@ -96,20 +103,20 @@ const AdminTracker = () => {
       },
       ...(isRoleLeadMarketing
         ? [
-            {
-              filterKey: 'assignedTo',
-              label: 'Assigned To',
-              placeholder: 'person',
-              options: assignedToDropdownData.map((item: any) => {
-                return {
-                  label: item.name,
-                  id: item._id
-                };
-              }),
-              hasSearch: true,
-              multiSelect: true
-            }
-          ]
+          {
+            filterKey: 'assignedTo',
+            label: 'Assigned To',
+            placeholder: 'person',
+            options: assignedToDropdownData.map((item: any) => {
+              return {
+                label: item.name,
+                id: item._id
+              };
+            }),
+            hasSearch: true,
+            multiSelect: true
+          }
+        ]
         : [])
     ];
   };

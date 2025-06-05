@@ -32,6 +32,9 @@ export function DayWiseTrend({
   headingFooter?: string;
 }) {
   const isEmpty = chartData.length === 0;
+  const max = Math.max(...chartData.map(d => d.admissions));
+  const ticks = Array.from({ length: max + 1 }, (_, i) => i);
+
 
   return (
     <Card className="w-full bg-gradient-to-br border border-gray-100 shadow-lg rounded-2xl">
@@ -87,6 +90,7 @@ export function DayWiseTrend({
                   style={{ fontSize: 12 }}
                   stroke="#374151"
                   strokeWidth={1.5}
+                  ticks={ticks}
                 />
                 <ChartTooltip
                   cursor={{ fill: 'transparent' }}

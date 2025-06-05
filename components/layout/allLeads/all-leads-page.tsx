@@ -83,6 +83,7 @@ export default function AllLeadsPage() {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const authStore = useAuthStore();
   const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING);
+  const [ticks, setTicks] = useState<boolean[]>([])
 
   const handleSortChange = (column: string, order: string) => {
     if (column === 'nextDueDateView') {

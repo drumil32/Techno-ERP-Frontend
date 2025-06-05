@@ -186,7 +186,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                 render={({ field: formField }) => (
                   <FormItem className={`${commonFormItemClass} `}>
                     <FormLabel className="font-inter font-semibold text-[14px] text-primary">
-                      Sr amount
+                      SR Amount
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -196,9 +196,10 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                         onChange={(e) => {
                           const value = e.target.value;
                           if (/^[0-9]*$/.test(value)) {
-                            formField.onChange(value === '' ? null : Number(value));
+                            formField.onChange(value === '' ? 0 : Number(value));
                           }
                         }}
+                        defaultValue={0}
                       />
                     </FormControl>
                     <div className="h-[20px]">
