@@ -78,10 +78,11 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   );
 
   useEffect(() => {
-    console.log('Telecallers:', telecallers);
-    console.log('Counsellors:', counsellors);
-    console.log('Form Values:', form.getValues());
-    console.log('Form Errors:', form.formState.errors);
+    // console.log('Telecallers:', telecallers);
+    // console.log('Counsellors:', counsellors);
+    // console.log('Form Values:', form.getValues());
+    // console.log('Form Errors:', form.formState.errors);
+    // console.log("api is not calling")
   }, [form]);
 
   return (

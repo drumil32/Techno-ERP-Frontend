@@ -101,7 +101,8 @@ export const frontendFeesDraftValidationSchema = z
     counsellor: z.array(z.string()).optional(),
     telecaller: z.array(z.string()).optional(),
     remarks: z.string().optional().nullable(),
-    isFeeApplicable: z.boolean().default(false).optional()
+    isFeeApplicable: z.boolean().default(false).optional(),
+    references : z.array(z.string()).optional()
   })
   .partial();
 

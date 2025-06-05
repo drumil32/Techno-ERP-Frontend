@@ -191,10 +191,11 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       setNestedErrors(validationResult.error.format());
 
       return false;
-      throw new Error('Validation failed');
+      // throw new Error('Validation failed');
     }
 
     const { confirmation, id, _id, ...rest } = filteredValues;
+    console.log("before updating ", confirmation, rest)
 
     try {
       if (!_id) {
@@ -207,6 +208,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         sessionStorage.setItem('draftSaved', 'true');
         router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_1(response._id));
       } else {
+        console.log("go to update data ", rest)
         const response = await updateEnquiryDraft({ ...rest, id: _id });
         if (!response) {
           toast.error('Failed to update enquiry draft');

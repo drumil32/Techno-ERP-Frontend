@@ -42,10 +42,10 @@ export const validateCustomFeeLogic = (
   clearErrors: UseFormClearErrors<IFeesRequestSchema>
 ): boolean => {
   let isOverallValid = true;
-  console.log('--- Starting fee validation ---');
-  console.log('Form values:', values);
-  console.log('Other fees base data:', otherFeesDataBase);
-  console.log('Semester fees base data:', semWiseFeesDataBase);
+  // console.log('--- Starting fee validation ---');
+  // console.log('Form values:', values);
+  // console.log('Other fees base data:', otherFeesDataBase);
+  // console.log('Semester fees base data:', semWiseFeesDataBase);
 
   // --- Validate Other Fees ---
   values.otherFees?.forEach((otherFee: any, index: any) => {
@@ -65,12 +65,12 @@ export const validateCustomFeeLogic = (
     const finalFee = otherFee.finalFee; // Already potentially undefined | number
     const feesDeposited = otherFee.feesDepositedTOA; // Already potentially undefined | number
 
-    console.log(`Validating Other Fee [${index}]:`, {
-      type: otherFee.type,
-      originalFeeAmount,
-      finalFee,
-      feesDeposited
-    });
+    // console.log(`Validating Other Fee [${index}]:`, {
+    //   type: otherFee.type,
+    //   originalFeeAmount,
+    //   finalFee,
+    //   feesDeposited
+    // });
 
     // Clear previous errors for these fields before re-validating
     clearErrors(finalFeeField);
@@ -84,9 +84,9 @@ export const validateCustomFeeLogic = (
       typeof originalFeeAmount === 'number' &&
       finalFee > originalFeeAmount
     ) {
-      console.log(
-        `Other Fee [${index}] validation failed: Final fee (${finalFee}) > Original fee (${originalFeeAmount})`
-      );
+      // console.log(
+      //   `Other Fee [${index}] validation failed: Final fee (${finalFee}) > Original fee (${originalFeeAmount})`
+      // );
       setError(finalFeeField, {
         type: 'manual_comparison'
         // message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`
@@ -101,9 +101,9 @@ export const validateCustomFeeLogic = (
     ) {
       if (typeof finalFee !== 'number' || isNaN(finalFee)) {
         // If deposit exists but final fee is invalid/missing
-        console.log(
-          `Other Fee [${index}] validation failed: Deposit exists (${feesDeposited}) but final fee is invalid (${finalFee})`
-        );
+        // console.log(
+        //   `Other Fee [${index}] validation failed: Deposit exists (${feesDeposited}) but final fee is invalid (${finalFee})`
+        // );
         setError(depositField, {
           type: 'manual_dependency'
           // message: `Final fee required`
@@ -111,9 +111,9 @@ export const validateCustomFeeLogic = (
         isOverallValid = false;
       } else if (feesDeposited > finalFee) {
         // If deposit exceeds final fee
-        console.log(
-          `Other Fee [${index}] validation failed: Deposit (${feesDeposited}) > Final fee (${finalFee})`
-        );
+        // console.log(
+        //   `Other Fee [${index}] validation failed: Deposit (${feesDeposited}) > Final fee (${finalFee})`
+        // );
         setError(depositField, {
           type: 'manual_comparison'
           // message: `Cannot exceed final fee (${formatCurrency(finalFee)})`
@@ -133,10 +133,10 @@ export const validateCustomFeeLogic = (
       const originalFeeAmount = originalSemFees[index];
       const finalFee = semFee.finalFee;
 
-      console.log(`Validating Semester Fee [${index}]:`, {
-        originalFeeAmount,
-        finalFee
-      });
+      // console.log(`Validating Semester Fee [${index}]:`, {
+      //   originalFeeAmount,
+      //   finalFee
+      // });
 
       // Clear previous error
       clearErrors(finalFeeField);
@@ -147,9 +147,9 @@ export const validateCustomFeeLogic = (
         typeof originalFeeAmount === 'number' && // Make sure original fee is also valid
         finalFee > originalFeeAmount
       ) {
-        console.log(
-          `Semester Fee [${index}] validation failed: Final fee (${finalFee}) > Original fee (${originalFeeAmount})`
-        );
+        // console.log(
+        //   `Semester Fee [${index}] validation failed: Final fee (${finalFee}) > Original fee (${originalFeeAmount})`
+        // );
         setError(finalFeeField, {
           type: 'manual_comparison'
           // message: `Cannot exceed original fee (${formatCurrency(originalFeeAmount)})`
@@ -159,7 +159,7 @@ export const validateCustomFeeLogic = (
     });
   }
 
-  console.log('--- Validation complete ---');
-  console.log('Overall validation status:', isOverallValid ? 'VALID' : 'INVALID');
+  // console.log('--- Validation complete ---');
+  // console.log('Overall validation status:', isOverallValid ? 'VALID' : 'INVALID');
   return isOverallValid;
 };

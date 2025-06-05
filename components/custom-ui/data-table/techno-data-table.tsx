@@ -221,8 +221,11 @@ export default function TechnoDataTable({
   onDateFilter,
   children
 }: any) {
-  
+
   const [globalFilter, setGlobalFilter] = useState<string>('');
+  const [columnVisibility, setColumnVisibility] = useState({
+    altPhoneNumber: false
+  });
   const [pageSize, setPageSize] = useState<number>(pageLimit);
   const { hasRole } = useAuthStore();
 
@@ -258,7 +261,8 @@ export default function TechnoDataTable({
     if (onSearch) onSearch(value);
   };
 
-  const table = useReactTable({
+
+  let table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -266,18 +270,20 @@ export default function TechnoDataTable({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     state: {
+      
       globalFilter,
       pagination: {
         pageIndex: currentPage - 1,
         pageSize: pageSize
-      }
+      },
+      columnVisibility
     },
     onGlobalFilterChange: setGlobalFilter,
     manualPagination: true,
-    pageCount: totalPages
+    pageCount: totalPages,
   });
-// console.log("data reached ", data);
-//   console.log("table datas ", table.getRowModel().rows)
+  // console.log("data reached ", data);
+  // console.log("table datas ", table.getRowModel().rows)
 
   const handleSort = (columnName: string) => {
     if (activeSortColumn === columnName) {
@@ -416,10 +422,10 @@ export default function TechnoDataTable({
                     // Style for fixed width columns
                     const widthStyle = fixedWidth
                       ? {
-                          width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                          minWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
-                          maxWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
-                        }
+                        width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                        minWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
+                        maxWidth: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
+                      }
                       : {};
 
                     return (
@@ -489,6 +495,7 @@ export default function TechnoDataTable({
             <TableBody className="[&_tr]:h-[50px]">
               {table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row: any) => (
+
                   <TableRow
                     key={row.id}
                     className={`h-[39px] ${rowCursor ? 'cursor-pointer' : ''} ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
@@ -499,57 +506,59 @@ export default function TechnoDataTable({
                       }
                     }}
                   >
-                    {row.getVisibleCells().map((cell: any) => {
-                      const isExcluded = nonClickableColumns.includes(cell.column.id);
-                      const align = cell.column.columnDef.meta?.align || 'left';
-                      const cellValue = cell.getValue();
-                      const maxWidth = cell.column.columnDef.meta?.maxWidth;
-                      const fixedWidth = cell.column.columnDef.meta?.fixedWidth;
+                    {row.getVisibleCells()
 
-                      // Style for fixed width columns
-                      const widthStyle = fixedWidth
-                        ? {
+                      .map((cell: any) => {
+                        const isExcluded = nonClickableColumns.includes(cell.column.id);
+                        const align = cell.column.columnDef.meta?.align || 'left';
+                        const cellValue = cell.getValue();
+                        const maxWidth = cell.column.columnDef.meta?.maxWidth;
+                        const fixedWidth = cell.column.columnDef.meta?.fixedWidth;
+
+                        // Style for fixed width columns
+                        const widthStyle = fixedWidth
+                          ? {
                             width: typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
                             minWidth:
                               typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth,
                             maxWidth:
                               typeof fixedWidth === 'number' ? `${fixedWidth}px` : fixedWidth
                           }
-                        : {};
+                          : {};
 
-                      return (
-                        <TableCell
-                          key={cell.id}
-                          className={clsx('h-[39px] py-2', {
-                            'text-left': align === 'left',
-                            'text-center': cellValue === 'N/A' || align === 'center',
-                            'text-right': align === 'right'
-                          })}
-                          style={widthStyle}
-                          onClick={(e) => isExcluded && e.stopPropagation()}
-                        >
-                          <div
-                            className={clsx('w-full overflow-hidden', {
+                        return (
+                          <TableCell
+                            key={cell.id}
+                            className={clsx('h-[39px] py-2', {
                               'text-left': align === 'left',
-                              'text-center': align === 'center',
+                              'text-center': cellValue === 'N/A' || align === 'center',
                               'text-right': align === 'right'
                             })}
+                            style={widthStyle}
+                            onClick={(e) => isExcluded && e.stopPropagation()}
                           >
-                            {cell.column.id === 'id' ? (
-                              <TruncatedCell
-                                value={cellValue + pageSize * (currentPage - 1)}
-                                maxWidth={maxWidth}
-                              />
-                            ) : (
-                              <TruncatedCell
-                                value={flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                maxWidth={maxWidth}
-                              />
-                            )}
-                          </div>
-                        </TableCell>
-                      );
-                    })}
+                            <div
+                              className={clsx('w-full overflow-hidden', {
+                                'text-left': align === 'left',
+                                'text-center': align === 'center',
+                                'text-right': align === 'right'
+                              })}
+                            >
+                              {cell.column.id === 'id' ? (
+                                <TruncatedCell
+                                  value={cellValue + pageSize * (currentPage - 1)}
+                                  maxWidth={maxWidth}
+                                />
+                              ) : (
+                                <TruncatedCell
+                                  value={flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                  maxWidth={maxWidth}
+                                />
+                              )}
+                            </div>
+                          </TableCell>
+                        );
+                      })}
                   </TableRow>
                 ))
               ) : (

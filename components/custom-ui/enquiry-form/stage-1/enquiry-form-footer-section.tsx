@@ -86,7 +86,9 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
 
   async function handleDialogSaveDraft() {
     try {
+      console.log("before calling ")
       const result = await saveDraft();
+      console.log("after calling", result)
       setDraftSaved(result === true);
     } catch {
       setDraftSaved(false);

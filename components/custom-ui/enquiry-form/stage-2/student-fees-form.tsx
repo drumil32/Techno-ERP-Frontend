@@ -44,7 +44,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
-import { getCounsellors, getEnquiry, getTeleCallers } from '../stage-1/enquiry-form-api';
+import { getCounsellors, getEnquiry, getTeleCallers, updateEnquiryDraft } from '../stage-1/enquiry-form-api';
 import EnquiryFormFooter from '../stage-1/enquiry-form-footer-section';
 import FilledByCollegeSection from '../stage-1/filled-by-college-section';
 import ShowStudentData from './data-show';
@@ -301,7 +301,7 @@ export const StudentFeesForm = () => {
         initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
       }
 
-      console.log('enquiry Data is', enquiryData);
+      // console.log('enquiry Data is', enquiryData);
 
       form.reset({
         enquiryId: enquiry_id,
@@ -332,7 +332,7 @@ export const StudentFeesForm = () => {
         const isExcluded =
           fee.type === displayFeeMapper(FeeType.TRANSPORT) ||
           fee.type === displayFeeMapper(FeeType.HOSTEL);
-        console.log('otherfeesData', otherFeesData);
+        // console.log('otherfeesData', otherFeesData);
 
         if (isExcluded) {
           return sum;
@@ -541,6 +541,7 @@ export const StudentFeesForm = () => {
     form.clearErrors();
 
     const currentValues = form.getValues();
+    console.log("geting current values ", currentValues)
     const existingDraftId = enquiryData?.studentFeeDraft?._id;
 
     const isCustomValid = validateCustomFeeLogic(
@@ -558,6 +559,7 @@ export const StudentFeesForm = () => {
     }
 
     const validationResult = frontendFeesDraftValidationSchema.safeParse(currentValues);
+    console.log("validation result ", validationResult)
 
     if (!validationResult.success) {
       toast.error('Validation failed. Please check the fields.');
@@ -573,7 +575,7 @@ export const StudentFeesForm = () => {
 
     const validatedDataForCleaning = validationResult.data;
     const cleanedData = cleanDataForDraft(validatedDataForCleaning);
-
+    console.log("cleaned data ", cleanedData)
     try {
       if (draftExists && draftId) {
         const finalPayload = {
