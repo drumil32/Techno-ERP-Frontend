@@ -5,6 +5,7 @@ import {
   AccordionTrigger
 } from '@/components/ui/accordion';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -12,25 +13,13 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { UseFormReturn } from 'react-hook-form';
-import { Nationality, Qualification } from '../schema/schema';
 import {
-  AdmissionReference,
-  AreaType,
-  BloodGroup,
-  Category,
-  Religion,
-  StatesOfIndia
+  AdmissionReference
 } from '@/types/enum';
-import { MultiSelectDropdown, MultiSelectOption } from '../../multi-select/mutli-select';
 import { useQueries } from '@tanstack/react-query';
-import { getCounsellors, getTeleCallers } from '../stage-1/enquiry-form-api';
-import { useMemo } from 'react';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
+import { UseFormReturn } from 'react-hook-form';
 import { MultiSelectPopoverCheckbox } from '../../common/multi-select-popover-checkbox';
+import { getCounsellors, getTeleCallers } from '../stage-1/enquiry-form-api';
 interface OfficeUseSectionInterface {
   form: UseFormReturn<any>;
   commonFormItemClass: string;
@@ -56,36 +45,50 @@ const OfficeUseSection: React.FC<OfficeUseSectionInterface> = ({
     ]
   });
   const telecallers: { _id: string; name: string }[] = Array.isArray(results[0].data)
-  ? results[0].data.map((name: string) => ({ _id: name, name }))
-  : [];
+    ? results[0].data.map((name: string) => ({ _id: name, name }))
+    : [];
 
-const counsellors: { _id: string; name: string }[] = Array.isArray(results[1].data)
-  ? results[1].data.map((name: string) => ({ _id: name, name }))
-  : [];
+  const counsellors: { _id: string; name: string }[] = Array.isArray(results[1].data)
+    ? results[1].data.map((name: string) => ({ _id: name, name }))
+    : [];
+
+  const references: { _id: string; name: string }[] = Object.values(AdmissionReference).map(
+    (ref) => ({ _id: ref, name: ref })
+  );
+
   return (
-    <>
-      <Accordion
-        type="single"
-        collapsible
-        className="w-full space-y-4"
-        defaultValue="office-use-section"
-      >
-        <AccordionItem value="office-use-section" className="border-b-0">
-          <AccordionTrigger className="w-full items-center">
-            <h3 className="font-inter text-[16px] font-semibold"> To be filled by college </h3>
-            <hr className="flex-1 border-t border-[#DADADA] ml-2" />
-          </AccordionTrigger>
+    <Accordion
+      type="single"
+      collapsible
+      className="w-full space-y-4"
+      defaultValue="office-use-section"
+    >
+      <AccordionItem value="office-use-section" className="border-b-0">
+        <AccordionTrigger className="w-full items-center">
+          <h3 className="font-inter text-[16px] font-semibold"> To be filled by college </h3>
+          <hr className="flex-1 border-t border-[#DADADA] ml-2" />
+        </AccordionTrigger>
 
-          <AccordionContent className="p-6 bg-white rounded-[10px]">
-            <div className="w-full grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-x-8 gap-y-1">
-              <FormField
-                key="reference"
+        <AccordionContent className="p-6 bg-white rounded-[10px]">
+          <div className="w-full grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-x-8 gap-y-1">
+            <MultiSelectPopoverCheckbox
+              form={form}
+              name="references"
+              disabled={isViewable}
+              label="References"
+              options={references}
+              placeholder="Select References"
+              className={commonFormItemClass}
+            />
+            {/* intially it was just one reference field, but now it is multiple references field so that i have added above one and commented below one */}
+            {/* <FormField
+                key="references"
                 control={form.control}
-                name="reference"
+                name="references"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
-                      Reference
+                      References
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
@@ -95,7 +98,7 @@ const counsellors: { _id: string; name: string }[] = Array.isArray(results[1].da
                         value={field.value}
                       >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue className="text-[#9D9D9D]" placeholder="Select Reference" />
+                          <SelectValue className="text-[#9D9D9D]" placeholder="Select References" />
                         </SelectTrigger>
                         <SelectContent>
                           {Object.values(AdmissionReference).map((ref) => (
@@ -111,53 +114,52 @@ const counsellors: { _id: string; name: string }[] = Array.isArray(results[1].da
                     </div>
                   </FormItem>
                 )}
-              />
+              /> */}
 
-              <MultiSelectPopoverCheckbox
-                form={form}
-                name="counsellor"
-                label="Counsellor’s Name"
-                options={counsellors}
-                placeholder="Select Counsellor's Name"
-                className="col-span-1"
-              />
+            <MultiSelectPopoverCheckbox
+              form={form}
+              name="counsellor"
+              label="Counsellor’s Name"
+              options={counsellors}
+              placeholder="Select Counsellor's Name"
+              className="col-span-1"
+            />
 
-              <MultiSelectPopoverCheckbox
-                form={form}
-                name="telecaller"
-                label="Telecaller’s Name"
-                options={telecallers}
-                placeholder="Select Telecaller's Name"
-                className="col-span-1"
-              />
+            <MultiSelectPopoverCheckbox
+              form={form}
+              name="telecaller"
+              label="Telecaller’s Name"
+              options={telecallers}
+              placeholder="Select Telecaller's Name"
+              className="col-span-1"
+            />
 
-              <FormField
-                control={form.control}
-                name="remarks"
-                render={({ field }) => (
-                  <FormItem className="col-span-3">
-                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
-                      Remarks
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Optional"
-                        className="resize-none text-sm "
-                        value={field.value ?? ''}
-                      />
-                    </FormControl>
-                    <div className="h-5">
-                      <FormMessage className="text-xs" />
-                    </div>
-                  </FormItem>
-                )}
-              />
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-    </>
+            <FormField
+              control={form.control}
+              name="remarks"
+              render={({ field }) => (
+                <FormItem className="col-span-3">
+                  <FormLabel className="font-inter font-semibold text-[14px] text-primary">
+                    Remarks
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="Optional"
+                      className="resize-none text-sm "
+                      value={field.value ?? ''}
+                    />
+                  </FormControl>
+                  <div className="h-5">
+                    <FormMessage className="text-xs" />
+                  </div>
+                </FormItem>
+              )}
+            />
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 };
 

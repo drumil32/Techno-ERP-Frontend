@@ -1,5 +1,5 @@
 // External Libraries
-import { z, ZodIssueCode } from 'zod';
+import { z } from 'zod';
 
 // Common Schemas
 import {
@@ -13,7 +13,6 @@ import {
 import {
   AdmissionMode,
   AdmissionReference,
-  AdmittedThrough,
   ApplicationStatus,
   AreaType,
   BloodGroup,
@@ -168,7 +167,7 @@ export const enquirySchema = z.object({
   dateOfBirth: requestDateSchema,
   category: z.nativeEnum(Category),
   course: z.string(),
-  reference: z.nativeEnum(AdmissionReference),
+  references: z.array(z.nativeEnum(AdmissionReference)),
 
   // Address Details
   address: addressSchema,

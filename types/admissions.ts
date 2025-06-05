@@ -123,7 +123,7 @@ export interface Admission {
   dateOfBirth: string;
   category: Category;
   course: Course;
-  reference: AdmissionReference;
+  references: AdmissionReference[];
   address: Address;
   academicDetails?: AcademicDetail[];
   dateOfEnquiry?: string;

@@ -53,7 +53,7 @@ export const feesRequestSchema = z.object({
   remarks: z.string().optional().nullable(),
   confirmationCheck: z.boolean().optional(),
   otpTarget: z.string().nullable().optional(),
-  reference: z.nativeEnum(AdmissionReference).optional(),
+  references: z.array(z.nativeEnum(AdmissionReference)).optional(),
   otpVerificationEmail: z.string().nullable().optional(),
   isFeeApplicable: z.boolean().default(false).optional()
 });

@@ -8,62 +8,56 @@ import {
   IFeesRequestSchema
 } from './studentFeesSchema';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
-import { getCounsellors, getEnquiry, getTeleCallers } from '../stage-1/enquiry-form-api';
-import { use, useEffect, useMemo, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import {
-  createStudentFees,
-  getFeesByCourseName,
-  getOtherFees,
-  updateEnquiryStatus,
-  updateStudentFees
-} from './helpers/apirequests';
-import { displayFeeMapper, scheduleFeeMapper } from './helpers/mappers';
-import { format, parse, isValid } from 'date-fns';
+import Loading from '@/app/loading';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { cleanDataForDraft } from './helpers/refine-data';
-import { createStudentFeesDraft, updateStudentFeesDraft } from './student-fees-api';
-import ShowStudentData from './data-show';
-import { ApplicationStatus, FeeType } from '@/types/enum';
-import { toast } from 'sonner';
-import { queryClient } from '@/lib/queryClient';
-import { validateCustomFeeLogic } from './helpers/validateFees';
-import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
-import { SITE_MAP } from '@/common/constants/frontendRouting';
-import EnquiryFormFooter from '../stage-1/enquiry-form-footer-section';
 import { DatePicker } from '@/components/ui/date-picker';
-import { MultiSelectPopoverCheckbox } from '../../common/multi-select-popover-checkbox';
-import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
-import Loading from '@/app/loading';
-import FilledByCollegeSection from '../stage-1/filled-by-college-section';
-import clsx from 'clsx';
 import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-  Select,
-  SelectContent
+  SelectValue
 } from '@/components/ui/select';
-import { read, watch } from 'fs';
-import { Checkbox } from '@/components/ui/checkbox';
+import { queryClient } from '@/lib/queryClient';
+import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
+import { AdmissionReference, ApplicationStatus, FeeType } from '@/types/enum';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueries, useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
+import { format, isValid, parse } from 'date-fns';
+import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import ConfirmationCheckBox from '../stage-1/confirmation-check-box';
+import { getCounsellors, getEnquiry, getTeleCallers } from '../stage-1/enquiry-form-api';
+import EnquiryFormFooter from '../stage-1/enquiry-form-footer-section';
+import FilledByCollegeSection from '../stage-1/filled-by-college-section';
+import ShowStudentData from './data-show';
+import {
+  createStudentFees,
+  getFeesByCourseName,
+  getOtherFees,
+  updateStudentFees
+} from './helpers/apirequests';
+import { displayFeeMapper, scheduleFeeMapper } from './helpers/mappers';
+import { cleanDataForDraft } from './helpers/refine-data';
+import { validateCustomFeeLogic } from './helpers/validateFees';
+import { createStudentFeesDraft, updateStudentFeesDraft } from './student-fees-api';
 
 export const calculateDiscountPercentage = (
   totalFee: number | undefined | null,
@@ -184,9 +178,6 @@ export const StudentFeesForm = () => {
     ]
   });
 
-  const telecallers = Array.isArray(results[0].data) ? results[0].data : [];
-  const counsellors = Array.isArray(results[1].data) ? results[1].data : [];
-
   const form = useForm<IFeesRequestSchema>({
     resolver: zodResolver(feesRequestSchema),
     mode: 'onChange',
@@ -197,6 +188,7 @@ export const StudentFeesForm = () => {
       feesClearanceDate: null,
       counsellor: [],
       telecaller: [],
+      references: [],
       remarks: '',
       confirmationCheck: false,
       isFeeApplicable: true,
@@ -270,6 +262,8 @@ export const StudentFeesForm = () => {
 
       let initialTelecallers: string[] = enquiryData.telecaller ?? [];
 
+      let initialReferences: AdmissionReference[] = enquiryData.references ?? [];
+
       initialOtherFees = Object.values(FeeType)
         .filter((ft) => ft !== FeeType.SEM1FEE)
         .map((feeType) => {
@@ -314,7 +308,7 @@ export const StudentFeesForm = () => {
         otherFees: initialOtherFees,
         semWiseFees: initialSemFees,
         feesClearanceDate: initialFeesClearanceDate,
-        reference: enquiryData.reference,
+        references: initialReferences,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
         isFeeApplicable: enquiryData.isFeeApplicable,
@@ -403,6 +397,7 @@ export const StudentFeesForm = () => {
 
     let initialCounsellors = newEnquiryData.counsellor ?? [];
     let initialTelecallers = newEnquiryData.telecaller ?? [];
+    let initialReferences = newEnquiryData.references ?? [];
     const initialCollegeRemarks = newEnquiryData?.remarks;
 
     initialOtherFees = Object.values(FeeType)
@@ -446,6 +441,7 @@ export const StudentFeesForm = () => {
         otherFees: initialOtherFees,
         semWiseFees: initialSemFees,
         feesClearanceDate: initialFeesClearanceDate,
+        references: initialReferences,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
         remarks: initialCollegeRemarks,
