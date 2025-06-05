@@ -93,8 +93,6 @@ export default function AdmissionsLandingPage() {
   });
 
   const admissionsData = admissionsQuery.data ? refineAdmissions(admissionsQuery.data) : [];
-  console.log(admissionsData);
-
   if (!admissionsData) {
     <Loading />;
   }

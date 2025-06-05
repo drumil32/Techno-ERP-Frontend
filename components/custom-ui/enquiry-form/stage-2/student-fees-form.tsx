@@ -193,7 +193,8 @@ export const StudentFeesForm = () => {
       confirmationCheck: false,
       isFeeApplicable: true,
       otpTarget: undefined,
-      otpVerificationEmail: null
+      otpVerificationEmail: null,
+      srAmount: 0
     },
     disabled: isViewable
   });
@@ -301,8 +302,6 @@ export const StudentFeesForm = () => {
         initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
       }
 
-      // console.log('enquiry Data is', enquiryData);
-
       form.reset({
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,
@@ -313,7 +312,8 @@ export const StudentFeesForm = () => {
         telecaller: initialTelecallers,
         isFeeApplicable: enquiryData.isFeeApplicable,
         remarks: enquiryData.remarks,
-        confirmationCheck: form.getValues().confirmationCheck || false
+        confirmationCheck: form.getValues().confirmationCheck || false,
+        srAmount: enquiryData.srAmount
       });
     } else if (error) {
       toast.error('Failed to load student data.');
@@ -332,7 +332,6 @@ export const StudentFeesForm = () => {
         const isExcluded =
           fee.type === displayFeeMapper(FeeType.TRANSPORT) ||
           fee.type === displayFeeMapper(FeeType.HOSTEL);
-        // console.log('otherfeesData', otherFeesData);
 
         if (isExcluded) {
           return sum;
@@ -539,9 +538,7 @@ export const StudentFeesForm = () => {
   async function handleSaveDraft() {
     setIsSavingDraft(true);
     form.clearErrors();
-
     const currentValues = form.getValues();
-    console.log("geting current values ", currentValues)
     const existingDraftId = enquiryData?.studentFeeDraft?._id;
 
     const isCustomValid = validateCustomFeeLogic(
@@ -551,7 +548,6 @@ export const StudentFeesForm = () => {
       form.setError,
       form.clearErrors
     );
-
     if (!isCustomValid) {
       toast.error('Fee validation failed. Please check highlighted fields.');
       setIsSavingDraft(false);
@@ -559,7 +555,6 @@ export const StudentFeesForm = () => {
     }
 
     const validationResult = frontendFeesDraftValidationSchema.safeParse(currentValues);
-    console.log("validation result ", validationResult)
 
     if (!validationResult.success) {
       toast.error('Validation failed. Please check the fields.');
@@ -574,8 +569,10 @@ export const StudentFeesForm = () => {
     }
 
     const validatedDataForCleaning = validationResult.data;
-    const cleanedData = cleanDataForDraft(validatedDataForCleaning);
-    console.log("cleaned data ", cleanedData)
+    const cleanedData = {
+      ...cleanDataForDraft(validatedDataForCleaning),
+      srAmount: validatedDataForCleaning.srAmount ?? 0
+    };
     try {
       if (draftExists && draftId) {
         const finalPayload = {

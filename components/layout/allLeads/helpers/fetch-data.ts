@@ -7,7 +7,6 @@ import { QueryFunctionContext } from '@tanstack/react-query';
 export const fetchLeads = async ({ queryKey }: any) => {
   const [, params] = queryKey;
   const res = await apiRequest(API_METHODS.POST, API_ENDPOINTS.getAllLeads, params);
-  console.log(res);
   return res;
 };
 
@@ -19,7 +18,6 @@ export const fetchLeadsAnalytics = async ({ queryKey }: any) => {
 
 export const fetchAssignedToDropdown = async () => {
   const result = await apiRequest(API_METHODS.GET, API_ENDPOINTS.fetchAssignedToDropdown);
-  // console.log(result)
   return result;
 };
 
@@ -27,7 +25,6 @@ export const fetchAvailableSheets = async (
   context: QueryFunctionContext<readonly [string, any]>
 ): Promise<SheetItem[]> => {
   const res = await apiRequest<SheetItem[]>(API_METHODS.GET, API_ENDPOINTS.getAvailableSheets);
-  // console.log(res)
   if (!res) throw new Error('Failed to fetch Student Fees Information');
   return res;
 };

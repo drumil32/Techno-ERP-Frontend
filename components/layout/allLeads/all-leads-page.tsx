@@ -23,7 +23,7 @@ import {
   fetchAvailableSheets,
   uploadSheetRequest
 } from './helpers/fetch-data';
-import { refineLeads, refineAnalytics, formatTimeStampView } from './helpers/refine-data';
+import { refineLeads, refineAnalytics, formatTimeStampView, AllLeadsAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
 1;
 import { toast } from 'sonner';
@@ -195,7 +195,8 @@ export default function AllLeadsPage() {
   const [limit, setLimit] = useState(50);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
-
+  const [leadData, setLeadData] = useState<any[]>([]);
+  const [hasMore, setHasMore] = useState(true);
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -205,6 +206,8 @@ export default function AllLeadsPage() {
   const handleLimitChange = (newLimit: number) => {
     setLimit(newLimit);
     setPage(1);
+    setLeadData([]); // Reset data when limit changes
+    setHasMore(true);
   };
 
   const getQueryParams = () => {
@@ -233,6 +236,7 @@ export default function AllLeadsPage() {
     enabled: true
   });
 
+
   const analyticsQuery = useQuery({
     queryKey: ['leadsAnalytics', analyticsParams, appliedFilters],
     queryFn: fetchLeadsAnalytics,
@@ -246,7 +250,28 @@ export default function AllLeadsPage() {
   const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
   const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data) : [];
   const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
-  const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
+  const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData, limit) : null;
+
+  useEffect(() => {
+    if (leadsQuery.data) {
+      const data: any = leadsQuery.data;
+      
+      if (data) {
+        if (page === 1) {
+          setLeadData(leads?.leads || []);
+        } else {
+          let newleads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData, limit) : null;
+          setLeadData(prev => {
+            const tleads = [...prev, ...(newleads?.leads || [])];
+            return tleads;
+          });
+
+        }
+        setHasMore(leads?.total === limit);
+        setTotalEntries(data?.total);
+      }
+    }
+  }, [leadsQuery.data]);
 
   const toastIdRef = useRef<string | number | null>(null);
 
@@ -313,7 +338,7 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'id',
       header: 'S. No',
-      meta: { align: 'center', maxWidth: 60, fixedWidth: 80 }
+      meta: { align: 'center', maxWidth: 60, fixedWidth: 80 },
     },
     {
       accessorKey: 'dateView',
@@ -461,7 +486,6 @@ export default function AllLeadsPage() {
               id: toastIdRef.current,
               duration: 3000
             });
-            console.error('Error updating lead:', error);
             setSelectedType(previousValue);
           }
         };
@@ -616,12 +640,12 @@ export default function AllLeadsPage() {
     },
     ...(isRoleLeadMarketing
       ? [
-          {
-            accessorKey: 'assignedToName',
-            header: 'Assigned To',
-            meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
-          }
-        ]
+        {
+          accessorKey: 'assignedToName',
+          header: 'Assigned To',
+          meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
+        }
+      ]
       : [])
   ];
 
@@ -692,27 +716,26 @@ export default function AllLeadsPage() {
       },
       ...(isRoleLeadMarketing
         ? [
-            {
-              filterKey: 'assignedTo',
-              label: 'Assigned To',
-              options: assignedToDropdownData.map((item: any) => {
-                return {
-                  label: item.name,
-                  id: item._id
-                };
-              }),
-              placeholder: 'assignee',
-              hasSearch: true,
-              multiSelect: true
-            }
-          ]
+          {
+            filterKey: 'assignedTo',
+            label: 'Assigned To',
+            options: assignedToDropdownData.map((item: any) => {
+              return {
+                label: item.name,
+                id: item._id
+              };
+            }),
+            placeholder: 'assignee',
+            hasSearch: true,
+            multiSelect: true
+          }
+        ]
         : [])
     ];
   };
 
   useEffect(() => {
     if (leads) {
-      // console.log("frontend logs", leads)
       setTotalPages(leads.totalPages);
       setTotalEntries(leads.total);
     }
@@ -757,7 +780,7 @@ export default function AllLeadsPage() {
         {leads?.leads && (
           <TechnoDataTable
             columns={columns}
-            data={leads.leads}
+            data={leadData}
             tableName="All Leads"
             currentPage={page}
             totalPages={totalPages}
@@ -823,8 +846,6 @@ export function TableActionButton() {
   });
 
   const sheetDropdownData = availableSheetsQuery.data;
-
-  console.log(sheetDropdownData);
 
   const uploadAction = async () => {
     setIsUploading(true);

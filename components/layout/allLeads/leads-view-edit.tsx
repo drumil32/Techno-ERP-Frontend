@@ -91,7 +91,6 @@ export default function LeadViewEdit({
 }: any) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState<LeadData | null>(null);
-  console.log(formData);
   const [originalData, setOriginalData] = useState<LeadData | null>(null);
   // const [isEditing, toggleIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -461,7 +460,6 @@ export default function LeadViewEdit({
                     newData.leads[leadIndex].leadTypeModifiedDateView
                 };
               }
-              console.log('our new data is ', newData);
               return newData;
             });
           });

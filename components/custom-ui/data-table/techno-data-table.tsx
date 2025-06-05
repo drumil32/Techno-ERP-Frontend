@@ -262,28 +262,19 @@ export default function TechnoDataTable({
   };
 
 
-  let table = useReactTable({
+
+  const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     state: {
-      
       globalFilter,
-      pagination: {
-        pageIndex: currentPage - 1,
-        pageSize: pageSize
-      },
       columnVisibility
     },
     onGlobalFilterChange: setGlobalFilter,
-    manualPagination: true,
-    pageCount: totalPages,
   });
-  // console.log("data reached ", data);
-  // console.log("table datas ", table.getRowModel().rows)
 
   const handleSort = (columnName: string) => {
     if (activeSortColumn === columnName) {
@@ -507,8 +498,7 @@ export default function TechnoDataTable({
                     }}
                   >
                     {row.getVisibleCells()
-
-                      .map((cell: any) => {
+                      .map((cell: any, idx: number) => {
                         const isExcluded = nonClickableColumns.includes(cell.column.id);
                         const align = cell.column.columnDef.meta?.align || 'left';
                         const cellValue = cell.getValue();
@@ -545,10 +535,14 @@ export default function TechnoDataTable({
                               })}
                             >
                               {cell.column.id === 'id' ? (
-                                <TruncatedCell
-                                  value={cellValue + pageSize * (currentPage - 1)}
-                                  maxWidth={maxWidth}
-                                />
+                                <div className="flex items-center justify-start gap-1">
+                                  <span>{row.index + 1}</span>
+                                  {data[row.index]?.isOlderThan7Days && (
+                                    <span className="text-green-500 ml-1 t" title="Older than 7 days">
+                                      ✔
+                                    </span>
+                                  )}
+                                </div>
                               ) : (
                                 <TruncatedCell
                                   value={flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -620,13 +614,13 @@ export default function TechnoDataTable({
             </DropdownMenu>
             <span>
               {table.getState().pagination.pageIndex * pageSize + 1} -{' '}
-              {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, totalEntries)} of{' '}
+              {data.length} of{' '}
               {totalEntries}
             </span>
           </div>
 
           <div className="flex items-center gap-1">
-            <Button
+            {/* <Button
               variant="ghost"
               size="sm"
               onClick={() => onPageChange(1)}
@@ -668,6 +662,16 @@ export default function TechnoDataTable({
               className="cursor-pointer"
             >
               <ChevronsRight />
+            </Button> */}
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => onPageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              aria-label="load more leads"
+              className="cursor-pointer"
+            >
+              Load more
             </Button>
           </div>
         </div>

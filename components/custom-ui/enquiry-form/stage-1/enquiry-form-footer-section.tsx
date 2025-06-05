@@ -67,8 +67,6 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           return !isAllEmpty; // keep if at least one is filled
         });
 
-      console.log('Filtered Academic Details:', filteredAcademicDetails);
-
       form.setValue('academicDetails', filteredAcademicDetails);
     }
 
@@ -86,9 +84,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
 
   async function handleDialogSaveDraft() {
     try {
-      console.log("before calling ")
       const result = await saveDraft();
-      console.log("after calling", result)
       setDraftSaved(result === true);
     } catch {
       setDraftSaved(false);

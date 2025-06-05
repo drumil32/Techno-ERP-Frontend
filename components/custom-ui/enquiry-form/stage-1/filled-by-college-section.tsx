@@ -77,14 +77,6 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
     (ref) => ({ _id: ref, name: ref })
   );
 
-  useEffect(() => {
-    // console.log('Telecallers:', telecallers);
-    // console.log('Counsellors:', counsellors);
-    // console.log('Form Values:', form.getValues());
-    // console.log('Form Errors:', form.formState.errors);
-    // console.log("api is not calling")
-  }, [form]);
-
   return (
     <Accordion type="single" collapsible defaultValue="student-details">
       <AccordionItem value="student-details">
@@ -97,7 +89,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
 
           <AccordionContent>
             <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-1 gap-x-[32px] bg-white p-4 rounded-[10px]">
-            <MultiSelectPopoverCheckbox
+              <MultiSelectPopoverCheckbox
                 form={form}
                 name="references"
                 disabled={isViewable}
@@ -179,6 +171,34 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                         value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Optional"
+                      />
+                    </FormControl>
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                key="srAmount"
+                control={form.control}
+                name="srAmount"
+                render={({ field: formField }) => (
+                  <FormItem className={`${commonFormItemClass} `}>
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
+                      Sr amount
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...formField}
+                        value={formField.value ?? 0}
+                        className={commonFieldClass}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[0-9]*$/.test(value)) {
+                            formField.onChange(value === '' ? null : Number(value));
+                          }
+                        }}
                       />
                     </FormControl>
                     <div className="h-[20px]">

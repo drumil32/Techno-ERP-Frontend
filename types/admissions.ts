@@ -147,6 +147,7 @@ export interface Admission {
   admittedBy?: string;
   collegeName?: string;
   affiliation?: string;
+  srAmount?:number;
 }
 
 /** Admission Table Row Type */

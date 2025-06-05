@@ -86,7 +86,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   useEffect(() => {
     if (data) {
       const sanitizedData = removeNullValues(data);
-      console.log(sanitizedData);
       form.reset(sanitizedData);
     }
   }, [data, form]);
@@ -195,7 +194,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
     }
 
     const { confirmation, id, _id, ...rest } = filteredValues;
-    console.log("before updating ", confirmation, rest)
 
     try {
       if (!_id) {
@@ -208,7 +206,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         sessionStorage.setItem('draftSaved', 'true');
         router.push(SITE_MAP.ADMISSIONS.FORM_STAGE_1(response._id));
       } else {
-        console.log("go to update data ", rest)
         const response = await updateEnquiryDraft({ ...rest, id: _id });
         if (!response) {
           toast.error('Failed to update enquiry draft');
@@ -225,7 +222,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
   async function onSubmit() {
     let values = form.getValues();
-    console.log('ON submit form data', values);
     values = removeNullValues(values);
     const filteredData = filterBySchema(formSchema, values);
 
