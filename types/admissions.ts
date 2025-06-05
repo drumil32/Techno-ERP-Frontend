@@ -123,7 +123,7 @@ export interface Admission {
   dateOfBirth: string;
   category: Category;
   course: Course;
-  reference: AdmissionReference;
+  references: AdmissionReference[];
   address: Address;
   academicDetails?: AcademicDetail[];
   dateOfEnquiry?: string;
@@ -147,6 +147,7 @@ export interface Admission {
   admittedBy?: string;
   collegeName?: string;
   affiliation?: string;
+  srAmount?:number;
 }
 
 /** Admission Table Row Type */

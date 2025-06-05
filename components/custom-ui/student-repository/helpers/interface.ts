@@ -1,6 +1,7 @@
 // Enums and Imports
 import {
   AdmissionMode,
+  AdmissionReference,
   Category,
   CourseYear,
   FeeSchedule,
@@ -107,7 +108,7 @@ export interface StudentInfo {
   dateOfBirth: string; // ISO date
   category: Category;
   course: string;
-  reference: string;
+  references: AdmissionReference[];
   address: Address;
   academicDetails: any[];
   documents: DocumentWithFileUrl[];

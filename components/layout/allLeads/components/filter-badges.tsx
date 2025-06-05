@@ -55,7 +55,6 @@ const FilterBadges = ({
       }
       return '';
     } catch (error) {
-      console.error('Error formatting date range:', error);
       return 'Invalid Date';
     }
   };
@@ -124,7 +123,6 @@ const FilterBadges = ({
         if (key === 'location') {
           getLabel = (val: string) => Locations[val as keyof typeof Locations] || val;
         } else if (key === 'courseCode') {
-          console.log('I am here my man fixing this shit');
           getLabel = (val: string) => CourseNameMapper[val as Course] || val;
         } else if (key === 'assignedTo') {
           getLabel = getAssignedToLabel;

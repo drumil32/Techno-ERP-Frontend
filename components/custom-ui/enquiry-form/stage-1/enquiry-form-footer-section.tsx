@@ -67,8 +67,6 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           return !isAllEmpty; // keep if at least one is filled
         });
 
-      console.log('Filtered Academic Details:', filteredAcademicDetails);
-
       form.setValue('academicDetails', filteredAcademicDetails);
     }
 

@@ -86,7 +86,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   useEffect(() => {
     if (data) {
       const sanitizedData = removeNullValues(data);
-      console.log(sanitizedData);
       form.reset(sanitizedData);
     }
   }, [data, form]);
@@ -191,7 +190,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       setNestedErrors(validationResult.error.format());
 
       return false;
-      throw new Error('Validation failed');
+      // throw new Error('Validation failed');
     }
 
     const { confirmation, id, _id, ...rest } = filteredValues;
@@ -223,7 +222,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
   async function onSubmit() {
     let values = form.getValues();
-    console.log('ON submit form data', values);
     values = removeNullValues(values);
     const filteredData = filterBySchema(formSchema, values);
 

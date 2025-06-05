@@ -73,12 +73,9 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
     ? results[1].data.map((name: string) => ({ _id: name, name }))
     : [];
 
-  useEffect(() => {
-    console.log('Telecallers:', telecallers);
-    console.log('Counsellors:', counsellors);
-    console.log('Form Values:', form.getValues());
-    console.log('Form Errors:', form.formState.errors);
-  }, [form]);
+  const references: { _id: string; name: string }[] = Object.values(AdmissionReference).map(
+    (ref) => ({ _id: ref, name: ref })
+  );
 
   return (
     <Accordion type="single" collapsible defaultValue="student-details">
@@ -92,14 +89,24 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
 
           <AccordionContent>
             <div className="grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-y-1 gap-x-[32px] bg-white p-4 rounded-[10px]">
-              <FormField
-                key="reference"
+              <MultiSelectPopoverCheckbox
+                form={form}
+                name="references"
+                disabled={isViewable}
+                label="References"
+                options={references}
+                placeholder="Select References"
+                className={commonFormItemClass}
+              />
+              {/* intially it was just one reference field, but now it is multiple references field so that i have added above one and commented below one */}
+              {/* <FormField
+                key="references"
                 control={form.control}
-                name="reference"
+                name="references"
                 render={({ field }) => (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
-                      Reference
+                      References
                       <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
@@ -113,7 +120,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                         disabled={isViewable}
                       >
                         <SelectTrigger className={`${commonFieldClass} w-full`}>
-                          <SelectValue placeholder="Select reference" />
+                          <SelectValue placeholder="Select references" />
                         </SelectTrigger>
                         <SelectContent>
                           {Object.values(AdmissionReference).map((ref) => (
@@ -129,7 +136,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                     </div>
                   </FormItem>
                 )}
-              />
+              /> */}
               <MultiSelectPopoverCheckbox
                 form={form}
                 className={commonFormItemClass}
@@ -164,6 +171,34 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                         value={field.value ?? ''}
                         className={commonFieldClass}
                         placeholder="Optional"
+                      />
+                    </FormControl>
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                key="srAmount"
+                control={form.control}
+                name="srAmount"
+                render={({ field: formField }) => (
+                  <FormItem className={`${commonFormItemClass} `}>
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
+                      Sr amount
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...formField}
+                        value={formField.value ?? 0}
+                        className={commonFieldClass}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[0-9]*$/.test(value)) {
+                            formField.onChange(value === '' ? null : Number(value));
+                          }
+                        }}
                       />
                     </FormControl>
                     <div className="h-[20px]">

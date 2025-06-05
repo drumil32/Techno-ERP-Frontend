@@ -231,7 +231,7 @@ const FinanceOfficeForm = () => {
         otherFees: initialOtherFees,
         semWiseFees: initialSemFees,
         feesClearanceDate: initialFeesClearanceDate,
-        reference: enquiryData.reference,
+        references: enquiryData.references,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
         isFeeApplicable: enquiryData.isFeeApplicable,
