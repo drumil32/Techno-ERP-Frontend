@@ -126,6 +126,7 @@ const DateFilterBadge = ({
             <span className="font-medium capitalize">{columnId.replace('Date', '')}:</span>
             <span>{format(date, 'MMM dd, yyyy')}</span>
             <button
+              title="Remove date filter"
               onClick={(e) => {
                 e.stopPropagation();
                 onRemove(columnId);
@@ -220,6 +221,7 @@ export default function TechnoDataTable({
   onDateFilter,
   children
 }: any) {
+  
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
   const { hasRole } = useAuthStore();
@@ -274,6 +276,8 @@ export default function TechnoDataTable({
     manualPagination: true,
     pageCount: totalPages
   });
+// console.log("data reached ", data);
+//   console.log("table datas ", table.getRowModel().rows)
 
   const handleSort = (columnName: string) => {
     if (activeSortColumn === columnName) {

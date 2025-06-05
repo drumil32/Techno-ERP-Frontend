@@ -269,6 +269,11 @@ export default function YellowLeadsTracker() {
       meta: { maxWidth: 130, fixedWidth: 150 }
     },
     {
+      accessorKey: 'altPhoneNumber',
+      header: 'Alt Phone Number',
+      meta: { maxWidth: 130, fixedWidth: 150 }
+    },
+    {
       accessorKey: 'areaView',
       header: 'Area',
       meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }

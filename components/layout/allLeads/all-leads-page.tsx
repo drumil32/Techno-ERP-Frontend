@@ -331,6 +331,11 @@ export default function AllLeadsPage() {
       meta: { maxWidth: 130, fixedWidth: 150 }
     },
     {
+      accessorKey: 'altPhoneNumber',
+      header: 'Alt Phone Number',
+      meta: { maxWidth: 130, fixedWidth: 150 }
+    },
+    {
       accessorKey: 'areaView',
       header: 'Area',
       meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
@@ -707,6 +712,7 @@ export default function AllLeadsPage() {
 
   useEffect(() => {
     if (leads) {
+      // console.log("frontend logs", leads)
       setTotalPages(leads.totalPages);
       setTotalEntries(leads.total);
     }
