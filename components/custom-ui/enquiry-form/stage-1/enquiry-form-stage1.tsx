@@ -148,7 +148,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
     );
 
-    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber', 'emailId'];
+    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber'];
     const filteredKeys = Array.from(new Set([...Object.keys(values), ...alwaysIncludeKeys])).filter(
       (key) => schemaKeys.includes(key)
     );
@@ -332,7 +332,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
             isViewable={isViewable}
             label="All the above information has been verified by the applicant and thoroughly checked by the Admissions team."
             id="checkbox-for-step1"
-            className="flex flex-row items-start bg-white rounded-md p-4"
+            className="flex flex-row items-start bg-white rounded-md p-4 -mt-[40px]"
           />
         )}
 
