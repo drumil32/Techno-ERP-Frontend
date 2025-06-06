@@ -58,8 +58,6 @@ const AcademicDetailsSection: React.FC<AcademicDetailsSectionInterface> = ({
 
           const expectedLevel = educationLevels[index];
 
-          console.log('entry', entry);
-          console.log('expected level', expectedLevel);
 
           if (
             allFilled &&

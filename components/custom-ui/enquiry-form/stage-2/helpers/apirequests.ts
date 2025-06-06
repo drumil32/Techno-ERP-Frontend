@@ -25,7 +25,6 @@ export const getOtherFees = async (courseCode: string): Promise<any[]> => {
 
     return data.DATA;
   } catch (error) {
-    console.error('Error fetching other fees:', error);
     throw error;
   }
 };

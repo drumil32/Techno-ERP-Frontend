@@ -125,6 +125,8 @@ export default function YellowLeadsTracker() {
   const [limit, setLimit] = useState(50);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
+  const [leadData, setLeadData] = useState<any[]>([]);
+  const [hasMore, setHasMore] = useState(true);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -174,6 +176,27 @@ export default function YellowLeadsTracker() {
 
   const assignedToDropdownData = Array.isArray(assignedToQuery?.data) ? assignedToQuery?.data : [];
   const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
+
+  useEffect(() => {
+    if (leadsQuery.data) {
+      const data: any = leadsQuery.data;
+
+      if (data) {
+        if (page === 1) {
+          setLeadData(leads?.leads || []);
+        } else {
+          let newleads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
+          setLeadData(prev => {
+            const tleads = [...prev, ...(newleads?.leads || [])];
+            return tleads;
+          });
+
+        }
+        setHasMore(leads?.total === limit);
+        setTotalEntries(data?.total);
+      }
+    }
+  }, [leadsQuery.data]);
 
   useEffect(() => {
     if (leads) {
@@ -266,6 +289,11 @@ export default function YellowLeadsTracker() {
     {
       accessorKey: 'phoneNumber',
       header: 'Phone Number',
+      meta: { maxWidth: 130, fixedWidth: 150 }
+    },
+    {
+      accessorKey: 'altPhoneNumber',
+      header: 'Alt Phone Number',
       meta: { maxWidth: 130, fixedWidth: 150 }
     },
     {
@@ -499,12 +527,12 @@ export default function YellowLeadsTracker() {
     },
     ...(isRoleLeadMarketing
       ? [
-          {
-            accessorKey: 'assignedToName',
-            header: 'Assigned To',
-            meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
-          }
-        ]
+        {
+          accessorKey: 'assignedToName',
+          header: 'Assigned To',
+          meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
+        }
+      ]
       : [])
   ];
 
@@ -580,18 +608,18 @@ export default function YellowLeadsTracker() {
       },
       ...(isRoleLeadMarketing
         ? [
-            {
-              filterKey: 'assignedTo',
-              label: 'Assigned To',
-              placeholder: 'Assigned To',
-              options: assignedToDropdownData?.map((item: any) => ({
-                label: item.name,
-                id: item._id
-              })),
-              hasSearch: true,
-              multiSelect: true
-            }
-          ]
+          {
+            filterKey: 'assignedTo',
+            label: 'Assigned To',
+            placeholder: 'Assigned To',
+            options: assignedToDropdownData?.map((item: any) => ({
+              label: item.name,
+              id: item._id
+            })),
+            hasSearch: true,
+            multiSelect: true
+          }
+        ]
         : [])
     ];
   };
@@ -679,7 +707,7 @@ export default function YellowLeadsTracker() {
         {leads?.leads && (
           <TechnoDataTable
             columns={columns}
-            data={leads.leads}
+            data={leadData}
             tableName="Active Leads"
             currentPage={page}
             totalPages={totalPages}

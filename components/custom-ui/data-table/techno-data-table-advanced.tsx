@@ -117,7 +117,6 @@ export default function TechnoDataTableAdvanced({
   handleBatchEdit,
   rowHeight = 39
 }: any) {
-  // console.log("Columns are : ", columns)
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [pageSize, setPageSize] = useState<number>(pageLimit);
   const [sortColumn, setSortColumn] = useState<string | null>(null);
@@ -128,11 +127,6 @@ export default function TechnoDataTableAdvanced({
   const [newRow, setNewRow] = useState<any>({});
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [batchValidationErrors, setBatchValidationErrors] = useState<Record<string, string>[]>([]);
-
-  // console.log("New Row : ", newRow);
-  // console.log("Edited Data : ", editedData);
-  // console.log("Adding Row : ", addingRow);
-  // console.log("Editing : ", editing);
 
   const validateAllEditedRows = (rows: any[]): boolean => {
     const allErrors: Record<string, string>[] = [];
@@ -169,18 +163,15 @@ export default function TechnoDataTableAdvanced({
 
   const validateRow = (row: any): boolean => {
     try {
-      console.log('Row to be validated : ', row);
       if (row.unit) row.unit = parseInt(row.unit);
       if (row.lectureNumber) row.lectureNumber = parseInt(row.lectureNumber);
       if (row.classStrength) row.classStrength = parseInt(row.classStrength);
       if (row.attendance) row.attendance = parseInt(row.attendance);
       if (row.absent) row.absent = parseInt(row.absent);
       const validation = scheduleSchema.parse(row);
-      console.log('Validation result : ', validation);
       setValidationErrors({});
       return true;
     } catch (err) {
-      console.log('validation errors', err);
       if (err instanceof z.ZodError) {
         const errors: Record<string, string> = {};
         err.errors.forEach((e) => {
@@ -189,7 +180,6 @@ export default function TechnoDataTableAdvanced({
             errors[key] = e.message;
           }
         });
-        // console.log("Errors are : ", errors);
 
         setValidationErrors(errors);
       }
@@ -440,7 +430,6 @@ export default function TechnoDataTableAdvanced({
                                     <SimpleDatePicker
                                       value={parsedDate ? formatDateForAPI(parsedDate) : undefined}
                                       onChange={(newDateStr: string | undefined) => {
-                                        // console.log("New Date is:", newDateStr);
                                         handleEditedChange(rowIndex, columnId, newDateStr);
                                         setBatchValidationErrors((prev) => {
                                           const updated = [...prev];
@@ -617,7 +606,6 @@ export default function TechnoDataTableAdvanced({
               <TableRow className={`h-[${rowHeight}px] cursor-pointer`}>
                 {columns.map((column: any, idx: number) => {
                   const columnId = column.accessorKey || column.id;
-                  // console.log("Here, column Id : ", columnId);
                   if (columnId === 'actions') {
                     return (
                       <TableCell key={idx} className={`h-[${rowHeight}px] text-center`}>
@@ -660,7 +648,6 @@ export default function TechnoDataTableAdvanced({
                           <SimpleDatePicker
                             value={parsedDate ? formatDateForAPI(parsedDate) : undefined}
                             onChange={(newDateStr: string | undefined) => {
-                              // console.log('Selected date:', newDateStr);
                               handleNewRowChange(columnId, newDateStr);
                               setValidationErrors((prev) => ({ ...prev, [columnId]: '' }));
                             }}
@@ -861,7 +848,6 @@ export default function TechnoDataTableAdvanced({
                 onClick={() => {
                   if (addingRow) {
                     const isValid = validateRow(newRow);
-                    // console.log("Is valid : ", isValid);
                     if (isValid) {
                       onSaveNewRow?.(newRow);
                       data.push(newRow);
@@ -869,7 +855,6 @@ export default function TechnoDataTableAdvanced({
                       setNewRow({});
                     }
                   } else {
-                    console.log('Updated data : ', editedData);
                     const isValid = validateAllEditedRows(editedData);
                     if (isValid) {
                       handleBatchEdit?.(editedData);

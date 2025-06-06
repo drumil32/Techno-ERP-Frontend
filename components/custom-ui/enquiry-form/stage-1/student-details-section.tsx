@@ -4,10 +4,8 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -15,35 +13,24 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 
 // Icons
-import { CalendarDaysIcon } from 'lucide-react';
 
 // Utilities
 import { toPascal } from '@/lib/utils';
-import { format, isAfter, isBefore, startOfDay } from 'date-fns';
 
 // Enums and Constants
 import {
   AdmissionMode,
-  AdmissionReference,
   Category,
-  Course,
-  CourseNameMapper,
   Gender
 } from '@/types/enum';
 
 // React and React Hook Form
-import React from 'react';
-import { FieldValues, UseFormReturn } from 'react-hook-form';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useQuery } from '@tanstack/react-query';
-import {
-  cityDropdown,
-  fixCityDropdown,
-  fixCourseDropdown
-} from '@/components/layout/admin-tracker/helpers/fetch-data';
+import React from 'react';
+import { FieldValues, UseFormReturn } from 'react-hook-form';
 import { fixCourseCodeDropdown } from './helpers/fetch-data';
 
 // Props Interface

@@ -48,7 +48,7 @@ export function convertDdmmyyyyToDate(dateString: string): Date | null {
   return date;
 }
 
-export const refineLeads = (data: any, assignedToDropdownData: any) => {
+export const refineLeads = (data: any, assignedToDropdownData: any, limit:number) => {
   const refinedLeads = data.leads?.map((lead: any, index: number) => {
     const assignedToUsers = Array.isArray(lead.assignedTo)
       ? lead.assignedTo
@@ -75,10 +75,11 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
 
     return {
       _id: lead._id,
-      id: index + 1,
+      id:  index+ 1,
       date: lead.date,
       dateView: formatDateView(lead.date),
       name: lead.name,
+      isOlderThan7Days : lead.isOlderThan7Days,
       phoneNumber: lead.phoneNumber,
       altPhoneNumber: lead.altPhoneNumber,
       altPhoneNumberView: lead.altPhoneNumber ?? '-',

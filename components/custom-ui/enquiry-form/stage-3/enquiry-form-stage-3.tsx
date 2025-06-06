@@ -22,7 +22,6 @@ import AddressDetailsSectionStage3 from './address-details-section';
 import ConfirmationCheckBoxStage3 from './acknowledgement-section';
 import EntranceExamDetailsSection from './entrance-exam-details-section';
 import MoreDetailsSection from './more-details-section';
-import OfficeUseSection from './office-use-section';
 import ScholarshipDetailsSection from './scholarship-details-section';
 import ConfirmationSection from './confirmation-section';
 import ShowStudentData from '../stage-2/data-show';
@@ -42,10 +41,10 @@ import { filterBySchema, removeNullValues } from '@/lib/utils';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { updateEnquiryDraftStep3, updateEnquiryStep3 } from './helper/apirequests';
 import { useRouter } from 'next/navigation';
-import { error } from 'console';
 import { EnquiryDocument } from './documents-section/single-document-form';
 import DocumentVerificationSection from './document-verification';
 import { OtpVerificationDialog } from './otp-verification-dialog';
+import FilledByCollegeSection from '../stage-1/filled-by-college-section';
 
 export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).extend({
   confirmation: z.boolean().refine((value) => value === true, {
@@ -89,7 +88,9 @@ const EnquiryFormStage3 = () => {
     resolver: zodResolver(formSchemaStep3),
     defaultValues: {
       stateOfDomicile: StatesOfIndia.UttarPradesh,
-      nationality: Nationality.INDIAN
+      nationality: Nationality.INDIAN,
+      srAmount: data?.srAmount || 0,
+      telecaller :data?.telecaller
     },
     disabled: isViewable
   });
@@ -377,7 +378,7 @@ const EnquiryFormStage3 = () => {
             enquiryDocuments={currentDocuments}
             setCurrentDocuments={setCurrentDocuments}
           /> */}
-          <OfficeUseSection
+          <FilledByCollegeSection
             form={form}
             isViewable={isViewable}
             commonFieldClass={commonFieldClass}
