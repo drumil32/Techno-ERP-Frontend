@@ -41,7 +41,6 @@ import { filterBySchema, removeNullValues } from '@/lib/utils';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { updateEnquiryDraftStep3, updateEnquiryStep3 } from './helper/apirequests';
 import { useRouter } from 'next/navigation';
-import { error } from 'console';
 import { EnquiryDocument } from './documents-section/single-document-form';
 import DocumentVerificationSection from './document-verification';
 import { OtpVerificationDialog } from './otp-verification-dialog';
@@ -89,7 +88,9 @@ const EnquiryFormStage3 = () => {
     resolver: zodResolver(formSchemaStep3),
     defaultValues: {
       stateOfDomicile: StatesOfIndia.UttarPradesh,
-      nationality: Nationality.INDIAN
+      nationality: Nationality.INDIAN,
+      srAmount: data?.srAmount || 0,
+      telecaller :data?.telecaller
     },
     disabled: isViewable
   });

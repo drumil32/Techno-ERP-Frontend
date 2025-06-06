@@ -25,20 +25,21 @@ const ConfirmationCheckBox: React.FC<ConfirmationCheckBoxInterface> = ({
 }) => {
   return (
     <FormField
+      
       control={form.control}
       name={name}
       render={({ field }) => (
         <FormItem className={className}>
           <FormControl>
-            <div className="flex items-center bg-white font-semibold rounded-[5px] p-[10px]">
+            <div className=" flex items-start bg-white font-semibold rounded-[5px] p-[10px]">
               <Checkbox
                 disabled={isViewable}
                 id={id}
                 checked={field.value}
                 onCheckedChange={field.onChange}
-                className="w-[16px] h-[16px]"
+                className="w-[18px] h-[18px]"
               />
-              <label htmlFor={id} className="ml-2 w-full text-[12px] cursor-pointer">
+              <label htmlFor={id} className="ml-2 w-full text-[15px] cursor-pointer">
                 {label}
                 <span className="text-red-500 pl-0">*</span>
               </label>

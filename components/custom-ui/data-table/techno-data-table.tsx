@@ -538,7 +538,7 @@ export default function TechnoDataTable({
                                 <div className="flex items-center justify-start gap-1">
                                   <span>{row.index + 1}</span>
                                   {data[row.index]?.isOlderThan7Days == false && (
-                                    <span className="text-green-500 ml-1 t" title="Older than 7 days">
+                                    <span className="text-green-500 ml-1 t" title="Last 7 days">
                                       ✔
                                     </span>
                                   )}
@@ -665,7 +665,7 @@ export default function TechnoDataTable({
             </Button> */}
             <Button
               variant="default"
-              size="sm"
+              size="lg"
               onClick={() => onPageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               aria-label="load more leads"
@@ -673,6 +673,8 @@ export default function TechnoDataTable({
             >
               Load more
             </Button>
+          </div>
+          <div className='w-[27.5%] '>
           </div>
         </div>
       )}

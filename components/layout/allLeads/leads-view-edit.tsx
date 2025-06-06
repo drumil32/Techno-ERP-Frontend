@@ -190,7 +190,7 @@ export default function LeadViewEdit({
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate,
         assignedTo: tempData.assignedTo,
-        leadTypeModifiedDate: tempData.leadTypeModifiedDate
+        lastCallDate: tempData.lastCallDate
       };
 
       validationData = removeNullValues(validationData);
@@ -356,7 +356,7 @@ export default function LeadViewEdit({
         setNewRemark('');
       }
 
-      let { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
+      let { lastCallDate, ...toBeUpdatedData } = filteredData;
       toBeUpdatedData = removeNullValues(toBeUpdatedData);
       const validation = updateLeadRequestSchema.safeParse(toBeUpdatedData);
       if (!validation.success) {
@@ -453,11 +453,11 @@ export default function LeadViewEdit({
                     response.remarks && response.remarks.length > 0
                       ? response.remarks[response.remarks.length - 1]
                       : newData.leads[leadIndex].remarksView,
-                  leadTypeModifiedDate:
-                    response.leadTypeModifiedDate ?? newData.leads[leadIndex].leadTypeModifiedDate,
-                  leadTypeModifiedDateView:
-                    formatTimeStampView(response.leadTypeModifiedDate) ??
-                    newData.leads[leadIndex].leadTypeModifiedDateView,
+                  lastCallDate:
+                    response.lastCallDate ?? newData.leads[leadIndex].lastCallDate,
+                  lastCallDateView:
+                    formatTimeStampView(response.lastCallDate) ??
+                    newData.leads[leadIndex].lastCallDateView,
                     isOlderThan7Days  : response.isOlderThan7Days 
                 };
               }
@@ -557,7 +557,7 @@ export default function LeadViewEdit({
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Timestamp</p>
-          <p>{formData.leadTypeModifiedDate ?? '-'}</p>
+          <p>{formData.lastCallDate ?? '-'}</p>
         </div>
       </div>
     </>
@@ -879,7 +879,7 @@ export default function LeadViewEdit({
       </div>
 
       <div className="flex flex-col gap-2">
-        <EditLabel className="text-[#666666]" title="Lead Modified Date" />
+        <EditLabel className="text-[#666666]" title="Last Call Date" />
         <p className="font-medium">{formatTimeStampView(formData.updatedAt) ?? 'Not Provided'}</p>
       </div>
     </>

@@ -64,21 +64,21 @@ export const academicDetailBaseSchema = z.object({
 export const academicDetailPartialSchema = academicDetailBaseSchema.partial();
 
 export const academicDetailSchema = z.object({
-  educationLevel: z.nativeEnum(EducationLevel), // Only allows fixed values
-  schoolCollegeName: z.string().min(1, 'School/College Name is required'),
-  universityBoardName: z.string().min(1, 'University/Board Name is required'),
+  educationLevel: z.nativeEnum(EducationLevel).optional(), // Only allows fixed values
+  schoolCollegeName: z.string().optional(),
+  universityBoardName: z.string().optional(),
   passingYear: z
     .number()
     .int()
     .refine((year) => year.toString().length === 4, {
       message: 'Passing Year must be a valid 4-digit year'
-    }),
+    }).optional(),
   percentageObtained: z
     .number()
     .min(0, 'Percentage must be at least 0')
-    .max(100, 'Percentage cannot exceed 100'),
+    .max(100, 'Percentage cannot exceed 100').optional(),
   subjects: z.string().nonempty('Subjects cannot be empty').optional()
-});
+}).optional();
 // Array schema
 export const academicDetailsArraySchema = z.array(academicDetailSchema);
 
@@ -142,12 +142,11 @@ export const enquirySchema = z.object({
     .nonempty('Student Name is required'),
   studentPhoneNumber: contactNumberSchema,
   emailId: z
-    .string({ required_error: 'Email is required' })
+    .string()
     .email('Invalid email format')
     .nonempty('Email is required'),
   fatherName: z
     .string({ required_error: 'Father Name is required' })
-    .regex(/^[A-Za-z\s]+$/, 'Father Name must only contain alphabets and spaces')
     .nonempty("Father's Name is required"),
   fatherPhoneNumber: contactNumberSchema,
   fatherOccupation: z
@@ -156,7 +155,6 @@ export const enquirySchema = z.object({
     .nonempty('Father occupation is required'),
   motherName: z
     .string({ required_error: "Mother's Name is required" })
-    .regex(/^[A-Za-z\s]+$/, 'Mother Name must only contain alphabets and spaces')
     .nonempty("Mother's Name is required"),
   motherPhoneNumber: contactNumberSchema.optional(),
   motherOccupation: z
@@ -167,7 +165,7 @@ export const enquirySchema = z.object({
   dateOfBirth: requestDateSchema,
   category: z.nativeEnum(Category),
   course: z.string(),
-  references: z.array(z.nativeEnum(AdmissionReference)),
+  references: z.array(z.nativeEnum(AdmissionReference)).optional(),
 
   // Address Details
   address: addressSchema,

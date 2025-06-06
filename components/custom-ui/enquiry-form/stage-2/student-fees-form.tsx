@@ -1127,7 +1127,7 @@ export const StudentFeesForm = () => {
             name="confirmationCheck"
             label="All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will be charged extra based on LU/AKTU norms."
             id="checkbox-for-step2"
-            className="flex flex-row items-start bg-white rounded-md p-4"
+            className="flex flex-row items-start bg-white rounded-md p-4 -mt-[40px]"
           />
         )}
 
