@@ -67,6 +67,7 @@ const FinanceOfficeForm = () => {
   const [transactionRemarks, setTransactionRemarks] = useState(''); // don't confuse yourself with enquiry remarks
 
   const router = useRouter();
+  
 
   const {
     isChecking: isRedirectChecking,
@@ -425,6 +426,12 @@ const FinanceOfficeForm = () => {
 
   return (
     <Form {...form}>
+
+      {/* <DownloadStep4 
+      studentId={enquiryData._id}
+      data={enquiryData}        
+      /> */}
+
       <form className="pt-8 mr-[25px] space-y-8 flex flex-col w-full  relative">
         <ShowStudentData data={enquiryData} />
 
