@@ -68,7 +68,8 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         country: Countries.India
       },
       studentPhoneNumber: '',
-      confirmation: false
+      confirmation: false,
+      srAmount: 0
     },
     disabled: isViewable
   });
@@ -86,7 +87,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
   useEffect(() => {
     if (data) {
       const sanitizedData = removeNullValues(data);
-      console.log(sanitizedData);
       form.reset(sanitizedData);
     }
   }, [data, form]);
@@ -148,7 +148,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
     );
 
-    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber', 'emailId'];
+    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber'];
     const filteredKeys = Array.from(new Set([...Object.keys(values), ...alwaysIncludeKeys])).filter(
       (key) => schemaKeys.includes(key)
     );
@@ -191,7 +191,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       setNestedErrors(validationResult.error.format());
 
       return false;
-      throw new Error('Validation failed');
+      // throw new Error('Validation failed');
     }
 
     const { confirmation, id, _id, ...rest } = filteredValues;
@@ -223,7 +223,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
   async function onSubmit() {
     let values = form.getValues();
-    console.log('ON submit form data', values);
     values = removeNullValues(values);
     const filteredData = filterBySchema(formSchema, values);
 
@@ -333,7 +332,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
             isViewable={isViewable}
             label="All the above information has been verified by the applicant and thoroughly checked by the Admissions team."
             id="checkbox-for-step1"
-            className="flex flex-row items-start bg-white rounded-md p-4"
+            className="flex flex-row items-start bg-white rounded-md p-4 -mt-[40px]"
           />
         )}
 

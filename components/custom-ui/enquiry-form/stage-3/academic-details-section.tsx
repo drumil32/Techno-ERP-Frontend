@@ -35,8 +35,8 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
     const academicDetails = form.getValues().academicDetails;
 
     if (!academicDetails || academicDetails.length === 0) {
-      setIsValid(false);
-      setValidationLog((prev) => [...prev, 'No academic details found - validation failed']);
+      // setIsValid(false);
+      // setValidationLog((prev) => [...prev, 'No academic details found - validation failed']);
       return;
     }
 
@@ -81,11 +81,7 @@ const AcademicDetailsSectionStage3: React.FC<AcademicDetailsSectionInterface> = 
     checkValidity();
   }, []);
 
-  useEffect(() => {
-    if (validationLog.length > 0) {
-      console.log('Validation Log:\n' + validationLog.join('\n'));
-    }
-  }, [validationLog]);
+
 
   const prevValuesRef = useRef<z.infer<typeof academicDetailsArraySchema>>([]);
 

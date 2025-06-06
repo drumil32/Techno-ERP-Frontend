@@ -56,6 +56,7 @@ import { Loader } from 'lucide-react';
 import Loading from '@/app/loading';
 import { clsx } from 'clsx';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DownloadStep4 } from './step4-pdf';
 
 const FinanceOfficeForm = () => {
   const params = useParams();
@@ -67,6 +68,7 @@ const FinanceOfficeForm = () => {
   const [transactionRemarks, setTransactionRemarks] = useState(''); // don't confuse yourself with enquiry remarks
 
   const router = useRouter();
+  
 
   const {
     isChecking: isRedirectChecking,
@@ -231,11 +233,12 @@ const FinanceOfficeForm = () => {
         otherFees: initialOtherFees,
         semWiseFees: initialSemFees,
         feesClearanceDate: initialFeesClearanceDate,
-        reference: enquiryData.reference,
+        references: enquiryData.references,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
         isFeeApplicable: enquiryData.isFeeApplicable,
-        remarks: initialCollegeRemarks
+        remarks: initialCollegeRemarks,
+        srAmount: enquiryData.srAmount
       });
     } else if (error) {
       toast.error('Failed to load student data.');
@@ -252,7 +255,6 @@ const FinanceOfficeForm = () => {
         const isExcluded =
           fee.type === displayFeeMapper(FeeType.TRANSPORT) ||
           fee.type === displayFeeMapper(FeeType.HOSTEL);
-        console.log('otherfeesData', otherFeesData);
 
         if (isExcluded) {
           return sum;
@@ -386,7 +388,6 @@ const FinanceOfficeForm = () => {
   async function onSubmit(): Promise<boolean> {
     try {
       setIsSubmittingFinal(true);
-      console.log(transactionType);
 
       if (!transactionTypeRef.current) {
         toast.error('Please select a transaction type');
@@ -425,6 +426,12 @@ const FinanceOfficeForm = () => {
 
   return (
     <Form {...form}>
+
+      {/* <DownloadStep4 
+      studentId={enquiryData._id}
+      data={enquiryData}        
+      /> */}
+
       <form className="pt-8 mr-[25px] space-y-8 flex flex-col w-full  relative">
         <ShowStudentData data={enquiryData} />
 
@@ -751,7 +758,12 @@ const FinanceOfficeForm = () => {
           </AccordionItem>
         </Accordion>
 
-        <FilledByCollegeSection commonFieldClass="" commonFormItemClass="" form={form} />
+        <FilledByCollegeSection
+          form={form}
+          isViewable={isViewable}
+          commonFieldClass=""
+          commonFormItemClass=""
+        />
 
         {/* Confirmation */}
         {/* <ConfirmationOTPSection
@@ -765,7 +777,7 @@ const FinanceOfficeForm = () => {
           name="confirmationCheck"
           label="All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will be charged extra based on LU/AKTU norms."
           id="checkbox-for-step4"
-          className="flex flex-row items-start bg-white rounded-md p-4"
+          className="flex flex-row items-start bg-white rounded-md p-4 -mt-[40px]"
         />
 
         {/* Submit */}

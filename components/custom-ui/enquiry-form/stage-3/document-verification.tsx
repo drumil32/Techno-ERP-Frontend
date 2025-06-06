@@ -61,7 +61,6 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
     return !documents.some(
       (doc) => doc.status === PhysicalDocumentNoteStatus.PENDING && !doc.dueBy
     );
-    console.log(documents, 'this are my documents');
   }, [documents, isViewable]);
 
   const initializeDocuments = useCallback(
@@ -118,7 +117,6 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
 
   useEffect(() => {
     onValidationChange?.(isValid);
-    console.log('I have got value', isValid);
   }, [isValid, onValidationChange]);
 
   const updateDocuments = useCallback(

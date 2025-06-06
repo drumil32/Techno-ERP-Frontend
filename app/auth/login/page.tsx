@@ -280,6 +280,7 @@ export default function LoginPage() {
               <a
                 className="underline hover:text-white transition-colors"
                 target="_blank"
+                rel="noopener"
                 href="https://www.sprintup.in"
               >
                 SprintUp

@@ -27,11 +27,13 @@ export function MonthWiseCourseTrend({
   heading = 'Month Wise Admissions',
   headingFooter = 'Total Admissions'
 }: {
-  chartData: { courseCode: string; count: number }[];
+  chartData: { courseName: string; count: number }[];
   heading?: string;
   headingFooter?: string;
 }) {
   const isEmpty = chartData.length === 0;
+  const max = Math.max(...chartData.map(d => d.count));
+  const ticks = Array.from({ length: max + 1 }, (_, i) => i);
 
   return (
     <Card className="w-full bg-gradient-to-br border border-gray-100 shadow-lg rounded-2xl">
@@ -70,7 +72,7 @@ export function MonthWiseCourseTrend({
               >
                 <CartesianGrid vertical={false} strokeDasharray="4 4" />
                 <XAxis
-                  dataKey="courseCode"
+                  dataKey="courseName"
                   tickLine={true}
                   axisLine={true}
                   tickMargin={8}
@@ -85,6 +87,7 @@ export function MonthWiseCourseTrend({
                   style={{ fontSize: 11 }}
                   stroke="#374151"
                   strokeWidth={1.5}
+                  ticks={ticks}
                 />
                 <ChartTooltip
                   cursor={{ fill: 'transparent' }}

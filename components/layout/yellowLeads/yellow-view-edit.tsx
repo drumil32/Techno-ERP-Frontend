@@ -458,8 +458,6 @@ export default function YellowLeadViewEdit({
         setFormData(originalData);
       }
     } catch (err) {
-      console.log(err);
-      console.error('Error updating lead:', err);
       toast.error('An error occurred while updating the lead');
     } finally {
       setIsSubmitting(false);
