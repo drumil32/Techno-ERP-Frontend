@@ -56,6 +56,7 @@ import { Loader } from 'lucide-react';
 import Loading from '@/app/loading';
 import { clsx } from 'clsx';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DownloadStep4 } from './step4-pdf';
 
 const FinanceOfficeForm = () => {
   const params = useParams();
@@ -67,6 +68,7 @@ const FinanceOfficeForm = () => {
   const [transactionRemarks, setTransactionRemarks] = useState(''); // don't confuse yourself with enquiry remarks
 
   const router = useRouter();
+  
 
   const {
     isChecking: isRedirectChecking,
@@ -424,6 +426,12 @@ const FinanceOfficeForm = () => {
 
   return (
     <Form {...form}>
+
+      {/* <DownloadStep4 
+      studentId={enquiryData._id}
+      data={enquiryData}        
+      /> */}
+
       <form className="pt-8 mr-[25px] space-y-8 flex flex-col w-full  relative">
         <ShowStudentData data={enquiryData} />
 
