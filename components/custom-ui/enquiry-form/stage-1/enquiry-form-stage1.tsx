@@ -68,7 +68,8 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
         country: Countries.India
       },
       studentPhoneNumber: '',
-      confirmation: false
+      confirmation: false,
+      srAmount: 0
     },
     disabled: isViewable
   });
