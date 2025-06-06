@@ -256,15 +256,24 @@ export default function AllLeadsPage() {
   useEffect(() => {
     if (leadsQuery.data) {
       const data: any = leadsQuery.data;
-      
+
       if (data) {
         if (page === 1) {
           setLeadData(leads?.leads || []);
         } else {
           let newleads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData, limit) : null;
-          setLeadData(prev => {
+          setLeadData((prev) => {
             const tleads = [...prev, ...(newleads?.leads || [])];
-            return tleads;
+            // console.log(tleads);
+
+            const allleads = tleads
+              .filter(lead => lead)
+              .map((lead, index) => ({
+                ...lead,
+                id: index + 1
+              }));
+
+            return allleads;
           });
 
         }
@@ -458,19 +467,22 @@ export default function AllLeadsPage() {
                     );
 
                     if (leadIndex !== -1) {
-                      newData.leads[leadIndex] = {
-                        ...newData.leads[leadIndex],
-                        leadType:
-                          LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
-                        _leadType: response.leadType,
-                        leadTypeModifiedDate:
-                          response.leadTypeModifiedDate ??
-                          newData.leads[leadIndex].leadTypeModifiedDate,
-                        leadTypeModifiedDateView:
-                          formatTimeStampView(response.leadTypeModifiedDate) ??
-                          newData.leads[leadIndex].leadTypeModifiedDateView,
-                        updatedAt: response.updatedAt
-                      };
+                      setLeadData((prevLeads) => {
+                        return prevLeads.map((lead, index) => {
+                          if (index === id-1) { 
+                            return {
+                              ...lead,
+                              leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
+                              _leadType: response.leadType,
+                              leadTypeModifiedDate: response.leadTypeModifiedDate ?? lead.leadTypeModifiedDate,
+                              leadTypeModifiedDateView: formatTimeStampView(response.leadTypeModifiedDate) ??
+                                lead.leadTypeModifiedDateView,
+                              updatedAt: response.updatedAt
+                            };
+                          }
+                          return lead;
+                        });
+                      });
                     }
 
                     return newData;
@@ -605,6 +617,7 @@ export default function AllLeadsPage() {
               setSelectedValue(previousValue);
             }
           } catch (error) {
+            // console.log(error)
             toast.error('Failed to update follow-up count', {
               id: toastIdRef.current,
               duration: 1500
@@ -822,6 +835,7 @@ export default function AllLeadsPage() {
               setRefreshKey={setRefreshKey}
               key={editRow._id}
               data={editRow}
+              setLeadData={setLeadData}
             />
           )}
         </TechnoRightDrawer>

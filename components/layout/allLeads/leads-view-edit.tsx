@@ -87,7 +87,8 @@ export default function LeadViewEdit({
   data,
   setIsDrawerOpen,
   setSelectedRowId,
-  setRefreshKey
+  setRefreshKey,
+  setLeadData
 }: any) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState<LeadData | null>(null);
@@ -383,8 +384,9 @@ export default function LeadViewEdit({
 
         const updateLeadCache = () => {
           const queryCache = queryClient.getQueryCache();
+          console.log("cahce ", queryCache)
           const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
-
+          console.log("load query ", leadQueries)
           leadQueries.forEach((query) => {
             queryClient.setQueryData(query.queryKey, (oldData: any) => {
               if (!oldData || !oldData.leads) return oldData;
@@ -395,10 +397,10 @@ export default function LeadViewEdit({
 
               const assignedToUsers = Array.isArray(response.assignedTo)
                 ? response.assignedTo
-                    .map((id: string) =>
-                      assignedToDropdownData?.find((user: any) => user._id === id)
-                    )
-                    .filter(Boolean)
+                  .map((id: string) =>
+                    assignedToDropdownData?.find((user: any) => user._id === id)
+                  )
+                  .filter(Boolean)
                 : [];
 
               let assignedToName = 'N/A';
@@ -415,51 +417,52 @@ export default function LeadViewEdit({
               }
 
               if (leadIndex !== -1) {
-                newData.leads[leadIndex] = {
-                  ...newData.leads[leadIndex],
-
-                  name: response.name,
-                  source: response.source,
-                  email: response.email,
-                  sourceView: response.source ?? '-',
-                  schoolName: response.schoolName,
-                  degree: response.degree,
-                  phoneNumber: response.phoneNumber,
-                  altPhoneNumber: response.altPhoneNumber,
-                  altPhoneNumberView: response.altPhoneNumber ?? '-',
-                  gender: response.gender,
-                  genderView: toPascal(response.gender),
-                  city: response.city,
-                  cityView: !response.city || response.city === '' ? '-' : response.city,
-                  area: response.area,
-                  areaView: !response.area || response.area === '' ? '-' : response.area,
-                  course: response.course,
-                  courseView: response.course ?? '-',
-                  assignedTo: response.assignedTo,
-                  assignedToView: assignedToView,
-                  assignedToName: assignedToName,
-                  date: response.date,
-                  updatedAt: response.updatedAt,
-                  nextDueDate: response.nextDueDate,
-                  nextDueDateView: response.nextDueDate
-                    ? formatDateView(response.nextDueDate)
-                    : '-',
-                  leadType:
-                    LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
-                  _leadType: response.leadType,
-                  followUpCount: response.followUpCount ?? newData.leads[leadIndex].followUpCount,
-                  remarks: response.remarks || newData.leads[leadIndex].remarks,
-                  remarksView:
-                    response.remarks && response.remarks.length > 0
-                      ? response.remarks[response.remarks.length - 1]
-                      : newData.leads[leadIndex].remarksView,
-                  lastCallDate:
-                    response.lastCallDate ?? newData.leads[leadIndex].lastCallDate,
-                  lastCallDateView:
-                    formatTimeStampView(response.lastCallDate) ??
-                    newData.leads[leadIndex].lastCallDateView,
-                    isOlderThan7Days  : response.isOlderThan7Days 
-                };
+                setLeadData((prevLeads : any[]) => {
+                  return prevLeads.map((lead) => {
+                    if (lead.id === data.id) {
+                      return {
+                        ...lead,
+                        name: response.name,
+                        source: response.source,
+                        email: response.email,
+                        sourceView: response.source ?? '-',
+                        schoolName: response.schoolName,
+                        degree: response.degree,
+                        phoneNumber: response.phoneNumber,
+                        altPhoneNumber: response.altPhoneNumber,
+                        altPhoneNumberView: response.altPhoneNumber ?? '-',
+                        gender: response.gender,
+                        genderView: toPascal(response.gender),
+                        city: response.city,
+                        cityView: !response.city || response.city === '' ? '-' : response.city,
+                        area: response.area,
+                        areaView: !response.area || response.area === '' ? '-' : response.area,
+                        course: response.course,
+                        courseView: response.course ?? '-',
+                        assignedTo: response.assignedTo,
+                        assignedToView: assignedToView,
+                        assignedToName: assignedToName,
+                        date: response.date,
+                        updatedAt: response.updatedAt,
+                        nextDueDate: response.nextDueDate,
+                        nextDueDateView: response.nextDueDate
+                          ? formatDateView(response.nextDueDate)
+                          : '-',
+                        leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
+                        _leadType: response.leadType,
+                        followUpCount: response.followUpCount ?? lead.followUpCount,
+                        remarks: response.remarks || lead.remarks,
+                        remarksView: response.remarks && response.remarks.length > 0
+                          ? response.remarks[response.remarks.length - 1]
+                          : lead.remarksView,
+                        lastCallDate: response.lastCallDate ?? lead.lastCallDate,
+                        lastCallDateView: formatTimeStampView(response.lastCallDate) ?? lead.lastCallDateView,
+                        isOlderThan7Days: response.isOlderThan7Days
+                      };
+                    }
+                    return lead;
+                  });
+                });
               }
               return newData;
             });
@@ -867,7 +870,7 @@ export default function LeadViewEdit({
             <p className="font-medium">
               {formData.assignedTo
                 ? assignedToDropdownData.find((item) => item._id == formData.assignedTo)?.name ||
-                  'Not Provided'
+                'Not Provided'
                 : 'Not Provided'}
             </p>
           </div>
