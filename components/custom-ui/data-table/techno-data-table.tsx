@@ -492,6 +492,7 @@ export default function TechnoDataTable({
                     className={`h-[39px] ${rowCursor ? 'cursor-pointer' : ''} ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
                     onClick={() => {
                       if (rowCursor) {
+                        // console.log("id selected ", row.id)
                         setSelectedRowId(row.id);
                         handleViewMore({ ...row.original, leadType: row.original._leadType });
                       }
@@ -536,7 +537,7 @@ export default function TechnoDataTable({
                             >
                               {cell.column.id === 'id' ? (
                                 <div className="flex items-center justify-start gap-1">
-                                  <span>{row.index + 1}</span>
+                                  <span>{cellValue}</span>
                                   {data[row.index]?.isOlderThan7Days == false && (
                                     <span className="text-green-500 ml-1 t" title="Last 7 days">
                                       ✔
