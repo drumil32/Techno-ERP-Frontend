@@ -69,7 +69,6 @@ export default function CourseYearWiseTable() {
   };
 
   const getSortIcon = (columnName: string) => {
-    console.log('Column: ', columnName);
     if (activeSortColumn === columnName) {
       return sortDirection === 'asc' ? (
         <ArrowUp className="w-4 h-4 text-purple-700" />
@@ -79,8 +78,6 @@ export default function CourseYearWiseTable() {
     }
     return <ArrowUpDown className="w-4 h-4 text-purple-400 opacity-60" />;
   };
-
-  console.log(sortedTableData, yearColumns, columnTotals, grandTotal);
 
   return (
     <Card className="h-full col-span-2 col-start-1 rounded-2xl ">
@@ -159,7 +156,7 @@ function transformDataForTable(data: AdmissionCourseYearWiseResponse) {
   }
 
   const allCourses = Array.from(
-    new Set(data.yearWise.flatMap((year) => year.courseWise.map((course) => course.courseCode)))
+    new Set(data.yearWise.flatMap((year) => year.courseWise.map((course) => course.courseName)))
   ).sort();
 
   const yearColumns = data.yearWise
@@ -173,16 +170,16 @@ function transformDataForTable(data: AdmissionCourseYearWiseResponse) {
     })
     .reverse();
 
-  const tableData = allCourses.map((courseCode) => {
+  const tableData = allCourses.map((courseName) => {
     const numberOfAdmissions: number[] = [];
 
     yearColumns.forEach((yearCol) => {
-      const courseData = yearCol.data.find((c) => c.courseCode === courseCode);
+      const courseData = yearCol.data.find((c) => c.courseName === courseName);
       numberOfAdmissions.push(courseData?.count || 0);
     });
 
     return {
-      course: courseCode,
+      course: courseName,
       numberOfAdmissions
     };
   });

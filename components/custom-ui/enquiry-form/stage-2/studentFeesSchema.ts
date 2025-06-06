@@ -53,9 +53,10 @@ export const feesRequestSchema = z.object({
   remarks: z.string().optional().nullable(),
   confirmationCheck: z.boolean().optional(),
   otpTarget: z.string().nullable().optional(),
-  reference: z.nativeEnum(AdmissionReference).optional(),
+  references: z.array(z.nativeEnum(AdmissionReference)).optional(),
   otpVerificationEmail: z.string().nullable().optional(),
-  isFeeApplicable: z.boolean().default(false).optional()
+  isFeeApplicable: z.boolean().default(false).optional(),
+  srAmount: z.number().min(0).default(0)
 });
 
 export const finalFeesCreateSchema = feesRequestSchema.extend({
@@ -101,7 +102,9 @@ export const frontendFeesDraftValidationSchema = z
     counsellor: z.array(z.string()).optional(),
     telecaller: z.array(z.string()).optional(),
     remarks: z.string().optional().nullable(),
-    isFeeApplicable: z.boolean().default(false).optional()
+    isFeeApplicable: z.boolean().default(false).optional(),
+    references: z.array(z.nativeEnum(AdmissionReference)).optional(),
+    srAmount: z.number().min(0)
   })
   .partial();
 

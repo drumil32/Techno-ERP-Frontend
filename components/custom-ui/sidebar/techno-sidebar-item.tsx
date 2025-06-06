@@ -54,11 +54,31 @@ export default function TechnoSidebarItem({
 
   const route = getRoute();
 
-  const isActive = (route && pathname.startsWith(route)) || sidebarActiveItem === text;
+  // Check if current item matches active path
+  const checkIsActive = () => {
+    // First check if pathname matches the route exactly or starts with it
+    if (route && pathname.startsWith(route)) {
+      return true;
+    }
+    
+    // Then check if pathname contains the sidebar item text
+    if (pathname.toLowerCase().includes(text.toLowerCase())) {
+      return true;
+    }
+    
+    // Finally check if it's manually selected
+    return sidebarActiveItem === text;
+  };
+
+  const [isActive, setIsActive] = useState(checkIsActive());
+
+  // Update active state when pathname or sidebarActiveItem changes
+  useEffect(() => {
+    setIsActive(checkIsActive());
+  }, [pathname, sidebarActiveItem]);
 
   const handleClick = () => {
-    setSidebarActiveItem(text); // This will now update immediately
-
+    setSidebarActiveItem(text);
     if (route) {
       router.push(route);
     }

@@ -44,8 +44,7 @@ export default function AdmissionFormLayout({ children }: { children: React.Reac
         console.error('Error fetching enquiry status:', error);
       }
     };
-
-    console.log(pathname);
+    
     if (pathname === SITE_MAP.ADMISSIONS.CREATE_ADMISSION) {
       setStatus('step_1');
       return;

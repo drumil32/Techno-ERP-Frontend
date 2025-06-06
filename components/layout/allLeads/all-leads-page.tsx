@@ -23,7 +23,7 @@ import {
   fetchAvailableSheets,
   uploadSheetRequest
 } from './helpers/fetch-data';
-import { refineLeads, refineAnalytics, formatTimeStampView } from './helpers/refine-data';
+import { refineLeads, refineAnalytics, formatTimeStampView, AllLeadsAnalytics } from './helpers/refine-data';
 import FilterBadges from './components/filter-badges';
 1;
 import { toast } from 'sonner';
@@ -83,6 +83,7 @@ export default function AllLeadsPage() {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const authStore = useAuthStore();
   const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING);
+  const [ticks, setTicks] = useState<boolean[]>([])
 
   const handleSortChange = (column: string, order: string) => {
     if (column === 'nextDueDateView') {
@@ -195,7 +196,8 @@ export default function AllLeadsPage() {
   const [limit, setLimit] = useState(50);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
-
+  const [leadData, setLeadData] = useState<any[]>([]);
+  const [hasMore, setHasMore] = useState(true);
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setPage(newPage);
@@ -205,6 +207,8 @@ export default function AllLeadsPage() {
   const handleLimitChange = (newLimit: number) => {
     setLimit(newLimit);
     setPage(1);
+    setLeadData([]); // Reset data when limit changes
+    setHasMore(true);
   };
 
   const getQueryParams = () => {
@@ -233,6 +237,7 @@ export default function AllLeadsPage() {
     enabled: true
   });
 
+
   const analyticsQuery = useQuery({
     queryKey: ['leadsAnalytics', analyticsParams, appliedFilters],
     queryFn: fetchLeadsAnalytics,
@@ -246,7 +251,37 @@ export default function AllLeadsPage() {
   const cityDropdownData = Array.isArray(cityDropdownQuery.data) ? cityDropdownQuery.data : [];
   const analytics = analyticsQuery.data ? refineAnalytics(analyticsQuery.data) : [];
   const assignedToDropdownData = Array.isArray(assignedToQuery.data) ? assignedToQuery.data : [];
-  const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
+  const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData, limit) : null;
+
+  useEffect(() => {
+    if (leadsQuery.data) {
+      const data: any = leadsQuery.data;
+
+      if (data) {
+        if (page === 1) {
+          setLeadData(leads?.leads || []);
+        } else {
+          let newleads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData, limit) : null;
+          setLeadData((prev) => {
+            const tleads = [...prev, ...(newleads?.leads || [])];
+            // console.log(tleads);
+
+            const allleads = tleads
+              .filter(lead => lead)
+              .map((lead, index) => ({
+                ...lead,
+                id: index + 1
+              }));
+
+            return allleads;
+          });
+
+        }
+        setHasMore(leads?.total === limit);
+        setTotalEntries(data?.total);
+      }
+    }
+  }, [leadsQuery.data]);
 
   const toastIdRef = useRef<string | number | null>(null);
 
@@ -313,7 +348,7 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'id',
       header: 'S. No',
-      meta: { align: 'center', maxWidth: 60, fixedWidth: 80 }
+      meta: { align: 'center', maxWidth: 60, fixedWidth: 80 },
     },
     {
       accessorKey: 'dateView',
@@ -328,6 +363,11 @@ export default function AllLeadsPage() {
     {
       accessorKey: 'phoneNumber',
       header: 'Phone Number',
+      meta: { maxWidth: 130, fixedWidth: 150 }
+    },
+    {
+      accessorKey: 'altPhoneNumber',
+      header: 'Alt Phone Number',
       meta: { maxWidth: 130, fixedWidth: 150 }
     },
     {
@@ -389,8 +429,11 @@ export default function AllLeadsPage() {
             leadTypeModifiedDateView,
             phoneNumber,
             altPhoneNumber,
+            isOlderThan7Days,
             ...cleanedRow
           } = row.original;
+
+          
 
           const updatedData = {
             _id: row.original._id,
@@ -427,19 +470,22 @@ export default function AllLeadsPage() {
                     );
 
                     if (leadIndex !== -1) {
-                      newData.leads[leadIndex] = {
-                        ...newData.leads[leadIndex],
-                        leadType:
-                          LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
-                        _leadType: response.leadType,
-                        leadTypeModifiedDate:
-                          response.leadTypeModifiedDate ??
-                          newData.leads[leadIndex].leadTypeModifiedDate,
-                        leadTypeModifiedDateView:
-                          formatTimeStampView(response.leadTypeModifiedDate) ??
-                          newData.leads[leadIndex].leadTypeModifiedDateView,
-                        updatedAt: response.updatedAt
-                      };
+                      setLeadData((prevLeads) => {
+                        return prevLeads.map((lead, index) => {
+                          if (index === id-1) { 
+                            return {
+                              ...lead,
+                              leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
+                              _leadType: response.leadType,
+                              leadTypeModifiedDate: response.leadTypeModifiedDate ?? lead.leadTypeModifiedDate,
+                              leadTypeModifiedDateView: formatTimeStampView(response.leadTypeModifiedDate) ??
+                                lead.leadTypeModifiedDateView,
+                              updatedAt: response.updatedAt
+                            };
+                          }
+                          return lead;
+                        });
+                      });
                     }
 
                     return newData;
@@ -456,7 +502,6 @@ export default function AllLeadsPage() {
               id: toastIdRef.current,
               duration: 3000
             });
-            console.error('Error updating lead:', error);
             setSelectedType(previousValue);
           }
         };
@@ -522,6 +567,7 @@ export default function AllLeadsPage() {
             leadTypeModifiedDate,
             leadTypeModifiedDateView,
             phoneNumber,
+            isOlderThan7Days,
             altPhoneNumber,
             ...cleanedRow
           } = filteredData;
@@ -575,6 +621,7 @@ export default function AllLeadsPage() {
               setSelectedValue(previousValue);
             }
           } catch (error) {
+            // console.log(error)
             toast.error('Failed to update follow-up count', {
               id: toastIdRef.current,
               duration: 1500
@@ -611,12 +658,12 @@ export default function AllLeadsPage() {
     },
     ...(isRoleLeadMarketing
       ? [
-          {
-            accessorKey: 'assignedToName',
-            header: 'Assigned To',
-            meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
-          }
-        ]
+        {
+          accessorKey: 'assignedToName',
+          header: 'Assigned To',
+          meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
+        }
+      ]
       : [])
   ];
 
@@ -687,20 +734,20 @@ export default function AllLeadsPage() {
       },
       ...(isRoleLeadMarketing
         ? [
-            {
-              filterKey: 'assignedTo',
-              label: 'Assigned To',
-              options: assignedToDropdownData.map((item: any) => {
-                return {
-                  label: item.name,
-                  id: item._id
-                };
-              }),
-              placeholder: 'assignee',
-              hasSearch: true,
-              multiSelect: true
-            }
-          ]
+          {
+            filterKey: 'assignedTo',
+            label: 'Assigned To',
+            options: assignedToDropdownData.map((item: any) => {
+              return {
+                label: item.name,
+                id: item._id
+              };
+            }),
+            placeholder: 'assignee',
+            hasSearch: true,
+            multiSelect: true
+          }
+        ]
         : [])
     ];
   };
@@ -751,7 +798,7 @@ export default function AllLeadsPage() {
         {leads?.leads && (
           <TechnoDataTable
             columns={columns}
-            data={leads.leads}
+            data={leadData}
             tableName="All Leads"
             currentPage={page}
             totalPages={totalPages}
@@ -792,6 +839,7 @@ export default function AllLeadsPage() {
               setRefreshKey={setRefreshKey}
               key={editRow._id}
               data={editRow}
+              setLeadData={setLeadData}
             />
           )}
         </TechnoRightDrawer>
@@ -817,8 +865,6 @@ export function TableActionButton() {
   });
 
   const sheetDropdownData = availableSheetsQuery.data;
-
-  console.log(sheetDropdownData);
 
   const uploadAction = async () => {
     setIsUploading(true);

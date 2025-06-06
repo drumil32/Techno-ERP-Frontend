@@ -10,7 +10,7 @@ export default function CollectionSummary({
   totalCollections: number;
   viewMode: ViewMode;
 }) {
-  console.log('TotalCollection', totalCollections);
+
   return (
     <div className="w-full flex flex-col gap-4 px-4 py-5 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
       <div className="w-fit font-semibold text-lg px-2 p-1 rounded-[5px] bg-[#FFF8EE] text-[#D58B18]">

@@ -98,7 +98,7 @@ export const getPersonalDetailsFormData = (data: StudentData) => {
       state: data.studentInfo.address?.state as StatesOfIndia,
       country: data.studentInfo.address?.country as Countries
     },
-    reference: data.studentInfo.reference as AdmissionReference,
+    references: data.studentInfo.references as AdmissionReference[],
     entranceExamDetails: data?.studentInfo?.entranceExamDetails,
     lurnRegistrationNo: data.studentInfo.lurnRegistrationNo
   };

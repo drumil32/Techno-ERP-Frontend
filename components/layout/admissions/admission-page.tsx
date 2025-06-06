@@ -93,8 +93,6 @@ export default function AdmissionsLandingPage() {
   });
 
   const admissionsData = admissionsQuery.data ? refineAdmissions(admissionsQuery.data) : [];
-  console.log(admissionsData);
-
   if (!admissionsData) {
     <Loading />;
   }
@@ -125,7 +123,7 @@ export default function AdmissionsLandingPage() {
         setSelectedRowId={setSelectedRowId}
         columns={columns}
         data={admissionsData}
-        tableName={`Ongoing Applications (${Object.values(admissionsData).length}) `}
+        tableName={`Ongoing Enquiry (${Object.values(admissionsData).length}) `}
         currentPage={1}
         totalPages={1}
         pageLimit={10}

@@ -24,16 +24,12 @@ export const downloadStep4 = async (
   data: any,
   directSave: boolean = false
 ): Promise<{ url: string; fileName: string }> => {
-  console.log(data)
   const container = document.createElement('div');
   container.style.width = '780px';
   container.style.padding = '0';
   container.style.fontFamily = 'Arial, sans-serif';
   container.style.backgroundColor = 'white';
   container.style.boxSizing = 'border-box';
-
-  console.log("data ", data.otherFeesTotals.totalFinal, " ", data.otherFeesTotals.totalDue, " ", data.otherFeesTotals.totalDeposited)
-
 
   const escapeHtml = (unsafe: any) => {
     if (typeof unsafe !== 'string') return unsafe;
@@ -256,7 +252,7 @@ export const downloadStep4 = async (
 
   try {
     const canvas = await html2canvas(container, {
-      scale: 3,
+      scale: 2,
       useCORS: true,
       logging: false
     });
@@ -295,7 +291,6 @@ export const downloadStep4 = async (
     const positionY = 0;
 
     pdf.addImage(imgData, 'PNG', positionX, positionY, imgFinalWidth, imgFinalHeight);
-
 
 
     const pdfBlob = pdf.output('blob');

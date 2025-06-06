@@ -78,7 +78,6 @@ export function PerformanceDashboard() {
   const formatDate = (date: Date) => format(date, 'dd/MM/yyyy');
 
   const getDuration = (period: 'day' | 'week' | 'month' | 'all' | 'yesterday') => {
-    console.log('Getting duration for:', period);
 
     switch (period) {
       case 'yesterday':
@@ -122,9 +121,6 @@ export function PerformanceDashboard() {
     queryFn: () => durationBasedSourceAnalytics(getDuration('all'))
   });
 
-  useEffect(() => {
-    console.log('Active Tab Changed:', activeTab);
-  }, [activeTab]);
 
   const getCurrentData = () => {
     switch (activeTab) {
@@ -358,7 +354,6 @@ export function PerformanceDashboard() {
       // Save file
       XLSX.writeFile(workbook, filename);
     } catch (error) {
-      console.error('Error downloading file:', error);
       alert('Error occurred while downloading the file. Please try again.');
     } finally {
       setIsDownloading(false);

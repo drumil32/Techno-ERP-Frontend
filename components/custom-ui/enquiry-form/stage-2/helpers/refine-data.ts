@@ -55,8 +55,8 @@ export const cleanDataForDraft = (data: any) => {
     }
   }
 
-  if (data.reference) {
-    cleaned.reference = data.reference;
+  if (data.references) {
+    cleaned.references = data.references;
   }
 
   if (data.remarks) {
