@@ -64,9 +64,9 @@ export const academicDetailBaseSchema = z.object({
 export const academicDetailPartialSchema = academicDetailBaseSchema.partial();
 
 export const academicDetailSchema = z.object({
-  educationLevel: z.nativeEnum(EducationLevel).optional().default(EducationLevel.Others), // Only allows fixed values
-  schoolCollegeName: z.string().min(1, 'School/College Name is required').optional(),
-  universityBoardName: z.string().min(1, 'University/Board Name is required').optional(),
+  educationLevel: z.nativeEnum(EducationLevel).optional(), // Only allows fixed values
+  schoolCollegeName: z.string().optional(),
+  universityBoardName: z.string().optional(),
   passingYear: z
     .number()
     .int()
