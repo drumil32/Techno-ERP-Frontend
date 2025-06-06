@@ -53,7 +53,6 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
 
   const checkValidity = () => {
     const values = form.getValues();
-    console.log('values that we are getting in more details', values);
 
     const moreDetails = {
       stateOfDomicile: values.stateOfDomicile,

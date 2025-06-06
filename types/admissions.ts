@@ -171,7 +171,7 @@ export type AdmissionAggregationResponse = AdmissionAggregationItem[];
 
 export interface CourseWiseAggregationItem {
   count: number;
-  courseCode: Course;
+  courseName: Course;
 }
 
 export interface YearWiseAggregationItem {

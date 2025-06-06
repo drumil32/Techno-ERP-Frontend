@@ -457,7 +457,8 @@ export default function LeadViewEdit({
                     response.leadTypeModifiedDate ?? newData.leads[leadIndex].leadTypeModifiedDate,
                   leadTypeModifiedDateView:
                     formatTimeStampView(response.leadTypeModifiedDate) ??
-                    newData.leads[leadIndex].leadTypeModifiedDateView
+                    newData.leads[leadIndex].leadTypeModifiedDateView,
+                    isOlderThan7Days  : response.isOlderThan7Days 
                 };
               }
               return newData;
