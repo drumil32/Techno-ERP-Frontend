@@ -55,7 +55,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   saveDraft,
   isSavingDraft,
   customSaveDialog,
-  draftExists
+  draftExists,
 }) => {
   const params = useParams();
   const studentId = params.id as string;
@@ -74,7 +74,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     setFinalApproval(true);
     try {
       const result = await onSubmit();
-      console.log('Submission result:', result);
+      // console.log('Submission result:', result);
       if (result !== false) {
         setSubmitDialogOpen(false);
         setSuccessDialogOpen(true);
