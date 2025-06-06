@@ -429,8 +429,11 @@ export default function AllLeadsPage() {
             leadTypeModifiedDateView,
             phoneNumber,
             altPhoneNumber,
+            isOlderThan7Days,
             ...cleanedRow
           } = row.original;
+
+          
 
           const updatedData = {
             _id: row.original._id,
@@ -564,6 +567,7 @@ export default function AllLeadsPage() {
             leadTypeModifiedDate,
             leadTypeModifiedDateView,
             phoneNumber,
+            isOlderThan7Days,
             altPhoneNumber,
             ...cleanedRow
           } = filteredData;
