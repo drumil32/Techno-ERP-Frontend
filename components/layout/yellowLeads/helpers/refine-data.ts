@@ -51,7 +51,8 @@ export const refineLeads = (data: any, assignedToDropdownData: any) => {
       nextDueDate: lead.nextDueDate,
       nextDueDateView: formatDateView(lead.nextDueDate) ?? '-',
       createdAt: new Date(lead.createdAt).toLocaleString(),
-      updatedAt: lead.updatedAt ?? 'N/A'
+      updatedAt: lead.updatedAt ?? 'N/A',
+      isOlderThan7Days: lead.isOlderThan7Days
     };
   });
   return {

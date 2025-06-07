@@ -384,9 +384,7 @@ export default function LeadViewEdit({
 
         const updateLeadCache = () => {
           const queryCache = queryClient.getQueryCache();
-          console.log("cahce ", queryCache)
           const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
-          console.log("load query ", leadQueries)
           leadQueries.forEach((query) => {
             queryClient.setQueryData(query.queryKey, (oldData: any) => {
               if (!oldData || !oldData.leads) return oldData;
@@ -401,14 +399,15 @@ export default function LeadViewEdit({
                     assignedToDropdownData?.find((user: any) => user._id === id)
                   )
                   .filter(Boolean)
-                : [];
+                : assignedToDropdownData.find((user:any) => user._id === response.assignedTo);
+
 
               let assignedToName = 'N/A';
               let assignedToView = '-';
 
-              if (assignedToUsers.length > 0) {
-                assignedToName = assignedToUsers[0].name;
-                assignedToView = assignedToUsers[0].name;
+              if (assignedToUsers.length > 0 || assignedToUsers?.name) {
+                assignedToName = assignedToUsers?.name || assignedToUsers[0].name ;
+                assignedToView = assignedToUsers?.name || assignedToUsers[0].name;
 
                 if (assignedToUsers.length > 1) {
                   assignedToName += ` +${assignedToUsers.length - 1}`;
@@ -453,8 +452,8 @@ export default function LeadViewEdit({
                         followUpCount: response.followUpCount ?? lead.followUpCount,
                         remarks: response.remarks || lead.remarks,
                         remarksView: response.remarks && response.remarks.length > 0
-                          ? response.remarks[response.remarks.length - 1]
-                          : lead.remarksView,
+                          ? response.remarks.map(remark => remark).join(' | ')
+                          : response.remarks,
                         lastCallDate: response.lastCallDate ?? lead.lastCallDate,
                         lastCallDateView: formatTimeStampView(response.lastCallDate) ?? lead.lastCallDateView,
                         isOlderThan7Days: response.isOlderThan7Days

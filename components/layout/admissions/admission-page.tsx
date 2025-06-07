@@ -10,7 +10,7 @@ import { AdmissionTableRow } from '@/types/admissions';
 import AdmissionCard from '@/components/custom-ui/admission-card/techno-admission-card';
 import TechnoPageTitle from '@/components/custom-ui/page-title/techno-page-title';
 import { useRouter } from 'next/navigation';
-import { ApplicationStatus } from '@/types/enum';
+import { ApplicationStatus, StepMapper } from '@/types/enum';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { Input } from '@/components/ui/input';
 import { BookPlus, Search } from 'lucide-react';
@@ -31,8 +31,10 @@ export default function AdmissionsLandingPage() {
         toast.success('Your application is already confirmed');
         return;
       }
+      const gostep = StepMapper[row.applicationStatus];
+      
       router.push(
-        SITE_MAP.ADMISSIONS.GO_TO_ENQUIRY(row._id, row.applicationStatus.toLocaleLowerCase())
+        SITE_MAP.ADMISSIONS.GO_TO_ENQUIRY(row._id, gostep)
       );
     }
   };
@@ -54,7 +56,7 @@ export default function AdmissionsLandingPage() {
       cell: ({ getValue }: CellContext<AdmissionTableRow, string>) => {
         const rawStatus = getValue<string>();
         return (
-          <div className="text-primary font-semibold">{formatApplicationStatus(rawStatus)}</div>
+          <div className="text-primary font-semibold">{StepMapper[rawStatus]}</div>
         );
       }
     }

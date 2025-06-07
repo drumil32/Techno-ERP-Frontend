@@ -1,6 +1,8 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-
+import { FeeType } from '@/types/enum';
+import { calculateDiscountPercentage, formatCurrency } from '../../stage-2/student-fees-form';
+import { displayFeeMapper, scheduleFeeMapper } from '../../stage-2/helpers/mappers';
 const placeholderLogoBase64 = '/images/techno-logo.webp';
 const placeholderPhotoBase64 = '/images/dummy_user.webp';
 const TIMS = 'Techno Institute of Management Sciences';
@@ -34,8 +36,13 @@ export const downloadStep4 = async (
     return unsafe.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
   };
 
-  const totalAmount = data?.particulars?.reduce(
-    (sum: number, item: any) => sum + parseFloat(item.amount || 0),
+  const totalAmount = data?.studentFee?.otherFees?.reduce(
+    (sum: number, item: any) => sum + parseFloat(item.finalFee || 0),
+    0
+  );
+
+  const totalDeposite = data?.studentFee?.otherFees?.reduce(
+    (sum: number, item: any) => sum + parseFloat(item.feesDepositedTOA || 0),
     0
   );
 
@@ -52,91 +59,131 @@ export const downloadStep4 = async (
   const generateFeeTables = () => {
     if (!data.studentFee) return '';
 
-    // Semester-wise fees table
-    // const semWiseTable = `
-    //   <div style="margin-top: 20px;">
-    //     <h4 style="font-size: 9px; font-weight: bold; margin-bottom: 2px; color: #851A6A;">
-    //       Semester-wise Fees
-    //     </h4>
-    //     <table style="width: 100%; border-collapse: collapse; font-size: 8px; border: 0.5px solid #E6E6E6;">
-    //       <thead>
-    //         <tr>
-    //           <th style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: left;">Semester</th>
-    //           <th style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">Fee Amount</th>
-    //           <th style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">Final Fee</th>
-    //           <th style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">Fees Paid</th>
-    //           <th style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">Due Date</th>
-    //         </tr>
-    //       </thead>
-    //       <tbody>
-    //         ${data.studentFee.semWiseFees?.map((fee: any, index: number) => `
-    //           <tr>
-    //             <td style="border: 0.5px solid #E6E6E6; padding: 4px;">Semester ${index + 1}</td>
-    //             <td style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">
-    //               ${parseFloat(fee.feeAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-    //             </td>
-    //             <td style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">
-    //               ${parseFloat(fee.finalFee || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-    //             </td>
-    //             <td style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">
-    //               ${parseFloat(fee.feesPaid || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-    //             </td>
-    //             <td style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">
-    //               ${fee.dueDate ? new Date(fee.dueDate).toLocaleDateString() : '--'}
-    //             </td>
-    //           </tr>
-    //         `).join('')}
-    //       </tbody>
-    //     </table>
-    //   </div>
-    // `;
+    // Calculate totals dynamically
+    let totalDeposite = 0;
+    let totalFinalFee = 0;
+    let totalDue = 0;
 
-    // Other fees table
-    const otherFeesTable = `
-      <div style="margin-top: 20px;">
-        <h4 style="font-size: 9px; font-weight: bold; margin-bottom: 5px; color: #851A6A;">
-          Other Fees
-        </h4>
-        <table style="width: 100%; border-collapse: collapse; font-size: 8px; border: 0.5px solid #E6E6E6;">
-          <thead>
-            <tr>
-              <th style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: left;">Fee Type</th>
-              <th style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">Fee Amount</th>
-              <th style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">Final Fee</th>
-              <th style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${data.studentFee.otherFees?.map((fee: any) => `
-              <tr>
-                <td style="border: 0.5px solid #E6E6E6; padding: 4px;">
-                  ${fee.type === 'SEM1FEE' ? 'Semester 1 Fee' : 
-                    fee.type === 'PROSPECTUS' ? 'Prospectus Fee' :
-                    fee.type === 'STUDENTID' ? 'Student ID Fee' :
-                    fee.type === 'UNIFORM' ? 'Uniform Fee' :
-                    fee.type === 'STUDENTWELFARE' ? 'Student Welfare' :
-                    fee.type === 'BOOKBANK' ? 'Book Bank' :
-                    fee.type === 'HOSTEL' ? 'Hostel Fee' :
-                    fee.type === 'TRANSPORT' ? 'Transport Fee' : fee.type}
-                </td>
-                <td style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">
-                  ${parseFloat(fee.feeAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </td>
-                <td style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">
-                  ${parseFloat(fee.finalFee || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </td>
-                <td style="border: 0.5px solid #E6E6E6; padding: 4px; text-align: right;">
-                  ${fee.feesDepositedTOA ? 'Paid' : 'Pending'}
-                </td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+    // Format date if available
+    const feeDate = data.studentFee.feesClearanceDate ?
+      new Date(data.studentFee.feesClearanceDate).toLocaleDateString('en-IN') :
+      new Date().toLocaleDateString('en-IN');
+
+
+
+    // Generate the main fees table
+    const feesTable = `
+    <div style="margin-top: 20px;">
+      <h4 style="font-size: 9px; font-weight: bold; margin-bottom: 5px; color: #851A6A;">
+        Fees Details (Date: ${feeDate})
+      </h4>
+
+      <!-- Header Row -->
+      <div style="display: grid; grid-template-columns: 1fr 0.5fr 0.5fr 0.5fr 0.8fr 0.8fr 0.5fr; 
+           background-color: #5B31D110; color: #5B31D1; font-weight: bold; padding: 8px; 
+           border-radius: 5px; font-size: 8px; gap: 8px; margin-bottom: 5px;">
+        <div style="grid-column: span 1">Fees Details</div>
+        <div>Schedule</div>
+        <div>Fees</div>
+        <div style="text-align: center;">Discount</div>
+        <div style="text-align: right;">Final Fees</div>
+        <div style="text-align: right;">Fees Deposit</div>
+        <div style="text-align: right;">Fees Due</div>
       </div>
-    `;
 
-    return  otherFeesTable;
+      <!-- Fee Items -->
+      <div style="border: 1px solid #E6E6E6; border-radius: 5px; overflow: hidden;">
+        ${data.otherFeesData?.map((fee: any, index: number) => {
+      const feeType = data.form.getValues(`otherFees.${index}.type`);
+      if (feeType == "BOOKBANK") return;
+
+      const originalFeeData = data.otherFeesData?.find((fee: any) =>
+        fee.type === FeeType.SEM1FEE
+          ? fee.type === feeType
+          : fee.type === displayFeeMapper(feeType)
+      );
+
+
+      let totalFee;
+      if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+        totalFee = data.form.getValues(`otherFees.${index}.finalFee`);
+      } else {
+        totalFee = originalFeeData?.amount;
+      }
+
+      const finalFee = data.otherFeesWatched?.[index]?.finalFee;
+
+      const feesDeposited = data.otherFeesWatched?.[index]?.feesDepositedTOA;
+
+      let discountValue;
+      if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+        discountValue = '-';
+      } else {
+        discountValue =
+          finalFee != undefined
+            ? calculateDiscountPercentage(totalFee, finalFee)
+            : '-';
+      }
+      const discountDisplay =
+        typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
+      const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
+
+      return `
+            <div style="display: grid; grid-template-columns: 1fr 0.5fr 0.5fr 0.5fr 0.8fr 0.8fr 0.5fr; 
+                 padding: 8px; font-size: 8px; gap: 8px; border-bottom: 1px solid #F3F3F3;
+                 align-items: center;">
+              <div style="grid-column: span 1; font-weight: 500; color: #333;">
+                ${displayFeeMapper(feeType)}
+              </div>
+              <div style="color: #666;">${scheduleFeeMapper(feeType)}</div>
+              <div style="color: #666;">${formatCurrency(totalFee)}</div>
+               <div style="text-align: center; color: #666;">
+                ${discountDisplay}
+              </div>
+              <div style="text-align: right; color: #666;">
+                ${formatCurrency(finalFee)}
+              </div>
+              <div style="text-align: right; color: #666;">
+                ${formatCurrency(feesDeposited)}
+              </div>
+              <div style="text-align: right; color: #333;">
+                ${formatCurrency(remainingFee)}
+              </div>
+              
+            </div>
+          `;
+    }).join('')}
+      </div>
+
+      <!-- Total Row -->
+      <div style="display: grid; grid-template-columns: 1fr 0.5fr 0.5fr 0.5fr 0.8fr 0.8fr 0.5fr; 
+           background-color: #5B31D110; color: #5B31D1; font-weight: bold; padding: 8px; 
+           border-radius: 5px; font-size: 8px; gap: 8px; margin-top: 5px;">
+        <div style="grid-column: span 1">Total Fees</div>
+        <div></div>
+        <div>-</div>
+        <div style="text-align: center;">-</div>
+        <div style="text-align: right;"> ${formatCurrency(data.otherFeesTotals.totalFinal)} </div>
+        <div style="text-align: right;">${formatCurrency(data.otherFeesTotals.totalDeposited)}</div>
+        <div style="text-align: right;">${formatCurrency(data.otherFeesTotals.totalDue)}</div>
+      </div>
+
+      <!-- Additional notes -->
+      <div style="margin-top: 10px;padding:2px;  background-color: #F9FAFB; border-radius: 5px; 
+           font-size: 7px; color: #666; ">
+        <p style="margin: 0px;">* Book Bank - 50% adjustable at the end of final semester</p>
+        <p style="margin: 0px;">* Book Bank - Applicable only in BBA, MBA, BAJMC, MAJMC & BCom (Hons)</p>
+        <p style="margin: 0px;">* Exam Fees - To be given at the time of exam form submission as per LU/AKTU Norms</p>
+      </div>
+      <div style="font-size : 10px">
+        Fee applicable : ${data.isFeeApplicable == true ? 'Yes' : 'No'}
+      </div>
+    </div>
+  `;
+
+    return feesTable;
   };
+
 
   const generateReceiptHtml = () => `
     <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; ">
@@ -161,24 +208,35 @@ export const downloadStep4 = async (
     </h3>
 
     <!-- Your existing receipt HTML here -->
-    <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
-      <tbody style="border: 0.5px solid #E6E6E6; padding: 2px 4px 20px 4px;">
-        <tr>
-          <td style="color: #666666; padding: 2px 4px 4px 4px; border:none;">Name :</td>
-          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(data.studentName)}</td>
-          <td style="color: #666666; padding: 2px 4px 4px 4px; border:none;">Category :</td>
-          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(data.category)}</td>
-        </tr>
-        <tr>
-        <td style="color: #666666; padding: 2px 4px 4px 4px; border:none;">Father Name :</td>
-        <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(data.fatherName)}</td>
-          <td style="color: #666666; padding: 2px 4px 10px 4px; border:none;">Course :</td>
-          <td style="padding: 2px 4px 10px 4px; border:none; ">${escapeHtml(data.course)}</td>
-          <td style="padding: 2px 4px 10px 4px; border:none; "></td>
-          <td style="padding: 2px 4px 10px 4px; border:none;"></td>
-        </tr>
-      </tbody>
-    </table>
+    <div style="display: flex; flex-direction: column; font-size: 8px; gap: 6px; border: 1px solid #E6E6E6; padding: 8px;">
+
+  <!-- Row 1: Name & Category -->
+  <div style="display: flex; justify-content: space-between;">
+    <div style="display: flex; gap: 4px; flex: 1;">
+      <div style="color: #666666;">Name:</div>
+      <div>${escapeHtml(data.studentName)}</div>
+    </div>
+    <div style="display: flex; gap: 4px; flex: 1;">
+      <div style="color: #666666;">Category:</div>
+      <div>${escapeHtml(data.category)}</div>
+    </div>
+  </div>
+
+  <!-- Row 2: Father Name & Course -->
+  <div style="display: flex; justify-content: space-between;">
+    <div style="display: flex; gap: 4px; flex: 1;">
+      <div style="color: #666666;">Father Name:</div>
+      <div>${escapeHtml(data.fatherName)}</div>
+    </div>
+    <div style="display: flex; gap: 4px; flex: 1;">
+      <div style="color: #666666;">Course:</div>
+      <div>${escapeHtml(data.course)}</div>
+    </div>
+  </div>
+
+</div>
+
+
 
     <!-- Add the fee tables after the receipt -->
     ${generateFeeTables()}
@@ -207,8 +265,8 @@ export const downloadStep4 = async (
       compress: true
     });
 
-    const fileName = `Fee-Receipt-${data.studentName?.replace(/\s+/g, '-')}-${data.course}.pdf`;
-    const title = `Fee Receipt - ${data.studentName}`;
+    const fileName = `Fee-details-${data.studentName?.replace(/\s+/g, '-')}-${data.course}.pdf`;
+    const title = `Fee details - ${data.studentName}`;
 
     pdf.setProperties({
       creator: 'Techno Institute',
@@ -234,14 +292,6 @@ export const downloadStep4 = async (
 
     pdf.addImage(imgData, 'PNG', positionX, positionY, imgFinalWidth, imgFinalHeight);
 
-    const middleY = pdfHeight / 2;
-    pdf.setLineDashPattern([4, 2], 0);
-    pdf.setDrawColor(100, 100, 100);
-    pdf.setLineWidth(0.5);
-    pdf.line(0, middleY, pdfWidth, middleY);
-    pdf.setLineDashPattern([], 0);
-
-    pdf.addImage(imgData, 'PNG', positionX, middleY + 3, imgFinalWidth, imgFinalHeight);
 
     const pdfBlob = pdf.output('blob');
     const file = new File([pdfBlob], fileName, { type: 'application/pdf' });

@@ -371,21 +371,6 @@ export default function AllLeadsPage() {
       meta: { maxWidth: 130, fixedWidth: 150 }
     },
     {
-      accessorKey: 'areaView',
-      header: 'Area',
-      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
-    },
-    {
-      accessorKey: 'cityView',
-      header: 'City',
-      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
-    },
-    {
-      accessorKey: 'courseView',
-      header: 'Course',
-      meta: { maxWidth: 120, fixedWidth: 140 }
-    },
-    {
       accessorKey: 'leadType',
       meta: { align: 'center', maxWidth: 150, fixedWidth: 200 },
       header: 'Lead Type',
@@ -655,6 +640,21 @@ export default function AllLeadsPage() {
       accessorKey: 'nextDueDateView',
       header: 'Next Due Date',
       meta: { align: 'center', maxWidth: 160, fixedWidth: 190 }
+    },
+        {
+      accessorKey: 'areaView',
+      header: 'Area',
+      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+    },
+    {
+      accessorKey: 'cityView',
+      header: 'City',
+      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+    },
+    {
+      accessorKey: 'courseView',
+      header: 'Course',
+      meta: { maxWidth: 120, fixedWidth: 140 }
     },
     ...(isRoleLeadMarketing
       ? [

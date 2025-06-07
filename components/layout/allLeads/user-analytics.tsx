@@ -10,15 +10,12 @@ import {
 } from '@/components/ui/dialog';
 import { UserAnalyticsData } from '@/types/marketing';
 import { useQuery } from '@tanstack/react-query';
-import { ChartBar, ChartPie, AlertTriangle } from 'lucide-react';
+import { ChartBar, ChartPie, AlertTriangle, BarChart3, UserPlus, UserCheck, UserX, UserCheck2, UserPlus2, UserX2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { fetchUserAnalytics, updateAnalyticsRemarks } from './helpers/fetch-data';
 import CountUp from 'react-countup';
 import {
-  Phone,
-  PhoneIncoming,
-  PhoneOutgoing,
-  PhoneOff,
+
   Footprints,
   GraduationCap
 } from 'lucide-react';
@@ -31,19 +28,19 @@ type StatCardProps = {
 };
 
 const iconsMap = {
-  'Total Calls': Phone,
-  'New Lead Calls': PhoneIncoming,
-  'Active Lead Calls': PhoneOutgoing,
-  'Non-Active Lead Calls': PhoneOff,
-  'Total Footfall': Footprints,
-  'Total Admissions': GraduationCap
+  'Total Leads Reached': BarChart3,      
+  'New Lead': UserPlus2,                     
+  'Active Lead': UserCheck2,                 
+  'Non-Active Lead': UserX2,                 
+  'Total Footfall': Footprints,          
+  'Total Admissions': GraduationCap        
 } as const;
 
 const bgMap = {
-  'Total Calls': 'bg-purple-50',
-  'New Lead Calls': 'bg-green-50',
-  'Active Lead Calls': 'bg-blue-50',
-  'Non-Active Lead Calls': 'bg-red-50',
+  'Total Leads Reached': 'bg-purple-50',
+  'New Lead': 'bg-green-50',
+  'Active Lead': 'bg-blue-50',
+  'Non-Active Lead': 'bg-red-50',
   'Total Footfall': 'bg-amber-50',
   'Total Admissions': 'bg-fuchsia-50'
 } as const;
@@ -131,11 +128,11 @@ export default function UserAnalytics() {
             <div>
               <h4 className="text-sm font-medium text-gray-700 mb-2">Call Analytics</h4>
               <div className="grid grid-cols-2 gap-4">
-                <StatCard label="Total Calls" value={userAnalyticsData.totalCalls} />
-                <StatCard label="New Lead Calls" value={userAnalyticsData.newLeadCalls} />
-                <StatCard label="Active Lead Calls" value={userAnalyticsData.activeLeadCalls} />
+                <StatCard label="Total Leads Reached" value={userAnalyticsData.totalCalls} />
+                <StatCard label="New Lead" value={userAnalyticsData.newLeadCalls} />
+                <StatCard label="Active Lead" value={userAnalyticsData.activeLeadCalls} />
                 <StatCard
-                  label="Non-Active Lead Calls"
+                  label="Non-Active Lead"
                   value={userAnalyticsData.nonActiveLeadCalls}
                 />
               </div>

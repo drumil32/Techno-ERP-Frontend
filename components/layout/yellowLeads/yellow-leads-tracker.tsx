@@ -176,7 +176,6 @@ export default function YellowLeadsTracker() {
 
   const assignedToDropdownData = Array.isArray(assignedToQuery?.data) ? assignedToQuery?.data : [];
   const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
-
   useEffect(() => {
     if (leadsQuery.data) {
       const data: any = leadsQuery.data;
@@ -186,9 +185,18 @@ export default function YellowLeadsTracker() {
           setLeadData(leads?.leads || []);
         } else {
           let newleads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
-          setLeadData(prev => {
+          setLeadData((prev) => {
             const tleads = [...prev, ...(newleads?.leads || [])];
-            return tleads;
+            // console.log(tleads);
+
+            const allleads = tleads
+              .filter(lead => lead)
+              .map((lead, index) => ({
+                ...lead,
+                id: index + 1
+              }));
+
+            return allleads;
           });
 
         }
@@ -197,7 +205,6 @@ export default function YellowLeadsTracker() {
       }
     }
   }, [leadsQuery.data]);
-
   useEffect(() => {
     if (leads) {
       setTotalPages(leads.totalPages);
@@ -295,21 +302,6 @@ export default function YellowLeadsTracker() {
       accessorKey: 'altPhoneNumber',
       header: 'Alt Phone Number',
       meta: { maxWidth: 130, fixedWidth: 150 }
-    },
-    {
-      accessorKey: 'areaView',
-      header: 'Area',
-      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
-    },
-    {
-      accessorKey: 'cityView',
-      header: 'City',
-      meta: { maxWidth: 120, fixedWidth: 120 }
-    },
-    {
-      accessorKey: 'courseView',
-      header: 'Course',
-      meta: { maxWidth: 120, fixedWidth: 140 }
     },
     {
       accessorKey: 'footFall',
@@ -476,6 +468,21 @@ export default function YellowLeadsTracker() {
       accessorKey: 'nextDueDateView',
       header: 'Next Due Date',
       meta: { align: 'center', maxWidth: 160, fixedWidth: 190 }
+    },
+    {
+      accessorKey: 'areaView',
+      header: 'Area',
+      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+    },
+    {
+      accessorKey: 'cityView',
+      header: 'City',
+      meta: { maxWidth: 120, fixedWidth: 120 }
+    },
+    {
+      accessorKey: 'courseView',
+      header: 'Course',
+      meta: { maxWidth: 120, fixedWidth: 140 }
     },
     {
       accessorKey: 'finalConversion',
@@ -746,6 +753,7 @@ export default function YellowLeadsTracker() {
               setRefreshKey={setRefreshKey}
               key={editRow._id}
               data={editRow}
+              setLeadData={setLeadData}
             />
           )}
         </TechnoRightDrawer>
