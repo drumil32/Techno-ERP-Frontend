@@ -100,7 +100,6 @@ export default function YellowLeadViewEdit({
       tempData = removeNullValues(tempData);
       let validationData = {
         _id: tempData._id,
-        lastCallDate: tempData.lastCallDate,
         name: tempData.name,
         phoneNumber: tempData.phoneNumber,
         altPhoneNumber: tempData.altPhoneNumber,
@@ -268,7 +267,6 @@ export default function YellowLeadViewEdit({
       'degree',
       'remarks',
       'nextDueDate',
-      'lastCallDate'
     ];
 
     return allowedFields.some((field) => {
@@ -319,7 +317,6 @@ export default function YellowLeadViewEdit({
         'followUpCount',
         'remarks',
         'nextDueDate',
-        'lastCallDate'
       ];
 
       let filteredData = Object.fromEntries(
@@ -339,6 +336,7 @@ export default function YellowLeadViewEdit({
           const key = err.path[0] as keyof FormErrors;
           newErrors[key] = err.message;
         });
+        console.log("newErrors", newErrors)
         setErrors(newErrors);
         toast.error('Please fix the errors in the form');
         return;
@@ -421,7 +419,7 @@ export default function YellowLeadViewEdit({
                         assignedToView: assignedToView,
                         assignedToName: assignedToName,
                         date: response.date,
-                        updatedAt: response.updatedAt,
+                        lastCallDate: response.lastCallDate ?? lead.lastCallDate,
                         nextDueDate: response.nextDueDate,
                         nextDueDateView: response.nextDueDate
                           ? formatDateView(response.nextDueDate)
@@ -433,7 +431,6 @@ export default function YellowLeadViewEdit({
                          remarksView: response.remarks && response.remarks.length > 0
                           ? response.remarks.map(remark => remark).join(' | ')
                           : response.remarks,
-                        lastCallDate: response.lastCallDate ?? lead.lastCallDate,
                         lastCallDateView: formatTimeStampView(response.lastCallDate) ?? lead.lastCallDateView,
                         isOlderThan7Days: response.isOlderThan7Days
                       };
@@ -854,7 +851,7 @@ export default function YellowLeadViewEdit({
 
       <div className="flex flex-col gap-2">
         <EditLabel className="text-[#666666]" title="Last Call Date" />
-        <p className="font-medium">{formatTimeStampView(formData.updatedAt) ?? 'Not Provided'}</p>
+        <p className="font-medium">{formatTimeStampView(formData.lastCallDate) ?? 'Not Provided'}</p>
       </div>
     </>
   );

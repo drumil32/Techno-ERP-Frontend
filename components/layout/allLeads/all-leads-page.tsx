@@ -407,7 +407,7 @@ export default function AllLeadsPage() {
             assignedToName,
             nextDueDateView,
             createdAt,
-            updatedAt,
+            lastCallDate,
             remarks,
             remarksView,
             leadTypeModifiedDate,
@@ -465,7 +465,7 @@ export default function AllLeadsPage() {
                               leadTypeModifiedDate: response.leadTypeModifiedDate ?? lead.leadTypeModifiedDate,
                               leadTypeModifiedDateView: formatTimeStampView(response.leadTypeModifiedDate) ??
                                 lead.leadTypeModifiedDateView,
-                              updatedAt: response.updatedAt
+                              lastCallDate: response.lastCallDate
                             };
                           }
                           return lead;
@@ -546,7 +546,7 @@ export default function AllLeadsPage() {
             assignedToName,
             nextDueDateView,
             createdAt,
-            updatedAt,
+            lastCallDate,
             remarks,
             remarksView,
             leadTypeModifiedDate,
@@ -589,7 +589,7 @@ export default function AllLeadsPage() {
                         ...newData.leads[leadIndex],
                         followUpCount:
                           response.followUpCount ?? newData.leads[leadIndex].followUpCount,
-                        updatedAt: response.updatedAt
+                        lastCallDate: response.lastCallDate
                       };
                     }
 

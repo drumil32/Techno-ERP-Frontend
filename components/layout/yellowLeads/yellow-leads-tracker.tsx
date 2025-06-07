@@ -345,7 +345,7 @@ export default function YellowLeadsTracker() {
                         ...newData.yellowLeads[leadIndex],
                         footFall: response.footFall,
                         finalConversion: response.finalConversion,
-                        updatedAt: response.updatedAt
+                        lastCallDate: response.lastCallDate
                       };
                     }
                     return newData;
@@ -419,7 +419,7 @@ export default function YellowLeadsTracker() {
                       newData.yellowLeads[leadIndex] = {
                         ...newData.yellowLeads[leadIndex],
                         followUpCount: response.followUpCount,
-                        updatedAt: response.updatedAt
+                        lastCallDate: response.lastCallDate
                       };
                     }
                     return newData;
@@ -515,7 +515,7 @@ export default function YellowLeadsTracker() {
                     newData.yellowLeads[leadIndex] = {
                       ...newData.yellowLeads[leadIndex],
                       finalConversion: response.finalConversion,
-                      updatedAt: response.updatedAt
+                      lastCallDate: response.lastCallDate
                     };
                   }
                   return newData;
