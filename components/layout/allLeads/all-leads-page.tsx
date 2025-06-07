@@ -366,6 +366,11 @@ export default function AllLeadsPage() {
       meta: { maxWidth: 130, fixedWidth: 150 }
     },
     {
+      accessorKey: 'courseView',
+      header: 'Course',
+      meta: { maxWidth: 120, fixedWidth: 140 }
+    },
+    {
       accessorKey: 'altPhoneNumber',
       header: 'Alt Phone Number',
       meta: { maxWidth: 130, fixedWidth: 150 }
@@ -506,6 +511,10 @@ export default function AllLeadsPage() {
       meta: {
         maxWidth: isRoleLeadMarketing ? 130 : 230,
         fixedWidth: isRoleLeadMarketing ? 180 : 280
+      },
+      cell: ({ row }: any) => {
+        const remarks = row.original.remarks || [];
+        return <TruncatedCell value={[...remarks].reverse().join(' | ')} />;
       }
     },
     {
@@ -641,7 +650,7 @@ export default function AllLeadsPage() {
       header: 'Next Due Date',
       meta: { align: 'center', maxWidth: 160, fixedWidth: 190 }
     },
-        {
+    {
       accessorKey: 'areaView',
       header: 'Area',
       meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
@@ -651,11 +660,7 @@ export default function AllLeadsPage() {
       header: 'City',
       meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
     },
-    {
-      accessorKey: 'courseView',
-      header: 'Course',
-      meta: { maxWidth: 120, fixedWidth: 140 }
-    },
+    
     ...(isRoleLeadMarketing
       ? [
         {

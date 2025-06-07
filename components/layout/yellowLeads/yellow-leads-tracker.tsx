@@ -5,7 +5,7 @@ import TechnoAnalyticCardsGroup, {
 } from '../../custom-ui/analytic-card/techno-analytic-cards-group';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
-import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
+import TechnoDataTable, { TruncatedCell } from '@/components/custom-ui/data-table/techno-data-table';
 import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -299,6 +299,11 @@ export default function YellowLeadsTracker() {
       meta: { maxWidth: 130, fixedWidth: 150 }
     },
     {
+      accessorKey: 'courseView',
+      header: 'Course',
+      meta: { maxWidth: 120, fixedWidth: 140 }
+    },
+    {
       accessorKey: 'altPhoneNumber',
       header: 'Alt Phone Number',
       meta: { maxWidth: 130, fixedWidth: 150 }
@@ -374,6 +379,10 @@ export default function YellowLeadsTracker() {
       meta: {
         maxWidth: isRoleLeadMarketing ? 130 : 230,
         fixedWidth: isRoleLeadMarketing ? 180 : 280
+      },
+      cell: ({ row }: any) => {
+        const remarks = row.original.remarks || [];
+        return <TruncatedCell value={[...remarks].reverse().join(' | ')} />;
       }
     },
     {
@@ -469,21 +478,7 @@ export default function YellowLeadsTracker() {
       header: 'Next Due Date',
       meta: { align: 'center', maxWidth: 160, fixedWidth: 190 }
     },
-    {
-      accessorKey: 'areaView',
-      header: 'Area',
-      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
-    },
-    {
-      accessorKey: 'cityView',
-      header: 'City',
-      meta: { maxWidth: 120, fixedWidth: 120 }
-    },
-    {
-      accessorKey: 'courseView',
-      header: 'Course',
-      meta: { maxWidth: 120, fixedWidth: 140 }
-    },
+
     {
       accessorKey: 'finalConversion',
       header: 'Lead Type',
@@ -531,6 +526,16 @@ export default function YellowLeadsTracker() {
 
         return <FinalConversionSelect value={value} onChange={handleChange} />;
       }
+    },
+    {
+      accessorKey: 'areaView',
+      header: 'Area',
+      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+    },
+    {
+      accessorKey: 'cityView',
+      header: 'City',
+      meta: { maxWidth: 120, fixedWidth: 120 }
     },
     ...(isRoleLeadMarketing
       ? [

@@ -48,7 +48,7 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import Loading from '@/app/loading';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { format } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';
 
@@ -176,8 +176,25 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className=" mx-auto w-auto p-0" align="center">
-        <Calendar mode="single" selected={selectedDate} onSelect={handleSelect} initialFocus />
+      <PopoverContent
+        side="bottom"
+        className=" mx-auto w-auto p-0" align="center">
+        <Calendar
+          mode="single"
+          selected={selectedDate}
+          onSelect={handleSelect}
+          initialFocus
+          modifiers={{
+            today: new Date(), 
+            selected: day => selectedDate ? isSameDay(day, selectedDate) : false,
+          }}
+          modifiersStyles={{
+            today: {
+              backgroundColor: '#a7c7f5',
+              color: '#111',
+            },
+          }}
+        />
         {selectedDate && (
           <div className="p-3 border-t flex justify-between items-center">
             <span className="text-sm">{format(selectedDate, 'PPP')}</span>
