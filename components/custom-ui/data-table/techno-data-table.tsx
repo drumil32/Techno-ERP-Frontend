@@ -185,7 +185,7 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
           onSelect={handleSelect}
           initialFocus
           modifiers={{
-            today: new Date(), 
+            today: new Date(),
             selected: day => selectedDate ? isSameDay(day, selectedDate) : false,
           }}
           modifiersStyles={{
@@ -236,9 +236,8 @@ export default function TechnoDataTable({
   searchBarPlaceholder = 'Search here',
   tableStyles = '',
   onDateFilter,
-  children
+  children,
 }: any) {
-  // console.log("get data", data)
 
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [columnVisibility, setColumnVisibility] = useState({

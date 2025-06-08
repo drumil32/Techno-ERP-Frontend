@@ -84,6 +84,12 @@ export const API_ENDPOINTS = {
     return `${API_DOMAIN}/admission/analytics?type=${type}&date=${date}`;
   },
 
+  //excel sheet in addmission
+
+  //for ongoing enquiry
+  enquiryExcelSheetData: `${API_DOMAIN}/admission/enquiry-excel-sheet-data`,
+  //for recent addmission
+  admissionExcelSheetData: `${API_DOMAIN}/admission/admission-excel-sheet-data`,
   // Document Upload
   uploadDocument: `${API_DOMAIN}/admission/enquiry/update-document`,
   fetchDocumentsByCourse: `${API_DOMAIN}/course-metadata`,

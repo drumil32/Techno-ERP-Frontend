@@ -50,7 +50,10 @@ export const feesRequestSchema = z.object({
   feesClearanceDate: z.string().nullable().optional(),
   counsellor: z.array(z.string()).optional(),
   telecaller: z.array(z.string()).optional(),
-  remarks: z.string().optional().nullable(),
+  enquiryRemark: z.string().optional().nullable(),
+  feeDetailsRemark:z.string().optional().nullable(),
+  financeOfficeRemark:z.string().optional().nullable(),
+  registarOfficeRemark:z.string().optional().nullable(),
   confirmationCheck: z.boolean().optional(),
   otpTarget: z.string().nullable().optional(),
   references: z.array(z.nativeEnum(AdmissionReference)).optional(),
@@ -101,10 +104,13 @@ export const frontendFeesDraftValidationSchema = z
     feesClearanceDate: z.string().optional().nullable(),
     counsellor: z.array(z.string()).optional(),
     telecaller: z.array(z.string()).optional(),
-    remarks: z.string().optional().nullable(),
+    feeDetailsRemark : z.string().optional(),
+    enquiryRemark : z.string().optional(),
+    registarOfficeRemark : z.string().optional(),
+    financeOfficeRemark : z.string().optional(),
     isFeeApplicable: z.boolean().default(false).optional(),
     references: z.array(z.nativeEnum(AdmissionReference)).optional(),
-    srAmount: z.number().min(0)
+    srAmount: z.number().min(0).optional()
   })
   .partial();
 

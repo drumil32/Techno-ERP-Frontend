@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { AdmissionStep } from '@/common/constants/admissionSteps';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { StepMapper } from '@/types/enum';
 
 export function AdmissionStepper({
   steps,
@@ -22,8 +23,10 @@ export function AdmissionStepper({
 
   const handleStepClick = (stepPath: string, index: number) => {
     if (isNewApplicationPath) return;
+    
     if (index <= maxAccessibleStep) {
-      router.push(`/c/admissions/application-process/ongoing/${applicationId}/${stepPath}`);
+      const capitalizedStepPath = stepPath.charAt(0).toUpperCase() + stepPath.slice(1);
+      router.push(`/c/admissions/application-process/ongoing/${applicationId}/${StepMapper[capitalizedStepPath]}`);
     }
   };
 
