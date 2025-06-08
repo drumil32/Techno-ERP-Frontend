@@ -100,6 +100,7 @@ interface DateSortableColumnProps {
   columnId: string;
   selectedDates: Record<string, Date | undefined>;
   onDateSelect: (columnId: string, date: Date | undefined) => void;
+  tableName?: string;
 }
 
 const DateFilterBadge = ({
@@ -142,10 +143,11 @@ const DateFilterBadge = ({
   );
 };
 
-const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSortableColumnProps) => {
+const DateSortableColumn = ({ columnId, selectedDates, onDateSelect, tableName }: DateSortableColumnProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const selectedDate = selectedDates[columnId];
+  let selectedDatesCheck = true;
 
+  const selectedDate = selectedDates[columnId];
   const handleSelect = (date: Date | undefined) => {
     onDateSelect(columnId, date);
     setIsOpen(false);
@@ -156,6 +158,24 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
     onDateSelect(columnId, undefined);
     setIsOpen(false);
   };
+
+  if (tableName === "Active Leads") {
+    const localf = localStorage.getItem("techno-filters-yellow-leads");
+    if (localf) {
+      const filters = JSON.parse(localf);
+      if (!filters.startNextDueDate) {
+        selectedDatesCheck = false;
+      }
+    }
+  } else if (tableName === "All Leads") {
+    const localf = localStorage.getItem("techno-filters-all-leads");
+    if (localf) {
+      const filters = JSON.parse(localf);
+      if (!filters.startNextDueDate) {
+        selectedDatesCheck = false;
+      }
+    }
+  }
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -169,7 +189,7 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
           )}
         >
           <span>Next Due Date</span>
-          {selectedDate ? (
+          {selectedDatesCheck && selectedDate ? (
             <CalendarIcon className="h-4 w-4 mr-2 text-primary" />
           ) : (
             <CalendarIcon className="h-4 w-4 mr-2 text-primary/50" />
@@ -179,6 +199,7 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
       <PopoverContent
         side="bottom"
         className=" mx-auto w-auto p-0" align="center">
+        {selectedDatesCheck ? 
         <Calendar
           mode="single"
           selected={selectedDate}
@@ -194,8 +215,20 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
               color: '#111',
             },
           }}
+        /> : <Calendar
+          mode="single"
+          onSelect={handleSelect}
+          initialFocus
+          
+          modifiersStyles={{
+            today: {
+              backgroundColor: '#a7c7f5',
+              color: '#111',
+            },
+          }}
         />
-        {selectedDate && (
+         }
+        {selectedDatesCheck && selectedDate && (
           <div className="p-3 border-t flex justify-between items-center">
             <span className="text-sm">{format(selectedDate, 'PPP')}</span>
             <Button variant="ghost" size="sm" onClick={handleClear}>
@@ -253,7 +286,12 @@ export default function TechnoDataTable({
   const tableRef = useRef<HTMLTableElement>(null);
   const [selectedDates, setSelectedDates] = useState<Record<string, Date | undefined>>(() => {
     if (typeof window === 'undefined') return {};
-    const saved = localStorage.getItem('dateFilters');
+    let saved;
+    if (tableName === "All Leads") {
+      saved = localStorage.getItem('allLeadsDateFilters');
+    } else if (tableName === "Active Leads") {
+      saved = localStorage.getItem('activeLeadsDateFilters');
+    }
     return saved ? JSON.parse(saved) : {};
   });
 
@@ -269,7 +307,10 @@ export default function TechnoDataTable({
   }, [searchTerm]);
 
   useEffect(() => {
-    localStorage.setItem('dateFilters', JSON.stringify(selectedDates));
+    if (tableName === "All Leads")
+      localStorage.setItem('allLeadsDateFilters', JSON.stringify(selectedDates));
+    else if (tableName === "Active Leads")
+      localStorage.setItem('activeLeadsDateFilters', JSON.stringify(selectedDates));
   }, [selectedDates]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -461,6 +502,7 @@ export default function TechnoDataTable({
                                 columnId={columnId}
                                 selectedDates={selectedDates}
                                 onDateSelect={handleDateSelect}
+                                tableName={tableName}
                               />
                             </>
                           )}

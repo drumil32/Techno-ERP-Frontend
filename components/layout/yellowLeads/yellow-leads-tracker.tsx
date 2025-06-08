@@ -594,6 +594,7 @@ export default function YellowLeadsTracker() {
   });
   const courses = Array.isArray(courseQuery.data) ? courseQuery.data : [];
   const getFiltersData = (): FilterData[] => {
+    // console.log("in filters ")
     return [
       {
         filterKey: 'leadTypeModifiedDate',
@@ -676,7 +677,9 @@ export default function YellowLeadsTracker() {
         'date',
         'nextDueDate',
         'startNextDueDate',
-        'endNextDueDate'
+        'endNextDueDate',
+        'activeLeadsDateFilters',
+        'allLeadsDateFilters'
       ];
 
       dateKeys.forEach((key) => {
@@ -695,8 +698,9 @@ export default function YellowLeadsTracker() {
 
   const clearFilters = () => {
     getFiltersData().forEach((filter) => {
+      
       if (filter.filterKey === 'date' || filter.isDateFilter) {
-        const dateKeys = ['startDate', 'endDate', 'startLTCDate', 'endLTCDate', 'date'];
+        const dateKeys = ['startDate', 'endDate', 'startLTCDate', 'endLTCDate', 'date','activeLeadsDateFilters','allLeadsDateFilters'];
 
         dateKeys.forEach((key) => updateFilter(key, undefined));
       } else {
