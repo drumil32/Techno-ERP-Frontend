@@ -60,11 +60,11 @@ export default function TechnoSidebarItem({
     if (route && pathname.startsWith(route)) {
       return true;
     }
-    
-    // Then check if pathname contains the sidebar item text
-    if (pathname.toLowerCase().includes(text.toLowerCase())) {
-      return true;
-    }
+
+    // if(pathname.includes("admin-tracker") ||pathname.includes("active-leads") ){
+    //   setSidebarActiveItem(SIDEBAR_ITEMS.MARKETING)
+    //   return true
+    // }
     
     // Finally check if it's manually selected
     return sidebarActiveItem === text;

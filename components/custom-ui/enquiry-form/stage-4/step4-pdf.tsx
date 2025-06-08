@@ -26,8 +26,7 @@ import {
 import { FaCircleExclamation } from 'react-icons/fa6';
 import { downloadStep4 } from './helpers/download-pdf';
 
-export function DownloadStep4({ tableActionButton = true, studentId, data }: { tableActionButton?: boolean; studentId: string, data:any }) {
-  console.log(data)
+export function DownloadStep4({ tableActionButton = true, studentId, data,otherFeesData, form, otherFeesWatched,otherFeesTotals }: { tableActionButton?: boolean; studentId: string, data:any,otherFeesData:any, form:any, otherFeesWatched:any,otherFeesTotals:any }) {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
@@ -45,7 +44,8 @@ export function DownloadStep4({ tableActionButton = true, studentId, data }: { t
       setPdfDataUrl(null);
       try {
         if (data) {
-          const { url, fileName } = await downloadStep4(data);
+          const sendData = {...data, otherFeesData,form,otherFeesWatched,otherFeesTotals}
+          const { url, fileName } = await downloadStep4(sendData);
           if (fileName) setFileName(fileName);
           if (url) setPdfDataUrl(url);
           else toast.error('Error in showing preview.');
@@ -152,7 +152,7 @@ export function DownloadStep4({ tableActionButton = true, studentId, data }: { t
             onClick={() => setDownloadOpen(true)}
           >
             <FileArchive className="w-5 h-5 mr-3 text-amber-600" />
-            <span className="text-gray-700 font-medium">Admission Form</span>
+            <span className="text-gray-700 font-medium">Fee Details</span>
             <DownloadCloud className="w-4 h-4 ml-auto text-gray-400" />
           </Button>
         }
@@ -162,10 +162,10 @@ export function DownloadStep4({ tableActionButton = true, studentId, data }: { t
         <DialogHeader>
           <DialogTitle className="flex gap-2 items-center">
             <DownloadIcon className="text-primary w-6 h-6" />
-            Download Admission Form
+            Download Fee Details
           </DialogTitle>
           <DialogDescription className="my-3">
-            Preview and download admission form.
+            Preview and download Fee Details.
           </DialogDescription>
         </DialogHeader>
 

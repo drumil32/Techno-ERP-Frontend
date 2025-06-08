@@ -17,7 +17,7 @@ export interface YellowLead {
   yellowLeadsFollowUpCount:number;
   remarks: string[];
   createdAt: string; // ISO Date string
-  updatedAt: string; // ISO Date string
+  // updatedAt: string; // ISO Date string
   __v: number;
   date: string; // DD/MM/YYYY format
   leadTypeModifiedDate: string; // DD/MM/YYYY format

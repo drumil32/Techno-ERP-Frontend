@@ -11,7 +11,7 @@ export const formatDateView = (dateStr: string) => {
   const [day, month, year] = parts;
   return `${day}/${month}/${year.slice(-2)}`;
 };
-export const formatTimeStampView = (dateStr: string) => {
+export const formatTimeStampView = (dateStr?: string) => {
   if (!dateStr || typeof dateStr !== 'string') return null;
 
   const [datePart, timePart] = dateStr.split('|').map((part) => part.trim());
@@ -106,7 +106,7 @@ export const refineLeads = (data: any, assignedToDropdownData: any, limit:number
       nextDueDateView: formatDateView(lead.nextDueDate) ?? '-',
       followUpCount: lead.followUpCount ?? 0,
       createdAt: new Date(lead.createdAt).toLocaleString(),
-      updatedAt: lead.updatedAt ?? 'N/A',
+      lastCallDate: lead.lastCallDate ?? 'N/A',
       remarks: lead.remarks,
 
       remarksView: lead.remarks ? [...lead.remarks].reverse().join(' | ') : '-',
