@@ -21,12 +21,36 @@ import {
   ChevronLeft,
   ChevronRight,
   DownloadCloud,
-  Printer
+  Printer,
+  FileTextIcon
 } from 'lucide-react';
 import { FaCircleExclamation } from 'react-icons/fa6';
 import { downloadStep4 } from './helpers/download-pdf';
+import { useQuery } from '@tanstack/react-query';
+import { getEnquiry } from '../stage-1/enquiry-form-api';
 
-export function DownloadStep4({ tableActionButton = true, studentId, data,otherFeesData, form, otherFeesWatched,otherFeesTotals }: { tableActionButton?: boolean; studentId: string, data:any,otherFeesData:any, form:any, otherFeesWatched:any,otherFeesTotals:any }) {
+export function DownloadStep4({
+  tableActionButton = true, 
+  studentId, 
+}: { 
+  tableActionButton?: boolean; 
+  studentId: string;
+}) {
+
+  const [dataUpdated, setDataUpdated] = useState(true);
+
+  const {
+      data: enquiryData,
+      error,
+      isFetched,
+      isLoading: isLoadingEnquiry
+    } = useQuery<any>({
+      queryKey: ['enquireFormData', studentId, dataUpdated],
+      queryFn: () => (studentId ? getEnquiry(studentId) : Promise.reject('Enquiry ID is null')),
+      enabled: !!studentId,
+      refetchOnWindowFocus: false
+    });
+
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
@@ -43,8 +67,8 @@ export function DownloadStep4({ tableActionButton = true, studentId, data,otherF
       setIsLoading(true);
       setPdfDataUrl(null);
       try {
-        if (data) {
-          const sendData = {...data, otherFeesData,form,otherFeesWatched,otherFeesTotals}
+        if (enquiryData) {
+          const sendData = {...enquiryData}
           const { url, fileName } = await downloadStep4(sendData);
           if (fileName) setFileName(fileName);
           if (url) setPdfDataUrl(url);
@@ -142,8 +166,9 @@ export function DownloadStep4({ tableActionButton = true, studentId, data,otherF
             variant={'outline'}
             className="cursor-pointer mx-auto"
             onClick={() => setDownloadOpen(true)}
+            title='Fee Details'
           >
-            <FileArchive className="text-primary" />
+            <FileTextIcon  className="text-primary" />
           </Button>
           :
           <Button
@@ -151,7 +176,7 @@ export function DownloadStep4({ tableActionButton = true, studentId, data,otherF
             className="h-12 justify-start px-6 py-3 border-gray-200 hover:bg-gray-50"
             onClick={() => setDownloadOpen(true)}
           >
-            <FileArchive className="w-5 h-5 mr-3 text-amber-600" />
+            <FileTextIcon className="w-5 h-5 mr-3 text-amber-600" />
             <span className="text-gray-700 font-medium">Fee Details</span>
             <DownloadCloud className="w-4 h-4 ml-auto text-gray-400" />
           </Button>
