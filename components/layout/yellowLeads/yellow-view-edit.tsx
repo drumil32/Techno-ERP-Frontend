@@ -13,7 +13,7 @@ import {
 import { CalendarIcon, Loader2, Pencil, Save, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Course, FinalConversionStatus, Gender, LeadType, Locations, UserRoles } from '@/types/enum';
+import { Course, FinalConversionStatus, Gender, Locations, UserRoles } from '@/types/enum';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
@@ -393,11 +393,9 @@ export default function YellowLeadViewEdit({
               }
 
               if (leadIndex !== -1) {
-                console.log("id " ,data.id, "  and response" , response);
                 setLeadData((prevLeads: any[]) => {
                   return prevLeads.map((lead) => {
                     if (lead.id === data.id) {
-                      console.log(lead.id , " ", lead)
                       return {
                         ...lead,
                         ...response,
@@ -428,8 +426,7 @@ export default function YellowLeadViewEdit({
                         nextDueDateView: response.nextDueDate
                           ? formatDateView(response.nextDueDate)
                           : '-',
-                        leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
-                        _leadType: response.leadType,
+                        
                         followUpCount: response.followUpCount ?? lead.followUpCount,
                         remarks: response.remarks || lead.remarks,
                          remarksView: response.remarks && response.remarks.length > 0
@@ -439,7 +436,6 @@ export default function YellowLeadViewEdit({
                         isOlderThan7Days: response.isOlderThan7Days
                       };
                     }
-                    // console.log("lead is ", lead)
                     return lead;
                   });
                 });
