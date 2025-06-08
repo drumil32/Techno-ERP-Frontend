@@ -509,12 +509,12 @@ export default function AllLeadsPage() {
       accessorKey: 'remarksView',
       header: 'Remarks',
       meta: {
-        maxWidth: isRoleLeadMarketing ? 130 : 230,
-        fixedWidth: isRoleLeadMarketing ? 180 : 280
+        maxWidth: 130,
+        fixedWidth:  180 
       },
       cell: ({ row }: any) => {
         const remarks = row.original.remarks || [];
-        return <TruncatedCell value={[...remarks].reverse().join(' | ')} />;
+        return <TruncatedCell maxWidth={130} value={[...remarks].reverse().join(' | ')} />;
       }
     },
     {

@@ -393,12 +393,14 @@ export default function YellowLeadViewEdit({
               }
 
               if (leadIndex !== -1) {
-                console.log("id " ,data.id);
+                console.log("id " ,data.id, "  and response" , response);
                 setLeadData((prevLeads: any[]) => {
                   return prevLeads.map((lead) => {
                     if (lead.id === data.id) {
+                      console.log(lead.id , " ", lead)
                       return {
                         ...lead,
+                        ...response,
                         name: response.name,
                         footfall : response.footFall,
                         source: response.source,
@@ -437,6 +439,7 @@ export default function YellowLeadViewEdit({
                         isOlderThan7Days: response.isOlderThan7Days
                       };
                     }
+                    // console.log("lead is ", lead)
                     return lead;
                   });
                 });
@@ -473,8 +476,8 @@ export default function YellowLeadViewEdit({
     <>
       <div className="flex flex-col gap-6 text-sm">
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">LTC Date</p>
-          <p>{formData.lastCallDate ?? '-'}</p>
+          <p className="w-1/4 text-[#666666]">Date</p>
+          <p>{formData.date ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Name</p>
@@ -558,8 +561,8 @@ export default function YellowLeadViewEdit({
     <>
       <div className="flex flex-row gap-5 items-center">
         <div className="flex flex-col gap-2 w-1/2">
-          <EditLabel htmlFor="ltcDate" title={'LTC Date'} />
-          <p className="h-9 font-medium">{formatTimeStampView(data.lastCallDate)}</p>
+          <EditLabel htmlFor="date" title={'Date'} />
+          <p className="h-9 font-medium">{formatTimeStampView(data.date)}</p>
         </div>
 
         <div className="space-y-2 w-1/2">

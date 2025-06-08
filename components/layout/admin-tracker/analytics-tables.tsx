@@ -62,18 +62,18 @@ type SortConfig = {
 
 export function LeadTables() {
   const [allLeadsSortConfig, setAllLeadsSortConfig] = useState<SortConfig>({
-    key: 'source',
-    direction: 'ascending'
+    key: 'totalLeads',
+    direction: 'descending'
   });
 
   const [onlineSortConfig, setOnlineSortConfig] = useState<SortConfig>({
-    key: 'source',
-    direction: 'ascending'
+    key: 'totalLeads',
+    direction: 'descending'
   });
 
   const [offlineSortConfig, setOfflineSortConfig] = useState<SortConfig>({
-    key: 'source',
-    direction: 'ascending'
+    key: 'totalLeads',
+    direction: 'descending'
   });
 
   const [allLeadsTab, setAllLeadsTab] = useState('numbers');

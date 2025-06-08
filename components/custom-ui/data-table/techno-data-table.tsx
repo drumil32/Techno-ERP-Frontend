@@ -73,22 +73,13 @@ export const TruncatedCell = ({ value, maxWidth }: { value: any; maxWidth?: numb
   if (!value || value === '-' || value === 'N/A') return <>{value}</>;
 
   return isTruncated ? (
-    <TooltipProvider delayDuration={200}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <span
-            ref={cellRef}
-            className="truncate block hover:text-[#6042D1] hover:underline"
-            style={{ maxWidth: maxWidth ? `${maxWidth}px` : 'none' }}
-          >
-            {value}
-          </span>
-        </TooltipTrigger>
-        <TooltipContent className="max-w-[300px] break-words bg-gray-800 text-white border-gray-600">
-          <p>{value}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <div
+      title={value}
+      className="truncate overflow-hidden text-ellipsis hover:underline hover:cursor-pointer cursor-default"
+      style={{ maxWidth: maxWidth ? `${maxWidth}px` : '100%' }}
+    >
+      {value}
+    </div>
   ) : (
     <span ref={cellRef} style={{ maxWidth: maxWidth ? `${maxWidth}px` : 'none' }} className="block">
       {value}
@@ -199,35 +190,35 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect, tableName }
       <PopoverContent
         side="bottom"
         className=" mx-auto w-auto p-0" align="center">
-        {selectedDatesCheck ? 
-        <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={handleSelect}
-          initialFocus
-          modifiers={{
-            today: new Date(),
-            selected: day => selectedDate ? isSameDay(day, selectedDate) : false,
-          }}
-          modifiersStyles={{
-            today: {
-              backgroundColor: '#a7c7f5',
-              color: '#111',
-            },
-          }}
-        /> : <Calendar
-          mode="single"
-          onSelect={handleSelect}
-          initialFocus
-          
-          modifiersStyles={{
-            today: {
-              backgroundColor: '#a7c7f5',
-              color: '#111',
-            },
-          }}
-        />
-         }
+        {selectedDatesCheck ?
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={handleSelect}
+            initialFocus
+            modifiers={{
+              today: new Date(),
+              selected: day => selectedDate ? isSameDay(day, selectedDate) : false,
+            }}
+            modifiersStyles={{
+              today: {
+                backgroundColor: '#a7c7f5',
+                color: '#111',
+              },
+            }}
+          /> : <Calendar
+            mode="single"
+            onSelect={handleSelect}
+            initialFocus
+
+            modifiersStyles={{
+              today: {
+                backgroundColor: '#a7c7f5',
+                color: '#111',
+              },
+            }}
+          />
+        }
         {selectedDatesCheck && selectedDate && (
           <div className="p-3 border-t flex justify-between items-center">
             <span className="text-sm">{format(selectedDate, 'PPP')}</span>

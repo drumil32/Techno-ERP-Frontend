@@ -198,7 +198,7 @@ export function PerformanceDashboard() {
 
   const metrics = [
     {
-      title: 'Total Calls',
+      title: 'Total Leads Reached',
       value: totals.totalCalls,
       icon: <Phone />,
       trend: 'up',
@@ -495,7 +495,7 @@ export function PerformanceDashboard() {
                               onClick={() => requestSort('totalCalls')}
                               className="flex items-center justify-center w-full hover:text-primary cursor-pointer"
                             >
-                              Total Calls {getSortIcon('totalCalls')}
+                              Total  Leads Reached {getSortIcon('totalCalls')}
                             </button>
                           </TableHead>
                           <TableHead className="font-semibold text-primary dark:text-gray-100 text-center w-[100px]">

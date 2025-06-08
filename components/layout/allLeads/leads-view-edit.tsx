@@ -447,8 +447,8 @@ export default function LeadViewEdit({
                         nextDueDateView: response.nextDueDate
                           ? formatDateView(response.nextDueDate)
                           : '-',
-                        leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
-                        _leadType: response.leadType,
+                        leadType: LeadType[response.leadType as keyof typeof LeadType],
+                        _leadType: LeadType[response.leadType as keyof typeof LeadType],
                         followUpCount: response.followUpCount ?? lead.followUpCount,
                         remarks: response.remarks || lead.remarks,
                         remarksView: response.remarks && response.remarks.length > 0

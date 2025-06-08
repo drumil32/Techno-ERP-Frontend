@@ -284,14 +284,14 @@ export default function YellowLeadsTracker() {
       meta: { align: 'center', maxWidth: 60, fixedWidth: 70 },
     },
     {
-      accessorKey: 'leadTypeModifiedDate',
-      header: 'LTC Date',
+      accessorKey: 'date',
+      header: 'Date',
       meta: { align: 'center', maxWidth: 100, fixedWidth: 120 },
     },
     {
       accessorKey: 'name',
       header: 'Name',
-      meta: { align: 'left', maxWidth: 130, fixedWidth: 150 },
+      meta: { align: 'left', maxWidth: 130, fixedWidth: 130 },
     },
     {
       accessorKey: 'phoneNumber',
@@ -387,12 +387,12 @@ export default function YellowLeadsTracker() {
       accessorKey: 'remarksView',
       header: 'Remarks',
       meta: {
-        maxWidth: isRoleLeadMarketing ? 130 : 230,
-        fixedWidth: isRoleLeadMarketing ? 180 : 280,
+        maxWidth: 130,
+        fixedWidth:130 ,
       },
       cell: ({ row }: any) => {
         const remarks = row.original.remarks || [];
-        return <TruncatedCell value={[...remarks].reverse().join(' | ')} />;
+        return <TruncatedCell maxWidth={130} value={[...remarks].reverse().join(' | ')} />;
       },
     },
     {
@@ -597,9 +597,9 @@ export default function YellowLeadsTracker() {
     // console.log("in filters ")
     return [
       {
-        filterKey: 'leadTypeModifiedDate',
-        placeholder: 'LTC Date',
-        label: 'LTC Date',
+        filterKey: 'date',
+        placeholder: 'Date',
+        label: 'Date',
         isDateFilter: true
       },
       {
@@ -670,10 +670,6 @@ export default function YellowLeadsTracker() {
 
     if (filterKey === 'date' || filterKey.includes('Date')) {
       const dateKeys = [
-        'startDate',
-        'endDate',
-        'startLTCDate',
-        'endLTCDate',
         'date',
         'nextDueDate',
         'startNextDueDate',
