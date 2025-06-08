@@ -423,7 +423,7 @@ export default function AllLeadsPage() {
             ...cleanedRow
           } = row.original;
 
-          
+
 
           const updatedData = {
             _id: row.original._id,
@@ -462,7 +462,7 @@ export default function AllLeadsPage() {
                     if (leadIndex !== -1) {
                       setLeadData((prevLeads) => {
                         return prevLeads.map((lead, index) => {
-                          if (index === id-1) { 
+                          if (index === id - 1) {
                             return {
                               ...lead,
                               leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
@@ -594,18 +594,26 @@ export default function AllLeadsPage() {
                     );
 
                     if (leadIndex !== -1) {
-                      newData.leads[leadIndex] = {
-                        ...newData.leads[leadIndex],
-                        followUpCount:
-                          response.followUpCount ?? newData.leads[leadIndex].followUpCount,
-                        lastCallDate: response.lastCallDate
-                      };
+                      setLeadData((prevLeads) => {
+                        return prevLeads.map((lead, index) => {
+                          if (index === id - 1) {
+                            return {
+                              ...lead,
+                              followUpCount:
+                                response.followUpCount ?? newData.leads[leadIndex].followUpCount,
+                              lastCallDate: response.lastCallDate
+                            };
+                          }
+                          return lead;
+                        });
+                      });
                     }
 
                     return newData;
                   });
                 });
               };
+
               updateLeadCache();
             } else {
               toast.error('Failed to update follow-up count', {
@@ -660,7 +668,7 @@ export default function AllLeadsPage() {
       header: 'City',
       meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
     },
-    
+
     ...(isRoleLeadMarketing
       ? [
         {
