@@ -393,12 +393,14 @@ export default function YellowLeadViewEdit({
               }
 
               if (leadIndex !== -1) {
+                console.log("id " ,data.id);
                 setLeadData((prevLeads: any[]) => {
                   return prevLeads.map((lead) => {
                     if (lead.id === data.id) {
                       return {
                         ...lead,
                         name: response.name,
+                        footfall : response.footFall,
                         source: response.source,
                         email: response.email,
                         sourceView: response.source ?? '-',

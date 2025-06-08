@@ -281,32 +281,32 @@ export default function YellowLeadsTracker() {
     {
       accessorKey: 'id',
       header: 'S.No.',
-      meta: { align: 'center', maxWidth: 60, fixedWidth: 70 }
+      meta: { align: 'center', maxWidth: 60, fixedWidth: 70 },
     },
     {
       accessorKey: 'leadTypeModifiedDate',
       header: 'LTC Date',
-      meta: { align: 'center', maxWidth: 100, fixedWidth: 120 }
+      meta: { align: 'center', maxWidth: 100, fixedWidth: 120 },
     },
     {
       accessorKey: 'name',
       header: 'Name',
-      meta: { align: 'left', maxWidth: 130, fixedWidth: 150 }
+      meta: { align: 'left', maxWidth: 130, fixedWidth: 150 },
     },
     {
       accessorKey: 'phoneNumber',
       header: 'Phone Number',
-      meta: { maxWidth: 130, fixedWidth: 150 }
+      meta: { maxWidth: 130, fixedWidth: 150 },
     },
     {
       accessorKey: 'courseView',
       header: 'Course',
-      meta: { maxWidth: 120, fixedWidth: 140 }
+      meta: { maxWidth: 120, fixedWidth: 140 },
     },
     {
       accessorKey: 'altPhoneNumber',
       header: 'Alt Phone Number',
-      meta: { maxWidth: 130, fixedWidth: 150 }
+      meta: { maxWidth: 130, fixedWidth: 150 },
     },
     {
       accessorKey: 'footFall',
@@ -314,26 +314,24 @@ export default function YellowLeadsTracker() {
       meta: { align: 'center', fixedWidth: 100, maxWidth: 100 },
       cell: ({ row }: any) => {
         const [selectedStatus, setSelectedStatus] = useState<FootFallStatus>(
-          row.original.footFall === true ? FootFallStatus.true : FootFallStatus.false
+          row.original.footFall ? FootFallStatus.true : FootFallStatus.false
         );
 
         const handleFootfallChange = async (newValue: FootFallStatus) => {
           const previousValue = selectedStatus;
           setSelectedStatus(newValue);
-          const toastId = toast.loading('Updating footfall...', { duration: Infinity });
 
+          const toastId = toast.loading('Updating footfall...', { duration: Infinity });
           const updatedData = { _id: row.original._id, footFall: newValue === FootFallStatus.true };
+          const { id } = row.original;
 
           try {
-            const response: any = await apiRequest(
-              API_METHODS.PUT,
-              API_ENDPOINTS.updateYellowLead,
-              updatedData
-            );
+            const response: any = await apiRequest(API_METHODS.PUT, API_ENDPOINTS.updateYellowLead, updatedData);
             toast.dismiss(toastId);
 
             if (response) {
               toast.success('Footfall updated!', { duration: 1500 });
+
               const updateLeadCache = () => {
                 const queryCache = queryClient.getQueryCache();
                 const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
@@ -341,27 +339,39 @@ export default function YellowLeadsTracker() {
                 leadQueries.forEach((query) => {
                   queryClient.setQueryData(query.queryKey, (oldData: any) => {
                     if (!oldData || !oldData.yellowLeads) return oldData;
+
                     const newData = JSON.parse(JSON.stringify(oldData));
+
                     const leadIndex = newData.yellowLeads.findIndex(
                       (lead: any) => lead._id === response._id
                     );
+
                     if (leadIndex !== -1) {
-                      newData.yellowLeads[leadIndex] = {
-                        ...newData.yellowLeads[leadIndex],
-                        footFall: response.footFall,
-                        finalConversion: response.finalConversion,
-                        lastCallDate: response.lastCallDate
-                      };
+                      setLeadData((prevLeads) => {
+                        return prevLeads.map((lead, index) => {
+                          if (index === id - 1) {
+                            return {
+                              ...lead,
+                              footFall: response.footFall,
+                              finalConversion: response.finalConversion,
+                              lastCallDate: response.lastCallDate,
+                            };
+                          }
+                          return lead;
+                        });
+                      });
                     }
+
                     return newData;
                   });
                 });
               };
+
               updateLeadCache();
+
               queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
             } else {
-              toast.error('Update failed!', { duration: 1500 });
-              setSelectedStatus(previousValue);
+              throw new Error();
             }
           } catch {
             toast.dismiss(toastId);
@@ -371,19 +381,19 @@ export default function YellowLeadsTracker() {
         };
 
         return <FootFallSelect value={selectedStatus} onChange={handleFootfallChange} />;
-      }
+      },
     },
     {
       accessorKey: 'remarksView',
       header: 'Remarks',
       meta: {
         maxWidth: isRoleLeadMarketing ? 130 : 230,
-        fixedWidth: isRoleLeadMarketing ? 180 : 280
+        fixedWidth: isRoleLeadMarketing ? 180 : 280,
       },
       cell: ({ row }: any) => {
         const remarks = row.original.remarks || [];
         return <TruncatedCell value={[...remarks].reverse().join(' | ')} />;
-      }
+      },
     },
     {
       accessorKey: 'followUpCount',
@@ -393,26 +403,27 @@ export default function YellowLeadsTracker() {
         const [selectedValue, setSelectedValue] = useState(row.original.followUpCount);
         const toastIdRef = useRef<string | number | null>(null);
 
-        const handleDropdownChange = async (newValue: number) => {
+        const handleDropdownChange = async (value: number) => {
           const previousValue = selectedValue;
-          setSelectedValue(newValue);
-          toastIdRef.current = toast.loading('Updating follow-up count...', { duration: Infinity });
+          setSelectedValue(value);
+          toastIdRef.current = toast.loading('Updating...', { duration: Infinity });
 
-          const filteredData = { _id: row.original._id, followUpCount: newValue };
+          const updatedData = { _id: row.original._id, followUpCount: value };
 
+          const { id } = row.original;
           try {
             const response: LeadData | null = await apiRequest(
               API_METHODS.PUT,
               API_ENDPOINTS.updateYellowLead,
-              filteredData
+              updatedData
             );
+
             toast.dismiss(toastIdRef.current);
 
             if (response) {
-              toast.success('Follow-up count updated successfully', {
-                id: toastIdRef.current,
-                duration: 1500
-              });
+              toast.success('Follow-up count updated successfully', { duration: 1500 });
+
+
               const updateLeadCache = () => {
                 const queryCache = queryClient.getQueryCache();
                 const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
@@ -420,45 +431,49 @@ export default function YellowLeadsTracker() {
                 leadQueries.forEach((query) => {
                   queryClient.setQueryData(query.queryKey, (oldData: any) => {
                     if (!oldData || !oldData.yellowLeads) return oldData;
+
                     const newData = JSON.parse(JSON.stringify(oldData));
+
                     const leadIndex = newData.yellowLeads.findIndex(
                       (lead: any) => lead._id === response._id
                     );
+
                     if (leadIndex !== -1) {
-                      newData.yellowLeads[leadIndex] = {
-                        ...newData.yellowLeads[leadIndex],
-                        followUpCount: response.followUpCount,
-                        lastCallDate: response.lastCallDate
-                      };
+                      setLeadData((prevLeads) => {
+                        return prevLeads.map((lead, index) => {
+                          if (index === id - 1) {
+                            return {
+                              ...lead,
+                              followUpCount: response.followUpCount,
+                              lastCallDate: response.lastCallDate,
+                            };
+                          }
+                          return lead;
+                        });
+                      });
                     }
+
                     return newData;
                   });
                 });
               };
+
               updateLeadCache();
+
+              queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
             } else {
-              toast.error('Failed to update follow-up count', {
-                id: toastIdRef.current,
-                duration: 1500
-              });
-              setSelectedValue(previousValue);
+              throw new Error();
             }
-          } catch {
-            toast.error('Failed to update follow-up count', {
-              id: toastIdRef.current,
-              duration: 1500
-            });
+          } catch (err) {
+            console.log("err is ", err)
+            toast.dismiss(toastIdRef.current);
+            toast.error('Failed to update follow-up count', { duration: 1500 });
             setSelectedValue(previousValue);
-          } finally {
-            toastIdRef.current = null;
           }
         };
 
         return (
-          <Select
-            value={selectedValue.toString()}
-            onValueChange={(value) => handleDropdownChange(Number(value))}
-          >
+          <Select value={selectedValue.toString()} onValueChange={(val) => handleDropdownChange(Number(val))}>
             <SelectTrigger className="w-[60px] bg-white mx-auto min-h-[unset] h-8 text-sm">
               <SelectValue placeholder="Select" />
             </SelectTrigger>
@@ -471,14 +486,13 @@ export default function YellowLeadsTracker() {
             </SelectContent>
           </Select>
         );
-      }
+      },
     },
     {
       accessorKey: 'nextDueDateView',
       header: 'Next Due Date',
-      meta: { align: 'center', maxWidth: 160, fixedWidth: 190 }
+      meta: { align: 'center', maxWidth: 160, fixedWidth: 190 },
     },
-
     {
       accessorKey: 'finalConversion',
       header: 'Lead Type',
@@ -488,6 +502,7 @@ export default function YellowLeadsTracker() {
 
         const handleChange = async (newValue: FinalConversionStatus) => {
           const updatedData = { _id: row.original._id, finalConversion: newValue };
+          const { id } = row.original
           const response: LeadData | null = await apiRequest(
             API_METHODS.PUT,
             API_ENDPOINTS.updateYellowLead,
@@ -495,6 +510,9 @@ export default function YellowLeadsTracker() {
           );
 
           if (response) {
+            toast.success('Lead Type updated successfully');
+
+            queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
             const updateLeadCache = () => {
               const queryCache = queryClient.getQueryCache();
               const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
@@ -502,50 +520,60 @@ export default function YellowLeadsTracker() {
               leadQueries.forEach((query) => {
                 queryClient.setQueryData(query.queryKey, (oldData: any) => {
                   if (!oldData || !oldData.yellowLeads) return oldData;
+
                   const newData = JSON.parse(JSON.stringify(oldData));
+
                   const leadIndex = newData.yellowLeads.findIndex(
                     (lead: any) => lead._id === response._id
                   );
+
                   if (leadIndex !== -1) {
-                    newData.yellowLeads[leadIndex] = {
-                      ...newData.yellowLeads[leadIndex],
-                      finalConversion: response.finalConversion,
-                      lastCallDate: response.lastCallDate
-                    };
+                    setLeadData((prevLeads) => {
+                      return prevLeads.map((lead, index) => {
+                        if (index === id - 1) {
+                          return {
+                            ...lead,
+                            finalConversion: response.finalConversion,
+                            lastCallDate: response.lastCallDate,
+                          };
+                        }
+                        return lead;
+                      });
+                    });
                   }
+
                   return newData;
                 });
               });
             };
 
             updateLeadCache();
-            queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
-            toast.success('Lead Type updated successfully');
           }
+
         };
 
         return <FinalConversionSelect value={value} onChange={handleChange} />;
-      }
+      },
     },
     {
       accessorKey: 'areaView',
       header: 'Area',
-      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 },
     },
     {
       accessorKey: 'cityView',
       header: 'City',
-      meta: { maxWidth: 120, fixedWidth: 120 }
+      meta: { maxWidth: 120, fixedWidth: 120 },
     },
     ...(isRoleLeadMarketing
       ? [
         {
           accessorKey: 'assignedToName',
           header: 'Assigned To',
-          meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
-        }
+          meta: { align: 'left', maxWidth: 140, fixedWidth: 140 },
+        },
       ]
-      : [])
+      : []),
   ];
 
   const cityDropdownQuery = useQuery({
