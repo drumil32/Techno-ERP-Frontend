@@ -26,12 +26,21 @@ import {
   Sparkle,
   ArrowUp,
   ArrowDown,
-  ArrowUpDown
+  ArrowUpDown,
+  PhoneForwarded,
+  PhoneCall,
+  Facebook,
+  MessageSquare,
+  MessageCircleIcon,
+  BookOpenCheckIcon,
+  PencilRuler,
+  GraduationCapIcon
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { sourceAnalytics } from './helpers/fetch-data';
 import { NoDataPreview } from '@/components/custom-ui/no-data-preview/no-data-preview';
 import { useState } from 'react';
+import { FaFacebook } from 'react-icons/fa6';
 
 type LeadData = {
   source: string;
@@ -284,16 +293,35 @@ export function LeadTables() {
                     <Globe className="h-5 w-5 text-blue-400" />
                   ) : lead.source.includes('Website') ? (
                     <Laptop className="h-5 w-5 text-indigo-400" />
+                  ) : lead.source.includes('IVR') ? (
+                    <PhoneForwarded className="h-5 w-5 text-orange-500" />
+                  ) : lead.source.includes('Direct') ? (
+                    <PhoneCall className="h-5 w-5 text-green-500" />
+                  ) : lead.source.includes('Meta') ? (
+                    <FaFacebook className="h-5 w-5 text-blue-600" />
+                  ) : lead.source.includes('Tawk') ? (
+                    <MessageSquare className="h-5 w-5 text-emerald-500" />
+                  ) : lead.source.includes('WhatsApp') ? (
+                    <MessageCircleIcon className="h-5 w-5 text-green-600" />
                   ) : (
                     <PlusCircle className="h-5 w-5 text-gray-400" />
                   )
-                ) : lead.source === 'Student Reference' ? (
-                  <UserCheck className="h-5 w-5 text-amber-500" />
-                ) : lead.source === 'Technoligence' ? (
-                  <Cpu className="h-5 w-5 text-teal-500" />
-                ) : (
-                  <PlusCircle className="h-5 w-5 text-gray-500" />
-                )}
+                )
+                  : lead.source === 'Student Reference' ? (
+                    <UserCheck className="h-5 w-5 text-amber-500" />
+                  ) : lead.source === 'Technoligence' ? (
+                    <Cpu className="h-5 w-5 text-teal-500" />
+                  ) : lead.source === 'Board Exam' ? (
+                    <BookOpenCheckIcon className="h-5 w-5 text-purple-500" />
+                  ) : lead.source === 'CUET' ? (
+                    <PencilRuler className="h-5 w-5 text-pink-500" />
+                  ) : lead.source === 'PG Data' ? (
+                    <GraduationCapIcon className="h-5 w-5 text-indigo-500" />
+                  ) : lead.source === 'UG Data' ? (
+                    <School className="h-5 w-5 text-blue-500" />
+                  ) : (
+                    <PlusCircle className="h-5 w-5 text-gray-500" />
+                  )}
                 <span className="text-gray-800">
                   {tableType === 'allLeads'
                     ? lead.source.charAt(0).toUpperCase() + lead.source.slice(1)

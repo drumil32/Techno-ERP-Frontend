@@ -5,7 +5,7 @@ import TechnoAnalyticCardsGroup, {
 } from '../../custom-ui/analytic-card/techno-analytic-cards-group';
 import { useTechnoFilterContext } from '../../custom-ui/filter/filter-context';
 import TechnoFiltersGroup from '../../custom-ui/filter/techno-filters-group';
-import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
+import TechnoDataTable, { TruncatedCell } from '@/components/custom-ui/data-table/techno-data-table';
 import { Button } from '../../ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -176,7 +176,6 @@ export default function YellowLeadsTracker() {
 
   const assignedToDropdownData = Array.isArray(assignedToQuery?.data) ? assignedToQuery?.data : [];
   const leads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
-
   useEffect(() => {
     if (leadsQuery.data) {
       const data: any = leadsQuery.data;
@@ -186,9 +185,18 @@ export default function YellowLeadsTracker() {
           setLeadData(leads?.leads || []);
         } else {
           let newleads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
-          setLeadData(prev => {
+          setLeadData((prev) => {
             const tleads = [...prev, ...(newleads?.leads || [])];
-            return tleads;
+            // console.log(tleads);
+
+            const allleads = tleads
+              .filter(lead => lead)
+              .map((lead, index) => ({
+                ...lead,
+                id: index + 1
+              }));
+
+            return allleads;
           });
 
         }
@@ -197,7 +205,6 @@ export default function YellowLeadsTracker() {
       }
     }
   }, [leadsQuery.data]);
-
   useEffect(() => {
     if (leads) {
       setTotalPages(leads.totalPages);
@@ -292,24 +299,14 @@ export default function YellowLeadsTracker() {
       meta: { maxWidth: 130, fixedWidth: 150 }
     },
     {
-      accessorKey: 'altPhoneNumber',
-      header: 'Alt Phone Number',
-      meta: { maxWidth: 130, fixedWidth: 150 }
-    },
-    {
-      accessorKey: 'areaView',
-      header: 'Area',
-      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
-    },
-    {
-      accessorKey: 'cityView',
-      header: 'City',
-      meta: { maxWidth: 120, fixedWidth: 120 }
-    },
-    {
       accessorKey: 'courseView',
       header: 'Course',
       meta: { maxWidth: 120, fixedWidth: 140 }
+    },
+    {
+      accessorKey: 'altPhoneNumber',
+      header: 'Alt Phone Number',
+      meta: { maxWidth: 130, fixedWidth: 150 }
     },
     {
       accessorKey: 'footFall',
@@ -353,7 +350,7 @@ export default function YellowLeadsTracker() {
                         ...newData.yellowLeads[leadIndex],
                         footFall: response.footFall,
                         finalConversion: response.finalConversion,
-                        updatedAt: response.updatedAt
+                        lastCallDate: response.lastCallDate
                       };
                     }
                     return newData;
@@ -382,6 +379,10 @@ export default function YellowLeadsTracker() {
       meta: {
         maxWidth: isRoleLeadMarketing ? 130 : 230,
         fixedWidth: isRoleLeadMarketing ? 180 : 280
+      },
+      cell: ({ row }: any) => {
+        const remarks = row.original.remarks || [];
+        return <TruncatedCell value={[...remarks].reverse().join(' | ')} />;
       }
     },
     {
@@ -427,7 +428,7 @@ export default function YellowLeadsTracker() {
                       newData.yellowLeads[leadIndex] = {
                         ...newData.yellowLeads[leadIndex],
                         followUpCount: response.followUpCount,
-                        updatedAt: response.updatedAt
+                        lastCallDate: response.lastCallDate
                       };
                     }
                     return newData;
@@ -477,6 +478,7 @@ export default function YellowLeadsTracker() {
       header: 'Next Due Date',
       meta: { align: 'center', maxWidth: 160, fixedWidth: 190 }
     },
+
     {
       accessorKey: 'finalConversion',
       header: 'Lead Type',
@@ -508,7 +510,7 @@ export default function YellowLeadsTracker() {
                     newData.yellowLeads[leadIndex] = {
                       ...newData.yellowLeads[leadIndex],
                       finalConversion: response.finalConversion,
-                      updatedAt: response.updatedAt
+                      lastCallDate: response.lastCallDate
                     };
                   }
                   return newData;
@@ -524,6 +526,16 @@ export default function YellowLeadsTracker() {
 
         return <FinalConversionSelect value={value} onChange={handleChange} />;
       }
+    },
+    {
+      accessorKey: 'areaView',
+      header: 'Area',
+      meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
+    },
+    {
+      accessorKey: 'cityView',
+      header: 'City',
+      meta: { maxWidth: 120, fixedWidth: 120 }
     },
     ...(isRoleLeadMarketing
       ? [
@@ -746,6 +758,7 @@ export default function YellowLeadsTracker() {
               setRefreshKey={setRefreshKey}
               key={editRow._id}
               data={editRow}
+              setLeadData={setLeadData}
             />
           )}
         </TechnoRightDrawer>

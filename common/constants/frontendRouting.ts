@@ -17,10 +17,10 @@ export const SITE_MAP = {
     RECENT_ADMISSIONS: '/c/admissions/recent-admissions',
     CREATE_ADMISSION: '/c/admissions/application-process/new',
     ONGOING_ADMISSION: '/c/admissions/application-process/ongoing',
-    FORM_STAGE_1: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_1`,
-    FORM_STAGE_2: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_2`,
-    FORM_STAGE_3: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_3`,
-    FORM_STAGE_4: (id: string) => `/c/admissions/application-process/ongoing/${id}/step_4`,
+    FORM_STAGE_1: (id: string) => `/c/admissions/application-process/ongoing/${id}/Enquiry`,
+    FORM_STAGE_2: (id: string) => `/c/admissions/application-process/ongoing/${id}/Fees_Details`,
+    FORM_STAGE_3: (id: string) => `/c/admissions/application-process/ongoing/${id}/Registar`,
+    FORM_STAGE_4: (id: string) => `/c/admissions/application-process/ongoing/${id}/Finance`,
     GO_TO_ENQUIRY: (id: string, stage: string) =>
       `/c/admissions/application-process/ongoing/${id}/${stage}`,
     ADMIN_TRACKER: '/c/admissions/admin-tracker'

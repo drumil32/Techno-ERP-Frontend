@@ -13,7 +13,7 @@ import {
 import { CalendarIcon, Loader2, Pencil, Save, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Course, FinalConversionStatus, Gender, Locations, UserRoles } from '@/types/enum';
+import { Course, FinalConversionStatus, Gender, LeadType, Locations, UserRoles } from '@/types/enum';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
@@ -66,7 +66,8 @@ export default function YellowLeadViewEdit({
   data,
   setIsDrawerOpen,
   setSelectedRowId,
-  setRefreshKey
+  setRefreshKey,
+  setLeadData
 }: any) {
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState<YellowLead | null>(null);
@@ -99,7 +100,6 @@ export default function YellowLeadViewEdit({
       tempData = removeNullValues(tempData);
       let validationData = {
         _id: tempData._id,
-        leadTypeModifiedDate: tempData.leadTypeModifiedDate,
         name: tempData.name,
         phoneNumber: tempData.phoneNumber,
         altPhoneNumber: tempData.altPhoneNumber,
@@ -267,7 +267,6 @@ export default function YellowLeadViewEdit({
       'degree',
       'remarks',
       'nextDueDate',
-      'leadTypeModifiedDate'
     ];
 
     return allowedFields.some((field) => {
@@ -318,7 +317,6 @@ export default function YellowLeadViewEdit({
         'followUpCount',
         'remarks',
         'nextDueDate',
-        'leadTypeModifiedDate'
       ];
 
       let filteredData = Object.fromEntries(
@@ -338,12 +336,13 @@ export default function YellowLeadViewEdit({
           const key = err.path[0] as keyof FormErrors;
           newErrors[key] = err.message;
         });
+        console.log("newErrors", newErrors)
         setErrors(newErrors);
         toast.error('Please fix the errors in the form');
         return;
       }
 
-      const { leadTypeModifiedDate, ...toBeUpdatedData } = filteredData;
+      const { lastCallDate, ...toBeUpdatedData } = filteredData;
 
       delete toBeUpdatedData.assignedTo;
 
@@ -374,18 +373,18 @@ export default function YellowLeadViewEdit({
 
               const assignedToUsers = Array.isArray(response.assignedTo)
                 ? response.assignedTo
-                    .map((id: string) =>
-                      assignedToDropdownData?.find((user: any) => user._id === id)
-                    )
-                    .filter(Boolean)
-                : [];
+                  .map((id: string) =>
+                    assignedToDropdownData?.find((user: any) => user._id === id)
+                  )
+                  .filter(Boolean)
+                : assignedToDropdownData.find((user:any) => user._id === response.assignedTo);
 
               let assignedToName = 'N/A';
               let assignedToView = '-';
 
-              if (assignedToUsers.length > 0) {
-                assignedToName = assignedToUsers[0].name;
-                assignedToView = assignedToUsers[0].name;
+              if (assignedToUsers.length > 0 || assignedToUsers?.name) {
+                assignedToName = assignedToUsers?.name || assignedToUsers[0].name ;
+                assignedToView = assignedToUsers?.name || assignedToUsers[0].name;
 
                 if (assignedToUsers.length > 1) {
                   assignedToName += ` +${assignedToUsers.length - 1}`;
@@ -394,50 +393,51 @@ export default function YellowLeadViewEdit({
               }
 
               if (leadIndex !== -1) {
-                newData.yellowLeads[leadIndex] = {
-                  ...newData.yellowLeads[leadIndex],
-
-                  name: response.name,
-                  phoneNumber: response.phoneNumber,
-                  altPhoneNumber: response.altPhoneNumber,
-                  altPhoneNumberView: response.altPhoneNumber ?? '-',
-                  email: response.email,
-                  gender: response.gender,
-                  genderView: toPascal(response.gender),
-                  city: response.city,
-                  cityView: !response.city || response.city === '' ? '-' : response.city,
-                  area: response.area,
-                  areaView: !response.area || response.area === '' ? '-' : response.area,
-                  course: response.course,
-                  courseView: response.course ?? '-',
-                  footFall: response.footFall,
-                  finalConversion:
-                    FinalConversionStatus[
-                      response.finalConversion as keyof typeof FinalConversionStatus
-                    ] ?? response.finalConversion,
-                  assignedTo: response.assignedTo,
-                  assignedToName: assignedToName,
-                  followUpCount: response.followUpCount,
-                  schoolName: response.schoolName,
-                  degree: response.degree,
-                  remarks: response.remarks || newData.yellowLeads[leadIndex].remarks,
-                  remarksView:
-                    response.remarks && response.remarks.length > 0
-                      ? response.remarks[response.remarks.length - 1]
-                      : newData.yellowLeads[leadIndex].remarksView,
-                  nextDueDate: response.nextDueDate,
-                  nextDueDateView: response.nextDueDate
-                    ? formatDateView(response.nextDueDate)
-                    : '-',
-                  leadTypeModifiedDate:
-                    response.leadTypeModifiedDate ??
-                    newData.yellowLeads[leadIndex].leadTypeModifiedDate,
-                  leadTypeModifiedDateView:
-                    formatTimeStampView(response.leadTypeModifiedDate) ??
-                    newData.yellowLeads[leadIndex].leadTypeModifiedDateView,
-
-                  updatedAt: response.updatedAt ?? 'N/A'
-                };
+                setLeadData((prevLeads: any[]) => {
+                  return prevLeads.map((lead) => {
+                    if (lead.id === data.id) {
+                      return {
+                        ...lead,
+                        name: response.name,
+                        source: response.source,
+                        email: response.email,
+                        sourceView: response.source ?? '-',
+                        schoolName: response.schoolName,
+                        degree: response.degree,
+                        phoneNumber: response.phoneNumber,
+                        altPhoneNumber: response.altPhoneNumber,
+                        altPhoneNumberView: response.altPhoneNumber ?? '-',
+                        gender: response.gender,
+                        genderView: toPascal(response.gender),
+                        city: response.city,
+                        cityView: !response.city || response.city === '' ? '-' : response.city,
+                        area: response.area,
+                        areaView: !response.area || response.area === '' ? '-' : response.area,
+                        course: response.course,
+                        courseView: response.course ?? '-',
+                        assignedTo: response.assignedTo,
+                        assignedToView: assignedToView,
+                        assignedToName: assignedToName,
+                        date: response.date,
+                        lastCallDate: response.lastCallDate ?? lead.lastCallDate,
+                        nextDueDate: response.nextDueDate,
+                        nextDueDateView: response.nextDueDate
+                          ? formatDateView(response.nextDueDate)
+                          : '-',
+                        leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
+                        _leadType: response.leadType,
+                        followUpCount: response.followUpCount ?? lead.followUpCount,
+                        remarks: response.remarks || lead.remarks,
+                         remarksView: response.remarks && response.remarks.length > 0
+                          ? response.remarks.map(remark => remark).join(' | ')
+                          : response.remarks,
+                        lastCallDateView: formatTimeStampView(response.lastCallDate) ?? lead.lastCallDateView,
+                        isOlderThan7Days: response.isOlderThan7Days
+                      };
+                    }
+                    return lead;
+                  });
+                });
               }
 
               return newData;
@@ -472,7 +472,7 @@ export default function YellowLeadViewEdit({
       <div className="flex flex-col gap-6 text-sm">
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">LTC Date</p>
-          <p>{formData.leadTypeModifiedDate ?? '-'}</p>
+          <p>{formData.lastCallDate ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Name</p>
@@ -557,7 +557,7 @@ export default function YellowLeadViewEdit({
       <div className="flex flex-row gap-5 items-center">
         <div className="flex flex-col gap-2 w-1/2">
           <EditLabel htmlFor="ltcDate" title={'LTC Date'} />
-          <p className="h-9 font-medium">{formatTimeStampView(data.leadTypeModifiedDate)}</p>
+          <p className="h-9 font-medium">{formatTimeStampView(data.lastCallDate)}</p>
         </div>
 
         <div className="space-y-2 w-1/2">
@@ -838,7 +838,7 @@ export default function YellowLeadViewEdit({
             <p className="font-medium">
               {formData.assignedTo
                 ? assignedToDropdownData.find((item) => item._id == formData.assignedTo)?.name ||
-                  'Not Provided'
+                'Not Provided'
                 : 'Not Provided'}
             </p>
           </div>
@@ -847,6 +847,11 @@ export default function YellowLeadViewEdit({
           <EditLabel className="text-[#666666]" title="Source" />
           <p className="font-medium">{formData.source ?? 'Not Provided'}</p>
         </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <EditLabel className="text-[#666666]" title="Last Call Date" />
+        <p className="font-medium">{formatTimeStampView(formData.lastCallDate) ?? 'Not Provided'}</p>
       </div>
     </>
   );

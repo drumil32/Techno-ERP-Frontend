@@ -48,7 +48,7 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import Loading from '@/app/loading';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { format } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';
 
@@ -176,8 +176,25 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className=" mx-auto w-auto p-0" align="center">
-        <Calendar mode="single" selected={selectedDate} onSelect={handleSelect} initialFocus />
+      <PopoverContent
+        side="bottom"
+        className=" mx-auto w-auto p-0" align="center">
+        <Calendar
+          mode="single"
+          selected={selectedDate}
+          onSelect={handleSelect}
+          initialFocus
+          modifiers={{
+            today: new Date(), 
+            selected: day => selectedDate ? isSameDay(day, selectedDate) : false,
+          }}
+          modifiersStyles={{
+            today: {
+              backgroundColor: '#a7c7f5',
+              color: '#111',
+            },
+          }}
+        />
         {selectedDate && (
           <div className="p-3 border-t flex justify-between items-center">
             <span className="text-sm">{format(selectedDate, 'PPP')}</span>
@@ -221,6 +238,7 @@ export default function TechnoDataTable({
   onDateFilter,
   children
 }: any) {
+  // console.log("get data", data)
 
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [columnVisibility, setColumnVisibility] = useState({
@@ -492,7 +510,6 @@ export default function TechnoDataTable({
                     className={`h-[39px] ${rowCursor ? 'cursor-pointer' : ''} ${selectedRowId === row.id ? 'bg-gray-100' : ''}`}
                     onClick={() => {
                       if (rowCursor) {
-                        // console.log("id selected ", row.id)
                         setSelectedRowId(row.id);
                         handleViewMore({ ...row.original, leadType: row.original._leadType });
                       }
@@ -537,7 +554,7 @@ export default function TechnoDataTable({
                             >
                               {cell.column.id === 'id' ? (
                                 <div className="flex items-center justify-start gap-1">
-                                  <span>{cellValue}</span>
+                                  <span>{row.index + 1}</span>
                                   {data[row.index]?.isOlderThan7Days == false && (
                                     <span className="text-green-500 ml-1 t" title="Last 7 days">
                                       ✔

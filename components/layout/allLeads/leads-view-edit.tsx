@@ -64,7 +64,7 @@ export interface LeadData {
   leadType?: string;
   remarks: string[];
   nextDueDate?: string;
-  updatedAt: string;
+  lastCallDate?: string;
   [key: string]: any;
 }
 
@@ -190,8 +190,7 @@ export default function LeadViewEdit({
         followUpCount: tempData.followUpCount,
         remarks: tempData.remarks,
         nextDueDate: tempData.nextDueDate,
-        assignedTo: tempData.assignedTo,
-        lastCallDate: tempData.lastCallDate
+        assignedTo: tempData.assignedTo
       };
 
       validationData = removeNullValues(validationData);
@@ -367,6 +366,7 @@ export default function LeadViewEdit({
           newErrors[key] = err.message;
         });
         setErrors(newErrors);
+        console.log("newErrors", newErrors)
         toast.error('Please fix the errors in the form');
         return;
       }
@@ -384,9 +384,7 @@ export default function LeadViewEdit({
 
         const updateLeadCache = () => {
           const queryCache = queryClient.getQueryCache();
-          console.log("cahce ", queryCache)
           const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
-          console.log("load query ", leadQueries)
           leadQueries.forEach((query) => {
             queryClient.setQueryData(query.queryKey, (oldData: any) => {
               if (!oldData || !oldData.leads) return oldData;
@@ -401,14 +399,15 @@ export default function LeadViewEdit({
                     assignedToDropdownData?.find((user: any) => user._id === id)
                   )
                   .filter(Boolean)
-                : [];
+                : assignedToDropdownData.find((user:any) => user._id === response.assignedTo);
+
 
               let assignedToName = 'N/A';
               let assignedToView = '-';
 
-              if (assignedToUsers.length > 0) {
-                assignedToName = assignedToUsers[0].name;
-                assignedToView = assignedToUsers[0].name;
+              if (assignedToUsers.length > 0 || assignedToUsers?.name) {
+                assignedToName = assignedToUsers?.name || assignedToUsers[0].name ;
+                assignedToView = assignedToUsers?.name || assignedToUsers[0].name;
 
                 if (assignedToUsers.length > 1) {
                   assignedToName += ` +${assignedToUsers.length - 1}`;
@@ -443,7 +442,7 @@ export default function LeadViewEdit({
                         assignedToView: assignedToView,
                         assignedToName: assignedToName,
                         date: response.date,
-                        updatedAt: response.updatedAt,
+                        // lastCallDate: response.lastCallDate,
                         nextDueDate: response.nextDueDate,
                         nextDueDateView: response.nextDueDate
                           ? formatDateView(response.nextDueDate)
@@ -453,8 +452,8 @@ export default function LeadViewEdit({
                         followUpCount: response.followUpCount ?? lead.followUpCount,
                         remarks: response.remarks || lead.remarks,
                         remarksView: response.remarks && response.remarks.length > 0
-                          ? response.remarks[response.remarks.length - 1]
-                          : lead.remarksView,
+                          ? response.remarks.map(remark => remark).join(' | ')
+                          : response.remarks,
                         lastCallDate: response.lastCallDate ?? lead.lastCallDate,
                         lastCallDateView: formatTimeStampView(response.lastCallDate) ?? lead.lastCallDateView,
                         isOlderThan7Days: response.isOlderThan7Days
@@ -883,7 +882,7 @@ export default function LeadViewEdit({
 
       <div className="flex flex-col gap-2">
         <EditLabel className="text-[#666666]" title="Last Call Date" />
-        <p className="font-medium">{formatTimeStampView(formData.updatedAt) ?? 'Not Provided'}</p>
+        <p className="font-medium">{formatTimeStampView(formData.lastCallDate) ?? 'Not Provided'}</p>
       </div>
     </>
   );

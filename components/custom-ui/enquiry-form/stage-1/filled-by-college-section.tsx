@@ -98,6 +98,35 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                 placeholder="Select References"
                 className={commonFormItemClass}
               />
+              <FormField
+                key="srAmount"
+                control={form.control}
+                name="srAmount"
+                render={({ field: formField }) => (
+                  <FormItem className={`${commonFormItemClass} `}>
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
+                      SR Amount
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...formField}
+                        value={formField.value ?? 0}
+                        className={commonFieldClass}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (/^[0-9]*$/.test(value)) {
+                            formField.onChange(value === '' ? 0 : Number(value));
+                          }
+                        }}
+                        defaultValue={0}
+                      />
+                    </FormControl>
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
+                  </FormItem>
+                )}
+              />
               {/* intially it was just one reference field, but now it is multiple references field so that i have added above one and commented below one */}
               {/* <FormField
                 key="references"
@@ -146,16 +175,6 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                 options={telecallers}
                 placeholder="Select Telecaller's Name"
               />
-              <MultiSelectPopoverCheckbox
-                form={form}
-                name="counsellor"
-                disabled={isViewable}
-                label="Counsellor’s Name"
-                options={counsellors}
-                placeholder="Select Counsellor's Name"
-                className={commonFormItemClass}
-              />
-
               <FormField
                 key="remarks"
                 control={form.control}
@@ -179,35 +198,18 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                   </FormItem>
                 )}
               />
-              <FormField
-                key="srAmount"
-                control={form.control}
-                name="srAmount"
-                render={({ field: formField }) => (
-                  <FormItem className={`${commonFormItemClass} `}>
-                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
-                      SR Amount
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        {...formField}
-                        value={formField.value ?? 0}
-                        className={commonFieldClass}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (/^[0-9]*$/.test(value)) {
-                            formField.onChange(value === '' ? 0 : Number(value));
-                          }
-                        }}
-                        defaultValue={0}
-                      />
-                    </FormControl>
-                    <div className="h-[20px]">
-                      <FormMessage className="text-[11px]" />
-                    </div>
-                  </FormItem>
-                )}
+              <MultiSelectPopoverCheckbox
+                form={form}
+                name="counsellor"
+                disabled={isViewable}
+                label="Counsellor’s Name"
+                options={counsellors}
+                placeholder="Select Counsellor's Name"
+                className={commonFormItemClass}
               />
+
+              
+              
             </div>
           </AccordionContent>
         </div>

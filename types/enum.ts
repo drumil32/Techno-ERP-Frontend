@@ -492,6 +492,15 @@ export enum LeadType {
   INVALID = 'INVALID'
 }
 
+
+
+export const StepMapper : Record<string, string> = {
+  "Step_1" : 'Enquiry',
+  "Step_2" : 'Fee_Details',
+  "Step_3" : 'Registrar',
+  "Step_4" : 'Finance',
+}
+
 export const LeadTypeMapper: Record<LeadType, string> = {
   [LeadType.LEFT_OVER]: 'Left Over Data',
   [LeadType.NOT_INTERESTED]: 'Dead Data',
