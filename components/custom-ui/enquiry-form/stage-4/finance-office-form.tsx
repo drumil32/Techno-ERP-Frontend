@@ -136,7 +136,10 @@ const FinanceOfficeForm = () => {
       feesClearanceDate: null,
       counsellor: [],
       telecaller: [],
-      remarks: '',
+      financeOfficeRemark : enquiryData?.financeOfficeRemark  || '',
+      registarOfficeRemark : enquiryData?.registarOfficeRemark,
+      feeDetailsRemark : enquiryData?.feeDetailsRemark,
+      enquiryRemark: enquiryData?.enquiryRemark,
       confirmationCheck: false,
       isFeeApplicable: true,
       otpTarget: undefined,
@@ -189,7 +192,7 @@ const FinanceOfficeForm = () => {
 
       let initialTelecallers: string[] = enquiryData.telecaller ?? [];
 
-      const initialCollegeRemarks: string = enquiryData?.remarks;
+      const initialCollegeRemarks: string = enquiryData?.financeOfficeRemark;
 
       initialOtherFees = Object.values(FeeType)
         .filter((ft) => ft !== FeeType.SEM1FEE)
@@ -237,7 +240,10 @@ const FinanceOfficeForm = () => {
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
         isFeeApplicable: enquiryData.isFeeApplicable,
-        remarks: initialCollegeRemarks,
+        financeOfficeRemark: initialCollegeRemarks,
+        enquiryRemark : enquiryData.enquiryRemark,
+        registarOfficeRemark : enquiryData.registarOfficeRemark,
+        feeDetailsRemark : enquiryData.feeDetailsRemark,
         srAmount: enquiryData.srAmount
       });
     } else if (error) {
@@ -336,10 +342,12 @@ const FinanceOfficeForm = () => {
 
       const validatedDataForCleaning = validationResult.data;
       const cleanedData = cleanDataForDraft(validatedDataForCleaning);
+      
 
       const finalPayLoad: any = {
         id: recordId,
-        ...cleanedData
+        ...cleanedData,
+        financeOfficeRemark : values.financeOfficeRemark
       };
 
       await updateEnquiryStep4(finalPayLoad);
@@ -426,10 +434,6 @@ const FinanceOfficeForm = () => {
 
   return (
     <Form {...form}>
-
-      {/* <DownloadStep4
-        studentId={enquiryData._id}
-        data={enquiryData} otherFeesData={otherFeesData} form={form} otherFeesWatched={otherFeesWatched} otherFeesTotals={otherFeesTotals} /> */}
 
       <form className="pt-8 mr-[25px] space-y-8 flex flex-col w-full  relative">
         <ShowStudentData data={enquiryData} />
@@ -762,6 +766,8 @@ const FinanceOfficeForm = () => {
           isViewable={isViewable}
           commonFieldClass=""
           commonFormItemClass=""
+          remarkLabel='Finance Office Remark'
+          currentStep='financeOffice'
         />
 
         {/* Confirmation */}

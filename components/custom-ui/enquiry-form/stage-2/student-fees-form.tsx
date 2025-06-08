@@ -189,7 +189,8 @@ export const StudentFeesForm = () => {
       counsellor: [],
       telecaller: [],
       references: [],
-      remarks: '',
+      enquiryRemark: enquiryData?.enquiryRemark || '',
+      feeDetailsRemark:  '',
       confirmationCheck: false,
       isFeeApplicable: true,
       otpTarget: undefined,
@@ -311,7 +312,8 @@ export const StudentFeesForm = () => {
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
         isFeeApplicable: enquiryData.isFeeApplicable,
-        remarks: enquiryData.remarks,
+        enquiryRemark: enquiryData?.enquiryRemark,
+        feeDetailsRemark : enquiryData.feeDetailsRemark || '',
         confirmationCheck: form.getValues().confirmationCheck || false,
         srAmount: enquiryData.srAmount
       });
@@ -397,7 +399,7 @@ export const StudentFeesForm = () => {
     let initialCounsellors = newEnquiryData.counsellor ?? [];
     let initialTelecallers = newEnquiryData.telecaller ?? [];
     let initialReferences = newEnquiryData.references ?? [];
-    const initialCollegeRemarks = newEnquiryData?.remarks;
+    const initialCollegeRemarks = newEnquiryData?.feeDetailsRemark;
 
     initialOtherFees = Object.values(FeeType)
       .filter((ft) => ft !== FeeType.SEM1FEE)
@@ -443,7 +445,8 @@ export const StudentFeesForm = () => {
         references: initialReferences,
         counsellor: initialCounsellors,
         telecaller: initialTelecallers,
-        remarks: initialCollegeRemarks,
+        feeDetailsRemark: newEnquiryData.feeDetailsRemark,
+        enquiryRemark: enquiryData.enquiryRemark,
         confirmationCheck: form.getValues().confirmationCheck,
         otpTarget: form.getValues().otpTarget,
         isFeeApplicable: form.getValues().isFeeApplicable,
@@ -571,7 +574,8 @@ export const StudentFeesForm = () => {
     const validatedDataForCleaning = validationResult.data;
     const cleanedData = {
       ...cleanDataForDraft(validatedDataForCleaning),
-      srAmount: validatedDataForCleaning.srAmount ?? 0
+      srAmount: validatedDataForCleaning.srAmount ?? 0,
+      feeDetailsRemark : validatedDataForCleaning.feeDetailsRemark ?? ''
     };
     try {
       if (draftExists && draftId) {
@@ -1027,6 +1031,8 @@ export const StudentFeesForm = () => {
           commonFormItemClass=""
           form={form}
           isViewable={isViewable}
+          currentStep='feeDetails'
+          remarkLabel='Fee Details Remark'
         />
 
         {/* {!isViewable && (
@@ -1127,7 +1133,7 @@ export const StudentFeesForm = () => {
             name="confirmationCheck"
             label="All the Fees Deposited is Non Refundable/Non Transferable. Examination fees will be charged extra based on LU/AKTU norms."
             id="checkbox-for-step2"
-            className="flex flex-row items-start bg-white rounded-md p-4 -mt-[40px]"
+            className="flex flex-row items-start bg-white rounded-md p-4 mt-0"
           />
         )}
 

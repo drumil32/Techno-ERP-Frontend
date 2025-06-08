@@ -176,7 +176,10 @@ export const enquirySchema = z.object({
   // Filled By College Details
   telecaller: z.array(z.string()).optional(),
   counsellor: z.array(z.string()).optional(),
-  remarks: z.string().optional(),
+  enquiryRemark: z.string().optional(),
+  feeDetailsRemark: z.string().optional(),
+  registarOfficeRemark: z.string().optional(),
+  financeOfficeRemark: z.string().optional(),
 
   approvedBy: z.string().optional(),
   applicationStatus: z.nativeEnum(ApplicationStatus).default(ApplicationStatus.STEP_1),

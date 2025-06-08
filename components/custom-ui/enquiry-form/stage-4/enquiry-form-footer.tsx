@@ -37,6 +37,7 @@ import {
 } from '@/components/layout/admissions/helpers/download-pdf';
 import { AdmissionFeeReceiptDialog } from '@/components/layout/admissions/admission-fee-receipt-download-dialog';
 import { DownloadAdmissionReceiptDialog } from '@/components/layout/admissions/admission-receipt-download-dialog';
+import { DownloadStep4 } from './step4-pdf';
 
 interface EnquiryFormFooterProps {
   form: UseFormReturn<any>;
@@ -264,6 +265,9 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           <div className="grid grid-cols-2 gap-3 mt-6">
             <AdmissionFeeReceiptDialog studentId={studentId} tableActionButton={false} />
             <DownloadAdmissionReceiptDialog studentId={studentId} tableActionButton={false} />
+            <DownloadStep4
+              studentId={studentId} tableActionButton={false}
+            />
           </div>
 
           <DialogFooter className="mt-6 sm:justify-center">

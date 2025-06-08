@@ -71,7 +71,8 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       confirmation: false,
       srAmount: 0
     },
-    disabled: isViewable
+    disabled: isViewable,
+    
   });
 
   // Fetch enquiry data if id is provided
@@ -322,6 +323,8 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
           isViewable={isViewable}
           commonFieldClass={commonFieldClass}
           commonFormItemClass={commonFormItemClass}
+          currentStep='enquiry'
+          remarkLabel='Enquiry Remark'
         />
 
         {/* Confirmation Check box */}
@@ -332,7 +335,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
             isViewable={isViewable}
             label="All the above information has been verified by the applicant and thoroughly checked by the Admissions team."
             id="checkbox-for-step1"
-            className="flex flex-row items-start bg-white rounded-md p-4 -mt-[40px]"
+            className="flex flex-row items-start bg-white rounded-md p-4 "
           />
         )}
 

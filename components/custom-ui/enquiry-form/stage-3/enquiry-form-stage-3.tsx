@@ -90,7 +90,8 @@ const EnquiryFormStage3 = () => {
       stateOfDomicile: StatesOfIndia.UttarPradesh,
       nationality: Nationality.INDIAN,
       srAmount: data?.srAmount || 0,
-      telecaller :data?.telecaller
+      telecaller :data?.telecaller,
+      registarOfficeRemark : ''
     },
     disabled: isViewable
   });
@@ -383,6 +384,8 @@ const EnquiryFormStage3 = () => {
             isViewable={isViewable}
             commonFieldClass={commonFieldClass}
             commonFormItemClass={commonFormItemClass}
+            currentStep='registarOffice'
+            remarkLabel='Registar Office Remark'
           />
 
           <OtpVerificationDialog
