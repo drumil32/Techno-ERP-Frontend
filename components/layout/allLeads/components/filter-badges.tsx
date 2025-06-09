@@ -105,11 +105,11 @@ const FilterBadges = ({
       });
     }
 
-    if (appliedFilters.courseCode) {
+    if (appliedFilters.courseName) {
       newBadges.push({
-        key: 'courseCode',
-        label: 'Course Code',
-        value: appliedFilters.courseCode
+        key: 'courseName',
+        label: 'Course Name',
+        value: appliedFilters.courseName
       });
     }
 
@@ -122,7 +122,7 @@ const FilterBadges = ({
 
         if (key === 'location') {
           getLabel = (val: string) => Locations[val as keyof typeof Locations] || val;
-        } else if (key === 'courseCode') {
+        } else if (key === 'courseName') {
           getLabel = (val: string) => CourseNameMapper[val as Course] || val;
         } else if (key === 'assignedTo') {
           getLabel = getAssignedToLabel;

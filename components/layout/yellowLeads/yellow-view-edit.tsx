@@ -13,7 +13,7 @@ import {
 import { CalendarIcon, Loader2, Pencil, Save, Trash2 } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { Course, FinalConversionStatus, Gender, LeadType, Locations, UserRoles } from '@/types/enum';
+import { Course, FinalConversionStatus, Gender, Locations, UserRoles } from '@/types/enum';
 import { apiRequest } from '@/lib/apiClient';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
@@ -393,12 +393,12 @@ export default function YellowLeadViewEdit({
               }
 
               if (leadIndex !== -1) {
-                console.log("id " ,data.id);
                 setLeadData((prevLeads: any[]) => {
                   return prevLeads.map((lead) => {
                     if (lead.id === data.id) {
                       return {
                         ...lead,
+                        ...response,
                         name: response.name,
                         footfall : response.footFall,
                         source: response.source,
@@ -426,13 +426,12 @@ export default function YellowLeadViewEdit({
                         nextDueDateView: response.nextDueDate
                           ? formatDateView(response.nextDueDate)
                           : '-',
-                        leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
-                        _leadType: response.leadType,
+                        
                         followUpCount: response.followUpCount ?? lead.followUpCount,
                         remarks: response.remarks || lead.remarks,
                          remarksView: response.remarks && response.remarks.length > 0
-                          ? response.remarks.map(remark => remark).join(' | ')
-                          : response.remarks,
+                          ? response.remarks.map(remark => remark).reverse().join(' | ')
+                          : response.remarks.reverse(),
                         lastCallDateView: formatTimeStampView(response.lastCallDate) ?? lead.lastCallDateView,
                         isOlderThan7Days: response.isOlderThan7Days
                       };
@@ -473,8 +472,8 @@ export default function YellowLeadViewEdit({
     <>
       <div className="flex flex-col gap-6 text-sm">
         <div className="flex gap-2">
-          <p className="w-1/4 text-[#666666]">LTC Date</p>
-          <p>{formData.lastCallDate ?? '-'}</p>
+          <p className="w-1/4 text-[#666666]">Date</p>
+          <p>{formData.date ?? '-'}</p>
         </div>
         <div className="flex gap-2">
           <p className="w-1/4 text-[#666666]">Name</p>
@@ -558,8 +557,8 @@ export default function YellowLeadViewEdit({
     <>
       <div className="flex flex-row gap-5 items-center">
         <div className="flex flex-col gap-2 w-1/2">
-          <EditLabel htmlFor="ltcDate" title={'LTC Date'} />
-          <p className="h-9 font-medium">{formatTimeStampView(data.lastCallDate)}</p>
+          <EditLabel htmlFor="date" title={'Date'} />
+          <p className="h-9 font-medium">{formatTimeStampView(data.date)}</p>
         </div>
 
         <div className="space-y-2 w-1/2">

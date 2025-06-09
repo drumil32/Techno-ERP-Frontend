@@ -230,6 +230,7 @@ export default function LeadViewEdit({
 
   const handleExistingRemarkChange = (index: number, value: string) => {
     if (!formData) return;
+    console.log("here bro got it in handleExistingRemarkChange")
     const updatedRemarks = [...formData.remarks];
     updatedRemarks[index] = value;
     setFormData((prev) => (prev ? { ...prev, remarks: updatedRemarks } : null));
@@ -298,6 +299,7 @@ export default function LeadViewEdit({
     ];
 
     return allowedFields.some((field) => {
+      console.log("in allowed filed also bro")
       const origValue = originalData[field] || '';
       const newValue = formData[field] || '';
 
@@ -415,6 +417,8 @@ export default function LeadViewEdit({
                 }
               }
 
+              
+              
               if (leadIndex !== -1) {
                 setLeadData((prevLeads : any[]) => {
                   return prevLeads.map((lead) => {
@@ -447,13 +451,13 @@ export default function LeadViewEdit({
                         nextDueDateView: response.nextDueDate
                           ? formatDateView(response.nextDueDate)
                           : '-',
-                        leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
-                        _leadType: response.leadType,
+                        leadType: LeadType[response.leadType as keyof typeof LeadType],
+                        _leadType: LeadType[response.leadType as keyof typeof LeadType],
                         followUpCount: response.followUpCount ?? lead.followUpCount,
                         remarks: response.remarks || lead.remarks,
                         remarksView: response.remarks && response.remarks.length > 0
-                          ? response.remarks.map(remark => remark).join(' | ')
-                          : response.remarks,
+                          ? response.remarks.map(remark => remark).reverse().join(' | ')
+                          : response.remarks.reverse(),
                         lastCallDate: response.lastCallDate ?? lead.lastCallDate,
                         lastCallDateView: formatTimeStampView(response.lastCallDate) ?? lead.lastCallDateView,
                         isOlderThan7Days: response.isOlderThan7Days
@@ -463,6 +467,7 @@ export default function LeadViewEdit({
                   });
                 });
               }
+
               return newData;
             });
           });

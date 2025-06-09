@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -60,7 +60,19 @@ declare module '@tanstack/react-table' {
   }
 }
 
-export const TruncatedCell = ({ value, maxWidth }: { value: any; maxWidth?: number }) => {
+export const TruncatedCell = ({
+  value,
+  maxWidth,
+  disableTooltip = false,
+  columnId = ''
+}: {
+  value: any;
+  maxWidth?: number;
+  disableTooltip?: boolean;
+  columnId?: string;
+}) => {
+
+  
   const cellRef = useRef<HTMLSpanElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
 
@@ -70,9 +82,35 @@ export const TruncatedCell = ({ value, maxWidth }: { value: any; maxWidth?: numb
     }
   }, [value, maxWidth]);
 
-  if (!value || value === '-' || value === 'N/A') return <>{value}</>;
+  if (!value || value === '-' || value === 'N/A' || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip) return <>{value}</>;
 
-  return isTruncated ? (
+
+  if (columnId === "remarks") {
+    
+    const showValue = cellRef.current?.innerText
+    console.log("after update ", showValue)
+    return (
+      <TooltipProvider delayDuration={200}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span
+              ref={cellRef}
+              className="truncate block hover:text-[#6042D1] hover:underline"
+              style={{ maxWidth: maxWidth ? `${maxWidth}px` : 'none' }}
+            >
+              {showValue}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-[300px] break-words bg-gray-800 text-white border-gray-600">
+            <p>{showValue}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )
+  }
+
+
+  return (
     <TooltipProvider delayDuration={200}>
       <Tooltip>
         <TooltipTrigger asChild>
@@ -89,10 +127,6 @@ export const TruncatedCell = ({ value, maxWidth }: { value: any; maxWidth?: numb
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
-  ) : (
-    <span ref={cellRef} style={{ maxWidth: maxWidth ? `${maxWidth}px` : 'none' }} className="block">
-      {value}
-    </span>
   );
 };
 
@@ -100,6 +134,7 @@ interface DateSortableColumnProps {
   columnId: string;
   selectedDates: Record<string, Date | undefined>;
   onDateSelect: (columnId: string, date: Date | undefined) => void;
+  tableName?: string;
 }
 
 const DateFilterBadge = ({
@@ -142,10 +177,11 @@ const DateFilterBadge = ({
   );
 };
 
-const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSortableColumnProps) => {
+const DateSortableColumn = ({ columnId, selectedDates, onDateSelect, tableName }: DateSortableColumnProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const selectedDate = selectedDates[columnId];
+  let selectedDatesCheck = true;
 
+  const selectedDate = selectedDates[columnId];
   const handleSelect = (date: Date | undefined) => {
     onDateSelect(columnId, date);
     setIsOpen(false);
@@ -156,6 +192,24 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
     onDateSelect(columnId, undefined);
     setIsOpen(false);
   };
+
+  if (tableName === "Active Leads") {
+    const localf = localStorage.getItem("techno-filters-yellow-leads");
+    if (localf) {
+      const filters = JSON.parse(localf);
+      if (!filters.startNextDueDate) {
+        selectedDatesCheck = false;
+      }
+    }
+  } else if (tableName === "All Leads") {
+    const localf = localStorage.getItem("techno-filters-all-leads");
+    if (localf) {
+      const filters = JSON.parse(localf);
+      if (!filters.startNextDueDate) {
+        selectedDatesCheck = false;
+      }
+    }
+  }
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -169,7 +223,7 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
           )}
         >
           <span>Next Due Date</span>
-          {selectedDate ? (
+          {selectedDatesCheck && selectedDate ? (
             <CalendarIcon className="h-4 w-4 mr-2 text-primary" />
           ) : (
             <CalendarIcon className="h-4 w-4 mr-2 text-primary/50" />
@@ -179,23 +233,36 @@ const DateSortableColumn = ({ columnId, selectedDates, onDateSelect }: DateSorta
       <PopoverContent
         side="bottom"
         className=" mx-auto w-auto p-0" align="center">
-        <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={handleSelect}
-          initialFocus
-          modifiers={{
-            today: new Date(),
-            selected: day => selectedDate ? isSameDay(day, selectedDate) : false,
-          }}
-          modifiersStyles={{
-            today: {
-              backgroundColor: '#a7c7f5',
-              color: '#111',
-            },
-          }}
-        />
-        {selectedDate && (
+        {selectedDatesCheck ?
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={handleSelect}
+            initialFocus
+            modifiers={{
+              today: new Date(),
+              selected: day => selectedDate ? isSameDay(day, selectedDate) : false,
+            }}
+            modifiersStyles={{
+              today: {
+                backgroundColor: '#a7c7f5',
+                color: '#111',
+              },
+            }}
+          /> : <Calendar
+            mode="single"
+            onSelect={handleSelect}
+            initialFocus
+
+            modifiersStyles={{
+              today: {
+                backgroundColor: '#a7c7f5',
+                color: '#111',
+              },
+            }}
+          />
+        }
+        {selectedDatesCheck && selectedDate && (
           <div className="p-3 border-t flex justify-between items-center">
             <span className="text-sm">{format(selectedDate, 'PPP')}</span>
             <Button variant="ghost" size="sm" onClick={handleClear}>
@@ -246,14 +313,19 @@ export default function TechnoDataTable({
   const [pageSize, setPageSize] = useState<number>(pageLimit);
   const { hasRole } = useAuthStore();
 
-  const [activeSortColumn, setActiveSortColumn] = useState('dateView');
+  const [activeSortColumn, setActiveSortColumn] = useState('date');
   const [sortDirection, setSortDirection] = useState('desc');
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const tableRef = useRef<HTMLTableElement>(null);
   const [selectedDates, setSelectedDates] = useState<Record<string, Date | undefined>>(() => {
     if (typeof window === 'undefined') return {};
-    const saved = localStorage.getItem('dateFilters');
+    let saved;
+    if (tableName === "All Leads") {
+      saved = localStorage.getItem('allLeadsDateFilters');
+    } else if (tableName === "Active Leads") {
+      saved = localStorage.getItem('activeLeadsDateFilters');
+    }
     return saved ? JSON.parse(saved) : {};
   });
 
@@ -269,7 +341,10 @@ export default function TechnoDataTable({
   }, [searchTerm]);
 
   useEffect(() => {
-    localStorage.setItem('dateFilters', JSON.stringify(selectedDates));
+    if (tableName === "All Leads")
+      localStorage.setItem('allLeadsDateFilters', JSON.stringify(selectedDates));
+    else if (tableName === "Active Leads")
+      localStorage.setItem('activeLeadsDateFilters', JSON.stringify(selectedDates));
   }, [selectedDates]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -362,7 +437,7 @@ export default function TechnoDataTable({
     return <Loading />;
   }
 
-  const sortableColumns = ['dateView', 'leadTypeModifiedDate', 'followUpCount'];
+  const sortableColumns = ['date', 'leadTypeModifiedDate', 'followUpCount'];
 
   const dateSortableColumns = ['nextDueDateView'];
 
@@ -461,6 +536,7 @@ export default function TechnoDataTable({
                                 columnId={columnId}
                                 selectedDates={selectedDates}
                                 onDateSelect={handleDateSelect}
+                                tableName={tableName}
                               />
                             </>
                           )}
@@ -478,6 +554,8 @@ export default function TechnoDataTable({
                                   header.column.columnDef.header,
                                   header.getContext()
                                 )}
+                                disableTooltip={true}
+                                columnId={columnId}
                                 maxWidth={maxWidth}
                               />
                               {getSortIcon(columnId)}
@@ -489,6 +567,8 @@ export default function TechnoDataTable({
                                   header.column.columnDef.header,
                                   header.getContext()
                                 )}
+                                 disableTooltip={true}
+                                columnId={columnId}
                                 maxWidth={maxWidth}
                               />
                             )
@@ -564,6 +644,7 @@ export default function TechnoDataTable({
                                 <TruncatedCell
                                   value={flexRender(cell.column.columnDef.cell, cell.getContext())}
                                   maxWidth={maxWidth}
+                                  columnId={cell.column.id}
                                 />
                               )}
                             </div>

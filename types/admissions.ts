@@ -148,6 +148,10 @@ export interface Admission {
   collegeName?: string;
   affiliation?: string;
   srAmount?:number;
+  enquiryRemark?:string;
+  feeDetailsRemark?:string;
+  registarOfficeRemark?:string;
+  financeOfficeRemark?:string;
 }
 
 /** Admission Table Row Type */
