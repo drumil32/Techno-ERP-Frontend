@@ -315,11 +315,13 @@ export default function TechnoFilter({
                     <TruncatedCell
                       value={typeof option === 'string' ? option : option.label}
                       maxWidth={180}
+                      disableTooltip={true}
                     />
                   ) : (
                     <TruncatedCell
                       value={typeof option === 'string' ? option : option.label}
                       maxWidth={180}
+                      disableTooltip={true}
                     />
                   )}
                 </div>

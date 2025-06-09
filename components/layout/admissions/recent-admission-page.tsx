@@ -215,20 +215,22 @@ export function TableActionButton() {
           "Country" : enq.address.country,
           "Aadhaar Number" : enq.aadharNumber,
           "Date of Birth" : enq.dateOfBirth,
-          "Student's Number" : enq.studentName,
-          "Father's Number" : enq.fatherName,
+          "Student's Number" : enq.studentPhoneNumber,
+          "Father's Number" : enq.fatherPhoneNumber,
           "Email" : enq.emailId,
           "Gender" : enq.gender,
           "Religion" : enq.religion,
+          "Blood Group" : enq.bloodGroup,
+          "Category" : enq.category
         }
       })
 
 
       const worksheet = XLSX.utils.json_to_sheet(excelData);
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'enquiry-excel');
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'admission-excel');
 
-      XLSX.writeFile(workbook, `${userName}-${dateStr}-enquiry-excel-sheet.xlsx`);
+      XLSX.writeFile(workbook, `admission-excel-${dateStr}.xlsx`);
     
       toast.success('Marketing Data Downloaded Successfully');
       setDownloadOpen(false);

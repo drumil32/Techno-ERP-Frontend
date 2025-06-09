@@ -231,6 +231,7 @@ const FinanceOfficeForm = () => {
       } else {
         initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
       }
+      console.log("data ", enquiryData)
       form.reset({
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,

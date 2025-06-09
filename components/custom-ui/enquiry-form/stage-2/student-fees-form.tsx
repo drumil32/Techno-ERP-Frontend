@@ -449,7 +449,8 @@ export const StudentFeesForm = () => {
         confirmationCheck: form.getValues().confirmationCheck,
         otpTarget: form.getValues().otpTarget,
         isFeeApplicable: form.getValues().isFeeApplicable,
-        otpVerificationEmail: form.getValues().otpVerificationEmail
+        otpVerificationEmail: form.getValues().otpVerificationEmail,
+        srAmount : newEnquiryData.srAmount || form.getValues().srAmount
       },
       {
         keepDirty: false

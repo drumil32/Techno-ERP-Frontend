@@ -64,12 +64,14 @@ export const TruncatedCell = ({
   value,
   maxWidth,
   disableTooltip = false,
-  columnId = ''
+  columnId = '',
+  tableName = '',
 }: {
   value: any;
   maxWidth?: number;
   disableTooltip?: boolean;
   columnId?: string;
+  tableName ?:string;
 }) => {
 
   
@@ -82,7 +84,7 @@ export const TruncatedCell = ({
     }
   }, [value, maxWidth]);
 
-  if (!value || value === '-' || value === 'N/A' || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip) return <>{value}</>;
+  if (!value || value === '-' || value === 'N/A' || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip || tableName.includes("Ongoing Enquiry") || tableName.includes("Recent Admissions")) return <>{value}</>;
 
 
   if (columnId === "remarks") {
@@ -487,9 +489,9 @@ export default function TechnoDataTable({
       <div className="relative">
         <div
           ref={tableContainerRef}
-          className="min-h-[900px] h-[240px] overflow-auto custom-scrollbar relative"
+          className= " min-h-[900px] h-[240px] overflow-auto custom-scrollbar relative"
         >
-          <Table ref={tableRef} className={cn('w-full', tableStyles)}>
+          <Table ref={tableRef} className={cn('  w-full', tableStyles)}>
             <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg font-bolds sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id} className="h-10">
@@ -557,6 +559,7 @@ export default function TechnoDataTable({
                                 disableTooltip={true}
                                 columnId={columnId}
                                 maxWidth={maxWidth}
+                                tableName={tableName}
                               />
                               {getSortIcon(columnId)}
                             </div>
@@ -570,6 +573,7 @@ export default function TechnoDataTable({
                                  disableTooltip={true}
                                 columnId={columnId}
                                 maxWidth={maxWidth}
+                                tableName={tableName}
                               />
                             )
                           )}
@@ -645,6 +649,7 @@ export default function TechnoDataTable({
                                   value={flexRender(cell.column.columnDef.cell, cell.getContext())}
                                   maxWidth={maxWidth}
                                   columnId={cell.column.id}
+                                  tableName={tableName}
                                 />
                               )}
                             </div>
@@ -690,26 +695,7 @@ export default function TechnoDataTable({
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center space-x-2">
             <span>Rows per page:</span>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="cursor-pointer">
-                  {pageSize} <ChevronDown className="ml-1" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start">
-                {[5, 10, 20, 30, 50].map((size) => (
-                  <DropdownMenuItem
-                    key={size}
-                    onClick={() => {
-                      onLimitChange(size);
-                      setPageSize(size);
-                    }}
-                  >
-                    {size}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+           
             <span>
               {table.getState().pagination.pageIndex * pageSize + 1} -{' '}
               {data.length} of{' '}
@@ -772,7 +758,7 @@ export default function TechnoDataTable({
               Load more
             </Button>
           </div>
-          <div className='w-[27.5%] '>
+          <div className='w-[23.5%] '>
           </div>
         </div>
       )}
