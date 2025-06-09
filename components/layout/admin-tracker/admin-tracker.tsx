@@ -33,7 +33,7 @@ const AdminTracker = () => {
   const { filters, updateFilter } = useTechnoFilterContext();
   const { getAnalytics } = useAdminTrackerContext();
   const [appliedFilters, setAppliedFilters] = useState<any>({});
-  const [refreshKey, setRefreshKey] = useState(0);
+  // const [refreshKey, setRefreshKey] = useState(0);
   const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
   const authStore = useAuthStore();
   const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING);
@@ -46,7 +46,7 @@ const AdminTracker = () => {
   const getQueryParams = () => {
     const params: { [key: string]: any } = {
       ...(currentFiltersRef.current || {}),
-      refreshKey
+      // refreshKey
     };
 
     return params;
@@ -124,7 +124,7 @@ const AdminTracker = () => {
   const applyFilter = () => {
     currentFiltersRef.current = { ...filters };
     setAppliedFilters({ ...filters });
-    setRefreshKey((prevKey) => prevKey + 1);
+    // setRefreshKey((prevKey) => prevKey + 1);
   };
 
   const clearFilters = () => {
@@ -140,7 +140,7 @@ const AdminTracker = () => {
 
     setAppliedFilters({});
     currentFiltersRef.current = {};
-    setRefreshKey((prevKey) => prevKey + 1);
+    // setRefreshKey((prevKey) => prevKey + 1);
   };
   const handleFilterRemove = (filterKey: string) => {
     const updatedFilters = appliedFilters ? { ...appliedFilters } : {};
@@ -158,7 +158,7 @@ const AdminTracker = () => {
     }
 
     setAppliedFilters(updatedFilters);
-    setRefreshKey((prevKey) => prevKey + 1);
+    // setRefreshKey((prevKey) => prevKey + 1);
   };
 
   const analyticsParams = {};
@@ -310,11 +310,11 @@ const AdminTracker = () => {
       }
     };
   }, [
-    refreshKey,
-    assignedToQuery.isLoading,
-    assignedToQuery.isError,
-    assignedToQuery.isSuccess,
-    assignedToQuery.isFetching,
+    // refreshKey,
+    // assignedToQuery.isLoading,
+    // assignedToQuery.isError,
+    // assignedToQuery.isSuccess,
+    // assignedToQuery.isFetching,
     data
   ]);
 

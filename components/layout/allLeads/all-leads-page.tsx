@@ -67,6 +67,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
 import UserAnalytics from './user-analytics';
+import clsx from 'clsx';
 
 export default function AllLeadsPage() {
   const queryClient = useQueryClient();
@@ -351,7 +352,7 @@ export default function AllLeadsPage() {
       meta: { align: 'center', maxWidth: 60, fixedWidth: 80 },
     },
     {
-      accessorKey: 'dateView',
+      accessorKey: 'date',
       header: 'Date',
       meta: { align: 'center', maxWidth: 110, fixedWidth: 110 }
     },
@@ -423,7 +424,7 @@ export default function AllLeadsPage() {
             ...cleanedRow
           } = row.original;
 
-          
+
 
           const updatedData = {
             _id: row.original._id,
@@ -462,7 +463,7 @@ export default function AllLeadsPage() {
                     if (leadIndex !== -1) {
                       setLeadData((prevLeads) => {
                         return prevLeads.map((lead, index) => {
-                          if (index === id-1) { 
+                          if (index === id - 1) {
                             return {
                               ...lead,
                               leadType: LeadType[response.leadType as keyof typeof LeadType] ?? response.leadType,
@@ -509,12 +510,8 @@ export default function AllLeadsPage() {
       accessorKey: 'remarksView',
       header: 'Remarks',
       meta: {
-        maxWidth: isRoleLeadMarketing ? 130 : 230,
-        fixedWidth: isRoleLeadMarketing ? 180 : 280
-      },
-      cell: ({ row }: any) => {
-        const remarks = row.original.remarks || [];
-        return <TruncatedCell value={[...remarks].reverse().join(' | ')} />;
+        maxWidth: 130,
+        fixedWidth: 180
       }
     },
     {
@@ -594,18 +591,26 @@ export default function AllLeadsPage() {
                     );
 
                     if (leadIndex !== -1) {
-                      newData.leads[leadIndex] = {
-                        ...newData.leads[leadIndex],
-                        followUpCount:
-                          response.followUpCount ?? newData.leads[leadIndex].followUpCount,
-                        lastCallDate: response.lastCallDate
-                      };
+                      setLeadData((prevLeads) => {
+                        return prevLeads.map((lead, index) => {
+                          if (index === id - 1) {
+                            return {
+                              ...lead,
+                              followUpCount:
+                                response.followUpCount ?? newData.leads[leadIndex].followUpCount,
+                              lastCallDate: response.lastCallDate
+                            };
+                          }
+                          return lead;
+                        });
+                      });
                     }
 
                     return newData;
                   });
                 });
               };
+
               updateLeadCache();
             } else {
               toast.error('Failed to update follow-up count', {
@@ -660,7 +665,7 @@ export default function AllLeadsPage() {
       header: 'City',
       meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
     },
-    
+
     ...(isRoleLeadMarketing
       ? [
         {

@@ -34,6 +34,7 @@ export function MonthWiseCourseTrend({
   const isEmpty = chartData.length === 0;
   const max = Math.max(...chartData.map(d => d.count));
   const ticks = Array.from({ length: max + 1 }, (_, i) => i);
+  console.log(chartData)
 
   return (
     <Card className="w-full bg-gradient-to-br border border-gray-100 shadow-lg rounded-2xl">
@@ -63,7 +64,7 @@ export function MonthWiseCourseTrend({
             <span>No admission data available for the selected date.</span>
           </div>
         ) : (
-          <div className="w-full h-64">
+          <div className="w-full h-128">
             <ChartContainer config={chartConfig} className="w-full h-full">
               <BarChart
                 data={chartData}
@@ -76,10 +77,35 @@ export function MonthWiseCourseTrend({
                   tickLine={true}
                   axisLine={true}
                   tickMargin={8}
-                  style={{ fontSize: 11 }}
                   stroke="#374151"
                   strokeWidth={1.5}
+                  interval={0}
+                  height={60}
+                  tick={({ x, y, payload }) => (
+                    <g transform={`translate(${x},${y + 10})`}>
+                      <foreignObject x={-30} y={-20} width={60} height={40}>
+                        <div
+                          style={{
+                            fontSize: '10px',
+                            width: '100%',
+                            height: '100%',
+                            textAlign: 'center',
+                            wordWrap: 'break-word',
+                            whiteSpace: 'normal',
+                            overflow: 'hidden',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            lineHeight: '1.1'
+                          }}
+                        >
+                          {payload.value}
+                        </div>
+                      </foreignObject>
+                    </g>
+                  )}
                 />
+
                 <YAxis
                   tickLine={true}
                   axisLine={true}
@@ -88,6 +114,7 @@ export function MonthWiseCourseTrend({
                   stroke="#374151"
                   strokeWidth={1.5}
                   ticks={ticks}
+                  width={10}
                 />
                 <ChartTooltip
                   cursor={{ fill: 'transparent' }}
