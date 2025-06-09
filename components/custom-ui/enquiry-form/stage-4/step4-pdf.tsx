@@ -37,20 +37,6 @@ export function DownloadStep4({
   studentId: string;
 }) {
 
-  const [dataUpdated, setDataUpdated] = useState(true);
-
-  const {
-      data: enquiryData,
-      error,
-      isFetched,
-      isLoading: isLoadingEnquiry
-    } = useQuery<any>({
-      queryKey: ['enquireFormData', studentId, dataUpdated],
-      queryFn: () => (studentId ? getEnquiry(studentId) : Promise.reject('Enquiry ID is null')),
-      enabled: !!studentId,
-      refetchOnWindowFocus: false
-    });
-
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [pdfDataUrl, setPdfDataUrl] = useState<string | null>(null);
@@ -67,9 +53,9 @@ export function DownloadStep4({
       setIsLoading(true);
       setPdfDataUrl(null);
       try {
-        if (enquiryData) {
-          const sendData = {...enquiryData}
-          const { url, fileName } = await downloadStep4(sendData);
+        const res  = await getEnquiry(studentId);
+        if (res) {
+          const { url, fileName } = await downloadStep4(res);
           if (fileName) setFileName(fileName);
           if (url) setPdfDataUrl(url);
           else toast.error('Error in showing preview.');
