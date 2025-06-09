@@ -67,6 +67,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Checkbox } from '@/components/ui/checkbox';
 import UserAnalytics from './user-analytics';
+import clsx from 'clsx';
 
 export default function AllLeadsPage() {
   const queryClient = useQueryClient();
@@ -351,7 +352,7 @@ export default function AllLeadsPage() {
       meta: { align: 'center', maxWidth: 60, fixedWidth: 80 },
     },
     {
-      accessorKey: 'dateView',
+      accessorKey: 'date',
       header: 'Date',
       meta: { align: 'center', maxWidth: 110, fixedWidth: 110 }
     },
@@ -510,11 +511,7 @@ export default function AllLeadsPage() {
       header: 'Remarks',
       meta: {
         maxWidth: 130,
-        fixedWidth:  180 
-      },
-      cell: ({ row }: any) => {
-        const remarks = row.original.remarks || [];
-        return <TruncatedCell maxWidth={130} value={[...remarks].reverse().join(' | ')} />;
+        fixedWidth: 180
       }
     },
     {

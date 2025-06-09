@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -60,7 +60,19 @@ declare module '@tanstack/react-table' {
   }
 }
 
-export const TruncatedCell = ({ value, maxWidth }: { value: any; maxWidth?: number }) => {
+export const TruncatedCell = ({
+  value,
+  maxWidth,
+  disableTooltip = false,
+  columnId = ''
+}: {
+  value: any;
+  maxWidth?: number;
+  disableTooltip?: boolean;
+  columnId?: string;
+}) => {
+
+  
   const cellRef = useRef<HTMLSpanElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
 
@@ -70,20 +82,51 @@ export const TruncatedCell = ({ value, maxWidth }: { value: any; maxWidth?: numb
     }
   }, [value, maxWidth]);
 
-  if (!value || value === '-' || value === 'N/A') return <>{value}</>;
+  if (!value || value === '-' || value === 'N/A' || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip) return <>{value}</>;
 
-  return isTruncated ? (
-    <div
-      title={value}
-      className="truncate overflow-hidden text-ellipsis hover:underline hover:cursor-pointer cursor-default"
-      style={{ maxWidth: maxWidth ? `${maxWidth}px` : '100%' }}
-    >
-      {value}
-    </div>
-  ) : (
-    <span ref={cellRef} style={{ maxWidth: maxWidth ? `${maxWidth}px` : 'none' }} className="block">
-      {value}
-    </span>
+
+  if (columnId === "remarks") {
+    
+    const showValue = cellRef.current?.innerText
+    console.log("after update ", showValue)
+    return (
+      <TooltipProvider delayDuration={200}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span
+              ref={cellRef}
+              className="truncate block hover:text-[#6042D1] hover:underline"
+              style={{ maxWidth: maxWidth ? `${maxWidth}px` : 'none' }}
+            >
+              {showValue}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-[300px] break-words bg-gray-800 text-white border-gray-600">
+            <p>{showValue}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    )
+  }
+
+
+  return (
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span
+            ref={cellRef}
+            className="truncate block hover:text-[#6042D1] hover:underline"
+            style={{ maxWidth: maxWidth ? `${maxWidth}px` : 'none' }}
+          >
+            {value}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-[300px] break-words bg-gray-800 text-white border-gray-600">
+          <p>{value}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
 
@@ -270,7 +313,7 @@ export default function TechnoDataTable({
   const [pageSize, setPageSize] = useState<number>(pageLimit);
   const { hasRole } = useAuthStore();
 
-  const [activeSortColumn, setActiveSortColumn] = useState('dateView');
+  const [activeSortColumn, setActiveSortColumn] = useState('date');
   const [sortDirection, setSortDirection] = useState('desc');
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -394,7 +437,7 @@ export default function TechnoDataTable({
     return <Loading />;
   }
 
-  const sortableColumns = ['dateView', 'leadTypeModifiedDate', 'followUpCount'];
+  const sortableColumns = ['date', 'leadTypeModifiedDate', 'followUpCount'];
 
   const dateSortableColumns = ['nextDueDateView'];
 
@@ -511,6 +554,8 @@ export default function TechnoDataTable({
                                   header.column.columnDef.header,
                                   header.getContext()
                                 )}
+                                disableTooltip={true}
+                                columnId={columnId}
                                 maxWidth={maxWidth}
                               />
                               {getSortIcon(columnId)}
@@ -522,6 +567,8 @@ export default function TechnoDataTable({
                                   header.column.columnDef.header,
                                   header.getContext()
                                 )}
+                                 disableTooltip={true}
+                                columnId={columnId}
                                 maxWidth={maxWidth}
                               />
                             )
@@ -597,6 +644,7 @@ export default function TechnoDataTable({
                                 <TruncatedCell
                                   value={flexRender(cell.column.columnDef.cell, cell.getContext())}
                                   maxWidth={maxWidth}
+                                  columnId={cell.column.id}
                                 />
                               )}
                             </div>

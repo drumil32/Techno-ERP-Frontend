@@ -390,10 +390,7 @@ export default function YellowLeadsTracker() {
         maxWidth: 130,
         fixedWidth:130 ,
       },
-      cell: ({ row }: any) => {
-        const remarks = row.original.remarks || [];
-        return <TruncatedCell maxWidth={130} value={[...remarks].reverse().join(' | ')} />;
-      },
+      
     },
     {
       accessorKey: 'followUpCount',

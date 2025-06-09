@@ -66,8 +66,8 @@ export function PerformanceDashboard() {
     key: keyof DurationUserStats;
     direction: 'ascending' | 'descending';
   }>({
-    key: 'userFirstName',
-    direction: 'ascending'
+    key: 'totalCalls',
+    direction: 'descending'
   });
 
   const [activeTab, setActiveTab] = useState<'day' | 'yesterday' | 'week' | 'month' | 'all'>('day');

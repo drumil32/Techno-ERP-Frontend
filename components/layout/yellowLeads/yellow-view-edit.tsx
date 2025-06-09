@@ -430,8 +430,8 @@ export default function YellowLeadViewEdit({
                         followUpCount: response.followUpCount ?? lead.followUpCount,
                         remarks: response.remarks || lead.remarks,
                          remarksView: response.remarks && response.remarks.length > 0
-                          ? response.remarks.map(remark => remark).join(' | ')
-                          : response.remarks,
+                          ? response.remarks.map(remark => remark).reverse().join(' | ')
+                          : response.remarks.reverse(),
                         lastCallDateView: formatTimeStampView(response.lastCallDate) ?? lead.lastCallDateView,
                         isOlderThan7Days: response.isOlderThan7Days
                       };

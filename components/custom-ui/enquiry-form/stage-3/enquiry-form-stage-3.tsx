@@ -91,7 +91,9 @@ const EnquiryFormStage3 = () => {
       nationality: Nationality.INDIAN,
       srAmount: data?.srAmount || 0,
       telecaller :data?.telecaller,
-      registarOfficeRemark : ''
+      registarOfficeRemark : '',
+      enquiryRemark: data?.enquiryRemark || "",
+      feeDetailsRemark: data?.feeDetailsRemark || ""
     },
     disabled: isViewable
   });
@@ -273,7 +275,10 @@ const EnquiryFormStage3 = () => {
         ...sanitizedData,
         dateOfAdmission: sanitizedData.dateOfAdmission || format(new Date(), 'dd/MM/yyyy'),
         id: id,
-        confirmation: false
+        confirmation: false,
+        enquiryRemark: sanitizedData.enquiryRemark || "",
+        feeDetailsRemark : sanitizedData.feeDetailsRemark || "",
+        registarOfficeRemark: sanitizedData.registarOfficeRemark || ""
       });
     }
   }, [data, form, id, refreshKey, isLoading, isFetching]);

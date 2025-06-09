@@ -56,6 +56,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   currentStep = 'enquiry',
   remarkLabel = 'Enquiry Remark'
 }) => {
+  console.log(form.getValues())
   const results = useQueries({
     queries: [
       {
@@ -207,9 +208,9 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                       />
                     </FormControl>
                     <FormControl>
-                      <div className="h-auto">
+                      <div className="h-auto ">
                         {form.getValues().registarOfficeRemark && remark != "registarOfficeRemark" && 
-                          <div>
+                          <div className='mt-4'>
                             <FormLabel className="font-inter font-semibold text-[12px] text-primary">
                               {"Registar Office Remaks"}
                             </FormLabel>
@@ -227,8 +228,8 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                     </FormControl>
                     <FormControl>
                       <div className="h-auto">
-                        {form.getValues().feeDetailsRemark && remark != "feeDetailsRemark" &&
-                          <div>
+                        {(form.getValues().feeDetailsRemark == "" || form.getValues().feeDetailsRemark)&& remark != "feeDetailsRemark" &&
+                          <div className='mt-4'>
                             <FormLabel className="font-inter font-semibold text-[12px] text-primary">
                               {"Fee Details Remaks"}
                             </FormLabel>
@@ -246,15 +247,15 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                     </FormControl>
                     <FormControl>
                       <div className="h-auto">
-                        {form.getValues().enquiryRemark && 
-                          <div>
+                        {(form.getValues().enquiryRemark == "" || form.getValues().enquiryRemark) && remark != "enquiryRemark" &&
+                          <div className='mt-4'>
                             <FormLabel className="font-inter font-semibold text-[12px] text-primary">
                               {"Enquiry Remaks"}
                             </FormLabel>
                             <Input
                             className='hover:cursor-pointer hover:underline'
-                              value={form.getValues().enquiryRemark}
-                              title={form.getValues().enquiryRemark}
+                              value={form.getValues().enquiryRemark || ""}
+                              title={form.getValues().enquiryRemark || ""}
                               
                               readOnly
                             />
