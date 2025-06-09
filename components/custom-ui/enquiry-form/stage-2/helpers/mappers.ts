@@ -2,7 +2,7 @@ import { FeeType } from '@/types/enum';
 
 export const displayFeeMapper = (feeType: FeeType | string | undefined): string => {
   switch (feeType) {
-    case FeeType.HOSTEL:
+    case FeeType.HOSTELYEARLY:
       return 'Hostel Fees';
     case FeeType.TRANSPORT:
       return 'Transport Fees';
@@ -26,7 +26,7 @@ export const displayFeeMapper = (feeType: FeeType | string | undefined): string 
 
 export const scheduleFeeMapper = (feeType: FeeType | string | undefined): string => {
   switch (feeType) {
-    case FeeType.HOSTEL:
+    case FeeType.HOSTELYEARLY:
       return 'Yearly';
     case FeeType.TRANSPORT:
       return 'Yearly';

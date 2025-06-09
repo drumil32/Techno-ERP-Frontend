@@ -260,7 +260,7 @@ const FinanceOfficeForm = () => {
       const baseOriginal = otherFeesData.reduce((sum, fee) => {
         const isExcluded =
           fee.type === displayFeeMapper(FeeType.TRANSPORT) ||
-          fee.type === displayFeeMapper(FeeType.HOSTEL);
+          fee.type === displayFeeMapper(FeeType.HOSTELYEARLY);
 
         if (isExcluded) {
           return sum;
@@ -460,13 +460,11 @@ const FinanceOfficeForm = () => {
                   {otherFeesFields.map((field, index) => {
                     const feeType = form.getValues(`otherFees.${index}.type`);
                     const originalFeeData = otherFeesData?.find((fee: any) =>
-                      fee.type === FeeType.SEM1FEE
-                        ? fee.type === feeType
-                        : fee.type === displayFeeMapper(feeType)
+                      fee.type === feeType
                     );
 
                     let totalFee;
-                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTELYEARLY) {
                       totalFee = form.getValues(`otherFees.${index}.finalFee`);
                     } else {
                       totalFee = originalFeeData?.amount;
@@ -477,7 +475,7 @@ const FinanceOfficeForm = () => {
                     const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
 
                     let discountValue;
-                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTELYEARLY) {
                       discountValue = '-';
                     } else {
                       discountValue =
@@ -492,7 +490,7 @@ const FinanceOfficeForm = () => {
                     if (
                       totalFee === 0 &&
                       feeType != FeeType.TRANSPORT &&
-                      feeType != FeeType.HOSTEL
+                      feeType != FeeType.HOSTELYEARLY
                     ) {
                       return;
                     }

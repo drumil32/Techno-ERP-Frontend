@@ -190,7 +190,7 @@ export const StudentFeesForm = () => {
       telecaller: [],
       references: [],
       enquiryRemark: enquiryData?.enquiryRemark || '',
-      feeDetailsRemark:  '',
+      feeDetailsRemark: '',
       confirmationCheck: false,
       isFeeApplicable: true,
       otpTarget: undefined,
@@ -271,7 +271,6 @@ export const StudentFeesForm = () => {
         .map((feeType) => {
           const baseFeeInfo: any = otherFeesData.find((item: any) => item.type === feeType);
           const existingFee = feeDataSource?.otherFees?.find((fee: any) => fee.type === feeType);
-
           return {
             type: feeType,
             finalFee: existingFee?.finalFee ?? baseFeeInfo?.fee ?? undefined,
@@ -313,7 +312,7 @@ export const StudentFeesForm = () => {
         telecaller: initialTelecallers,
         isFeeApplicable: enquiryData.isFeeApplicable,
         enquiryRemark: enquiryData?.enquiryRemark,
-        feeDetailsRemark : enquiryData.feeDetailsRemark || '',
+        feeDetailsRemark: enquiryData.feeDetailsRemark || '',
         confirmationCheck: form.getValues().confirmationCheck || false,
         srAmount: enquiryData.srAmount
       });
@@ -333,7 +332,7 @@ export const StudentFeesForm = () => {
       const baseOriginal = otherFeesData.reduce((sum, fee) => {
         const isExcluded =
           fee.type === displayFeeMapper(FeeType.TRANSPORT) ||
-          fee.type === displayFeeMapper(FeeType.HOSTEL);
+          fee.type === displayFeeMapper(FeeType.HOSTELYEARLY);
 
         if (isExcluded) {
           return sum;
@@ -575,7 +574,7 @@ export const StudentFeesForm = () => {
     const cleanedData = {
       ...cleanDataForDraft(validatedDataForCleaning),
       srAmount: validatedDataForCleaning.srAmount ?? 0,
-      feeDetailsRemark : validatedDataForCleaning.feeDetailsRemark ?? ''
+      feeDetailsRemark: validatedDataForCleaning.feeDetailsRemark ?? ''
     };
     try {
       if (draftExists && draftId) {
@@ -723,14 +722,14 @@ export const StudentFeesForm = () => {
                 <div className="border border-gray-200 rounded-lg divide-y divide-gray-100 overflow-hidden">
                   {otherFeesFields.map((field, index) => {
                     const feeType = form.getValues(`otherFees.${index}.type`);
+                    console.log(feeType, typeof feeType)
+                    console.log(otherFeesData)
                     const originalFeeData = otherFeesData?.find((fee: any) =>
-                      fee.type === FeeType.SEM1FEE
-                        ? fee.type === feeType
-                        : fee.type === displayFeeMapper(feeType)
+                      fee.type === feeType
                     );
 
                     let totalFee;
-                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTELYEARLY) {
                       totalFee = form.getValues(`otherFees.${index}.finalFee`);
                     } else {
                       totalFee = originalFeeData?.amount;
@@ -741,7 +740,7 @@ export const StudentFeesForm = () => {
                     const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
 
                     let discountValue;
-                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTELYEARLY) {
                       discountValue = '-';
                     } else {
                       discountValue =
@@ -756,7 +755,7 @@ export const StudentFeesForm = () => {
                     if (
                       totalFee === 0 &&
                       feeType != FeeType.TRANSPORT &&
-                      feeType != FeeType.HOSTEL
+                      feeType != FeeType.HOSTELYEARLY
                     ) {
                       return;
                     }

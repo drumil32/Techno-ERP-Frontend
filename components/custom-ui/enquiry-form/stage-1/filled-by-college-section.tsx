@@ -56,7 +56,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   currentStep = 'enquiry',
   remarkLabel = 'Enquiry Remark'
 }) => {
-  console.log(form.getValues())
+  // console.log(form.getValues())
   const results = useQueries({
     queries: [
       {
