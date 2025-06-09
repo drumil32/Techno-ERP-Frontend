@@ -19,6 +19,10 @@ export const displayFeeMapper = (feeType: FeeType | string | undefined): string 
     // case FeeType.EXAMFEES: return "Exam Fees";
     case FeeType.SEM1FEE:
       return 'Sem 1 Tuition Fees';
+    case FeeType.HOSTELCAUTIONMONEY:
+      return 'Hostel Cautionmoney'
+    case FeeType.HOSTELMAINTENANCE:
+      return 'Hostel maintenance'
     default:
       return 'Unknown Fee Type';
   }
@@ -43,6 +47,10 @@ export const scheduleFeeMapper = (feeType: FeeType | string | undefined): string
     // case FeeType.EXAMFEES: return "One-time";
     case FeeType.SEM1FEE:
       return 'Sem-Wise';
+    case FeeType.HOSTELMAINTENANCE:
+      return 'Yearly';
+    case FeeType.HOSTELCAUTIONMONEY:
+      return 'One-time'
     default:
       return 'N/A';
   }

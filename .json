@@ -1,0 +1,4339 @@
+{
+    "MESSAGE": "Recent admission excel sheet data fetched successfully",
+    "SUCCESS": true,
+    "ERROR": null,
+    "DATA": [
+        {
+            "references": [],
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "683c0ccaac9a2f0b02feb1d7",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "01/06/2025",
+            "studentName": "Abhinav Gupta",
+            "studentPhoneNumber": "8802940318",
+            "emailId": "vaibhavkgupta17@gmail.com",
+            "fatherName": "Sunil Kumar Gupta",
+            "fatherPhoneNumber": "8802940322",
+            "fatherOccupation": "Business",
+            "motherName": "Neelam Gupta",
+            "motherPhoneNumber": "8888888888",
+            "motherOccupation": "Housewife",
+            "dateOfBirth": "08/04/2011",
+            "category": "General",
+            "course": "BBA",
+            "reference": "Digital Marketing",
+            "address": {
+                "addressLine1": "abksbdvlh",
+                "addressLine2": "sldvblsndf",
+                "district": "Lucknow",
+                "pincode": "226010",
+                "state": "Delhi",
+                "country": "India",
+                "_id": "683c0db9ac9a2f0b02feb371"
+            },
+            "academicDetails": [
+                {
+                    "educationLevel": "10th",
+                    "schoolCollegeName": "Green Lawns School",
+                    "universityBoardName": "CBSE",
+                    "passingYear": 2009,
+                    "percentageObtained": 78,
+                    "subjects": "ksjdblknlfksbef,ksbfkkjbwef, kwefkb",
+                    "_id": "683c0db9ac9a2f0b02feb372"
+                },
+                {
+                    "educationLevel": "12th",
+                    "schoolCollegeName": "St. Xavier's School",
+                    "universityBoardName": "ICSE",
+                    "passingYear": 2011,
+                    "percentageObtained": 89,
+                    "subjects": "ksdbflk,ksdjbvkblajbvlnsad, isugfkasjbk, isdgkufk",
+                    "_id": "683c0db9ac9a2f0b02feb373"
+                },
+                {
+                    "educationLevel": "Graduation",
+                    "schoolCollegeName": "IIT Delhi",
+                    "universityBoardName": "IIT",
+                    "passingYear": 2016,
+                    "percentageObtained": 87,
+                    "subjects": "Civil Engineering",
+                    "_id": "683c0db9ac9a2f0b02feb374"
+                }
+            ],
+            "telecaller": [
+                "6837e63224277de6f9e08361",
+                "683817f624277de6f9e08363",
+                "6838cf2524277de6f9e08387",
+                "680aa2b0b340c3fc9c9426b3"
+            ],
+            "remarks": "lksjfbvlnasd;lfnk",
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/683c0ccaac9a2f0b02feb1d7/Photo.png",
+                    "_id": "683c0d5aac9a2f0b02feb2d9"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/683c0ccaac9a2f0b02feb1d7/Signature.png",
+                    "_id": "683c0d61ac9a2f0b02feb2e1"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "683c0db9ac9a2f0b02feb375"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "PENDING",
+                    "dueBy": "19/06/2025",
+                    "_id": "683c0db9ac9a2f0b02feb376"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "683c0db9ac9a2f0b02feb377"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "PENDING",
+                    "dueBy": "06/06/2025",
+                    "_id": "683c0db9ac9a2f0b02feb378"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "683c0db9ac9a2f0b02feb379"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "683c0d35ac9a2f0b02feb26b",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 20000,
+                        "feesDepositedTOA": 10000,
+                        "_id": "683c152ea2afb446e4abeb9f"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 1000,
+                        "feesDepositedTOA": 1000,
+                        "_id": "683c152ea2afb446e4abeba0"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 100,
+                        "feesDepositedTOA": 0,
+                        "_id": "683c152ea2afb446e4abeba1"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 4000,
+                        "feesDepositedTOA": 0,
+                        "_id": "683c152ea2afb446e4abeba2"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 1500,
+                        "feesDepositedTOA": 1500,
+                        "_id": "683c152ea2afb446e4abeba3"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 1000,
+                        "feesDepositedTOA": 0,
+                        "_id": "683c152ea2afb446e4abeba4"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683c152ea2afb446e4abeba5"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683c152ea2afb446e4abeba6"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 20000,
+                        "dueDate": null,
+                        "feesPaid": 10000
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 22000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 22000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 22000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 22000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 22000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "20/06/2025"
+            },
+            "aadharNumber": "442425830671",
+            "areaType": "RURAL",
+            "dateOfAdmission": "01/06/2025",
+            "religion": "Hinduism",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS101",
+            "photoNo": 101,
+            "universityId": "TGI2025BBA101"
+        },
+        {
+            "references": [],
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "683cb34c75879b6349fec42a",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "02/06/2025",
+            "studentName": "Gin Tama",
+            "studentPhoneNumber": "1212212323",
+            "emailId": "rajatnai49@gmail.com",
+            "fatherName": "Richard Doe",
+            "fatherPhoneNumber": "9999900000",
+            "fatherOccupation": "Ra",
+            "motherName": "Jane Doe",
+            "motherPhoneNumber": "9999999999",
+            "motherOccupation": "Spaces",
+            "dateOfBirth": "17/01/2015",
+            "category": "SC",
+            "course": "BSCB",
+            "reference": "Business Associate",
+            "address": {
+                "addressLine1": "Station Plot, Near Gandhivadi",
+                "addressLine2": "Hello",
+                "district": "Lucknow",
+                "pincode": "123123",
+                "state": "Meghalaya",
+                "country": "India",
+                "_id": "683cb43775879b6349fec572"
+            },
+            "telecaller": [],
+            "gender": "FEMALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/683cb34c75879b6349fec42a/Photo.jpg",
+                    "_id": "683cb40b75879b6349fec546"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/683cb34c75879b6349fec42a/Signature.jpg",
+                    "_id": "683cb41175879b6349fec54b"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "683cb43775879b6349fec573"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "683cb43775879b6349fec574"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "683cb43775879b6349fec575"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "683cb43775879b6349fec576"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "683cb43775879b6349fec577"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "683cb37475879b6349fec4c4",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "feesDepositedTOA": 0,
+                        "_id": "683cb48175879b6349fec641"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683cb48175879b6349fec642"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683cb48175879b6349fec643"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683cb48175879b6349fec644"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683cb48175879b6349fec645"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683cb48175879b6349fec646"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683cb48175879b6349fec647"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683cb48175879b6349fec648"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "02/06/2025"
+            },
+            "dateOfAdmission": "02/06/2025",
+            "aadharNumber": "123123123123",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS102",
+            "photoNo": 102,
+            "universityId": "TGI2025BSCB102"
+        },
+        {
+            "references": [],
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "683eb929597c444304cc830e",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "03/06/2025",
+            "studentName": "Rajat",
+            "studentPhoneNumber": "9876543210",
+            "emailId": "rajatnai49@gmail.com",
+            "fatherName": "Richard Doe",
+            "fatherPhoneNumber": "9876543211",
+            "fatherOccupation": "Engineer",
+            "motherName": "Jane Doe",
+            "motherOccupation": "Doctor",
+            "dateOfBirth": "23/01/2015",
+            "category": "OBC",
+            "course": "BSCB",
+            "reference": "Digital Marketing",
+            "address": {
+                "addressLine1": "Station Plot, Near Gandhivadi",
+                "addressLine2": "Station Plot",
+                "district": "Lucknow",
+                "pincode": "128379",
+                "state": "Chhattisgarh",
+                "country": "India",
+                "_id": "683eb9a9597c444304cc83f7"
+            },
+            "telecaller": [
+                "Deepak Shukla",
+                "Deepa Rani",
+                "Anita Pal"
+            ],
+            "gender": "FEMALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Pankaj Awasthi",
+                "Raindil",
+                "Vinay kumar",
+                "Prachi Srivastava",
+                "Garima Chaudhary"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/683eb929597c444304cc830e/Photo.png",
+                    "_id": "683eb987597c444304cc83cb"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/683eb929597c444304cc830e/Signature.png",
+                    "_id": "683eb988597c444304cc83d0"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "683eb9a9597c444304cc83f8"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "683eb9a9597c444304cc83f9"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "683eb9a9597c444304cc83fa"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "683eb9a9597c444304cc83fb"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "683eb9a9597c444304cc83fc"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "683eb957597c444304cc836b",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "feesDepositedTOA": 0,
+                        "_id": "683eba05597c444304cc8499"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683eba05597c444304cc849a"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683eba05597c444304cc849b"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683eba05597c444304cc849c"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683eba05597c444304cc849d"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683eba05597c444304cc849e"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683eba05597c444304cc849f"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "683eba05597c444304cc84a0"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "03/06/2025"
+            },
+            "aadharNumber": "123123123123",
+            "areaType": "RURAL",
+            "dateOfAdmission": "03/06/2025",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS103",
+            "photoNo": 103,
+            "universityId": "TGI2025BSCB103"
+        },
+        {
+            "references": [],
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "68400df97c7f923b0893c368",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "04/06/2025",
+            "studentName": "Saroj Awasthi",
+            "studentPhoneNumber": "8802940318",
+            "emailId": "vaibhavkgupta17@gmail.com",
+            "fatherName": "Sameer Awasthi",
+            "fatherPhoneNumber": "8802940316",
+            "fatherOccupation": "Professor",
+            "motherName": "Sheetal Awasthi",
+            "motherPhoneNumber": "8802940123",
+            "motherOccupation": "Housewife",
+            "dateOfBirth": "02/01/2001",
+            "category": "General",
+            "course": "BBA",
+            "reference": "LU/NPG/External Venue",
+            "address": {
+                "addressLine1": "House 2/87 Vishal Khand, Gomti Nagar",
+                "addressLine2": "Near Police Station",
+                "district": "Lucknow",
+                "pincode": "226100",
+                "state": "Uttar Pradesh",
+                "country": "India",
+                "_id": "68400f877c7f923b0893c592"
+            },
+            "academicDetails": [
+                {
+                    "educationLevel": "10th",
+                    "schoolCollegeName": "Green Lawns School",
+                    "universityBoardName": "CBSE",
+                    "passingYear": 2009,
+                    "percentageObtained": 89,
+                    "_id": "68400f877c7f923b0893c593"
+                },
+                {
+                    "educationLevel": "12th",
+                    "schoolCollegeName": "St. Xavier's School",
+                    "universityBoardName": "ICSE",
+                    "passingYear": 2011,
+                    "percentageObtained": 93,
+                    "_id": "68400f877c7f923b0893c594"
+                },
+                {
+                    "educationLevel": "Graduation",
+                    "schoolCollegeName": "IIT Delhi",
+                    "universityBoardName": "IITs",
+                    "passingYear": 2016,
+                    "percentageObtained": 85,
+                    "_id": "68400f877c7f923b0893c595"
+                }
+            ],
+            "telecaller": [
+                "Madhu Singh",
+                "Pradeep Dixit"
+            ],
+            "remarks": "Need to recheck the data download feature",
+            "gender": "FEMALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Prachi Srivastava",
+                "Prasoon Gupta"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68400df97c7f923b0893c368/Photo.jpg",
+                    "_id": "68400eda7c7f923b0893c4a5"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68400df97c7f923b0893c368/Signature.jpg",
+                    "_id": "68400edb7c7f923b0893c4ad"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68400f877c7f923b0893c596"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "PENDING",
+                    "dueBy": "07/08/2025",
+                    "_id": "68400f877c7f923b0893c597"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "68400f877c7f923b0893c598"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "PENDING",
+                    "dueBy": "10/07/2025",
+                    "_id": "68400f877c7f923b0893c599"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68400f877c7f923b0893c59a"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "68400e757c7f923b0893c43e",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 15000,
+                        "feesDepositedTOA": 5000,
+                        "_id": "684010cd7c7f923b0893c66e"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 1000,
+                        "feesDepositedTOA": 1000,
+                        "_id": "684010cd7c7f923b0893c66f"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 100,
+                        "feesDepositedTOA": 100,
+                        "_id": "684010cd7c7f923b0893c670"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 4000,
+                        "feesDepositedTOA": 3000,
+                        "_id": "684010cd7c7f923b0893c671"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 1500,
+                        "feesDepositedTOA": 1000,
+                        "_id": "684010cd7c7f923b0893c672"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 2000,
+                        "feesDepositedTOA": 1000,
+                        "_id": "684010cd7c7f923b0893c673"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684010cd7c7f923b0893c674"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684010cd7c7f923b0893c675"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 15000,
+                        "dueDate": null,
+                        "feesPaid": 5000
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 18000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 18000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 18000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 18000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 18000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "14/08/2025"
+            },
+            "dateOfAdmission": "04/06/2025",
+            "aadharNumber": "442425830671",
+            "areaType": "RURAL",
+            "bloodGroup": "AB-",
+            "religion": "Hinduism",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS104",
+            "photoNo": 104,
+            "universityId": "TGI2025BBA104"
+        },
+        {
+            "references": [],
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "6840252c7c7f923b0893c8ae",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "04/06/2025",
+            "studentName": "abhinav",
+            "studentPhoneNumber": "8802940317",
+            "emailId": "vaibhavkgupta17@gmail.com",
+            "fatherName": "Anil Kumar Gupta",
+            "fatherPhoneNumber": "8802940317",
+            "fatherOccupation": "Business",
+            "motherName": "Manorama Guota",
+            "motherPhoneNumber": "8802940317",
+            "motherOccupation": "Housewife",
+            "dateOfBirth": "09/01/2001",
+            "category": "General",
+            "course": "MBA",
+            "reference": "Digital Marketing",
+            "address": {
+                "addressLine1": "House no. 5, Sarvapalli Mall Avenue Road",
+                "addressLine2": "Orchid Apartment",
+                "district": "Lucknow",
+                "pincode": "226001",
+                "state": "Uttar Pradesh",
+                "country": "India",
+                "_id": "684028667c7f923b0893ca45"
+            },
+            "telecaller": [
+                "Mudit Tiwari",
+                "Deepa Rani",
+                "Anushika Saini",
+                "Dhruv Kumar Singh"
+            ],
+            "remarks": "kbvivcytdfgikgi",
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Pankaj Awasthi",
+                "Prasoon Gupta",
+                "Raindil"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6840252c7c7f923b0893c8ae/Photo.jpg",
+                    "_id": "684027627c7f923b0893c9b7"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6840252c7c7f923b0893c8ae/Signature.jpg",
+                    "_id": "684027667c7f923b0893c9bc"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "684028667c7f923b0893ca46"
+                },
+                {
+                    "type": "Graduation Final Year Marksheet",
+                    "status": "PENDING",
+                    "dueBy": "15/07/2025",
+                    "_id": "684028667c7f923b0893ca47"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "PENDING",
+                    "dueBy": "20/06/2025",
+                    "_id": "684028667c7f923b0893ca48"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "684028667c7f923b0893ca49"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "684028667c7f923b0893ca4a"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "684027007c7f923b0893c96a",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 25000,
+                        "feesDepositedTOA": 10000,
+                        "_id": "684029277c7f923b0893cac1"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 1000,
+                        "feesDepositedTOA": 1000,
+                        "_id": "684029277c7f923b0893cac2"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 100,
+                        "feesDepositedTOA": 100,
+                        "_id": "684029277c7f923b0893cac3"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684029277c7f923b0893cac4"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 1500,
+                        "feesDepositedTOA": 1500,
+                        "_id": "684029277c7f923b0893cac5"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684029277c7f923b0893cac6"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684029277c7f923b0893cac7"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684029277c7f923b0893cac8"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 25000,
+                        "dueDate": null,
+                        "feesPaid": 10000
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 30000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 30000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 30000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "15/07/2025"
+            },
+            "aadharNumber": "442425830671",
+            "areaType": "RURAL",
+            "bloodGroup": "B+",
+            "dateOfAdmission": "04/06/2025",
+            "religion": "Hinduism",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIMS101",
+            "photoNo": 105,
+            "universityId": "TGI2025MBA105"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "68411e291d8f453b34715b39",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "05/06/2025",
+            "studentName": "test student",
+            "studentPhoneNumber": "9033107401",
+            "emailId": "akheniad@gmail.com",
+            "fatherName": "test father",
+            "fatherPhoneNumber": "9033107401",
+            "fatherOccupation": "Engineer",
+            "motherName": "test mother",
+            "motherPhoneNumber": "9033107401",
+            "motherOccupation": "Doctor",
+            "dateOfBirth": "01/01/2015",
+            "category": "General",
+            "course": "BBA",
+            "references": [
+                "LU/NPG/External Venue",
+                "Technoligence"
+            ],
+            "address": {
+                "addressLine1": "Station Plot, Near Gandhivadi",
+                "addressLine2": "Station Plot",
+                "district": "Lucknow",
+                "pincode": "360410",
+                "state": "Gujarat",
+                "country": "India",
+                "_id": "68426da9223e77b2252e39b5"
+            },
+            "telecaller": [
+                "Anita Pal"
+            ],
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Prachi Srivastava"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68411e291d8f453b34715b39/Photo.png",
+                    "_id": "68426d8b223e77b2252e3989"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68411e291d8f453b34715b39/Signature.png",
+                    "_id": "68426d8b223e77b2252e398e"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68426da9223e77b2252e39b6"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68426da9223e77b2252e39b7"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "68426da9223e77b2252e39b8"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68426da9223e77b2252e39b9"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "68426da9223e77b2252e39ba"
+                }
+            ],
+            "studentFeeDraft": null,
+            "srAmount": 2349,
+            "studentFee": {
+                "_id": "684199aad5f9a6dc3f46cf91",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ad5d9b175844c611c71c"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ad5d9b175844c611c71d"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ad5d9b175844c611c71e"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ad5d9b175844c611c71f"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ad5d9b175844c611c720"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ad5d9b175844c611c721"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ad5d9b175844c611c722"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ad5d9b175844c611c723"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "05/06/2025"
+            },
+            "aadharNumber": "123456789011",
+            "dateOfAdmission": "06/06/2025",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS109",
+            "photoNo": 113,
+            "universityId": "TGI2025BBA113"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "6841293fa8a9217adbe06c1c",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "05/06/2025",
+            "studentName": "demoo",
+            "studentPhoneNumber": "1234567890",
+            "emailId": "devanchauhan012@gmail.com",
+            "fatherName": "demoo",
+            "fatherPhoneNumber": "1234567891",
+            "fatherOccupation": "occupation",
+            "motherName": "demo",
+            "motherPhoneNumber": "1234567891",
+            "motherOccupation": "occ",
+            "dateOfBirth": "31/01/2015",
+            "category": "SC",
+            "course": "BSCB",
+            "references": [
+                "Technoligence"
+            ],
+            "address": {
+                "addressLine1": "add123",
+                "addressLine2": "add234",
+                "district": "Lucknow",
+                "pincode": "123456",
+                "state": "Uttar Pradesh",
+                "country": "India",
+                "_id": "68419504d5f9a6dc3f46c905"
+            },
+            "telecaller": [
+                "Ashish Nigam"
+            ],
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Ashish Nigam",
+                "Garima Chaudhary",
+                "Raindil"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6841293fa8a9217adbe06c1c/Photo.jpg",
+                    "_id": "684194c0d5f9a6dc3f46c8de"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6841293fa8a9217adbe06c1c/Signature.jpg",
+                    "_id": "684194e5d5f9a6dc3f46c8e8"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68419504d5f9a6dc3f46c907"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68419504d5f9a6dc3f46c908"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "68419504d5f9a6dc3f46c909"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "68419504d5f9a6dc3f46c90a"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "68419504d5f9a6dc3f46c90b"
+                }
+            ],
+            "studentFeeDraft": null,
+            "remarks": "optional remarks",
+            "srAmount": 12356,
+            "studentFee": {
+                "_id": "68419472d5f9a6dc3f46c860",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842afbd9b175844c611cb16"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842afbd9b175844c611cb17"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842afbd9b175844c611cb18"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842afbd9b175844c611cb19"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842afbd9b175844c611cb1a"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842afbd9b175844c611cb1b"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842afbd9b175844c611cb1c"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842afbd9b175844c611cb1d"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "05/06/2025"
+            },
+            "aadharNumber": "123123123123",
+            "dateOfAdmission": "05/06/2025",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "entranceExamDetails": {
+                "nameOfExamination": "devam chauhan",
+                "_id": "68419504d5f9a6dc3f46c906"
+            },
+            "formNo": "TIHS111",
+            "photoNo": 115,
+            "universityId": "TGI2025BSCB115"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "68417108d5f9a6dc3f46af26",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "05/06/2025",
+            "studentName": "try",
+            "studentPhoneNumber": "4014024034",
+            "emailId": "devanchauhan012@gmail.com",
+            "fatherName": "tryfather",
+            "fatherPhoneNumber": "5015025034",
+            "fatherOccupation": "occ",
+            "motherName": "catchmother",
+            "motherPhoneNumber": "1011021034",
+            "motherOccupation": "occ",
+            "dateOfBirth": "30/01/2015",
+            "category": "OBC",
+            "course": "BBA",
+            "references": [
+                "Direct Walk-in"
+            ],
+            "srAmount": 0,
+            "address": {
+                "addressLine1": "add23456",
+                "addressLine2": "234add",
+                "district": "Lucknow",
+                "pincode": "123456",
+                "state": "Uttar Pradesh",
+                "country": "India",
+                "_id": "68418d17d5f9a6dc3f46c667"
+            },
+            "telecaller": [
+                "Aryan Kanaujia",
+                "Deepa Rani"
+            ],
+            "remarks": "remark1",
+            "gender": "FEMALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Raindil",
+                "Vinay kumar"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68417108d5f9a6dc3f46af26/Photo.jpg",
+                    "_id": "68418c88d5f9a6dc3f46c56a"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68417108d5f9a6dc3f46af26/Signature.jpg",
+                    "_id": "68418cb3d5f9a6dc3f46c574"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68418d17d5f9a6dc3f46c669"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68418d17d5f9a6dc3f46c66a"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "68418d17d5f9a6dc3f46c66b"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "68418d17d5f9a6dc3f46c66c"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "68418d17d5f9a6dc3f46c66d"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "68418c38d5f9a6dc3f46c4eb",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "feesDepositedTOA": 0,
+                        "_id": "68418d50d5f9a6dc3f46c706"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68418d50d5f9a6dc3f46c707"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68418d50d5f9a6dc3f46c708"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68418d50d5f9a6dc3f46c709"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68418d50d5f9a6dc3f46c70a"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68418d50d5f9a6dc3f46c70b"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68418d50d5f9a6dc3f46c70c"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68418d50d5f9a6dc3f46c70d"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "05/06/2025"
+            },
+            "dateOfAdmission": "05/06/2025",
+            "aadharNumber": "123123123123",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "entranceExamDetails": {
+                "nameOfExamination": "devam chauhan",
+                "_id": "68418d17d5f9a6dc3f46c668"
+            },
+            "formNo": "TIHS106",
+            "photoNo": 108,
+            "universityId": "TGI2025BBA108"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "684177bed5f9a6dc3f46b2b9",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "05/06/2025",
+            "studentName": "student name",
+            "studentPhoneNumber": "9033107408",
+            "emailId": "akheniad@gmail.com",
+            "fatherName": "Suresh Sharma",
+            "fatherPhoneNumber": "9033107408",
+            "fatherOccupation": "Engineer",
+            "motherName": "Jane Doe",
+            "motherPhoneNumber": "9033107408",
+            "motherOccupation": "Doctor",
+            "dateOfBirth": "01/01/2015",
+            "category": "General",
+            "course": "BED",
+            "references": [
+                "Digital Marketing",
+                "Direct Walk-in",
+                "Student Reference",
+                "LU/NPG/External Venue"
+            ],
+            "srAmount": 232,
+            "address": {
+                "addressLine1": "Station Plot, Near Gandhivadi",
+                "addressLine2": "Station Plot",
+                "district": "Lucknow",
+                "pincode": "360410",
+                "state": "Gujarat",
+                "country": "India",
+                "_id": "6841785dd5f9a6dc3f46b41c"
+            },
+            "telecaller": [
+                "Anita Pal",
+                "Abhilasha Singh",
+                "Deepa Rani"
+            ],
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Pankaj Awasthi",
+                "Raindil"
+            ],
+            "admittedThrough": "Counselling",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/684177bed5f9a6dc3f46b2b9/Photo.png",
+                    "_id": "68417805d5f9a6dc3f46b3ca"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/684177bed5f9a6dc3f46b2b9/Signature.png",
+                    "_id": "6841780fd5f9a6dc3f46b3d3"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6841785dd5f9a6dc3f46b41d"
+                },
+                {
+                    "type": "UG/PG Degree (with >50% score)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6841785dd5f9a6dc3f46b41e"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "PENDING",
+                    "dueBy": "05/06/2025",
+                    "_id": "6841785dd5f9a6dc3f46b41f"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "6841785dd5f9a6dc3f46b420"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6841785dd5f9a6dc3f46b421"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "684177f9d5f9a6dc3f46b37e",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 25625,
+                        "feesDepositedTOA": 10,
+                        "_id": "684178cad5f9a6dc3f46b53e"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684178cad5f9a6dc3f46b53f"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684178cad5f9a6dc3f46b540"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684178cad5f9a6dc3f46b541"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684178cad5f9a6dc3f46b542"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684178cad5f9a6dc3f46b543"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684178cad5f9a6dc3f46b544"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684178cad5f9a6dc3f46b545"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 25625,
+                        "dueDate": null,
+                        "feesPaid": 10
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 25625,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 15000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 15000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "05/06/2025"
+            },
+            "dateOfAdmission": "05/06/2025",
+            "remarks": "This is the remak",
+            "aadharNumber": "121212121213",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS105",
+            "photoNo": 106,
+            "universityId": "TGI2025BED106"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "684180e9d5f9a6dc3f46b697",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "05/06/2025",
+            "studentName": "vaibhav Gupta",
+            "studentPhoneNumber": "8802940317",
+            "emailId": "vaibhavkgupta17@gmail.com",
+            "fatherName": "Anil Kumar Gupta",
+            "fatherPhoneNumber": "8802940317",
+            "fatherOccupation": "Business",
+            "motherName": "Manorama Gupta",
+            "motherPhoneNumber": "8802940317",
+            "motherOccupation": "Hoousewife",
+            "dateOfBirth": "13/01/1995",
+            "category": "OBC",
+            "course": "MBA",
+            "references": [
+                "Digital Marketing",
+                "Advertising",
+                "Direct Walk-in"
+            ],
+            "srAmount": 100,
+            "address": {
+                "addressLine1": "B37 Jwalamukhi Hostel",
+                "addressLine2": "Iit Delhi",
+                "district": "Lucknow",
+                "pincode": "110016",
+                "state": "Delhi",
+                "country": "India",
+                "_id": "6841849bd5f9a6dc3f46ba38"
+            },
+            "telecaller": [
+                "Anushika Saini",
+                "Ashish Nigam"
+            ],
+            "remarks": "Course Unclear - BBA, BCA, BCom - All interested",
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Prasoon Gupta",
+                "Deepak Shukla",
+                "Pankaj Awasthi"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/684180e9d5f9a6dc3f46b697/Photo.jpg",
+                    "_id": "68418414d5f9a6dc3f46b955"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/684180e9d5f9a6dc3f46b697/Signature.jpg",
+                    "_id": "68418417d5f9a6dc3f46b95a"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6841849bd5f9a6dc3f46ba39"
+                },
+                {
+                    "type": "Graduation Final Year Marksheet",
+                    "status": "PENDING",
+                    "dueBy": "20/07/2025",
+                    "_id": "6841849bd5f9a6dc3f46ba3a"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6841849bd5f9a6dc3f46ba3b"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6841849bd5f9a6dc3f46ba3c"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "PENDING",
+                    "dueBy": "20/06/2025",
+                    "_id": "6841849bd5f9a6dc3f46ba3d"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "684183c7d5f9a6dc3f46b84e",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684185bbd5f9a6dc3f46bc1d"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 1000,
+                        "feesDepositedTOA": 1000,
+                        "_id": "684185bbd5f9a6dc3f46bc1e"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684185bbd5f9a6dc3f46bc1f"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684185bbd5f9a6dc3f46bc20"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684185bbd5f9a6dc3f46bc21"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684185bbd5f9a6dc3f46bc22"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684185bbd5f9a6dc3f46bc23"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684185bbd5f9a6dc3f46bc24"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 27000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 27000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 27000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "05/06/2025"
+            },
+            "aadharNumber": "442425830671",
+            "dateOfAdmission": "05/06/2025",
+            "areaType": "RURAL",
+            "bloodGroup": "B-",
+            "religion": "Hinduism",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIMS102",
+            "photoNo": 107,
+            "universityId": "TGI2025MBA107"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "6841a9ffd5f9a6dc3f46db9c",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "05/06/2025",
+            "studentName": "Vaibhav Gupta",
+            "studentPhoneNumber": "8802940317",
+            "emailId": "vaibhavkgupta17@gmail.com",
+            "fatherName": "Mr Anil Kumar",
+            "fatherPhoneNumber": "8802940317",
+            "fatherOccupation": "Business",
+            "motherName": "Mrs Manorama Gupta",
+            "motherPhoneNumber": "8802940317",
+            "motherOccupation": "Housewife",
+            "dateOfBirth": "14/01/2009",
+            "category": "General",
+            "course": "MBA",
+            "references": [
+                "Business Associate",
+                "LU/NPG/External Venue",
+                "Technoligence"
+            ],
+            "srAmount": 100,
+            "address": {
+                "addressLine1": "B37 Jwalamukhi Hostel",
+                "addressLine2": "Iit Delhi",
+                "district": "Lucknow",
+                "pincode": "110016",
+                "state": "Delhi",
+                "country": "India",
+                "_id": "6841ab51d5f9a6dc3f46dcb4"
+            },
+            "academicDetails": [
+                {
+                    "educationLevel": "10th",
+                    "schoolCollegeName": "dsvlkhld",
+                    "universityBoardName": "sakdlvjbl",
+                    "passingYear": 2008,
+                    "percentageObtained": 89,
+                    "_id": "6841ab51d5f9a6dc3f46dcb5"
+                },
+                {
+                    "educationLevel": "12th",
+                    "schoolCollegeName": "sdvlblk",
+                    "universityBoardName": "sdkljbvlasd",
+                    "passingYear": 2010,
+                    "percentageObtained": 89,
+                    "_id": "6841ab51d5f9a6dc3f46dcb6"
+                },
+                {
+                    "educationLevel": "Graduation",
+                    "schoolCollegeName": "saldvn;lasdn;",
+                    "universityBoardName": "sdljvblsadv",
+                    "passingYear": 2016,
+                    "percentageObtained": 89,
+                    "_id": "6841ab51d5f9a6dc3f46dcb7"
+                }
+            ],
+            "telecaller": [
+                "Anushika Saini",
+                "Ashish Nigam"
+            ],
+            "remarks": "sldfkblaksndvl;ansd;vn;wsnv",
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Pankaj Awasthi",
+                "Prachi Srivastava"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "documents": [
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6841a9ffd5f9a6dc3f46db9c/Signature.jpeg",
+                    "_id": "6841ab14d5f9a6dc3f46dc79"
+                },
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6841a9ffd5f9a6dc3f46db9c/Photo.jpg",
+                    "_id": "6841ab16d5f9a6dc3f46dc81"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6841ab51d5f9a6dc3f46dcb8"
+                },
+                {
+                    "type": "Graduation Final Year Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6841ab51d5f9a6dc3f46dcb9"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "6841ab51d5f9a6dc3f46dcba"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "PENDING",
+                    "dueBy": "11/06/2025",
+                    "_id": "6841ab51d5f9a6dc3f46dcbb"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "PENDING",
+                    "dueBy": "12/06/2025",
+                    "_id": "6841ab51d5f9a6dc3f46dcbc"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "6841aafad5f9a6dc3f46dc1a",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 25000,
+                        "feesDepositedTOA": 2000,
+                        "_id": "6841aba2d5f9a6dc3f46dda4"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 1000,
+                        "feesDepositedTOA": 1000,
+                        "_id": "6841aba2d5f9a6dc3f46dda5"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 100,
+                        "feesDepositedTOA": 0,
+                        "_id": "6841aba2d5f9a6dc3f46dda6"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 4000,
+                        "feesDepositedTOA": 0,
+                        "_id": "6841aba2d5f9a6dc3f46dda7"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 1500,
+                        "feesDepositedTOA": 0,
+                        "_id": "6841aba2d5f9a6dc3f46dda8"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6841aba2d5f9a6dc3f46dda9"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6841aba2d5f9a6dc3f46ddaa"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6841aba2d5f9a6dc3f46ddab"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 25000,
+                        "dueDate": null,
+                        "feesPaid": 2000
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 25000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 25000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 25000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "05/06/2025"
+            },
+            "aadharNumber": "442425830671",
+            "areaType": "RURAL",
+            "bloodGroup": "A-",
+            "dateOfAdmission": "05/06/2025",
+            "religion": "Islam",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIMS103",
+            "photoNo": 109,
+            "universityId": "TGI2025MBA109"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "68426367d5f9a6dc3f46e3a9",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "06/06/2025",
+            "studentName": "demostudent",
+            "studentPhoneNumber": "1234567891",
+            "emailId": "devanchauhan012@gmail.com",
+            "fatherName": "demoo",
+            "fatherPhoneNumber": "1234567890",
+            "fatherOccupation": "occupation",
+            "motherName": "demo",
+            "motherPhoneNumber": "1234567890",
+            "motherOccupation": "Spaces",
+            "dateOfBirth": "01/01/2015",
+            "category": "EWS",
+            "course": "BSCB",
+            "references": [
+                "Advertising"
+            ],
+            "address": {
+                "addressLine1": "fml2efm2ef",
+                "addressLine2": "add234",
+                "district": "Lucknow",
+                "pincode": "123456",
+                "state": "Uttar Pradesh",
+                "country": "India",
+                "_id": "68426671d5f9a6dc3f46e535"
+            },
+            "telecaller": [],
+            "gender": "FEMALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68426367d5f9a6dc3f46e3a9/Photo.jpg",
+                    "_id": "68426634d5f9a6dc3f46e509"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68426367d5f9a6dc3f46e3a9/Signature.jpg",
+                    "_id": "68426634d5f9a6dc3f46e50e"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68426671d5f9a6dc3f46e536"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68426671d5f9a6dc3f46e537"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "68426671d5f9a6dc3f46e538"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68426671d5f9a6dc3f46e539"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "68426671d5f9a6dc3f46e53a"
+                }
+            ],
+            "srAmount": 0,
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "6842660ad5f9a6dc3f46e4a9",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "feesDepositedTOA": 0,
+                        "_id": "684266a9d5f9a6dc3f46e5d3"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684266a9d5f9a6dc3f46e5d4"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684266a9d5f9a6dc3f46e5d5"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684266a9d5f9a6dc3f46e5d6"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684266a9d5f9a6dc3f46e5d7"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684266a9d5f9a6dc3f46e5d8"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684266a9d5f9a6dc3f46e5d9"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "684266a9d5f9a6dc3f46e5da"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 14000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "06/06/2025"
+            },
+            "dateOfAdmission": "06/06/2025",
+            "aadharNumber": "123123123123",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS107",
+            "photoNo": 110,
+            "universityId": "TGI2025BSCB110"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "68426910d5f9a6dc3f46e760",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "06/06/2025",
+            "studentName": "student name",
+            "studentPhoneNumber": "9033107408",
+            "emailId": "akheniad@gmail.com",
+            "fatherName": "Suresh Sharma",
+            "fatherPhoneNumber": "9033107408",
+            "fatherOccupation": "Engineer",
+            "motherName": "Jane Doe",
+            "motherPhoneNumber": "9033107408",
+            "motherOccupation": "Doctor",
+            "dateOfBirth": "01/01/2015",
+            "category": "General",
+            "course": "BCOM",
+            "references": [
+                "Business Associate",
+                "Direct Walk-in"
+            ],
+            "address": {
+                "addressLine1": "Station Plot, Near Gandhivadi",
+                "addressLine2": "Station Plot",
+                "district": "Lucknow",
+                "pincode": "360410",
+                "state": "Gujarat",
+                "country": "India",
+                "_id": "68426c335c9c26be764b314b"
+            },
+            "telecaller": [],
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68426910d5f9a6dc3f46e760/Photo.png",
+                    "_id": "68426c0f5c9c26be764b311f"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68426910d5f9a6dc3f46e760/Signature.png",
+                    "_id": "68426c105c9c26be764b3124"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68426c335c9c26be764b314c"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68426c335c9c26be764b314d"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "68426c335c9c26be764b314e"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "68426c335c9c26be764b314f"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68426c335c9c26be764b3150"
+                }
+            ],
+            "srAmount": 0,
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "68426bed5c9c26be764b30bb",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "feesDepositedTOA": 100,
+                        "_id": "68441ea9290ebf310b0be002"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68441ea9290ebf310b0be003"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68441ea9290ebf310b0be004"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 1,
+                        "_id": "68441ea9290ebf310b0be005"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 1,
+                        "_id": "68441ea9290ebf310b0be006"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68441ea9290ebf310b0be007"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68441ea9290ebf310b0be008"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 20,
+                        "feesDepositedTOA": 0,
+                        "_id": "68441ea9290ebf310b0be009"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 100
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "06/06/2025"
+            },
+            "aadharNumber": "123456789011",
+            "dateOfAdmission": "06/06/2025",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS114",
+            "photoNo": 118,
+            "universityId": "TGI2025BCOM118"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "68426e0a223e77b2252e3a39",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "06/06/2025",
+            "studentName": "student name",
+            "studentPhoneNumber": "9033107408",
+            "emailId": "akheniad@gmail.com",
+            "fatherName": "Suresh Sharma",
+            "fatherPhoneNumber": "9033107408",
+            "fatherOccupation": "Engineer",
+            "motherName": "Jane Doe",
+            "motherPhoneNumber": "9033107408",
+            "motherOccupation": "Doctor",
+            "dateOfBirth": "08/01/2015",
+            "category": "General",
+            "course": "MBA",
+            "references": [
+                "Business Associate",
+                "LU/NPG/External Venue"
+            ],
+            "srAmount": 0,
+            "address": {
+                "addressLine1": "Station Plot, Near Gandhivadi",
+                "addressLine2": "Station Plot",
+                "district": "Lucknow",
+                "pincode": "360410",
+                "state": "Gujarat",
+                "country": "India",
+                "_id": "68426eee223e77b2252e3b35"
+            },
+            "telecaller": [],
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68426e0a223e77b2252e3a39/Signature.png",
+                    "_id": "68426ed4223e77b2252e3b09"
+                },
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68426e0a223e77b2252e3a39/Photo.png",
+                    "_id": "68426ed5223e77b2252e3b0e"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68426eee223e77b2252e3b36"
+                },
+                {
+                    "type": "Graduation Final Year Marksheet",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68426eee223e77b2252e3b37"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "68426eee223e77b2252e3b38"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68426eee223e77b2252e3b39"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "68426eee223e77b2252e3b3a"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "68426e84223e77b2252e3aa8",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "feesDepositedTOA": 0,
+                        "_id": "68426f06223e77b2252e3bd3"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68426f06223e77b2252e3bd4"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68426f06223e77b2252e3bd5"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68426f06223e77b2252e3bd6"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 1,
+                        "_id": "68426f06223e77b2252e3bd7"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68426f06223e77b2252e3bd8"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68426f06223e77b2252e3bd9"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68426f06223e77b2252e3bda"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "06/06/2025"
+            },
+            "aadharNumber": "123456789011",
+            "dateOfAdmission": "06/06/2025",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIMS104",
+            "photoNo": 111,
+            "universityId": "TGI2025MBA111"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "6842902ee791624ee7d2c7c2",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "06/06/2025",
+            "studentName": "st",
+            "studentPhoneNumber": "9192939495",
+            "emailId": "devanchauhan012@gmail.com",
+            "fatherName": "Mr. 19",
+            "fatherPhoneNumber": "1234567891",
+            "fatherOccupation": "Engineer",
+            "motherName": "Ms. 19",
+            "motherOccupation": "NA",
+            "dateOfBirth": "17/01/2015",
+            "category": "OBC",
+            "course": "BSCM",
+            "references": [],
+            "srAmount": 0,
+            "address": {
+                "addressLine1": "fml2efm2ef",
+                "addressLine2": "234add",
+                "district": "Lucknow",
+                "pincode": "123456",
+                "state": "Uttar Pradesh",
+                "country": "India",
+                "_id": "6842aefd9b175844c611c845"
+            },
+            "telecaller": [],
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6842902ee791624ee7d2c7c2/Signature.jpg",
+                    "_id": "68429082e791624ee7d2c8a1"
+                },
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6842902ee791624ee7d2c7c2/Photo.jpg",
+                    "_id": "68429083e791624ee7d2c8ab"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6842aefd9b175844c611c846"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6842aefd9b175844c611c847"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "6842aefd9b175844c611c848"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6842aefd9b175844c611c849"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6842aefd9b175844c611c84a"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "6842904ce791624ee7d2c823",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842af2d9b175844c611c8ee"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842af2d9b175844c611c8ef"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842af2d9b175844c611c8f0"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842af2d9b175844c611c8f1"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842af2d9b175844c611c8f2"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842af2d9b175844c611c8f3"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842af2d9b175844c611c8f4"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842af2d9b175844c611c8f5"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "06/06/2025"
+            },
+            "dateOfAdmission": "06/06/2025",
+            "aadharNumber": "123123123123",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS110",
+            "photoNo": 114,
+            "universityId": "TGI2025BSCM114"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "6842a4bde791624ee7d2cb7f",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "06/06/2025",
+            "studentName": "Vaibhav Gupta",
+            "studentPhoneNumber": "8802940317",
+            "emailId": "vaibhavkgupta17@gmail.com",
+            "fatherName": "Mr. Anil Kumar",
+            "fatherPhoneNumber": "8802940317",
+            "fatherOccupation": "Business",
+            "motherName": "Mrs. Manorama Gupta",
+            "motherPhoneNumber": "8802940317",
+            "motherOccupation": "Housewife",
+            "dateOfBirth": "07/01/2009",
+            "category": "General",
+            "course": "BCOMH",
+            "references": [
+                "Digital Marketing",
+                "Student Reference"
+            ],
+            "srAmount": 1000,
+            "address": {
+                "addressLine1": "B37 Jwalamukhi Hostel",
+                "addressLine2": "Iit Delhi",
+                "district": "Lucknow",
+                "pincode": "110016",
+                "state": "Delhi",
+                "country": "India",
+                "_id": "6842a5c5e791624ee7d2ccf9"
+            },
+            "academicDetails": [
+                {
+                    "educationLevel": "10th",
+                    "schoolCollegeName": "Green Lawns",
+                    "_id": "6842a5c5e791624ee7d2ccfa"
+                },
+                {
+                    "educationLevel": "12th",
+                    "schoolCollegeName": "St. Xavier's",
+                    "_id": "6842a5c5e791624ee7d2ccfb"
+                },
+                {
+                    "educationLevel": "Graduation",
+                    "schoolCollegeName": "IIT Delhi",
+                    "_id": "6842a5c5e791624ee7d2ccfc"
+                }
+            ],
+            "telecaller": [
+                "Anita Pal"
+            ],
+            "remarks": "sdlvblasdvn;asdnv;",
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Pankaj Awasthi"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "documents": [
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6842a4bde791624ee7d2cb7f/Signature.jpeg",
+                    "_id": "6842a59ae791624ee7d2ccba"
+                },
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6842a4bde791624ee7d2cb7f/Photo.jpg",
+                    "_id": "6842a59be791624ee7d2ccc2"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6842a5c5e791624ee7d2ccfd"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "PENDING",
+                    "dueBy": "12/06/2025",
+                    "_id": "6842a5c5e791624ee7d2ccfe"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "PENDING",
+                    "dueBy": "12/06/2025",
+                    "_id": "6842a5c5e791624ee7d2ccff"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "PENDING",
+                    "dueBy": "20/06/2025",
+                    "_id": "6842a5c5e791624ee7d2cd00"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "PENDING",
+                    "dueBy": "13/06/2025",
+                    "_id": "6842a5c5e791624ee7d2cd01"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "6842a570e791624ee7d2cc57",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "feesDepositedTOA": 5000,
+                        "_id": "6842a5f1e791624ee7d2cd89"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 1000,
+                        "feesDepositedTOA": 1000,
+                        "_id": "6842a5f1e791624ee7d2cd8a"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 100,
+                        "feesDepositedTOA": 100,
+                        "_id": "6842a5f1e791624ee7d2cd8b"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 3000,
+                        "feesDepositedTOA": 3000,
+                        "_id": "6842a5f1e791624ee7d2cd8c"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 1500,
+                        "feesDepositedTOA": 1500,
+                        "_id": "6842a5f1e791624ee7d2cd8d"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 2000,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842a5f1e791624ee7d2cd8e"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842a5f1e791624ee7d2cd8f"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842a5f1e791624ee7d2cd90"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 5000
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "06/06/2025"
+            },
+            "aadharNumber": "442425830671",
+            "dateOfAdmission": "06/06/2025",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS108",
+            "photoNo": 112,
+            "universityId": "TGI2025BCOMH112"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "6842c91b9b175844c611e00f",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "06/06/2025",
+            "studentName": "vaibhav gupta",
+            "studentPhoneNumber": "8802940317",
+            "emailId": "p17vaibhav387@iima.ac.in",
+            "fatherName": "Anil Kummar",
+            "fatherPhoneNumber": "8802940317",
+            "fatherOccupation": "Business",
+            "motherName": "Manorama Gupta",
+            "motherPhoneNumber": "8802940317",
+            "motherOccupation": "Housewife",
+            "dateOfBirth": "15/01/2015",
+            "category": "OBC",
+            "course": "BCOM",
+            "references": [
+                "Business Associate",
+                "LU/NPG/External Venue",
+                "Student Reference"
+            ],
+            "srAmount": 0,
+            "address": {
+                "addressLine1": "B37 Jwalamukhi Hostel",
+                "addressLine2": "Iit Delhi",
+                "district": "Lucknow",
+                "pincode": "110016",
+                "state": "Delhi",
+                "country": "India",
+                "_id": "6842cc289b175844c611e624"
+            },
+            "telecaller": [
+                "Anita Pal",
+                "Aryan Kanaujia",
+                "Deepa Rani"
+            ],
+            "remarks": "BCom fees finalised at 8500. No student reference. Additional Comments added. ",
+            "gender": "FEMALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Garima Chaudhary",
+                "Prasoon Gupta",
+                "Sachin Yadav"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6842c91b9b175844c611e00f/Signature.jpeg",
+                    "_id": "6842ca849b175844c611e3da"
+                },
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6842c91b9b175844c611e00f/Photo.jpg",
+                    "_id": "6842ca869b175844c611e3df"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "PENDING",
+                    "dueBy": "16/07/2025",
+                    "_id": "6842cc289b175844c611e625"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6842cc289b175844c611e626"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "PENDING",
+                    "dueBy": "07/08/2025",
+                    "_id": "6842cc289b175844c611e627"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6842cc289b175844c611e628"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6842cc289b175844c611e629"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "6842ca609b175844c611e327",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 8500,
+                        "feesDepositedTOA": 1400,
+                        "_id": "6842ccce9b175844c611e73a"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 1000,
+                        "feesDepositedTOA": 1000,
+                        "_id": "6842ccce9b175844c611e73b"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 100,
+                        "feesDepositedTOA": 100,
+                        "_id": "6842ccce9b175844c611e73c"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 3000,
+                        "feesDepositedTOA": 3000,
+                        "_id": "6842ccce9b175844c611e73d"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 1500,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ccce9b175844c611e73e"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ccce9b175844c611e73f"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ccce9b175844c611e740"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842ccce9b175844c611e741"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 8500,
+                        "dueDate": null,
+                        "feesPaid": 1400
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 9000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 9000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 9000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 9000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 9000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "20/07/2025"
+            },
+            "aadharNumber": "442425830671",
+            "dateOfAdmission": "06/06/2025",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS112",
+            "photoNo": 116,
+            "universityId": "TGI2025BCOM116"
+        },
+        {
+            "enquiryRemark": "",
+            "feeDetailsRemark": "",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "_id": "6842d02c9b175844c611ed7a",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "06/06/2025",
+            "studentName": "sldvb",
+            "studentPhoneNumber": "8802940317",
+            "emailId": "vaibhavkgupta17@gmail.com",
+            "fatherName": "sldvbl",
+            "fatherPhoneNumber": "8802940317",
+            "fatherOccupation": "sodvblasdkbnv",
+            "motherName": "sadjvblaksdbvl",
+            "motherPhoneNumber": "8802940317",
+            "motherOccupation": "sadvblasdv",
+            "dateOfBirth": "08/01/2015",
+            "category": "General",
+            "course": "BSCB",
+            "references": [
+                "Digital Marketing"
+            ],
+            "srAmount": 0,
+            "address": {
+                "addressLine1": "B37 Jwalamukhi Hostel",
+                "addressLine2": "Iit Delhi",
+                "district": "Lucknow",
+                "pincode": "110016",
+                "state": "Delhi",
+                "country": "India",
+                "_id": "6842d1089b175844c611ef52"
+            },
+            "telecaller": [
+                "Anita Pal",
+                "Aryan Kanaujia"
+            ],
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Garima Chaudhary",
+                "Prachi Srivastava"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6842d02c9b175844c611ed7a/Signature.jpeg",
+                    "_id": "6842d0b89b175844c611eec2"
+                },
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6842d02c9b175844c611ed7a/Photo.jpg",
+                    "_id": "6842d0b99b175844c611eec7"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6842d1089b175844c611ef53"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6842d1089b175844c611ef54"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "PENDING",
+                    "dueBy": "15/07/2025",
+                    "_id": "6842d1089b175844c611ef55"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6842d1089b175844c611ef56"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6842d1089b175844c611ef57"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "6842d0909b175844c611ee6c",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 10500,
+                        "feesDepositedTOA": 3900,
+                        "_id": "6842d1749b175844c611f0c7"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 1000,
+                        "feesDepositedTOA": 1000,
+                        "_id": "6842d1749b175844c611f0c8"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 100,
+                        "feesDepositedTOA": 100,
+                        "_id": "6842d1749b175844c611f0c9"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842d1749b175844c611f0ca"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 1500,
+                        "feesDepositedTOA": 1500,
+                        "_id": "6842d1749b175844c611f0cb"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842d1749b175844c611f0cc"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842d1749b175844c611f0cd"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6842d1749b175844c611f0ce"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 10500,
+                        "dueDate": null,
+                        "feesPaid": 3900
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "06/06/2025"
+            },
+            "aadharNumber": "442425830671",
+            "areaType": "RURAL",
+            "bloodGroup": "B-",
+            "dateOfAdmission": "06/06/2025",
+            "religion": "Hinduism",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIHS113",
+            "photoNo": 117,
+            "universityId": "TGI2025BSCB117"
+        },
+        {
+            "_id": "684435002ba879a1bcf8a46c",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "07/06/2025",
+            "studentName": "temp",
+            "studentPhoneNumber": "9023240018",
+            "emailId": "23ceubs023@ddu.ac.in",
+            "fatherName": "Mr. 19",
+            "fatherPhoneNumber": "1011021034",
+            "fatherOccupation": "occupation",
+            "motherName": "Ms. 19",
+            "motherOccupation": "occ",
+            "dateOfBirth": "16/01/2015",
+            "category": "EWS",
+            "course": "MCA",
+            "references": [],
+            "srAmount": 0,
+            "address": {
+                "addressLine1": "add23456",
+                "addressLine2": "234add",
+                "district": "Lucknow",
+                "pincode": "123456",
+                "state": "Uttar Pradesh",
+                "country": "India",
+                "_id": "6844450a2ba879a1bcf8b3bf"
+            },
+            "telecaller": [],
+            "enquiryRemark": "123",
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/684435002ba879a1bcf8a46c/Photo.jpg",
+                    "_id": "684444d22ba879a1bcf8b3ab"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/684435002ba879a1bcf8a46c/Signature.jpg",
+                    "_id": "684444e82ba879a1bcf8b3b5"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6844450a2ba879a1bcf8b3c0"
+                },
+                {
+                    "type": "Graduation Final Year Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6844450a2ba879a1bcf8b3c1"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "6844450a2ba879a1bcf8b3c2"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6844450a2ba879a1bcf8b3c3"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6844450a2ba879a1bcf8b3c4"
+                }
+            ],
+            "studentFeeDraft": null,
+            "feeDetailsRemark": "1111 remark ; 11111111111111111111111111111111 2222222222222222222222222222222222222222222222222 333333333333333333333333333333333 4444444444444444444444444444444",
+            "studentFee": {
+                "_id": "6844422a2ba879a1bcf8b0fb",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 3000,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846de7b21ecca3b96f2b589"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 1000,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846de7b21ecca3b96f2b58a"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 100,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846de7b21ecca3b96f2b58b"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 4000,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846de7b21ecca3b96f2b58c"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 1500,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846de7b21ecca3b96f2b58d"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846de7b21ecca3b96f2b58e"
+                    },
+                    {
+                        "type": "HOSTELYEARLY",
+                        "feeAmount": 0,
+                        "finalFee": 100,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846de7b21ecca3b96f2b58f"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846de7b21ecca3b96f2b590"
+                    },
+                    {
+                        "type": "HOSTELCAUTIONMONEY",
+                        "feeAmount": 0,
+                        "finalFee": 2000,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846de7b21ecca3b96f2b591"
+                    },
+                    {
+                        "type": "HOSTELMAINTENANCE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846de7b21ecca3b96f2b592"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 3000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 35000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "07/06/2025"
+            },
+            "dateOfAdmission": "07/06/2025",
+            "registarOfficeRemark": "111           1111111111111111111111111111111111111111111111111111111111111111111111111111111               55555555555555555555555555555555555555555555555555555555555555                   77777777777777777777777777777777777777",
+            "aadharNumber": "123123123123",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "financeOfficeRemark": "123",
+            "formNo": "TIHS115",
+            "photoNo": 121,
+            "universityId": "TGI2025MCA121"
+        },
+        {
+            "_id": "6845296e37f8678df514ea1b",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "08/06/2025",
+            "studentName": "temp try",
+            "studentPhoneNumber": "9033107408",
+            "emailId": "akheniad@gmail.com",
+            "fatherName": "Suresh Sharma",
+            "fatherPhoneNumber": "9033107408",
+            "fatherOccupation": "Engineer",
+            "motherName": "Jane Doe",
+            "motherPhoneNumber": "9033107408",
+            "motherOccupation": "Doctor",
+            "dateOfBirth": "01/01/2015",
+            "category": "General",
+            "course": "MBA",
+            "references": [
+                "LU/NPG/External Venue",
+                "Direct Walk-in",
+                "Advertising"
+            ],
+            "srAmount": 501,
+            "address": {
+                "addressLine1": "Station Plot, Near Gandhivadi",
+                "addressLine2": "Station Plot",
+                "district": "Lucknow",
+                "pincode": "360410",
+                "state": "Gujarat",
+                "country": "India",
+                "_id": "68452afc37f8678df514ec1d"
+            },
+            "academicDetails": [
+                {
+                    "educationLevel": "10th",
+                    "schoolCollegeName": "just clg nmae",
+                    "_id": "68452afc37f8678df514ec1e"
+                },
+                {
+                    "educationLevel": "12th",
+                    "passingYear": 2022,
+                    "_id": "68452afc37f8678df514ec1f"
+                },
+                {
+                    "educationLevel": "Graduation",
+                    "universityBoardName": "board",
+                    "_id": "68452afc37f8678df514ec20"
+                }
+            ],
+            "telecaller": [
+                "Abhilasha Singh",
+                "Ashish Nigam"
+            ],
+            "enquiryRemark": "ye rahi enquiry hai na yaha pe",
+            "feeDetailsRemark": "ye raha ref",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Ashish Nigam"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "documents": [
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6845296e37f8678df514ea1b/Signature.png",
+                    "_id": "68452a7137f8678df514ebd7"
+                },
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6845296e37f8678df514ea1b/Photo.png",
+                    "_id": "68452a7237f8678df514ebdf"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68452afc37f8678df514ec22"
+                },
+                {
+                    "type": "Graduation Final Year Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68452afc37f8678df514ec23"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68452afc37f8678df514ec24"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68452afc37f8678df514ec25"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "68452afc37f8678df514ec26"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "68452a5d37f8678df514eb6e",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "feesDepositedTOA": 0,
+                        "_id": "68452b6837f8678df514ed42"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68452b6837f8678df514ed43"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 11,
+                        "feesDepositedTOA": 0,
+                        "_id": "68452b6837f8678df514ed44"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68452b6837f8678df514ed45"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68452b6837f8678df514ed46"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 99,
+                        "feesDepositedTOA": 0,
+                        "_id": "68452b6837f8678df514ed47"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68452b6837f8678df514ed48"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 10,
+                        "feesDepositedTOA": 0,
+                        "_id": "68452b6837f8678df514ed49"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 2000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 3000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 4000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "08/06/2025"
+            },
+            "aadharNumber": "123456789011",
+            "dateOfAdmission": "08/06/2025",
+            "entranceExamDetails": {
+                "nameOfExamination": "examination",
+                "rollNumber": "sfne",
+                "_id": "68452afc37f8678df514ec21"
+            },
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIMS105",
+            "photoNo": 119,
+            "universityId": "TGI2025MBA119"
+        },
+        {
+            "_id": "68466cbec92943a5f59906b7",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "09/06/2025",
+            "studentName": "temp",
+            "studentPhoneNumber": "9023240018",
+            "emailId": "devanchauhan012@gmail.com",
+            "fatherName": "demoo",
+            "fatherPhoneNumber": "1011021034",
+            "fatherOccupation": "Business",
+            "motherName": "Ms. 19",
+            "motherPhoneNumber": "1011021034",
+            "motherOccupation": "NA",
+            "dateOfBirth": "24/01/2015",
+            "category": "Other",
+            "course": "MBA",
+            "references": [],
+            "srAmount": 200,
+            "address": {
+                "addressLine1": "feat120",
+                "addressLine2": "234add",
+                "district": "Lucknow",
+                "pincode": "123456",
+                "state": "Andaman and Nicobar Islands",
+                "country": "India",
+                "_id": "68466d4ec92943a5f59907d2"
+            },
+            "telecaller": [],
+            "enquiryRemark": "",
+            "feeDetailsRemark": "1111",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": "",
+            "gender": "FEMALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68466cbec92943a5f59906b7/Photo.jpg",
+                    "_id": "68466d22c92943a5f59907a4"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/68466cbec92943a5f59906b7/Signature.jpg",
+                    "_id": "68466d23c92943a5f59907a9"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68466d4ec92943a5f59907d3"
+                },
+                {
+                    "type": "Graduation Final Year Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68466d4ec92943a5f59907d4"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "68466d4ec92943a5f59907d5"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68466d4ec92943a5f59907d6"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "68466d4ec92943a5f59907d7"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "68466d00c92943a5f5990735",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "feesDepositedTOA": 0,
+                        "_id": "68466e3bc92943a5f599090e"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68466e3bc92943a5f599090f"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68466e3bc92943a5f5990910"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68466e3bc92943a5f5990911"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68466e3bc92943a5f5990912"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68466e3bc92943a5f5990913"
+                    },
+                    {
+                        "type": "HOSTEL",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68466e3bc92943a5f5990914"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "68466e3bc92943a5f5990915"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 45000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "09/06/2025"
+            },
+            "dateOfAdmission": "09/06/2025",
+            "aadharNumber": "123123123123",
+            "nationality": "INDIAN",
+            "stateOfDomicile": "Uttar Pradesh",
+            "formNo": "TIMS106",
+            "photoNo": 120,
+            "universityId": "TGI2025MBA120"
+        },
+        {
+            "_id": "6846df4221ecca3b96f2b6ad",
+            "admissionMode": "OFFLINE",
+            "dateOfEnquiry": "09/06/2025",
+            "studentName": "Gin Tama",
+            "studentPhoneNumber": "1011021034",
+            "emailId": "devanchauhan012@gmail.com",
+            "fatherName": "Suresh Sharma",
+            "fatherPhoneNumber": "1011021034",
+            "fatherOccupation": "Engineer",
+            "motherName": "demo",
+            "motherPhoneNumber": "1011021034",
+            "motherOccupation": "Housewife",
+            "dateOfBirth": "08/01/2015",
+            "category": "OBC",
+            "course": "BSCM",
+            "references": [
+                "Business Associate",
+                "Direct Walk-in"
+            ],
+            "srAmount": 10000,
+            "address": {
+                "addressLine1": "feat120",
+                "addressLine2": "234add",
+                "district": "Lucknow",
+                "pincode": "123456",
+                "state": "Andaman and Nicobar Islands",
+                "country": "India",
+                "_id": "6846e04921ecca3b96f2b7de"
+            },
+            "telecaller": [
+                "Deepak Shukla",
+                "Dhruv Kumar Singh"
+            ],
+            "enquiryRemark": "remark",
+            "feeDetailsRemark": "fee",
+            "registarOfficeRemark": "oggy",
+            "financeOfficeRemark": "finiance",
+            "gender": "MALE",
+            "applicationStatus": "Confirmed",
+            "counsellor": [
+                "Garima Chaudhary",
+                "Pankaj Awasthi"
+            ],
+            "admittedThrough": "Direct",
+            "isFeeApplicable": true,
+            "academicDetails": [],
+            "documents": [
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6846df4221ecca3b96f2b6ad/Signature.jpg",
+                    "_id": "6846e02121ecca3b96f2b7ae"
+                },
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6846df4221ecca3b96f2b6ad/Photo.png",
+                    "_id": "6846e02421ecca3b96f2b7b3"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6846e04921ecca3b96f2b7df"
+                },
+                {
+                    "type": "12th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "6846e04921ecca3b96f2b7e0"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "6846e04921ecca3b96f2b7e1"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6846e04921ecca3b96f2b7e2"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "NOT_APPLICABLE",
+                    "_id": "6846e04921ecca3b96f2b7e3"
+                }
+            ],
+            "studentFeeDraft": null,
+            "studentFee": {
+                "_id": "6846dfce21ecca3b96f2b72e",
+                "otherFees": [
+                    {
+                        "type": "SEM1FEE",
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846e08521ecca3b96f2b894"
+                    },
+                    {
+                        "type": "PROSPECTUS",
+                        "feeAmount": 1000,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846e08521ecca3b96f2b895"
+                    },
+                    {
+                        "type": "STUDENTID",
+                        "feeAmount": 100,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846e08521ecca3b96f2b896"
+                    },
+                    {
+                        "type": "UNIFORM",
+                        "feeAmount": 4000,
+                        "finalFee": 2000,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846e08521ecca3b96f2b897"
+                    },
+                    {
+                        "type": "STUDENTWELFARE",
+                        "feeAmount": 1500,
+                        "finalFee": 500,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846e08521ecca3b96f2b898"
+                    },
+                    {
+                        "type": "BOOKBANK",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846e08521ecca3b96f2b899"
+                    },
+                    {
+                        "type": "HOSTELYEARLY",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846e08521ecca3b96f2b89a"
+                    },
+                    {
+                        "type": "TRANSPORT",
+                        "feeAmount": 0,
+                        "finalFee": 0,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846e08521ecca3b96f2b89b"
+                    },
+                    {
+                        "type": "HOSTELCAUTIONMONEY",
+                        "feeAmount": 0,
+                        "finalFee": 2500,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846e08521ecca3b96f2b89c"
+                    },
+                    {
+                        "type": "HOSTELMAINTENANCE",
+                        "feeAmount": 0,
+                        "finalFee": 3000,
+                        "feesDepositedTOA": 0,
+                        "_id": "6846e08521ecca3b96f2b89d"
+                    }
+                ],
+                "semWiseFees": [
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    },
+                    {
+                        "feeAmount": 0,
+                        "finalFee": 12000,
+                        "dueDate": null,
+                        "feesPaid": 0
+                    }
+                ],
+                "feesClearanceDate": "09/06/2025"
+            },
+            "aadharNumber": "123123123123",
+            "areaType": "RURAL",
+            "bloodGroup": "AB+",
+            "dateOfAdmission": "09/06/2025",
+            "religion": "Hinduism",
+            "stateOfDomicile": "Punjab",
+            "nationality": "INDIAN",
+            "formNo": "TIHS116",
+            "photoNo": 122,
+            "universityId": "TGI2025BSCM122"
+        }
+    ]
+}

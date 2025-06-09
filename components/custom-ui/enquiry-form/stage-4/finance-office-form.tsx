@@ -447,7 +447,7 @@ const FinanceOfficeForm = () => {
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-full xl:w-2/3 space-y-2">
-                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold p-3 sm:p-4 grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-x-2 sm:gap-x-3 gap-y-2 rounded-[5px] text-sm sm:text-base">
+                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold p-3 sm:p-4 grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-x-2 sm:gap-x-3 gap-y-2 rounded-[5px] text-sm sm:text-base">
                   <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Fees Details</div>
                   <div className="text-left">Schedule</div>
                   <div className="text-left">Fees</div>
@@ -488,18 +488,18 @@ const FinanceOfficeForm = () => {
                       typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
                     const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
 
-                    if (
-                      totalFee === 0 &&
-                      feeType != FeeType.TRANSPORT &&
-                      feeType != FeeType.HOSTELYEARLY
-                    ) {
-                      return;
-                    }
+                    // if (
+                    //   totalFee === 0 &&
+                    //   feeType != FeeType.TRANSPORT &&
+                    //   feeType != FeeType.HOSTELYEARLY
+                    // ) {
+                    //   return;
+                    // }
 
                     return (
                       <div
                         key={field.id}
-                        className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-2 sm:gap-3 md:gap-4 items-center p-3 sm:p-4 hover:bg-gray-50 transition-colors"
+                        className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-2 sm:gap-3 md:gap-4 items-center p-3 sm:p-4 hover:bg-gray-50 transition-colors"
                       >
                         <div className="xs:col-span-2 text-left sm:col-span-4 md:col-span-1 text-sm font-medium text-gray-800">
                           {displayFeeMapper(feeType)}

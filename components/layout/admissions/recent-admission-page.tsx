@@ -180,7 +180,7 @@ export function TableActionButton() {
           "Name of Student": enq.studentName,
           "Father's Name" : enq.fatherName,
           "Mother's Name" : enq.motherName,
-          "Address" : enq.address.addressLine1,
+          "Address" : enq.address.addressLine1 + ", " + enq.address.district+ ", " + enq.address.state + ", " +enq.address.country + ", " + enq.address.pincode, 
           "District" :enq.address.district,
           "Pincode" : enq.address.pincode,
           "State" : enq.address.state,
@@ -193,7 +193,13 @@ export function TableActionButton() {
           "Gender" : enq.gender,
           "Religion" : enq.religion,
           "Blood Group" : enq.bloodGroup,
-          "Category" : enq.category
+          "Category" : enq.category,
+          "10th" : "School/Collage Name " + enq?.academicDetails?.            schoolCollegeName+
+            "\nUniversity/Board Name" +  enq?.academicDetails?.universityBoardName+
+            "\nPassing Year"+ enq?.academicDetails?.passingYear +
+            "\nPercentage Obtained" + enq?.academicDetails?.PercentageObtained + 
+            "\nMention Subjects" + enq?.subjects,
+          
         }
       })
 
