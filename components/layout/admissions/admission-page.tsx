@@ -216,7 +216,7 @@ export function TableActionButton() {
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'enquiry-excel');
 
-      XLSX.writeFile(workbook, `enquiry-excel-sheet-${dateStr}.xlsx`);
+      XLSX.writeFile(workbook, `${dateStr} - Ongoing Enquiry.xlsx`);
       console.log(enquiryData.DATA)
 
 

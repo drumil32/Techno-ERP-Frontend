@@ -1,5 +1,5 @@
 import { FeeType } from '@/types/enum';
-
+// 
 export const displayFeeMapper = (feeType: FeeType | string | undefined): string => {
   switch (feeType) {
     case FeeType.HOSTEL:

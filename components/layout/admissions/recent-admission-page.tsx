@@ -152,18 +152,6 @@ export function TableActionButton() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [selectedSheet, setSelectedSheet] = useState<string | null>(null);
 
-  const results = useQueries({
-        queries: [
-          {
-            queryKey: ['telecallers'],
-            queryFn: getTeleCallers
-          },
-          {
-            queryKey: ['counsellors'],
-            queryFn: getCounsellors
-          }
-        ]
-      });
 
   const uploadAction = async () => {
     setIsUploading(true);
@@ -172,22 +160,6 @@ export function TableActionButton() {
   const downloadAction = async () => {
     setIsDownloading(true);
     try {
-
-
-      
-
-      const telecallers: { _id: string; name: string }[] = Array.isArray(results[0].data)
-        ? results[0].data.map((name: string) => ({ _id: name, name }))
-        : [];
-
-      const counsellors: { _id: string; name: string }[] = Array.isArray(results[1].data)
-        ? results[1].data.map((name: string) => ({ _id: name, name }))
-        : [];
-
-      const references: { _id: string; name: string }[] = Object.values(AdmissionReference).map(
-        (ref) => ({ _id: ref, name: ref })
-      );
-
 
       const response = await fetch(API_ENDPOINTS.admissionExcelSheetData, {
         method: 'GET',
@@ -230,7 +202,7 @@ export function TableActionButton() {
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'admission-excel');
 
-      XLSX.writeFile(workbook, `admission-excel-${dateStr}.xlsx`);
+      XLSX.writeFile(workbook, `${dateStr} - Recent Admissions.xlsx`);
     
       toast.success('Marketing Data Downloaded Successfully');
       setDownloadOpen(false);
