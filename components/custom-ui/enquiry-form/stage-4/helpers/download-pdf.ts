@@ -369,22 +369,22 @@ export const downloadStep4 = async (
       ">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 9px;">
           <!-- Row 1 -->
-          <div style="display: flex; gap: 5px;">
-            <div style="color: ${secondaryText}; min-width: 80px;">Name:</div>
+          <div style="display: flex; ">
+            <div style="color: ${secondaryText}; min-width: 70px;">Student Name:</div>
             <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.studentName)}</div>
           </div>
-          <div style="display: flex; gap: 5px;">
-            <div style="color: ${secondaryText}; min-width: 80px;">Category:</div>
+          <div style="display: flex; ">
+            <div style="color: ${secondaryText}; min-width: 50px;">Category:</div>
             <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.category)}</div>
           </div>
           
           <!-- Row 2 -->
-          <div style="display: flex; gap: 5px;">
-            <div style="color: ${secondaryText}; min-width: 80px;">Father Name:</div>
+          <div style="display: flex;">
+            <div style="color: ${secondaryText}; min-width: 70px;">Father Name:</div>
             <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.fatherName)}</div>
           </div>
-          <div style="display: flex; gap: 5px;">
-            <div style="color: ${secondaryText}; min-width: 80px;">Course:</div>
+          <div style="display: flex;">
+            <div style="color: ${secondaryText}; min-width: 50px;">Course:</div>
             <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.course)}</div>
           </div>
           

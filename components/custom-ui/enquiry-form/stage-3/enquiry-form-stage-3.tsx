@@ -18,7 +18,7 @@ import { Form } from '@/components/ui/form';
 import EnquiryFormFooter from '../stage-1/enquiry-form-footer-section';
 import AcademicDetailsSectionStage3 from './academic-details-section';
 import StudentDetailsSectionStage3 from './student-details-section';
-import AddressDetailsSectionStage3 from './address-details-section';
+// import AddressDetailsSectionStage3 from './address-details-section';
 import ConfirmationCheckBoxStage3 from './acknowledgement-section';
 import EntranceExamDetailsSection from './entrance-exam-details-section';
 import MoreDetailsSection from './more-details-section';
@@ -45,6 +45,7 @@ import { EnquiryDocument } from './documents-section/single-document-form';
 import DocumentVerificationSection from './document-verification';
 import { OtpVerificationDialog } from './otp-verification-dialog';
 import FilledByCollegeSection from '../stage-1/filled-by-college-section';
+import AddressDetailsSection from '../stage-1/address-details-section';
 
 export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).extend({
   confirmation: z.boolean().refine((value) => value === true, {
@@ -356,7 +357,7 @@ const EnquiryFormStage3 = () => {
             setCurrentDocuments={setCurrentDocuments}
           />
           {/* Address details */}
-          <AddressDetailsSectionStage3
+          <AddressDetailsSection
             form={form}
             isViewable={isViewable}
             commonFieldClass={commonFieldClass}

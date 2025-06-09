@@ -161,19 +161,6 @@ export function TableActionButton() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [selectedSheet, setSelectedSheet] = useState<string | null>(null);
 
-  const results = useQueries({
-        queries: [
-          {
-            queryKey: ['telecallers'],
-            queryFn: getTeleCallers
-          },
-          {
-            queryKey: ['counsellors'],
-            queryFn: getCounsellors
-          }
-        ]
-      });
-
   const uploadAction = async () => {
     setIsUploading(true);
   };
@@ -182,53 +169,44 @@ export function TableActionButton() {
     setIsDownloading(true);
     try {
 
-
-      
-
-      const telecallers: { _id: string; name: string }[] = Array.isArray(results[0].data)
-        ? results[0].data.map((name: string) => ({ _id: name, name }))
-        : [];
-
-      const counsellors: { _id: string; name: string }[] = Array.isArray(results[1].data)
-        ? results[1].data.map((name: string) => ({ _id: name, name }))
-        : [];
-
-      const references: { _id: string; name: string }[] = Object.values(AdmissionReference).map(
-        (ref) => ({ _id: ref, name: ref })
-      );
-
-
       const response = await fetch(API_ENDPOINTS.enquiryExcelSheetData, {
         method: 'GET',
         credentials: 'include'
       });
 
       const enquiryData = await response.json();
-      const userName = authStore.user?.name ?? 'user';
+      // const userName = authStore.user?.name ?? 'user';
       const dateStr = format(new Date(), 'dd-MM-yyyy');
 
-      const excelData =  Array.from(enquiryData.DATA).map((enq: any, index: number) => {
+      const excelData = Array.from(enquiryData.DATA).map((enq: any, index: number) => {
+
+        const avaliableReferences = enq.references
+
+        const avaliableTelecallers = enq?.telecaller
+
+        const avaliableCounsellors = enq?.counsellor
+
         return {
           "S.No": index + 1,
           "Footfall Date": enq.dateOfEnquiry,
           "Student Name": enq.studentName,
           "Course": enq.course,
-          "Source Reference": references.map((ref) => ref.name).join(", "),
-          "Telecaller(s)": telecallers.map((tel) => tel.name).join(", "),
-          "COUNSELLOR(S)": counsellors.map((col) => col.name).join(", "),
-          "Status" : enq.applicationStatus,
-          "Remark - Enquiry" : enq.enquiryRemark,
+          "Source Reference": avaliableReferences?.map((ref: any) => ref).join(", "),
+          "Telecaller(s)": avaliableTelecallers?.map((tel: any) => tel).join(", "),
+          "COUNSELLOR(S)": avaliableCounsellors?.map((col: any) => col).join(", "),
+          "Status": StepMapper[enq.applicationStatus] == "Fee_Details" ? "Fee Details" : StepMapper[enq.applicationStatus],
+          "Remark - Enquiry": enq.enquiryRemark,
           "Remark - Fees Details": enq.feeDetailsRemark,
-          "Remark - Registrar Office" : enq.registarOfficeRemark,
-          "Remark - Finance" : enq.financeOfficeRemark,
-          "Student Number" : enq.studentPhoneNumber,
-          "Father's Name" : enq.fatherName,
-          "Father's Number" : enq.fatherPhoneNumber,
-          "City" : enq.address?.city || enq.address.addressLine1,
-          "Address" : enq.address.district + " " + enq.address.state + " " + enq.address.country + " " + enq.address.pincode,
-          "category" : enq.category,
-          "Form Sold" : enq.admittedThrough,
-          "Admission Model" : enq.admissionMode,
+          "Remark - Registrar Office": enq.registarOfficeRemark,
+          "Remark - Finance": enq.financeOfficeRemark,
+          "Student Number": enq.studentPhoneNumber,
+          "Father's Name": enq.fatherName,
+          "Father's Number": enq.fatherPhoneNumber,
+          "Address": enq.address.addressLine1 + ", " + enq.address.district + ", " + enq.address.state + ", " + enq.address.country,
+          "Pincode" : enq.address.pincode,
+          "category": enq.category,
+          "Form Sold": enq.admittedThrough,
+          "Admission Model": enq.admissionMode,
           "Fees Type": enq.isFeeApplicable == true ? "Non-Zero fees" : "Zero fees"
         }
       })
@@ -238,7 +216,7 @@ export function TableActionButton() {
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'enquiry-excel');
 
-      XLSX.writeFile(workbook, `${userName}-${dateStr}-enquiry-excel-sheet.xlsx`);
+      XLSX.writeFile(workbook, `enquiry-excel-sheet-${dateStr}.xlsx`);
       console.log(enquiryData.DATA)
 
 

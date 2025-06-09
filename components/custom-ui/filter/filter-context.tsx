@@ -32,6 +32,7 @@ const TechnoFilterProvider = ({
 
   const updateFilter = useCallback(
     (key: string, value: any) => {
+      console.log("in update filter")
       setFilters((prev) => {
         const newFilters = { ...prev };
         if (value == null || value === '') {
@@ -48,6 +49,7 @@ const TechnoFilterProvider = ({
 
   const updateFilters = useCallback(
     (newFilters: Record<string, any>) => {
+      console.log("in update filters")
       setFilters((prev) => {
         const merged = { ...prev, ...newFilters };
         Object.keys(merged).forEach((key) => {

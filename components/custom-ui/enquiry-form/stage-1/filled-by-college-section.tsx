@@ -56,7 +56,6 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   currentStep = 'enquiry',
   remarkLabel = 'Enquiry Remark'
 }) => {
-  console.log(form.getValues())
   const results = useQueries({
     queries: [
       {
@@ -180,6 +179,83 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                 label="Telecaller’s Name"
                 options={telecallers}
                 placeholder="Select Telecaller's Name"
+              />
+              <FormField
+                key="remarks"
+                control={form.control}
+                name="remarks"
+                render={({ field }) => (
+                  <FormItem className={`${commonFormItemClass} col-span-2 col-start-1`}>
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
+                      Remarks
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        value={field.value ?? ''}
+                        className={commonFieldClass}
+                        placeholder="Optional"
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <div className="h-auto ">
+                        {(form.getValues().registarOfficeRemark  == "" || form.getValues().registarOfficeRemark) && remark != "registarOfficeRemark" && 
+                          <div className='mt-4'>
+                            <FormLabel className="font-inter font-semibold text-[12px] text-primary">
+                              {"Registar Office Remaks"}
+                            </FormLabel>
+                            <Input
+                            className='hover:cursor-pointer hover:underline'
+                            title={form.getValues().registarOfficeRemark}
+                              value={form.getValues().registarOfficeRemark}
+                              readOnly
+                              
+                            />
+                          </div>
+                        }
+                        <FormMessage className="text-[11px]" />
+                      </div>
+                    </FormControl>
+                    <FormControl>
+                      <div className="h-auto">
+                        {(form.getValues().feeDetailsRemark == "" || form.getValues().feeDetailsRemark)&& remark != "feeDetailsRemark" &&
+                          <div className='mt-4'>
+                            <FormLabel className="font-inter font-semibold text-[12px] text-primary">
+                              {"Fee Details Remaks"}
+                            </FormLabel>
+                            <Input
+                            className='hover:cursor-pointer hover:underline'
+                            title={form.getValues().feeDetailsRemark}
+                              value={form.getValues().feeDetailsRemark}
+                              readOnly
+                              
+                            />
+                          </div>
+                        }
+                        <FormMessage className="text-[11px]" />
+                      </div>
+                    </FormControl>
+                    <FormControl>
+                      <div className="h-auto">
+                        {(form.getValues().enquiryRemark == "" || form.getValues().enquiryRemark) && remark != "enquiryRemark" &&
+                          <div className='mt-4'>
+                            <FormLabel className="font-inter font-semibold text-[12px] text-primary">
+                              {"Enquiry Remaks"}
+                            </FormLabel>
+                            <Input
+                            className='hover:cursor-pointer hover:underline'
+                              value={form.getValues().enquiryRemark || ""}
+                              title={form.getValues().enquiryRemark || ""}
+                              
+                              readOnly
+                            />
+                          </div>
+                        }
+                        <FormMessage className="text-[11px]" />
+                      </div>
+                    </FormControl>
+                  </FormItem>
+                )}
               />
               <MultiSelectPopoverCheckbox
                 form={form}
