@@ -24,6 +24,9 @@ export const downloadStep4 = async (
   data: any,
   directSave: boolean = false
 ): Promise<{ url: string; fileName: string }> => {
+
+  console.log("data is ",data)
+
   const container = document.createElement('div');
   container.style.width = '794px'; // A4 width in pixels (210mm)
   container.style.minHeight = '1123px'; // A4 height in pixels (297mm)
@@ -341,8 +344,8 @@ export const downloadStep4 = async (
             ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}
           </p>
           <p style="font-size: 8px; margin: 0; color: ${secondaryText};">
-            Email: ${escapeHtml(data.clgEmail ?? 'registrar@tims.edu.in')} | 
-            Contact: ${escapeHtml(data.clgContactNumber ?? '9839506777')}
+            Email: ${escapeHtml(data.collegeFeeEmail ?? 'registrar@tims.edu.in')} | 
+            Contact: ${escapeHtml(data.collegeFeeContactNumber  ?? '9839506777')}
           </p>
         </div>
       </div>

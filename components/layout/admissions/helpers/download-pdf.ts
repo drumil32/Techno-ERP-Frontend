@@ -446,8 +446,8 @@ export const downloadFeeReceipt = async (
           <p style="text-align: center; font-size: 8px; font-weight: 600; margin: 0; line-height: 1.2;">
               (Affiliated to ${escapeHtml(data.affiliationName) ?? 'Dr. A.P.J. Abdul Kalam Technical University, Lucknow'})<br />
               ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}<br />
-              Email: ${escapeHtml(data.collegeEmail ?? 'registrar@tims.edu.in')} | Contact:
-              ${escapeHtml(data.collegeContactNumber ?? '9839506777')}
+              Email: ${escapeHtml(data.collegeFeeEmail ?? '')} | Contact:
+              ${escapeHtml(data.collegeFeeContactNumber ?? '')}
           </p>
       </div>
     </div>

@@ -209,7 +209,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                     </FormControl>
                     <FormControl>
                       <div className="h-auto ">
-                        {form.getValues().registarOfficeRemark && remark != "registarOfficeRemark" && remark != "feeDetailsRemark"  &&
+                        {(form.getValues().registarOfficeRemark == "" || form.getValues().registarOfficeRemark) && remark != "registarOfficeRemark" && remark != "feeDetailsRemark"  &&
                           <div className='mt-4'>
                             <FormLabel className="font-inter font-semibold text-[12px] text-primary">
                               {"Registar Office Remaks"}

@@ -71,6 +71,12 @@ export default function RecentAdmissionsPage() {
       </div>
     },
     // {
+    //   id: "admission",
+    //   header: '',
+    //   meta: { align: 'center' },
+    //   cell: ({ row }: any) => <DownloadAdmissionReceiptDialog studentId={row.original._id} />
+    // },
+    // {
     //   id: 'receipt',
     //   header: '',
     //   meta: { align: 'center' },
@@ -127,7 +133,7 @@ export default function RecentAdmissionsPage() {
 
       <TechnoDataTable
         selectedRowId={selectedRowId}
-        setSelectedRowId={setSelectedRowId}
+        // setSelectedRowId={setSelectedRowId}
         columns={columns}
         data={admissionsData}
         tableName={`Recent Admissions (${Object.values(admissionsData).length}) `}
@@ -138,7 +144,7 @@ export default function RecentAdmissionsPage() {
         handleViewMore={() => { }}
         searchTerm={search}
         showPagination={false}
-        tableActionButton={<TableActionButton/>}
+        tableActionButton={<TableActionButton />}
       />
     </>
   );
@@ -170,7 +176,12 @@ export function TableActionButton() {
       const userName = authStore.user?.name ?? 'user';
       const dateStr = format(new Date(), 'dd-MM-yyyy');
 
-      const excelData =  Array.from(addmissionData.DATA).map((enq: any, index: number) => {
+      const excelData = Array.from(addmissionData.DATA).map((enq: any, index: number) => {
+        const avaliableReferences = enq?.references
+
+        const avaliableTelecallers = enq?.telecaller
+
+        const avaliableCounsellors = enq?.counsellor
         return {
           "S.No": index + 1,
           "Admission Date": enq.dateOfAdmission,
@@ -178,28 +189,104 @@ export function TableActionButton() {
           "Course": enq.course,
           "Form No.": enq.formNo,
           "Name of Student": enq.studentName,
-          "Father's Name" : enq.fatherName,
-          "Mother's Name" : enq.motherName,
-          "Address" : enq.address.addressLine1 + ", " + enq.address.district+ ", " + enq.address.state + ", " +enq.address.country + ", " + enq.address.pincode, 
-          "District" :enq.address.district,
-          "Pincode" : enq.address.pincode,
-          "State" : enq.address.state,
-          "Country" : enq.address.country,
-          "Aadhaar Number" : enq.aadharNumber,
-          "Date of Birth" : enq.dateOfBirth,
-          "Student's Number" : enq.studentPhoneNumber,
-          "Father's Number" : enq.fatherPhoneNumber,
-          "Email" : enq.emailId,
-          "Gender" : enq.gender,
-          "Religion" : enq.religion,
-          "Blood Group" : enq.bloodGroup,
-          "Category" : enq.category,
-          "10th" : "School/Collage Name " + enq?.academicDetails?.            schoolCollegeName+
-            "\nUniversity/Board Name" +  enq?.academicDetails?.universityBoardName+
-            "\nPassing Year"+ enq?.academicDetails?.passingYear +
-            "\nPercentage Obtained" + enq?.academicDetails?.PercentageObtained + 
-            "\nMention Subjects" + enq?.subjects,
-          
+          "Father's Name": enq.fatherName,
+          "Mother's Name": enq.motherName,
+          "Address": enq.address.addressLine1 + ", " + enq.address.district + ", " + enq.address.state + ", " + enq.address.country + ", " + enq.address.pincode,
+          "District": enq.address.district,
+          "Pincode": enq.address.pincode,
+          "State": enq.address.state,
+          "Country": enq.address.country,
+          "Aadhaar Number": enq.aadharNumber,
+          "Date of Birth": enq.dateOfBirth,
+          "Student's Number": enq.studentPhoneNumber,
+          "Father's Number": enq.fatherPhoneNumber,
+          "Email": enq.emailId,
+          "Gender": enq.gender,
+          "Religion": enq.religion,
+          "Blood Group": enq.bloodGroup,
+          "Category": enq.category,
+          "10th": enq?.academicDetails?.[0]?.educationLevel === "10th"
+            ? `School/Collage Name: ${enq.academicDetails[0].schoolCollegeName || 'N/A'}\n` +
+            `University/Board Name: ${enq.academicDetails[0].universityBoardName || 'N/A'}\n` +
+            `Passing Year: ${enq.academicDetails[0].passingYear || 'N/A'}\n` +
+            `Percentage Obtained: ${enq.academicDetails[0].PercentageObtained || 'N/A'}\n` +
+            `Mention Subjects: ${enq.academicDetails[0].subjects || 'N/A'}`
+            : '',
+
+          "12th": enq?.academicDetails?.[1]?.educationLevel === "12th"
+            ? `School/Collage Name: ${enq.academicDetails[1].schoolCollegeName || 'N/A'}\n` +
+            `University/Board Name: ${enq.academicDetails[1].universityBoardName || 'N/A'}\n` +
+            `Passing Year: ${enq.academicDetails[1].passingYear || 'N/A'}\n` +
+            `Percentage Obtained: ${enq.academicDetails[1].PercentageObtained || 'N/A'}\n` +
+            `Mention Subjects: ${enq.academicDetails[1].subjects || 'N/A'}`
+            : '',
+
+          "Graduation": enq?.academicDetails?.[2]?.educationLevel === "Graduation"
+            ? `School/Collage Name: ${enq.academicDetails[2].schoolCollegeName || 'N/A'}\n` +
+            `University/Board Name: ${enq.academicDetails[2].universityBoardName || 'N/A'}\n` +
+            `Passing Year: ${enq.academicDetails[2].passingYear || 'N/A'}\n` +
+            `Percentage Obtained: ${enq.academicDetails[2].PercentageObtained || 'N/A'}\n` +
+            `Mention Stream: ${enq.academicDetails[2].subjects || 'N/A'}`
+            : '',
+
+          "Doc 1": enq.physicalDocumentNote?.[0]?.type === "10th Marksheet" ?
+            `Name: ${enq.physicalDocumentNote?.[0].type || 'N/A'}\n` +
+            `Staus: ${enq.physicalDocumentNote?.[0].status}\n`
+            : '',
+
+          "Due Date 1": enq.physicalDocumentNote?.[0]?.type === "10th Marksheet" ?
+            `${enq.physicalDocumentNote?.[0].dueBy || 'N/A'}\n`
+            : '',
+
+          "Doc 2": enq.physicalDocumentNote?.[1]?.type === "12th Marksheet" ?
+            `Name: ${enq.physicalDocumentNote?.[1].type || 'N/A'}\n` +
+            `Staus: ${enq.physicalDocumentNote?.[1].status}\n`
+            : '',
+
+          "Due Date 2": enq.physicalDocumentNote?.[1]?.type === "12th Marksheet" ?
+            `${enq.physicalDocumentNote?.[1].dueBy || 'N/A'}\n`
+            : '',
+
+          "Doc 3": enq.physicalDocumentNote?.[2]?.type === "T.C. / Migration" ?
+            `Name: ${enq.physicalDocumentNote?.[2].type || 'N/A'}\n` +
+            `Staus: ${enq.physicalDocumentNote?.[2].status}\n`
+            : '',
+
+          "Due Date 3": enq.physicalDocumentNote?.[2]?.type === "T.C. / Migration" ?
+            `${enq.physicalDocumentNote?.[2].dueBy || 'N/A'}\n`
+            : '',
+
+          "Doc 4": enq.physicalDocumentNote?.[3]?.type === "Gap Affidavit (If Applicable)" ?
+            `Name: ${enq.physicalDocumentNote?.[3].type || 'N/A'}\n` +
+            `Staus: ${enq.physicalDocumentNote?.[3].status}\n`
+            : '',
+
+          "Due Date 4": enq.physicalDocumentNote?.[3]?.type === "Gap Affidavit (If Applicable)" ?
+            `${enq.physicalDocumentNote?.[3].dueBy || 'N/A'}\n`
+            : '',
+
+          "Doc 5": enq.physicalDocumentNote?.[4]?.type === "Caste Certificate (If Applicable)" ?
+            `Name: ${enq.physicalDocumentNote?.[4].type || 'N/A'}\n` +
+            `Staus: ${enq.physicalDocumentNote?.[4].status}\n`
+            : '',
+
+          "Due Date 5": enq.physicalDocumentNote?.[4]?.type === "Caste Certificate (If Applicable)" ?
+            `${enq.physicalDocumentNote?.[4].dueBy || 'N/A'}\n`
+            : '',
+
+          "Source Reference": avaliableReferences?.map((ref: any) => ref).join(", "),
+          "Telecaller(s)": avaliableTelecallers?.map((tel: any) => tel).join(", "),
+          "COUNSELLOR(S)": avaliableCounsellors?.map((col: any) => col).join(", "),
+
+          "Remark - Enquiry": enq.enquiryRemark,
+          "Remark - Fees Details": enq.feeDetailsRemark,
+          "Remark - Registrar Office": enq.registarOfficeRemark,
+          "Remark - Finance": enq.financeOfficeRemark,
+          "Applicable Fees": (enq.applicableFee ?? 0),
+          "Final Fees": (enq.finalFee ?? 0),
+          "Discount Applicable": (enq.discountApplicable ?? 0),
+          "TOTAL DISCOUNT": (enq.totalDiscountApplicable ?? 0),
+          "REFERENCE AMOUNT": (enq.srAmount ?? 0),
         }
       })
 
@@ -209,7 +296,7 @@ export function TableActionButton() {
       XLSX.utils.book_append_sheet(workbook, worksheet, 'admission-excel');
 
       XLSX.writeFile(workbook, `${dateStr} - Recent Admissions.xlsx`);
-    
+
       toast.success('Marketing Data Downloaded Successfully');
       setDownloadOpen(false);
     } catch (error) {

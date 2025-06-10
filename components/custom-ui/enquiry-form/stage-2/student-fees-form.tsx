@@ -70,6 +70,7 @@ export const calculateDiscountPercentage = (
     return 0;
   }
 
+
   const effectiveFinalFee = Math.min(numericFinalFee, numericTotalFee);
 
   const discount = 100 - (effectiveFinalFee / numericTotalFee) * 100;
@@ -709,8 +710,8 @@ export const StudentFeesForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-full xl:w-2/3 space-y-2">
-                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold p-3 sm:p-4 grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-x-2 sm:gap-x-3 gap-y-2 rounded-[5px] text-sm sm:text-base">
+              <div className="w-full xl:w-2/3 space-y-1">
+                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold px-3 py-2 grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-x-2 sm:gap-x-3 gap-y-2 rounded-[5px] text-sm sm:text-base">
                   <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Fees Details</div>
                   <div className="text-left">Schedule</div>
                   <div className="text-left">Fees</div>
@@ -720,19 +721,19 @@ export const StudentFeesForm = () => {
                   <div className="text-right">Fees Due</div>
                 </div>
 
-                <div className="border border-gray-200 rounded-lg divide-y divide-gray-100 overflow-hidden">
+                <div className="border border-gray-200 rounded-lg divide-y divide-gray-100 overflow-hidden ">
                   {otherFeesFields.map((field, index) => {
                     const feeType = form.getValues(`otherFees.${index}.type`);
-                    console.log(feeType, typeof feeType)
-                    // console.log(otherFeesData)
+                   
                     const originalFeeData = otherFeesData?.find((fee: any) =>
                       fee.type === feeType
                     );
 
-                    console.log(originalFeeData)
+                    const feeTypeArray = ["HOSTELMAINTENANCE","HOSTELCAUTIONMONEY","HOSTELYEARLY","TRANSPORT"]
+
 
                     let totalFee;
-                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTELYEARLY) {
+                    if (feeTypeArray.includes(feeType)) {
                       totalFee = form.getValues(`otherFees.${index}.finalFee`);
                     } else {
                       totalFee = originalFeeData?.amount;
@@ -743,7 +744,7 @@ export const StudentFeesForm = () => {
                     const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
 
                     let discountValue;
-                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTELYEARLY) {
+                    if (feeTypeArray.includes(feeType)) {
                       discountValue = '-';
                     } else {
                       discountValue =
@@ -755,20 +756,20 @@ export const StudentFeesForm = () => {
                       typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
                     const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
 
-                    // if (
-                    //   totalFee === 0 &&
-                    //   feeType != FeeType.TRANSPORT &&
-                    //   feeType != FeeType.HOSTELYEARLY
-                    // ) {
-                    //   return;
-                    // }
+                    if (
+                      (
+                      feeType == FeeType.BOOKBANK
+                    )
+                    ) {
+                      return;
+                    }
 
                     return (
                       <div
                         key={field.id}
-                        className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-2 sm:gap-3 md:gap-4 items-center p-3 sm:p-4 hover:bg-gray-50 transition-colors"
+                        className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-2 sm:gap-3 md:gap-4 items-center px-3 py-1 hover:bg-gray-50 transition-colors"
                       >
-                        <div className="xs:col-span-2 text-left sm:col-span-4 md:col-span-1 text-sm font-medium text-gray-800">
+                        <div className="xs:col-span-2 text-left sm:col-span-4 md:col-span-1 text-sm font-medium text-gray-800 ">
                           {displayFeeMapper(feeType)}
                         </div>
 
@@ -793,10 +794,14 @@ export const StudentFeesForm = () => {
                                     type="text"
                                     placeholder="Enter fees"
                                     {...formField}
-                                    className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
+                                    className="text-right px-3 h-8 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
                                     onChange={(e) => {
                                       const value = e.target.value;
-                                      if (/^[0-9]*$/.test(value)) {
+                                      if (/^[0-9]*$/.test(value)) { 
+                                        if(totalFee - Number(value) < 0 &&
+                                      !feeTypeArray.includes(feeType)) 
+                                          return;
+
                                         formField.onChange(value === '' ? null : Number(value));
                                       }
                                     }}
@@ -829,10 +834,11 @@ export const StudentFeesForm = () => {
                                     type="text"
                                     placeholder="Enter fees"
                                     {...formField}
-                                    className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
+                                    className="text-right px-3 h-8 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
                                     onChange={(e) => {
                                       const value = e.target.value;
                                       if (/^[0-9]*$/.test(value)) {
+                                        if(Number(value) > Number(finalFee)) return;
                                         formField.onChange(value === '' ? null : Number(value));
                                       }
                                     }}
@@ -866,7 +872,7 @@ export const StudentFeesForm = () => {
                   })}
                 </div>
 
-                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold p-3 sm:p-4 rounded-[5px] grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr]  gap-x-2 sm:gap-x-3 gap-y-2 text-sm sm:text-base">
+                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold px-3 py-2  rounded-[5px] grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr]  gap-x-2 sm:gap-x-3 gap-y-2 text-sm sm:text-base">
                   <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Total Fees</div>
                   <div></div>
                   {/* <div className="text-left">{formatCurrency(otherFeesTotals.totalOriginal)}</div> */}
@@ -955,8 +961,8 @@ export const StudentFeesForm = () => {
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-full lg:w-max">
-                <div className="space-y-3 sm:space-y-4">
-                  <div className="grid rounded-[5px] bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold text-sm sm:text-base p-3 sm:p-4 grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 border-b border-gray-200">
+                <div className="space-y-3 sm:space-y-1">
+                  <div className="grid rounded-[5px] bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold text-sm sm:text-base px-3 py-2   grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr]  border-b border-gray-200">
                     <div className="text-left">Semester</div>
                     <div className="text-center">Fee Details</div>
                     <div className="text-center">Fees</div>
@@ -978,7 +984,7 @@ export const StudentFeesForm = () => {
                       return (
                         <div
                           key={field.id}
-                          className="grid grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 items-center p-3 sm:p-4 hover:bg-gray-50 transition-colors"
+                          className="grid grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 items-center px-3 py-1 hover:bg-gray-50 transition-colors"
                         >
                           <div className="text-sm font-medium text-gray-800">
                             Semester {index + 1}
@@ -1003,10 +1009,11 @@ export const StudentFeesForm = () => {
                                     defaultValue={0}
                                     placeholder="Enter fees"
                                     {...formField}
-                                    className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
+                                    className="text-right px-3 h-8  text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
                                     onChange={(e) => {
                                       const value = e.target.value;
                                       if (/^[0-9]*$/.test(value)) {
+                                        if(Number(value) > Number(originalFeeAmount)) return;
                                         formField.onChange(value === '' ? null : Number(value));
                                       }
                                     }}
