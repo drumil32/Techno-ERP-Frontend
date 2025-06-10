@@ -138,7 +138,6 @@ export const enquirySchema = z.object({
   dateOfEnquiry: requestDateSchema.optional(),
   studentName: z
     .string({ required_error: 'Student Name is required' })
-    .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
     .nonempty('Student Name is required'),
   studentPhoneNumber: contactNumberSchema,
   emailId: z
@@ -253,7 +252,6 @@ export const enquiryDraftStep3Schema = enquiryStep3UpdateRequestSchema
     academicDetails: academicDetailsPartialArraySchema.optional(),
     studentName: z
       .string({ required_error: 'Student Name is required' })
-      .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
       .nonempty('Student Name is required'),
     studentPhoneNumber: contactNumberSchema,
     counsellor: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
@@ -268,7 +266,6 @@ export const enquiryDraftStep1RequestSchema = enquiryStep1RequestSchema
   .extend({
     studentName: z
       .string({ required_error: 'Student Name is required' })
-      .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
       .nonempty('Student Name is required'),
     studentPhoneNumber: contactNumberSchema,
 
