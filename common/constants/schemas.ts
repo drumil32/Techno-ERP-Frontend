@@ -10,8 +10,8 @@ export const contactNumberSchema = z
   .regex(/^[1-9]\d{9}$/, 'Invalid contact number format. Expected: 1234567890');
 
 export const addressSchema = z.object({
-  addressLine1: z.string().min(5, 'Permanent address must be at least 5 characters'),
-  addressLine2: z.string().min(5, 'Permanent address must be at least 5 characters'),
+  addressLine1: z.string(),
+  addressLine2: z.string().optional(),
   pincode: z
     .string()
     .regex(/^[1-9][0-9]{5}$/, 'Pincode must be a 6-digit number starting with a non-zero digit'),
@@ -30,9 +30,8 @@ export const previousCollegeDataSchema = z.object({
     .int()
     .refine((year) => year.toString().length === 4, {
       message: 'Passing Year must be a valid 4-digit year'
-    }),
+    }).optional(),
   aggregatePercentage: z
     .number()
-    .min(0, 'Percentage must be at least 0')
-    .max(100, 'Percentage cannot exceed 100')
+    .min(0, 'Percentage must be at least 0').optional()
 });

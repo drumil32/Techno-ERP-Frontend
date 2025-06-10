@@ -147,19 +147,15 @@ export const enquirySchema = z.object({
   fatherName: z
     .string({ required_error: 'Father Name is required' })
     .nonempty("Father's Name is required"),
-  fatherPhoneNumber: contactNumberSchema,
+  fatherPhoneNumber: contactNumberSchema.optional(),
   fatherOccupation: z
-    .string({ required_error: 'Father occupation is required' })
-    .regex(/^[A-Za-z\s]+$/, 'Father occupation must only contain alphabets and spaces')
-    .nonempty('Father occupation is required'),
+    .string({required_error:'Father occupation is required'}),
   motherName: z
     .string({ required_error: "Mother's Name is required" })
     .nonempty("Mother's Name is required"),
   motherPhoneNumber: contactNumberSchema.optional(),
   motherOccupation: z
-    .string({ required_error: 'Mother occupation is required' })
-    .regex(/^[A-Za-z\s]+$/, 'Mother occupation must only contain alphabets and spaces')
-    .nonempty('Mother occupation is required'),
+    .string().optional(),
   gender: z.nativeEnum(Gender),
   dateOfBirth: requestDateSchema,
   category: z.nativeEnum(Category),
