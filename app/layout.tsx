@@ -28,7 +28,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Techno ERP',
   description: 'Enterprise-Resource-Planning for Techno',
-  metadataBase: new URL('https://techno.sprintup.in'),
+  metadataBase: new URL(
+    process.env.NODE_ENV === "development"
+      ? "https://www.develop.techno.sprintup.in"
+      : "https://techno.sprintup.in"
+  ),
   openGraph: {
     title: 'Techno ERP',
     description:

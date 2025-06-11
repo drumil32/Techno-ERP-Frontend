@@ -292,6 +292,56 @@ export function TableActionButton() {
 
 
       const worksheet = XLSX.utils.json_to_sheet(excelData);
+      worksheet['!cols'] = [
+        { wch: 5 },   // S.No
+        { wch: 15 },  // Admission Date
+        { wch: 10 },  // Photo No.
+        { wch: 20 },  // Course
+        { wch: 10 },  // Form No.
+        { wch: 25 },  // Name of Student
+        { wch: 25 },  // Father's Name
+        { wch: 25 },  // Mother's Name
+        { wch: 40 },  // Address
+        { wch: 15 },  // District
+        { wch: 10 },  // Pincode
+        { wch: 15 },  // State
+        { wch: 15 },  // Country
+        { wch: 15 },  // Aadhaar Number
+        { wch: 15 },  // Date of Birth
+        { wch: 15 },  // Student's Number
+        { wch: 15 },  // Father's Number
+        { wch: 25 },  // Email
+        { wch: 10 },  // Gender
+        { wch: 15 },  // Religion
+        { wch: 15 },  // Blood Group
+        { wch: 15 },  // Category
+        { wch: 40 },  // 10th
+        { wch: 40 },  // 12th
+        { wch: 40 },  // Graduation
+        { wch: 20 },  // Doc 1
+        { wch: 15 },  // Due Date 1
+        { wch: 20 },  // Doc 2
+        { wch: 15 },  // Due Date 2
+        { wch: 20 },  // Doc 3
+        { wch: 15 },  // Due Date 3
+        { wch: 20 },  // Doc 4
+        { wch: 15 },  // Due Date 4
+        { wch: 20 },  // Doc 5
+        { wch: 15 },  // Due Date 5
+        { wch: 20 },  // Source Reference
+        { wch: 20 },  // Telecaller(s)
+        { wch: 20 },  // COUNSELLOR(S)
+        { wch: 30 },  // Remark - Enquiry
+        { wch: 30 },  // Remark - Fees Details
+        { wch: 30 },  // Remark - Registrar Office
+        { wch: 30 },  // Remark - Finance
+        { wch: 15 },  // Applicable Fees
+        { wch: 15 },  // Final Fees
+        { wch: 20 },  // Discount Applicable
+        { wch: 15 },  // TOTAL DISCOUNT
+        { wch: 15 }   // REFERENCE AMOUNT
+      ];
+
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'admission-excel');
 

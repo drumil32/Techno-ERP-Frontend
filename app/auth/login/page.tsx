@@ -247,7 +247,7 @@ export default function LoginPage() {
 
                 <p className="text-base text-blue-100 mb-6">
                   An all-in-one Lead Tracking & ERP solution designed specifically for ambitious
-                  educational institutions.
+                  educationally institutions.
                 </p>
               </motion.div>
 

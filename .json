@@ -28,7 +28,7 @@
                 "pincode": "226010",
                 "state": "Delhi",
                 "country": "India",
-                "_id": "683c79dc75879b6349febd53"
+                "_id": "6849a6c82a9d1887773f4c4b"
             },
             "academicDetails": [
                 {
@@ -38,7 +38,7 @@
                     "passingYear": 2009,
                     "percentageObtained": 78,
                     "subjects": "ksjdblknlfksbef,ksbfkkjbwef, kwefkb",
-                    "_id": "683c79dc75879b6349febd50"
+                    "_id": "6849a6c82a9d1887773f4c48"
                 },
                 {
                     "educationLevel": "12th",
@@ -47,7 +47,7 @@
                     "passingYear": 2011,
                     "percentageObtained": 89,
                     "subjects": "ksdbflk,ksdjbvkblajbvlnsad, isugfkasjbk, isdgkufk",
-                    "_id": "683c79dc75879b6349febd51"
+                    "_id": "6849a6c82a9d1887773f4c49"
                 },
                 {
                     "educationLevel": "Graduation",
@@ -56,7 +56,7 @@
                     "passingYear": 2016,
                     "percentageObtained": 87,
                     "subjects": "Civil Engineering",
-                    "_id": "683c79dc75879b6349febd52"
+                    "_id": "6849a6c82a9d1887773f4c4a"
                 }
             ],
             "documents": [
@@ -74,18 +74,19 @@
             "physicalDocumentNote": [
                 {
                     "type": "10th Marksheet",
-                    "status": "VERIFIED",
-                    "_id": "683c15e6b391d6e11f52598a"
+                    "status": "PENDING",
+                    "_id": "683c15e6b391d6e11f52598a",
+                    "dueBy": "2025-06-25T18:30:00.000Z"
                 },
                 {
                     "type": "12th Marksheet",
-                    "status": "PENDING",
+                    "status": "VERIFIED",
                     "dueBy": "2025-06-19T18:30:00.000Z",
                     "_id": "683c15e6b391d6e11f52598b"
                 },
                 {
                     "type": "T.C. / Migration",
-                    "status": "NOT_APPLICABLE",
+                    "status": "VERIFIED",
                     "_id": "683c15e6b391d6e11f52598c"
                 },
                 {
@@ -107,6 +108,14 @@
             "religion": "Hinduism",
             "admittedThrough": "Direct",
             "_id": "683c15e6b391d6e11f525983",
+            "bloodGroup": "O+",
+            "entranceExamDetails": {
+                "nameOfExamination": "jwt",
+                "rollNumber": "109",
+                "rank": 2,
+                "qualified": true,
+                "_id": "6849a6c82a9d1887773f4c47"
+            },
             "applicableFee": 0,
             "finalFee": 17800,
             "discountApplicable": -17800,
@@ -2960,6 +2969,105 @@
             "feeDetailsRemark": "remark2",
             "registarOfficeRemark": "111           1111111111111111111111111111111111111111111111111111111111111111111111111111111               55555555555555555555555555555555555555555555555555555555555555                   77777777777777777777777777777777777777",
             "financeOfficeRemark": "done"
+        },
+        {
+            "universityId": "TGI2025MBA131",
+            "photoNo": 131,
+            "formNo": "TIMS110",
+            "lurnRegistrationNo": "Not Provided",
+            "studentName": "student name",
+            "studentPhoneNumber": "9033107408",
+            "fatherName": "Suresh Sharma",
+            "fatherPhoneNumber": "9033107408",
+            "fatherOccupation": "Engineer",
+            "motherName": "Jane Doe",
+            "motherPhoneNumber": "9033107408",
+            "motherOccupation": "Doctor",
+            "emailId": "akheniad@gmail.com",
+            "dateOfBirth": "2014-12-31T18:30:00.000Z",
+            "category": "OBC",
+            "references": [
+                "Business Associate",
+                "Direct Walk-in",
+                "Student Reference"
+            ],
+            "srAmount": 200,
+            "aadharNumber": "123123123123",
+            "address": {
+                "addressLine1": "Station Plot, Near Gandhivadi",
+                "addressLine2": "Station Plot",
+                "district": "Lucknow",
+                "pincode": "360410",
+                "state": "Gujarat",
+                "country": "India",
+                "_id": "68498a38fb6654dfcb6c3d09"
+            },
+            "academicDetails": [],
+            "entranceExamDetails": {
+                "nameOfExamination": "devan chauhan",
+                "rollNumber": "290",
+                "rank": 101901010222,
+                "qualified": true,
+                "_id": "68498a38fb6654dfcb6c3d0a"
+            },
+            "documents": [
+                {
+                    "type": "Photo",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6846e7a126403af79a2cc8b2/Photo.jpg",
+                    "_id": "68498a38fb6654dfcb6c3d0b"
+                },
+                {
+                    "type": "Signature",
+                    "fileUrl": "https://erp-development.s3.amazonaws.com/2025/admissions/6846e7a126403af79a2cc8b2/Signature.jpg",
+                    "_id": "68498a38fb6654dfcb6c3d0c"
+                }
+            ],
+            "physicalDocumentNote": [
+                {
+                    "type": "10th Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68498a38fb6654dfcb6c3d0d"
+                },
+                {
+                    "type": "Graduation Final Year Marksheet",
+                    "status": "VERIFIED",
+                    "_id": "68498a38fb6654dfcb6c3d0e"
+                },
+                {
+                    "type": "T.C. / Migration",
+                    "status": "VERIFIED",
+                    "_id": "68498a38fb6654dfcb6c3d0f"
+                },
+                {
+                    "type": "Gap Affidavit (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "68498a38fb6654dfcb6c3d10"
+                },
+                {
+                    "type": "Caste Certificate (If Applicable)",
+                    "status": "VERIFIED",
+                    "_id": "68498a38fb6654dfcb6c3d11"
+                }
+            ],
+            "stateOfDomicile": "Uttar Pradesh",
+            "nationality": "INDIAN",
+            "gender": "MALE",
+            "admittedThrough": "Direct",
+            "_id": "68498a38fb6654dfcb6c3d08",
+            "applicableFee": 56600,
+            "finalFee": 4680,
+            "discountApplicable": 51920,
+            "totalDiscountApplicable": 68260,
+            "telecaller": [
+                "Anushika Saini"
+            ],
+            "counsellor": [
+                "Deepak Shukla"
+            ],
+            "enquiryRemark": "",
+            "feeDetailsRemark": "fee remark",
+            "registarOfficeRemark": "",
+            "financeOfficeRemark": ""
         }
     ]
 }

@@ -213,6 +213,29 @@ export function TableActionButton() {
 
 
       const worksheet = XLSX.utils.json_to_sheet(excelData);
+      worksheet['!cols'] = [
+      { wch: 5 },    // S.No
+      { wch: 15 },   // Footfall Date
+      { wch: 25 },   // Student Name
+      { wch: 20 },   // Course
+      { wch: 20 },   // Source Reference
+      { wch: 20 },   // Telecaller(s)
+      { wch: 20 },   // COUNSELLOR(S)
+      { wch: 15 },   // Status
+      { wch: 30 },   // Remark - Enquiry
+      { wch: 30 },   // Remark - Fees Details
+      { wch: 30 },   // Remark - Registrar Office
+      { wch: 30 },   // Remark - Finance
+      { wch: 15 },   // Student Number
+      { wch: 25 },   // Father's Name
+      { wch: 15 },   // Father's Number
+      { wch: 40 },   // Address
+      { wch: 10 },   // Pincode
+      { wch: 15 },   // category
+      { wch: 15 },   // Form Sold
+      { wch: 15 },   // Admission Model
+      { wch: 15 }    // Fees Type
+    ];
       const workbook = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(workbook, worksheet, 'enquiry-excel');
 
