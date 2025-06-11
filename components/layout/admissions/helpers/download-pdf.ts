@@ -274,13 +274,12 @@ export const downloadAdmissionForm = async (
                 style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; color: #666666; font-weight: 400; border-right: none;">
                 Qualified :</td>
             <td style="border:1px solid #E6E6E6; padding: 0px 4px 10px 4px; border-left: none;">
-                ${
-                  data.entranceExamDetails.qualified === undefined
-                    ? '--'
-                    : data.entranceExamDetails.qualified
-                      ? 'Yes'
-                      : 'No'
-                }
+                ${data.entranceExamDetails.qualified === undefined
+      ? '--'
+      : data.entranceExamDetails.qualified
+        ? 'Yes'
+        : 'No'
+    }
             </td>
         </tr>
     </tbody>
@@ -434,6 +433,34 @@ export const downloadFeeReceipt = async (
     logo = '/images/TIHS.png';
   }
 
+  const generateDueTable = () => {
+    let totalAmount = 0;
+
+    return `
+    <div style="width: 100%; font-family: Arial, sans-serif;border: 1px solid #e0e0e0;border-top:0px solid #E6E6E6;overflow: hidden;">
+        <div style=" font-weight: bold; border-bottom: 1px solid #e0e0e0; font-size:7px; ">
+            <div style="margin-bottom:3px">Total Dues:</div>
+        </div>
+        
+        ${data.dues.map((due: any, index: number) => {
+      totalAmount += due.amount;
+      return `
+            <div style="heigth:auto; display: flex; justify-content: space-between;  background-color:#fff;font-size:7px">
+                <div style="flex: 2;margin-bottom:3px;">${due.label}</div>
+                <div style="flex: 1;margin-bottom:3px; text-align: right; margin-right:50px; ">₹${due.amount.toLocaleString('en-IN')}</div>
+            </div>
+            `;
+    }).join('')}
+        
+        <div style="display: flex; justify-content: space-between;font-size:7px; font-weight: bold;margin-bottom:3px;padding:">
+            <div style="flex: 2;">Total</div>
+            <div style=" margin-right:50px; text-align: right; border-top:1px solid #e0e0e0;">₹${totalAmount.toLocaleString('en-IN')}</div>
+        </div>
+    </div>
+    `;
+  }
+
+
   const generateReceiptHtml = () => `
     <div style="position: relative; display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; ">
       <div style="position: absolute; top: 0; left: 0;">
@@ -457,89 +484,113 @@ export const downloadFeeReceipt = async (
     </h3>
 
     <table style="width: 100%; border-collapse: collapse; font-size: 8px;">
-      <tbody style="border: 0.5px solid #E6E6E6; padding: 2px 4px 20px 4px;">
+      <tbody style="border: 0.5px solid #E6E6E6; padding: 1px 2px 10px 2px;">
         <tr>
-          <td style="color: #666666; padding: 2px 4px 4px 4px; width: 18%; border:none;">Receipt No :</td>
-          <td style="padding: 2px 4px 4px 4px; width: 32%; border:none;">${escapeHtml(data.recieptNumber)}</td>
-          <td style="color: #666666; padding: 2px 4px 4px 4px; width: 18%; border:none;">Date :</td>
-          <td style="padding: 2px 4px 4px 4px; width: 32%; border:none;">${escapeHtml(data.date)}</td>
+          <td style="color: #666666;padding-left:5px; width: 18%; border:none;">Receipt No :</td>
+          <td style="padding-left:5px; width: 32%; border:none;">${escapeHtml(data.recieptNumber)}</td>
+          <td style="color: #666666;padding-left:5px; width: 18%; border:none;">Date :</td>
+          <td style="padding-left:5px; width: 32%; border:none;">${escapeHtml(data.date)}</td>
         </tr>
         <tr>
-          <td style="color: #666666; padding: 2px 4px 4px 4px; border:none;">Name :</td>
-          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(data.studentName)}</td>
-          <td style="color: #666666; padding: 2px 4px 4px 4px; border:none;">Category :</td>
-          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(data.category)}</td>
+          <td style="color: #666666;padding-left:5px; border:none;">Name :</td>
+          <td style="padding-left:5px; border:none;">${escapeHtml(data.studentName)}</td>
+          <td style="color: #666666;padding-left:5px; border:none;">Category :</td>
+          <td style="padding-left:5px; border:none;">${escapeHtml(data.category)}</td>
         </tr>
         <tr>
-          <td style="color: #666666; padding: 2px 4px 4px 4px; border:none;">Father Name :</td>
-          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(data.fatherName)}</td>
-          <td style="color: #666666; padding: 2px 4px 4px 4px; border:none;">Session :</td>
-          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(data.session)}</td>
+          <td style="color: #666666;padding-left:5px; border:none;">Father Name :</td>
+          <td style="padding-left:5px; border:none;">${escapeHtml(data.fatherName)}</td>
+          <td style="color: #666666;padding-left:5px; border:none;">Session :</td>
+          <td style="ppadding-left:5px; border:none;">${escapeHtml(data.session)}</td>
         </tr>
         <tr>
-          <td style="color: #666666; padding: 2px 4px 10px 4px; border:none;">Course :</td>
-          <td style="padding: 2px 4px 10px 4px; border:none; ">${escapeHtml(data.course)}</td>
-          <td style="padding: 2px 4px 10px 4px; border:none; "></td>
-          <td style="padding: 2px 4px 10px 4px; border:none;"></td>
+          <td style="color: #666666;padding-top:0px; padding-left:5px;padding-bottom:10px; border:none;">Course :</td>
+          <td style="padding-left:5px; padding-bottom:10px;padding-top:0px;border:none; ">${escapeHtml(data.course)}</td>
+          <td style="padding-left:5px;padding-bottom:10px;padding-top:0px; border:none; "></td>
+          <td style="padding-left:5px;padding-bottom:10px border:none;padding-top:0px;"></td>
         </tr>
       </tbody>
     </table>
 
-    <table style="border: 0.5px solid #E6E6E6; padding: 2px 4px 20px 4px; width: 100%; border-collapse: collapse; font-size: 8px; margin-top: -1px;">
+    <table style="border: 0.5px solid #E6E6E6;border-top:0px solid #E6E6E6; padding-top:5px; width: 100%; border-collapse: collapse; font-size: 7px; margin-top: -1px;">
       <thead>
         <tr>
-          <th style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: left; border-right:none;">Particulars</th>
-          <th style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: right; border-left:none; width: 25%;">Amount</th>
+          <th style="border: 0.5px solid #E6E6E6;border-top:0px solid #E6E6E6; padding: 1px 2px 5px 2px; text-align: left; border-right:none;">Particulars</th>
+          <th style="border: 0.5px solid #E6E6E6;border-top:0px solid #E6E6E6; padding: 1px 4px 5px 2px; text-align: right; border-left:none; width: 25%;">Amount</th>
         </tr>
       </thead>
       <tbody>
         ${data.particulars
-          .map(
-            (fee: any) => `
+      .map(
+        (fee: any) => `
         <tr>
-          <td style="padding: 2px 4px 4px 4px; border:none;">${escapeHtml(fee.name)}</td>
-          <td style="padding: 2px 4px 4px 4px; text-align: right; border:none;">
+          <td style="padding: 1px 1px 1px 1px; border:none;">${escapeHtml(fee.name)}</td>
+          <td style="padding: 1px 1px 1px 1px; text-align: right; border:none;">
           ${parseFloat(fee.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </td>
         </tr>`
-          )
-          .join('')}
-        <tr>
-        <td style="height:10px; width:100%;"> </td>
-        </tr>
-        <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; font-weight: bold; border-right:none;">Total</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; border-left:none;"></td>
-        </tr>
+      )
+      .join('')}
+        ${(data.particulars  && data.particulars.length > 0) ? `<tr>
+        <td style="height:5px; width:100%;"> </td>
+        </tr>` : '' }
+        
       </tbody>
     </table>
 
-    <table style="width: 100%; border-collapse: collapse; font-size: 8px; margin-top: -1px;">
-      <tbody>
-        <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; font-weight: bold; border-right:none;">Total Received Amount</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: right; border-left:none;">
-          ${totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </td>
-        </tr>
-        <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; border-right:none;">Vide ${escapeHtml(data.transactionType)}</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: right; border-left:none;"><span style="color: #666666; ">Date : </span>${escapeHtml(data.date)}</td>
-        </tr>
-        <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; font-weight: bold; border-right:none; border-bottom:none;">Amount in words</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; text-align: right; border-left:none; border-bottom:none;">For Techno Institute of Higher Studies</td>
-        </tr>
-        <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-right:none; border-bottom:none; border-top:none;">${escapeHtml(data.amountInWords)}</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 4px 4px; border-left:none; border-bottom:none; border-top:none;"></td>
-        </tr>
-        <tr>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; border-right:none; border-top:none; width: 30%;">${escapeHtml(data.remarks ?? '--')}</td>
-          <td style="border: 0.5px solid #E6E6E6; padding: 2px 4px 10px 4px; text-align: right; border-left:none; border-top:none;">Authorized Signatory</td>
-        </tr>
-      </tbody>
-    </table>
+    ${ data.dues && data.dues.length > 0 ? generateDueTable() : '' }
+
+    <div style="width: 100%; font-size: 8px; border: 1px solid #E6E6E6;border-top: 0px solid #E6E6E6;border-left:0px solid #E6E6E6;border-right:0px solid #E6E6E6">
+  <!-- Total Received Amount Row -->
+  <div style="width: 100%; font-size: 8px; border: 1px solid #E6E6E6; border-top: 0px solid #E6E6E6;">
+  <!-- Total Received Amount Row -->
+  <div style="display: flex; border-bottom: 0.5px solid #E6E6E6;">
+    <div style="flex: 1; display: flex; justify-content: center; align-items: center; padding: 1px 2px 5px 2px; font-weight: bold;">
+      Total Received Amount
+    </div>
+    <div style=" padding: 1px 2px 5px 2px; font-weight: bold;">
+      ${totalAmount.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+    </div>
+  </div>
+
+  <!-- Payment Method Row -->
+  <div style="display: flex; ">
+    <div style="flex: 1; ">
+      Vide ${escapeHtml(data.transactionType)}
+    </div>
+    <div style="flex: 1; text-align: right;">
+      <span style="color: #666666;">Date : </span>${escapeHtml(data.date)}
+    </div>
+  </div>
+
+  <!-- Amount in Words Header -->
+  <div style="display: flex; ">
+    <div style="flex: 1;  font-weight: bold; ">
+      Amount in words
+    </div>
+    <div style="flex: 1; text-align: right;">
+      For Techno Institute of Higher Studies
+    </div>
+  </div>
+
+  <!-- Amount in Words Value -->
+  <div style="display: flex; ">
+    <div style="flex: 1;  ">
+      ${escapeHtml(data.amountInWords)}
+    </div>
+    <div style="flex: 1; "></div>
+  </div>
+
+  <!-- Remarks and Signature -->
+  <div style="display: flex;">
+    <div style="flex: 1; padding: 1px 2px 5px 2px; ">
+      ${escapeHtml(data.remarks ?? '--')}
+    </div>
+    <div style="flex: 1; padding: 1px 2px 5px 2px; text-align: right;">
+      Authorized Signatory
+    </div>
+  </div>
+</div>
   `;
 
   container.innerHTML = `

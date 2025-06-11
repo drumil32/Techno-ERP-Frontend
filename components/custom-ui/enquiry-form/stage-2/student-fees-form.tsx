@@ -758,7 +758,7 @@ export const StudentFeesForm = () => {
 
                     if (
                       (
-                      feeType == FeeType.BOOKBANK
+                      feeType == FeeType.BOOKBANK && totalFee == 0
                     )
                     ) {
                       return;

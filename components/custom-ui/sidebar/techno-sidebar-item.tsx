@@ -61,12 +61,6 @@ export default function TechnoSidebarItem({
       return true;
     }
 
-    // if(pathname.includes("admin-tracker") ||pathname.includes("active-leads") ){
-    //   setSidebarActiveItem(SIDEBAR_ITEMS.MARKETING)
-    //   return true
-    // }
-    
-    // Finally check if it's manually selected
     return sidebarActiveItem === text;
   };
 
@@ -76,6 +70,21 @@ export default function TechnoSidebarItem({
   useEffect(() => {
     setIsActive(checkIsActive());
   }, [pathname, sidebarActiveItem]);
+
+  useEffect(()=>{
+    if(pathname.includes("/c/marketing")){
+      setSidebarActiveItem(SIDEBAR_ITEMS.MARKETING);
+    }
+    else if(pathname.includes("/c/admission")){
+      setSidebarActiveItem(SIDEBAR_ITEMS.ADMISSIONS);
+    }
+    else if(pathname.includes("/c/finance")){
+      setSidebarActiveItem(SIDEBAR_ITEMS.FINANCE);
+    }
+    else if(pathname.includes("/c/academics")){
+      setSidebarActiveItem(SIDEBAR_ITEMS.ACADEMICS);
+    }
+  },[pathname])
 
   const handleClick = () => {
     setSidebarActiveItem(text);

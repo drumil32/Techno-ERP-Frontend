@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { Label } from '@/components/ui/label';
 import { DocumentWithFileUrl, FieldDefinition, StudentData } from './helpers/interface';
 import { formatYearRange } from '@/lib/utils';
-import { Loader2, Pencil } from 'lucide-react';
+import { Book, BookOpen, Calendar1, CalendarDays, FileSignature, FileText, IdCard, Layers, Loader2, Pencil, Phone, PhoneCall, School, User, User2, Users } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateDocument } from './helpers/api';
@@ -11,8 +11,9 @@ import { DocumentType } from '@/types/enum';
 import { getReadableDocumentName } from '../enquiry-form/stage-3/documents-section/helpers/mapperFunction';
 import { toast } from 'sonner';
 
-const InfoField = ({ label, value }: FieldDefinition) => (
-  <div className="flex flex-row gap-2 items-start">
+const InfoField = ({ label, value, icon }: FieldDefinition) => (
+  <div className="flex flex-row gap-2 items-center">
+    {icon}
     <Label className="text-sm font-normal text-gray-500 shrink-0">{label}:</Label>
     <p className="font-medium truncate max-w-[200px]" title={value?.toString()}>
       {value}
@@ -117,19 +118,96 @@ const StudentProfileView = ({ studentData }: { studentData: StudentData }) => {
   const photoDocument = studentInfo?.documents?.find((doc) => doc.type === 'Photo');
 
   const studentDisplayFields: FieldDefinition[] = [
-    { label: 'Student Name', value: studentInfo?.studentName },
-    { label: "Student's Phone Number", value: studentInfo?.studentPhoneNumber },
-    { label: "Father's Name", value: studentInfo?.fatherName },
-    { label: "Father's Phone Number", value: studentInfo?.fatherPhoneNumber },
-    { label: 'Course Code', value: courseCode },
     {
-      label: 'Course Year',
-      value: currentAcademicYear ? formatYearRange(currentAcademicYear) : undefined
+      icon: (
+        <div className="p-2 bg-blue-50 rounded-lg mr-3 text-blue-600">
+          <User className="size-4" />
+        </div>
+      ),
+      label: 'Student Name',
+      value: studentInfo?.studentName,
     },
-    { label: 'Semester', value: currentSemester },
-    { label: 'Student ID', value: studentInfo?.universityId },
-    { label: 'Form No.', value: studentInfo?.formNo },
-    { label: 'LURN/Pre-registration No.', value: studentInfo?.lurnRegistrationNo }
+    {
+      icon: (
+        <div className="p-2 bg-blue-50 rounded-lg mr-3 text-blue-600">
+          <Phone className="size-4" />
+        </div>
+      ),
+      label: "Student's Phone Number",
+      value: studentInfo?.studentPhoneNumber,
+    },
+    {
+      icon: (
+        <div className="p-2 bg-yellow-50 rounded-lg mr-3 text-yellow-600">
+          <User2 className="size-4" />
+        </div>
+      ),
+      label: "Father's Name",
+      value: studentInfo?.fatherName,
+    },
+    {
+      icon: (
+        <div className="p-2 bg-yellow-50 rounded-lg mr-3 text-yellow-600">
+          <PhoneCall className="size-4" />
+        </div>
+      ),
+      label: "Father's Phone Number",
+      value: studentInfo?.fatherPhoneNumber,
+    },
+    {
+      icon: (
+        <div className="p-2 bg-green-50 rounded-lg mr-3 text-green-600">
+          <Book className="size-4" />
+        </div>
+      ),
+      label: 'Course Code',
+      value: courseCode,
+    },
+    {
+      icon: (
+        <div className="p-2 bg-blue-50 rounded-lg mr-3 text-blue-600">
+          <CalendarDays className="size-4" />
+        </div>
+      ),
+      label: 'Course Year',
+      value: currentAcademicYear ? formatYearRange(currentAcademicYear) : undefined,
+    },
+    {
+      icon: (
+        <div className="p-2 bg-purple-50 rounded-lg mr-3 text-purple-600">
+          <Layers className="size-4" />
+        </div>
+      ),
+      label: 'Semester',
+      value: currentSemester,
+    },
+    {
+      icon: (
+        <div className="p-2 bg-blue-50 rounded-lg mr-3 text-blue-600">
+          <IdCard className="size-4" />
+        </div>
+      ),
+      label: 'Student ID',
+      value: studentInfo?.universityId,
+    },
+    {
+      icon: (
+        <div className="p-2 bg-gray-50 rounded-lg mr-3 text-gray-600">
+          <FileText className="size-4" />
+        </div>
+      ),
+      label: 'Form No.',
+      value: studentInfo?.formNo,
+    },
+    {
+      icon: (
+        <div className="p-2 bg-pink-50 rounded-lg mr-3 text-pink-600">
+          <FileSignature className="size-4" />
+        </div>
+      ),
+      label: 'LURN/Pre-registration No.',
+      value: studentInfo?.lurnRegistrationNo,
+    },
   ];
 
   return (
@@ -141,8 +219,8 @@ const StudentProfileView = ({ studentData }: { studentData: StudentData }) => {
         image={photoDocument?.fileUrl || '/images/techno-logo.png'}
       />
       <div className="bg-white p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 flex-grow rounded-lg shadow-sm">
-        {studentDisplayFields.map(({ label, value }) => (
-          <InfoField key={label} label={label} value={value || 'N/A'} />
+        {studentDisplayFields.map(({ label, value, icon }) => (
+          <InfoField key={label} icon={icon} label={label} value={value || 'N/A'} />
         ))}
       </div>
     </div>
