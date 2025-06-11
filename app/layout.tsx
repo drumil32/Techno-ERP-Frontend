@@ -37,8 +37,8 @@ export const metadata: Metadata = {
     title: 'Techno ERP',
     description:
       'A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges.',
-    images: '/og-image.png',
-    url: 'https://example.com',
+    images: ['https://www.develop.techno.sprintup.in/og-image.png'],
+    url: 'https://techno.sprintup.in',
     locale: 'en_US',
     type: 'website'
   }
@@ -49,16 +49,34 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const baseUrl =
+    process.env.NODE_ENV === 'development'
+      ? 'https://www.develop.techno.sprintup.in'
+      : 'https://techno.sprintup.in';
+
   return (
     <html lang="en">
-      <head></head>
+      <head>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="Enterprise-Resource-Planning for Techno" />
+        <meta property="og:title" content="Techno ERP" />
+        <meta property="og:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
+        <meta property="og:image" content={`${baseUrl}/og-image.png`} />
+        <meta property="og:url" content={baseUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Techno ERP" />
+        <meta name="twitter:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
+        <meta name="twitter:image" content={`${baseUrl}/og-image.png`} />
+      </head>
       <body
         className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
         <DevBadge />
         <Suspense>
           <ProgressBar />
-          <h2 className=""></h2>
           <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
           <NavigationEvents />
           <Toaster richColors theme="light" position="top-center" />
