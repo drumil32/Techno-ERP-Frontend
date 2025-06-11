@@ -34,7 +34,7 @@ import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 
 // Utility and type imports
 import { format } from 'date-fns';
-import { ApplicationStatus, EducationLevel, StatesOfIndia } from '@/types/enum';
+import { AdmittedThrough, ApplicationStatus, EducationLevel, StatesOfIndia } from '@/types/enum';
 import { Admission } from '@/types/admissions';
 import { toast } from 'sonner';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
@@ -94,7 +94,8 @@ const EnquiryFormStage3 = () => {
       telecaller :data?.telecaller,
       registarOfficeRemark : '',
       enquiryRemark: data?.enquiryRemark || "",
-      feeDetailsRemark: data?.feeDetailsRemark || ""
+      feeDetailsRemark: data?.feeDetailsRemark || "",
+      admittedThrough: AdmittedThrough.DIRECT
     },
     disabled: isViewable
   });
@@ -104,6 +105,9 @@ const EnquiryFormStage3 = () => {
     const documentNotes = values.physicalDocumentNote || [];
 
     values = removeNullValues(values);
+    if(!values.admittedThrough){
+      values.admittedThrough = AdmittedThrough.DIRECT
+    }
     values.physicalDocumentNote = documentNotes.map((note) => ({
       type: note.type,
       status: note.status,
@@ -279,7 +283,8 @@ const EnquiryFormStage3 = () => {
         confirmation: false,
         enquiryRemark: sanitizedData.enquiryRemark || "",
         feeDetailsRemark : sanitizedData.feeDetailsRemark || "",
-        registarOfficeRemark: sanitizedData.registarOfficeRemark || ""
+        registarOfficeRemark: sanitizedData.registarOfficeRemark || "",
+        admittedThrough:  sanitizedData.admittedThrough || AdmittedThrough.DIRECT 
       });
     }
   }, [data, form, id, refreshKey, isLoading, isFetching]);

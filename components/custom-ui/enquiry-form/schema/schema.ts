@@ -53,7 +53,10 @@ export const academicDetailBaseSchema = z.object({
     .refine((year) => year.toString().length === 4, {
       message: 'Passing Year must be a valid 4-digit year'
     }), // Keep refinements for when value is present
-  percentageObtained: z.number().optional(), // Keep refinements for when value is present
+  percentageObtained: z
+    .number()
+    .min(0, 'Percentage must be at least 0')
+    .max(100, 'Percentage cannot exceed 100').optional(), // Keep refinements for when value is present
   subjects: z
     .string()
     .nonempty('Subject name is required') // Validate inner string if array present
@@ -132,6 +135,11 @@ export enum Nationality {
   // STATELESS = 'STATELESS'
 }
 
+export enum AdmittedThrough{
+  DIRECT = 'Direct',
+  COUNSELLING = 'Counselling'
+}
+
 export const enquirySchema = z.object({
   _id: z.string().optional(),
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
@@ -199,13 +207,16 @@ export const enquirySchema = z.object({
   entranceExamDetails: entranceExamDetailSchema.optional(),
   admittedBy: z.union([z.string(), z.enum(['other'])]).optional(),
   isFeeApplicable: z.boolean().default(true).optional(),
-  srAmount: z.number().min(0).optional()
+  srAmount: z.number().min(0).optional(),
+  admittedThrough : z.nativeEnum(AdmittedThrough).default(AdmittedThrough.DIRECT)
 });
 
 export enum Qualification {
   Yes = 'Yes',
   No = 'No'
 }
+
+
 
 export const enquiryStep1RequestSchema = enquirySchema
   .omit({
@@ -254,7 +265,8 @@ export const enquiryDraftStep3Schema = enquiryStep3UpdateRequestSchema
     telecaller: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     dateOfAdmission: requestDateSchema,
     dateOfBirth: requestDateSchema.optional(),
-    entranceExamDetails: entranceExamDetailSchema.partial().optional()
+    entranceExamDetails: entranceExamDetailSchema.partial().optional(),
+    admittedThrough : z.nativeEnum(AdmittedThrough).default(AdmittedThrough.DIRECT)
   })
   .strict();
 
