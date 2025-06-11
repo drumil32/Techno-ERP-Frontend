@@ -62,14 +62,14 @@ export default function RootLayout({
         <meta name="description" content="Enterprise-Resource-Planning for Techno" />
         <meta property="og:title" content="Techno ERP" />
         <meta property="og:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
-        <meta property="og:image" content={`${baseUrl}/og-image.png`} />
+        <meta property="og:image" content={`${baseUrl}/images/sprintup-logo-light.png`} />
         <meta property="og:url" content={baseUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_US" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Techno ERP" />
         <meta name="twitter:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
-        <meta name="twitter:image" content={`${baseUrl}/og-image.png`} />
+        <meta name="twitter:image" content={`${baseUrl}/images/sprintup-logo-light.png`} />
       </head>
       <body
         className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
