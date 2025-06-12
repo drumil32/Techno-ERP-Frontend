@@ -29,7 +29,6 @@ const baseUrl =
     ? 'https://www.develop.techno.sprintup.in'
     : 'https://techno.sprintup.in';
 
-const imageUrl = `${baseUrl}/images/logo.jpg`;
 
 export default function RootLayout({
   children
@@ -39,25 +38,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <title>Techno ERP</title>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="Enterprise-Resource-Planning for Techno" />
 
-        {/* Open Graph Meta */}
         <meta property="og:title" content="Techno ERP" />
         <meta property="og:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
-        <meta property="og:image" content={imageUrl} />
-        <meta property="og:url" content={baseUrl} />
+        <meta property="og:image" content="https://www.develop.techno.sprintup.in/images/logo.jpg" />
+        <meta property="og:url" content="https://techno.sprintup.in" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_US" />
 
-        {/* Twitter Card Meta */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Techno ERP" />
         <meta name="twitter:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
-        <meta name="twitter:image" content={imageUrl} />
+        <meta name="twitter:image" content="https://www.develop.techno.sprintup.in/images/logo.jpg" />
       </head>
+
       <body
         className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >

@@ -332,7 +332,7 @@ export default function LoginPage() {
                 </div>
               </motion.div>
               <h2 className="text-2xl font-bold text-gray-800 mb-1">Welcome Back</h2>
-              <p className="text-muted-foreground text-sm">Sign in to your educational dashboard</p>
+              <p className="text-muted-foreground text-sm">Sign in to your Educational dashboard</p>
             </div>
 
             <form onSubmit={handleSubmit(handleLogin)} className="space-y-4">
