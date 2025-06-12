@@ -44,7 +44,7 @@ export default function RootLayout({
 
         <meta property="og:title" content="Techno ERP" />
         <meta property="og:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
-        <meta property="og:image" content="https://www.develop.techno.sprintup.in/images/techno-logo.webp" />
+        <meta property="og:image" content="https://techno.sprintup.in/images/techno-logo.webp" />
         <meta property="og:url" content="https://techno.sprintup.in" />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_US" />
@@ -52,7 +52,7 @@ export default function RootLayout({
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Techno ERP" />
         <meta name="twitter:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
-        <meta name="twitter:image" content="https://www.develop.techno.sprintup.in/images/techno-logo.webp" />
+        <meta name="twitter:image" content="https://techno.sprintup.in/images/techno-logo.webp" />
       </head>
 
       <body
