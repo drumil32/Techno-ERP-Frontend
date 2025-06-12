@@ -37,8 +37,8 @@ export const metadata: Metadata = {
     title: 'Techno ERP',
     description:
       'A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges.',
-    images: ['https://www.develop.techno.sprintup.in/og-image.png'],
-    url: 'https://techno.sprintup.in',
+    images: [ process.env.NODE_ENV === "development" ? 'https://www.develop.techno.sprintup.in/images/logo.jpg' : 'https://techno.sprintup.in/og-image.png'],
+    url:  process.env.NODE_ENV === "development" ? 'https://www.develop.techno.sprintup.in' : 'https://techno.sprintup.in',
     locale: 'en_US',
     type: 'website'
   }
@@ -62,14 +62,14 @@ export default function RootLayout({
         <meta name="description" content="Enterprise-Resource-Planning for Techno" />
         <meta property="og:title" content="Techno ERP" />
         <meta property="og:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
-        <meta property="og:image" content={`${baseUrl}/images/sprintup-logo-light.png`} />
+        <meta property="og:image" content={`${baseUrl}/images/logo.jpg`} />
         <meta property="og:url" content={baseUrl} />
         <meta property="og:type" content="website" />
         <meta property="og:locale" content="en_US" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Techno ERP" />
         <meta name="twitter:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
-        <meta name="twitter:image" content={`${baseUrl}/images/sprintup-logo-light.png`} />
+        <meta name="twitter:image" content={`${baseUrl}/images/logo.jpg`} />
       </head>
       <body
         className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
