@@ -1,13 +1,12 @@
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono, Inter } from 'next/font/google';
 import './globals.css';
+import { Geist, Geist_Mono, Inter } from 'next/font/google';
+import { Suspense } from 'react';
 
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { Toaster } from '@/components/ui/sonner';
 import ProgressBar from '@/components/custom-ui/progress-bar/progress-bar';
 import { NavigationEvents } from '@/components/custom-ui/router-events/router-event';
-import { Suspense } from 'react';
 import { DevBadge } from '@/components/ui/dev-badge';
 
 const geistSans = Geist({
@@ -32,27 +31,6 @@ const baseUrl =
 
 const imageUrl = `${baseUrl}/images/logo.jpg`;
 
-export const metadata: Metadata = {
-  title: 'Techno ERP',
-  description: 'Enterprise-Resource-Planning for Techno',
-  metadataBase: new URL(baseUrl),
-  openGraph: {
-    title: 'Techno ERP',
-    description:
-      'A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges.',
-    url: baseUrl,
-    images: [imageUrl],
-    locale: 'en_US',
-    type: 'website'
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Techno ERP',
-    description: 'A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges.',
-    images: [imageUrl]
-  }
-};
-
 export default function RootLayout({
   children
 }: Readonly<{
@@ -60,6 +38,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <title>Techno ERP</title>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="Enterprise-Resource-Planning for Techno" />
+
+        {/* Open Graph Meta */}
+        <meta property="og:title" content="Techno ERP" />
+        <meta property="og:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
+        <meta property="og:image" content={imageUrl} />
+        <meta property="og:url" content={baseUrl} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_US" />
+
+        {/* Twitter Card Meta */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Techno ERP" />
+        <meta name="twitter:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
+        <meta name="twitter:image" content={imageUrl} />
+      </head>
       <body
         className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
