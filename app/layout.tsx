@@ -25,22 +25,31 @@ const inter = Inter({
   subsets: ['latin']
 });
 
+const baseUrl =
+  process.env.NODE_ENV === 'development'
+    ? 'https://www.develop.techno.sprintup.in'
+    : 'https://techno.sprintup.in';
+
+const imageUrl = `${baseUrl}/images/logo.jpg`;
+
 export const metadata: Metadata = {
   title: 'Techno ERP',
   description: 'Enterprise-Resource-Planning for Techno',
-  metadataBase: new URL(
-    process.env.NODE_ENV === "development"
-      ? "https://www.develop.techno.sprintup.in"
-      : "https://techno.sprintup.in"
-  ),
+  metadataBase: new URL(baseUrl),
   openGraph: {
     title: 'Techno ERP',
     description:
       'A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges.',
-    images: [ process.env.NODE_ENV === "development" ? 'https://www.develop.techno.sprintup.in/images/logo.jpg' : 'https://techno.sprintup.in/og-image.png'],
-    url:  process.env.NODE_ENV === "development" ? 'https://www.develop.techno.sprintup.in' : 'https://techno.sprintup.in',
+    url: baseUrl,
+    images: [imageUrl],
     locale: 'en_US',
     type: 'website'
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Techno ERP',
+    description: 'A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges.',
+    images: [imageUrl]
   }
 };
 
@@ -49,35 +58,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const baseUrl =
-    process.env.NODE_ENV === 'development'
-      ? 'https://www.develop.techno.sprintup.in'
-      : 'https://techno.sprintup.in';
-
   return (
     <html lang="en">
-      <head>
-        <meta charSet="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="Enterprise-Resource-Planning for Techno" />
-        <meta property="og:title" content="Techno ERP" />
-        <meta property="og:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
-        <meta property="og:image" content={`${baseUrl}/images/logo.jpg`} />
-        <meta property="og:url" content={baseUrl} />
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="en_US" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Techno ERP" />
-        <meta name="twitter:description" content="A powerful all-in-one Lead Tracking and ERP solution built for ambitious colleges." />
-        <meta name="twitter:image" content={`${baseUrl}/images/logo.jpg`} />
-      </head>
       <body
         className={`overflow-hidden ${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
         <DevBadge />
         <Suspense>
           <ProgressBar />
-          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
           <NavigationEvents />
           <Toaster richColors theme="light" position="top-center" />
         </Suspense>
