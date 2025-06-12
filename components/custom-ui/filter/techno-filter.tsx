@@ -196,7 +196,7 @@ export default function TechnoFilter({
           <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-auto min-w-[200px] p-4 max-w-[400px]">
+      <DropdownMenuContent className={`  ${filterKey == "academicYear" ? "ml-16" : ""} w-auto min-w-[200px] p-4 max-w-[400px]`}>
         {isDateFilter ? (
           <div className="p-2 space-y-4">
             <div className="flex items-center space-x-2 cursor-pointer" onClick={handleThisMonth}>
@@ -279,11 +279,11 @@ export default function TechnoFilter({
                 </span>
               </div>
             )}
-            <div className="max-h-[540px] overflow-y-auto">
+            <div className={`  max-h-[540px] overflow-y-auto`}>
               {filteredOptions.map((option, index) => (
                 <div
                   key={index}
-                  className="flex items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap"
+                  className={` flex gap-2 items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap`}
                   onClick={() => handleSelect(option)}
                 >
                   <Checkbox

@@ -84,7 +84,7 @@ export const TruncatedCell = ({
     }
   }, [value, maxWidth]);
 
-  if (!value || value === '-' || value === 'N/A' || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip || tableName.includes("Ongoing Enquiry") || tableName.includes("Recent Admissions")) return <>{value}</>;
+  if (!value || value == '-' || value === 'N/A' || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip || tableName.includes("Ongoing Enquiry") || tableName.includes("Recent Admissions") || tableName.includes("Course Dues") || tableName.includes("Student Dues")) return <>{value}</>;
 
 
   if (columnId === "remarks") {

@@ -276,7 +276,7 @@ export const AllSubjectsPage = () => {
       id: `${i + 1}`
     }));
 
-    const academicYearOptions: FilterOption[] = generateAcademicYearDropdown().map(
+    const academicYearOptions: FilterOption[] = generateAcademicYearDropdown(0,1).map(
       (year: string) => ({
         label: year,
         id: year
@@ -322,17 +322,17 @@ export const AllSubjectsPage = () => {
           clearFilters={clearFilters}
         />
 
-        <Tooltip>
-          <TooltipTrigger className="flex items-center cursor-pointer">
+        <Tooltip >
+          <TooltipTrigger className=" flex items-center cursor-pointer">
             <span className="text-sm text-[#5B31D1]">Want to add a subject?&nbsp;</span>
             <InfoIcon className="w-5 h-5 text-[#5B31D1]" />
           </TooltipTrigger>
-          <TooltipContent className="bg-white text-black shadow-md">
+          <TooltipContent className="bg-white text-black shadow-md m-2">
             <span className="text-sm text-[#A1A1A1]">
-              <b>Steps to add a subject</b>
-              <p>Step 1 - Go to Courses tab </p>
-              <p>Step 2 - Select the Course</p>
-              <p>Step 3 - Click on Add Subject</p>
+              <b className='m-[2px]'>Steps to add a subject</b>
+              <p className='m-[2px]'>Step 1 - Go to Courses tab </p>
+              <p className='m-[2px]'>Step 2 - Select the Course</p>
+              <p className='m-[2px]'>Step 3 - Click on Add Subject</p>
             </span>
           </TooltipContent>
         </Tooltip>

@@ -58,6 +58,16 @@ export const apiRequest = async <T>(
 
   const responseBody: Response = await response.json();
 
+  if(responseBody.ERROR === "Invalid token"){
+     toast.error('Your session has expired. Please login again.');
+    //FOR YOUR INFORMATION,
+    // We are handling is-authenticated cookie to track auth status in frontend and below line handles the case where if user will remove token manually we will have to remove this as well so we can get redirection to login
+    document.cookie =
+      'is-authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=strict';
+    window.location.href = SITE_MAP.AUTH.LOGIN;
+    return null;
+  }
+
   if (!response.ok || !responseBody.SUCCESS) {
     toast.error(responseBody.ERROR || responseBody.MESSAGE || `HTTP Error: ${response.status}`);
     const errorMessage = responseBody.ERROR || responseBody.MESSAGE|| 'Something went wrong'
