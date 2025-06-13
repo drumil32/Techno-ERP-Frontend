@@ -155,7 +155,7 @@ export const enquirySchema = z.object({
   fatherName: z
     .string({ required_error: 'Father Name is required' })
     .nonempty("Father's Name is required"),
-  fatherPhoneNumber: contactNumberSchema.optional(),
+  fatherPhoneNumber: contactNumberSchema,
   fatherOccupation: z
     .string({required_error:'Father occupation is required'}),
   motherName: z

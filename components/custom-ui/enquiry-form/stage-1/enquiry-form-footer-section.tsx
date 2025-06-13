@@ -49,26 +49,26 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   async function handleSubmitClick() {
     const currentValues = form.getValues();
 
-    if (currentValues.academicDetails) {
-      const filteredAcademicDetails: IAcademicDetailArraySchema =
-        currentValues.academicDetails.filter((entry: IAcademicDetailSchema) => {
-          if (!entry) return false;
+    // if (currentValues.academicDetails) {
+    //   const filteredAcademicDetails: IAcademicDetailArraySchema =
+    //     currentValues.academicDetails.filter((entry: IAcademicDetailSchema) => {
+    //       if (!entry) return false;
 
-          // Only look at the fields we care about for "emptiness"
-          const { schoolCollegeName, universityBoardName, passingYear, percentageObtained } = entry;
+    //       // Only look at the fields we care about for "emptiness"
+    //       const { schoolCollegeName, universityBoardName, passingYear, percentageObtained } = entry;
 
-          // If ALL are empty/undefined/null/blank, skip the row
-          const isAllEmpty =
-            !schoolCollegeName &&
-            !universityBoardName &&
-            (passingYear === undefined || passingYear === null) &&
-            (percentageObtained === undefined || percentageObtained === null);
+    //       // If ALL are empty/undefined/null/blank, skip the row
+    //       const isAllEmpty =
+    //         !schoolCollegeName &&
+    //         !universityBoardName &&
+    //         (passingYear === undefined || passingYear === null) &&
+    //         (percentageObtained === undefined || percentageObtained === null);
 
-          return !isAllEmpty; // keep if at least one is filled
-        });
+    //       return !isAllEmpty; // keep if at least one is filled
+    //     });
 
-      form.setValue('academicDetails', filteredAcademicDetails);
-    }
+    //   form.setValue('academicDetails', filteredAcademicDetails);
+    // }
 
     if (isOtpVerificationRequired !== undefined && isOtpVerificationRequired) {
       setOtpGenerationTimer(true);
