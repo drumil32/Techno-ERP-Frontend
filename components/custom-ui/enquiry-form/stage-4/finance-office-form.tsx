@@ -463,7 +463,7 @@ const FinanceOfficeForm = () => {
                     const originalFeeData = otherFeesData?.find((fee: any) =>
                       fee.type === feeType
                     );
-                     const feeTypeArray = ["HOSTELMAINTENANCE","HOSTELCAUTIONMONEY","HOSTELYEARLY","TRANSPORT"]
+                    const feeTypeArray = ["HOSTELMAINTENANCE", "HOSTELCAUTIONMONEY", "HOSTELYEARLY", "TRANSPORT"]
 
                     let totalFee;
                     if (feeTypeArray.includes(feeType)) {
@@ -481,12 +481,13 @@ const FinanceOfficeForm = () => {
                       discountValue = '-';
                     } else {
                       discountValue =
-                        finalFee != undefined
-                          ? calculateDiscountPercentage(totalFee, finalFee)
+                        finalFee !== undefined
+                          ? totalFee - Number(finalFee)
                           : '-';
                     }
+
                     const discountDisplay =
-                      typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
+                      typeof discountValue === 'number' ? `₹${discountValue}` : discountValue;
                     const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
 
                     if (
@@ -704,10 +705,10 @@ const FinanceOfficeForm = () => {
                       const finalFee = semWiseFeesWatched?.[index]?.finalFee;
                       const discountValue =
                         finalFee != undefined
-                          ? calculateDiscountPercentage(originalFeeAmount, finalFee)
+                          ? originalFeeAmount - finalFee
                           : '-';
                       const discountDisplay =
-                        typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
+                        typeof discountValue === 'number' ? `₹${discountValue}` : discountValue;
 
                       return (
                         <div

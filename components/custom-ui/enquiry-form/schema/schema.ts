@@ -135,7 +135,7 @@ export enum Nationality {
   // STATELESS = 'STATELESS'
 }
 
-export enum AdmittedThrough{
+export enum AdmittedThrough {
   DIRECT = 'Direct',
   COUNSELLING = 'Counselling'
 }
@@ -151,13 +151,13 @@ export const enquirySchema = z.object({
   emailId: z
     .string()
     .email('Invalid email format')
-    .nonempty('Email is required'),
+    .optional(),
   fatherName: z
     .string({ required_error: 'Father Name is required' })
     .nonempty("Father's Name is required"),
   fatherPhoneNumber: contactNumberSchema,
   fatherOccupation: z
-    .string({required_error:'Father occupation is required'}),
+    .string({ required_error: 'Father occupation is required' }),
   motherName: z
     .string({ required_error: "Mother's Name is required" })
     .nonempty("Mother's Name is required"),
@@ -208,7 +208,7 @@ export const enquirySchema = z.object({
   admittedBy: z.union([z.string(), z.enum(['other'])]).optional(),
   isFeeApplicable: z.boolean().default(true).optional(),
   srAmount: z.number().min(0).optional(),
-  admittedThrough : z.nativeEnum(AdmittedThrough).default(AdmittedThrough.DIRECT)
+  admittedThrough: z.nativeEnum(AdmittedThrough).default(AdmittedThrough.DIRECT)
 });
 
 export enum Qualification {
@@ -260,13 +260,16 @@ export const enquiryDraftStep3Schema = enquiryStep3UpdateRequestSchema
     studentName: z
       .string({ required_error: 'Student Name is required' })
       .nonempty('Student Name is required'),
+    emailId: z
+      .string()
+      .optional(),
     studentPhoneNumber: contactNumberSchema,
     counsellor: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     telecaller: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     dateOfAdmission: requestDateSchema,
     dateOfBirth: requestDateSchema.optional(),
     entranceExamDetails: entranceExamDetailSchema.partial().optional(),
-    admittedThrough : z.nativeEnum(AdmittedThrough).default(AdmittedThrough.DIRECT)
+    admittedThrough: z.nativeEnum(AdmittedThrough).default(AdmittedThrough.DIRECT)
   })
   .strict();
 

@@ -91,8 +91,8 @@ const EnquiryFormStage3 = () => {
       stateOfDomicile: StatesOfIndia.UttarPradesh,
       nationality: Nationality.INDIAN,
       srAmount: data?.srAmount || 0,
-      telecaller :data?.telecaller,
-      registarOfficeRemark : '',
+      telecaller: data?.telecaller,
+      registarOfficeRemark: '',
       enquiryRemark: data?.enquiryRemark || "",
       feeDetailsRemark: data?.feeDetailsRemark || "",
       admittedThrough: AdmittedThrough.DIRECT
@@ -105,7 +105,7 @@ const EnquiryFormStage3 = () => {
     const documentNotes = values.physicalDocumentNote || [];
 
     values = removeNullValues(values);
-    if(!values.admittedThrough){
+    if (!values.admittedThrough) {
       values.admittedThrough = AdmittedThrough.DIRECT
     }
     values.physicalDocumentNote = documentNotes.map((note) => ({
@@ -191,6 +191,27 @@ const EnquiryFormStage3 = () => {
     try {
       let values = form.getValues();
       values = removeNullValues(values);
+      const email = values.emailId;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!email) {
+        form.setError('emailId', {
+          type: 'manual',
+          message: 'Email is required'
+        });
+        toast.error('Please enter your email address.');
+        return false;
+      }
+
+      if (!emailRegex.test(email)) {
+        form.setError('emailId', {
+          type: 'manual',
+          message: 'Invalid email format'
+        });
+        toast.error('Please enter a valid email address.');
+        return false;
+      }
+
       const filteredData = filterBySchema(formSchemaStep3, values);
 
       if (currentDocuments.length !== 2) {
@@ -275,6 +296,24 @@ const EnquiryFormStage3 = () => {
   useEffect(() => {
     if (data) {
       const sanitizedData = removeNullValues(data);
+      
+      const levels = ["10th", "12th", "Graduation"];
+      const academicMap = new Map();
+
+      // First, build a map of existing levels
+      if (Array.isArray((sanitizedData as any).academicDetails)) {
+        for (const entry of (sanitizedData as any).academicDetails) {
+          academicMap.set(entry.educationLevel, entry);
+        }
+      }
+
+      // Ensure fixed positions for 10th, 12th, Graduation
+      let academicDetails = levels.map((level) => {
+        return academicMap.get(level) || { educationLevel: level };
+      });
+
+      // Save back the updated list
+      (sanitizedData as any).academicDetails = academicDetails;
 
       form.reset({
         ...sanitizedData,
@@ -282,9 +321,10 @@ const EnquiryFormStage3 = () => {
         id: id,
         confirmation: false,
         enquiryRemark: sanitizedData.enquiryRemark || "",
-        feeDetailsRemark : sanitizedData.feeDetailsRemark || "",
+        feeDetailsRemark: sanitizedData.feeDetailsRemark || "",
         registarOfficeRemark: sanitizedData.registarOfficeRemark || "",
-        admittedThrough:  sanitizedData.admittedThrough || AdmittedThrough.DIRECT 
+        admittedThrough: sanitizedData.admittedThrough || AdmittedThrough.DIRECT,
+        academicDetails: academicDetails
       });
     }
   }, [data, form, id, refreshKey, isLoading, isFetching]);

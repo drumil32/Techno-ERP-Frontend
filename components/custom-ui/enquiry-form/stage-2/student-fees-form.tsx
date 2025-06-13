@@ -748,12 +748,13 @@ export const StudentFeesForm = () => {
                       discountValue = '-';
                     } else {
                       discountValue =
-                        finalFee != undefined
-                          ? calculateDiscountPercentage(totalFee, finalFee)
+                        finalFee !== undefined
+                          ? totalFee - Number(finalFee)
                           : '-';
                     }
+
                     const discountDisplay =
-                      typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
+                      typeof discountValue === 'number' ? `₹${discountValue}` : discountValue;
                     const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
 
                     if (
@@ -976,10 +977,10 @@ export const StudentFeesForm = () => {
                       const finalFee = semWiseFeesWatched?.[index]?.finalFee;
                       const discountValue =
                         finalFee != undefined
-                          ? calculateDiscountPercentage(originalFeeAmount, finalFee)
+                          ? originalFeeAmount - finalFee
                           : '-';
                       const discountDisplay =
-                        typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
+                        typeof discountValue === 'number' ? `₹${discountValue}` : discountValue;
 
                       return (
                         <div
