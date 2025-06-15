@@ -9,11 +9,33 @@ import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { API_METHODS } from '@/common/constants/apiMethods';
 import { useRouter } from 'next/navigation';
 import useAuthStore from '@/stores/auth-store';
+import { getSidebarItemsByUserRoles } from '@/lib/enumDisplayMapper';
+import { useState, useEffect } from 'react';
+import { MENU_ITEMS } from './techno-sidebar-body';
 
 export default function TechnoSidebarFooter() {
   const router = useRouter();
   const { logout } = useAuthStore();
   const hovered = useHoverContext();
+
+   const { user } = useAuthStore();
+  const [enabledItems, setEnabledItems] = useState<string[]>([]);
+  const [enableSize, setEnableSize] = useState<number>(0)
+
+  useEffect(() => {
+    if (user?.roles) {
+      const items = new Set(user.roles.flatMap((role) => 
+        getSidebarItemsByUserRoles(role)
+      ));
+      setEnabledItems(Array.from(items));
+       
+
+    }
+  }, [user]);
+
+  const visibleItems = MENU_ITEMS.filter(item => enabledItems.includes(item.text));
+
+  const expand = (visibleItems.length > 1);
 
   const handleLogout = async () => {
     try {
@@ -43,7 +65,7 @@ export default function TechnoSidebarFooter() {
 
   return (
     <>
-      {!hovered && (
+      {(!hovered || !expand)  && (
         <Avatar className="transition-transform duration-300 ease-in-out">
           {/* TODO: Avatar will replace by the College Logo */}
           <AvatarImage

@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, redirect } from 'next/navigation';
 import TechnoIcon from '../icon/TechnoIcon';
 import { useHoverContext } from './hover-context';
 import { SIDEBAR_ITEMS } from '@/common/constants/sidebarItems';
@@ -8,6 +8,12 @@ import { SITE_MAP } from '@/common/constants/frontendRouting';
 import { useEffect, useState } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useSidebarStore } from '@/stores/sidebar-item';
+import useAuthStore from '@/stores/auth-store';
+import { getSidebarItemsByUserRoles } from '@/lib/enumDisplayMapper';
+import { MENU_ITEMS } from './techno-sidebar-body';
+import { getAccess } from '@/lib/checkAccess';
+import { tuple } from 'zod';
+import Loading from '@/app/loading';
 
 export default function TechnoSidebarItem({
   icon: Icon,
@@ -23,6 +29,7 @@ export default function TechnoSidebarItem({
   const pathname = usePathname();
   const { sidebarActiveItem, setSidebarActiveItem } = useSidebarStore();
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -33,6 +40,21 @@ export default function TechnoSidebarItem({
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
+  const { user } = useAuthStore();
+  const [enabledItems, setEnabledItems] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (user?.roles) {
+      const items = new Set(user.roles.flatMap((role) =>
+        getSidebarItemsByUserRoles(role)
+      ));
+      setEnabledItems(Array.from(items));
+    }
+  }, [user]);
+
+  const visibleItems = MENU_ITEMS.filter(item => enabledItems.includes(item.text));
+  const expand = (visibleItems.length > 1);
 
   const routeKey = Object.keys(SIDEBAR_ITEMS).find(
     (key) => SIDEBAR_ITEMS[key as keyof typeof SIDEBAR_ITEMS] === text
@@ -71,20 +93,34 @@ export default function TechnoSidebarItem({
     setIsActive(checkIsActive());
   }, [pathname, sidebarActiveItem]);
 
-  useEffect(()=>{
-    if(pathname.includes("/c/marketing")){
+  useEffect(() => {
+    let url = "";
+    setLoading(true);
+    if (pathname.includes("/c/marketing")) {
+      url = getAccess(user, SIDEBAR_ITEMS.MARKETING)
       setSidebarActiveItem(SIDEBAR_ITEMS.MARKETING);
     }
-    else if(pathname.includes("/c/admission")){
+    else if (pathname.includes("/c/admission")) {
+      url = getAccess(user, SIDEBAR_ITEMS.ADMISSIONS)
       setSidebarActiveItem(SIDEBAR_ITEMS.ADMISSIONS);
     }
-    else if(pathname.includes("/c/finance")){
+    else if (pathname.includes("/c/finance")) {
+      url = getAccess(user, SIDEBAR_ITEMS.FINANCE)
       setSidebarActiveItem(SIDEBAR_ITEMS.FINANCE);
     }
-    else if(pathname.includes("/c/academics")){
+    else if (pathname.includes("/c/academics")) {
+      url = getAccess(user, SIDEBAR_ITEMS.ACADEMICS)
       setSidebarActiveItem(SIDEBAR_ITEMS.ACADEMICS);
     }
-  },[pathname])
+    else if (pathname.includes("/c/student-repository")) {
+      url = getAccess(user, SIDEBAR_ITEMS.STUDENT_REPOSITORY)
+    }
+
+    setLoading(false)
+    if (url) {
+      return redirect(url);
+    }
+  }, [pathname])
 
   const handleClick = () => {
     setSidebarActiveItem(text);
@@ -94,20 +130,24 @@ export default function TechnoSidebarItem({
     if (onClick) onClick();
   };
 
-  const shouldShowExpanded = isLargeScreen ? hovered : false;
+  const shouldShowExpanded = isLargeScreen ? (hovered && expand) : false;
+
+  if (loading) {
+    <Loading />;
+  }
 
   return (
     <TooltipProvider>
+
       <Tooltip>
         <TooltipTrigger asChild>
           <div
-            className={`flex items-center transition-all duration-300 py-3 px-4 ease-in-out cursor-pointer ${
-              shouldShowExpanded
-                ? `justify-start gap-4 rounded-lg w-full ${isActive && `bg-[#FAFAFA] text-primary rounded-lg`}`
-                : isActive
-                  ? 'justify-start rounded-l-lg w-[145%] bg-[#FAFAFA] text-primary'
-                  : 'justify-center w-full'
-            }`}
+            className={`flex items-center transition-all duration-300 py-3 px-4 ease-in-out cursor-pointer ${shouldShowExpanded
+              ? `justify-start gap-4 rounded-lg w-full ${isActive && `bg-[#FAFAFA] text-primary rounded-lg`}`
+              : isActive
+                ? 'justify-start rounded-l-lg w-[145%] bg-[#FAFAFA] text-primary'
+                : 'justify-center w-full'
+              }`}
             onClick={handleClick}
           >
             <TechnoIcon className="transition-transform duration-100 ease-in-out">

@@ -67,8 +67,9 @@ export default function AdmissionsLandingPage() {
       meta: { align: 'center' },
       cell: ({ getValue }: CellContext<AdmissionTableRow, string>) => {
         const rawStatus = getValue<string>();
+        console.log(rawStatus, "get rwa")
         return (
-          <div className="text-primary font-semibold">{StepMapper[rawStatus]}</div>
+          <div className="text-primary font-semibold">wow</div>
         );
       }
     }

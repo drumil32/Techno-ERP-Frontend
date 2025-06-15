@@ -41,7 +41,7 @@ import {
 import { LuDownload, LuUpload } from 'react-icons/lu';
 import clsx from 'clsx';
 import useAuthStore from '@/stores/auth-store';
-import { UserRoles } from '@/types/enum';
+import { StepMapper, UserRoles } from '@/types/enum';
 import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
@@ -83,9 +83,8 @@ export const TruncatedCell = ({
       setIsTruncated(cellRef.current.scrollWidth > maxWidth);
     }
   }, [value, maxWidth]);
-
-  if (!value || value == '-' || value === 'N/A' || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip || tableName.includes("Ongoing Enquiry") || tableName.includes("Recent Admissions") || tableName.includes("Course Dues") || tableName.includes("Student Dues")) return <>{value}</>;
-
+  
+  if (!value || value == '-'|| value === "--" || value === 'N/A'  || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip || tableName.includes("Ongoing Enquiry") || tableName.includes("Recent Admissions") || tableName.includes("Course Dues") || tableName.includes("Student Dues")) return <>{value}</>;
 
   if (columnId === "remarks") {
     
@@ -307,7 +306,6 @@ export default function TechnoDataTable({
   onDateFilter,
   children,
 }: any) {
-
   const [globalFilter, setGlobalFilter] = useState<string>('');
   const [columnVisibility, setColumnVisibility] = useState({
     altPhoneNumber: false
@@ -602,9 +600,13 @@ export default function TechnoDataTable({
                       .map((cell: any, idx: number) => {
                         const isExcluded = nonClickableColumns.includes(cell.column.id);
                         const align = cell.column.columnDef.meta?.align || 'left';
-                        const cellValue = cell.getValue();
+                        let cellValue = cell.getValue();
                         const maxWidth = cell.column.columnDef.meta?.maxWidth;
                         const fixedWidth = cell.column.columnDef.meta?.fixedWidth;
+
+                        if(["Step_1","Step_2","Step_3","Step_4"].includes(cellValue)){
+                          cellValue = StepMapper[cellValue?.toString()]
+                        }
 
                         // Style for fixed width columns
                         const widthStyle = fixedWidth
@@ -646,7 +648,8 @@ export default function TechnoDataTable({
                                 </div>
                               ) : (
                                 <TruncatedCell
-                                  value={flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                  // value={flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                  value={cellValue}
                                   maxWidth={maxWidth}
                                   columnId={cell.column.id}
                                   tableName={tableName}

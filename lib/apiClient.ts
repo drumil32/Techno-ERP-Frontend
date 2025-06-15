@@ -1,5 +1,6 @@
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
+import { redirect } from 'next/navigation';
 import { toast } from 'sonner';
 
 type RequestParams = Record<string, string | number | boolean | undefined>;
