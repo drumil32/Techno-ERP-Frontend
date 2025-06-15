@@ -83,8 +83,10 @@ export const TruncatedCell = ({
       setIsTruncated(cellRef.current.scrollWidth > maxWidth);
     }
   }, [value, maxWidth]);
+
+  const value2 = cellRef.current?.innerText
   
-  if (!value || value == '-'|| value === "--" || value === 'N/A'  || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip || tableName.includes("Ongoing Enquiry") || tableName.includes("Recent Admissions") || tableName.includes("Course Dues") || tableName.includes("Student Dues")) return <>{value}</>;
+  if (!value || value == '-'|| value2 == "-" || value2 == "--" || value === "--" || value === 'N/A'  || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip || tableName.includes("Ongoing Enquiry") || tableName.includes("Recent Admissions") || tableName.includes("Course Dues") || tableName.includes("Student Dues")) return <>{value}</>;
 
   if (columnId === "remarks") {
     
@@ -648,8 +650,8 @@ export default function TechnoDataTable({
                                 </div>
                               ) : (
                                 <TruncatedCell
-                                  // value={flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                  value={cellValue}
+                                  value={flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                  // value={cellValue}
                                   maxWidth={maxWidth}
                                   columnId={cell.column.id}
                                   tableName={tableName}
