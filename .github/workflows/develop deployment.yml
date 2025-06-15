@@ -1,0 +1,50 @@
+name: Deploy to EC2 from develop
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.16.0'
+
+      - name: Install dependencies
+        run: npm install --force
+
+      - name: Build Next.js project
+        run: npm run build
+
+      - name: Archive production files
+        run: tar -czf deploy.tar.gz .next public package.json node_modules
+
+      - name: Upload archive to EC2
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "deploy.tar.gz"
+          target: "/home/ubuntu/ERP-Develop-Frontend"
+
+      - name: SSH to EC2, extract and restart
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /home/ubuntu/ERP-Develop-Frontend
+            rm -rf .next node_modules
+            tar -xzf deploy.tar.gz
+            rm deploy.tar.gz
+            pm2 reload ecosystem.config.js --only techno-development-frontend
