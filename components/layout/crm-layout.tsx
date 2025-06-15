@@ -32,7 +32,7 @@ const HEADER_ITEMS: HeaderItems = {
   ADMIN_TRACKER: {
     title: 'Admin Tracker',
     route: SITE_MAP.MARKETING.ADMIN_TRACKER,
-    requiredRoles: [UserRoles.ADMIN]
+    requiredRoles: [UserRoles.ADMIN, UserRoles.LEAD_MARKETING]
   }
 };
 
