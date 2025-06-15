@@ -267,7 +267,8 @@ export default function AllCoursesPage() {
   ];
 
   const getFiltersData = () => {
-    const academicYearOptions: FilterOption[] = generateAcademicYearDropdown().map(
+    
+    const academicYearOptions: FilterOption[] = generateAcademicYearDropdown(0,1).map(
       (year: string) => ({
         label: year,
         id: year

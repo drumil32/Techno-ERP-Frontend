@@ -53,7 +53,10 @@ export const academicDetailBaseSchema = z.object({
     .refine((year) => year.toString().length === 4, {
       message: 'Passing Year must be a valid 4-digit year'
     }), // Keep refinements for when value is present
-  percentageObtained: z.number().optional(), // Keep refinements for when value is present
+  percentageObtained: z
+    .number()
+    .min(0, 'Percentage must be at least 0')
+    .max(100, 'Percentage cannot exceed 100').optional(), // Keep refinements for when value is present
   subjects: z
     .string()
     .nonempty('Subject name is required') // Validate inner string if array present
@@ -132,35 +135,35 @@ export enum Nationality {
   // STATELESS = 'STATELESS'
 }
 
+export enum AdmittedThrough {
+  DIRECT = 'Direct',
+  COUNSELLING = 'Counselling'
+}
+
 export const enquirySchema = z.object({
   _id: z.string().optional(),
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
   dateOfEnquiry: requestDateSchema.optional(),
   studentName: z
     .string({ required_error: 'Student Name is required' })
-    .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
     .nonempty('Student Name is required'),
   studentPhoneNumber: contactNumberSchema,
   emailId: z
     .string()
     .email('Invalid email format')
-    .nonempty('Email is required'),
+    .optional(),
   fatherName: z
     .string({ required_error: 'Father Name is required' })
     .nonempty("Father's Name is required"),
   fatherPhoneNumber: contactNumberSchema,
   fatherOccupation: z
-    .string({ required_error: 'Father occupation is required' })
-    .regex(/^[A-Za-z\s]+$/, 'Father occupation must only contain alphabets and spaces')
-    .nonempty('Father occupation is required'),
+    .string({ required_error: 'Father occupation is required' }),
   motherName: z
     .string({ required_error: "Mother's Name is required" })
     .nonempty("Mother's Name is required"),
   motherPhoneNumber: contactNumberSchema.optional(),
   motherOccupation: z
-    .string({ required_error: 'Mother occupation is required' })
-    .regex(/^[A-Za-z\s]+$/, 'Mother occupation must only contain alphabets and spaces')
-    .nonempty('Mother occupation is required'),
+    .string().optional(),
   gender: z.nativeEnum(Gender),
   dateOfBirth: requestDateSchema,
   category: z.nativeEnum(Category),
@@ -204,13 +207,16 @@ export const enquirySchema = z.object({
   entranceExamDetails: entranceExamDetailSchema.optional(),
   admittedBy: z.union([z.string(), z.enum(['other'])]).optional(),
   isFeeApplicable: z.boolean().default(true).optional(),
-  srAmount: z.number().min(0).optional()
+  srAmount: z.number().min(0).optional(),
+  admittedThrough: z.nativeEnum(AdmittedThrough).default(AdmittedThrough.DIRECT)
 });
 
 export enum Qualification {
   Yes = 'Yes',
   No = 'No'
 }
+
+
 
 export const enquiryStep1RequestSchema = enquirySchema
   .omit({
@@ -253,14 +259,17 @@ export const enquiryDraftStep3Schema = enquiryStep3UpdateRequestSchema
     academicDetails: academicDetailsPartialArraySchema.optional(),
     studentName: z
       .string({ required_error: 'Student Name is required' })
-      .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
       .nonempty('Student Name is required'),
+    emailId: z
+      .string()
+      .optional(),
     studentPhoneNumber: contactNumberSchema,
     counsellor: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     telecaller: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     dateOfAdmission: requestDateSchema,
     dateOfBirth: requestDateSchema.optional(),
-    entranceExamDetails: entranceExamDetailSchema.partial().optional()
+    entranceExamDetails: entranceExamDetailSchema.partial().optional(),
+    admittedThrough: z.nativeEnum(AdmittedThrough).default(AdmittedThrough.DIRECT)
   })
   .strict();
 
@@ -268,7 +277,6 @@ export const enquiryDraftStep1RequestSchema = enquiryStep1RequestSchema
   .extend({
     studentName: z
       .string({ required_error: 'Student Name is required' })
-      .regex(/^[A-Za-z\s]+$/, 'Student Name must only contain alphabets and spaces')
       .nonempty('Student Name is required'),
     studentPhoneNumber: contactNumberSchema,
 

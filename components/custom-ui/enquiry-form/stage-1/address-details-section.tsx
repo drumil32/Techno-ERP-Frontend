@@ -91,7 +91,7 @@ const AddressDetailsSection: React.FC<AddressDetailsSectionInterface> = ({
                 render={({ field }) => (
                   <FormItem className={`col-span-2 gap-x-2 gap-y-0`}>
                     <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
-                      Address Line 2<span className="text-red-500 pl-0">*</span>
+                      Address Line 2
                     </FormLabel>
                     <FormControl>
                       <Input

@@ -28,6 +28,7 @@ import { FaCircleExclamation } from 'react-icons/fa6';
 import { downloadStep4 } from './helpers/download-pdf';
 import { useQuery } from '@tanstack/react-query';
 import { getEnquiry } from '../stage-1/enquiry-form-api';
+import { fetchDataForAdmissionFeeReceipt } from '@/components/layout/admissions/helpers/fetch-data';
 
 export function DownloadStep4({
   tableActionButton = true, 
@@ -36,20 +37,6 @@ export function DownloadStep4({
   tableActionButton?: boolean; 
   studentId: string;
 }) {
-
-  const [dataUpdated, setDataUpdated] = useState(true);
-
-  const {
-      data: enquiryData,
-      error,
-      isFetched,
-      isLoading: isLoadingEnquiry
-    } = useQuery<any>({
-      queryKey: ['enquireFormData', studentId, dataUpdated],
-      queryFn: () => (studentId ? getEnquiry(studentId) : Promise.reject('Enquiry ID is null')),
-      enabled: !!studentId,
-      refetchOnWindowFocus: false
-    });
 
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -67,9 +54,11 @@ export function DownloadStep4({
       setIsLoading(true);
       setPdfDataUrl(null);
       try {
-        if (enquiryData) {
-          const sendData = {...enquiryData}
-          const { url, fileName } = await downloadStep4(sendData);
+        const res  = await getEnquiry(studentId);
+        const feeReciptData = await fetchDataForAdmissionFeeReceipt({studentId})
+        if (res && feeReciptData) {
+          const data = {...res, ...feeReciptData}
+          const { url, fileName } = await downloadStep4(data);
           if (fileName) setFileName(fileName);
           if (url) setPdfDataUrl(url);
           else toast.error('Error in showing preview.');

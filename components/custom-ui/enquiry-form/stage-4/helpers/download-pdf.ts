@@ -24,6 +24,9 @@ export const downloadStep4 = async (
   data: any,
   directSave: boolean = false
 ): Promise<{ url: string; fileName: string }> => {
+
+  console.log("data is ",data)
+
   const container = document.createElement('div');
   container.style.width = '794px'; // A4 width in pixels (210mm)
   container.style.minHeight = '1123px'; // A4 height in pixels (297mm)
@@ -341,8 +344,8 @@ export const downloadStep4 = async (
             ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}
           </p>
           <p style="font-size: 8px; margin: 0; color: ${secondaryText};">
-            Email: ${escapeHtml(data.clgEmail ?? 'registrar@tims.edu.in')} | 
-            Contact: ${escapeHtml(data.clgContactNumber ?? '9839506777')}
+            Email: ${escapeHtml(data.collegeFeeEmail ?? 'registrar@tims.edu.in')} | 
+            Contact: ${escapeHtml(data.collegeFeeContactNumber  ?? '9839506777')}
           </p>
         </div>
       </div>
@@ -369,26 +372,35 @@ export const downloadStep4 = async (
       ">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 9px;">
           <!-- Row 1 -->
-          <div style="display: flex; gap: 5px;">
-            <div style="color: ${secondaryText}; min-width: 80px;">Name:</div>
+          <div style="display: flex; ">
+            <div style="color: ${secondaryText}; min-width: 70px;">Student Name:</div>
             <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.studentName)}</div>
           </div>
-          <div style="display: flex; gap: 5px;">
-            <div style="color: ${secondaryText}; min-width: 80px;">Category:</div>
-            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.category)}</div>
+          <div style="display: flex; ">
+            <div style="color: ${secondaryText}; min-width: 75px;">Student Number:</div>
+            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.studentPhoneNumber)}</div>
           </div>
           
           <!-- Row 2 -->
-          <div style="display: flex; gap: 5px;">
-            <div style="color: ${secondaryText}; min-width: 80px;">Father Name:</div>
+          <div style="display: flex;">
+            <div style="color: ${secondaryText}; min-width: 68px;">Father Name:</div>
             <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.fatherName)}</div>
           </div>
-          <div style="display: flex; gap: 5px;">
-            <div style="color: ${secondaryText}; min-width: 80px;">Course:</div>
-            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.course)}</div>
+          <div style="display: flex;">
+            <div style="color: ${secondaryText}; min-width: 75px;">Father Number:</div>
+            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.fatherPhoneNumber)}</div>
           </div>
           
           <!-- Row 3 -->
+          <div style="display: flex; ">
+            <div style="color: ${secondaryText}; min-width: 68px;">Category:</div>
+            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.category)}</div>
+          </div>
+          <div style="display: flex;">
+            <div style="color: ${secondaryText}; min-width: 75px;">Course:</div>
+            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.course)}</div>
+          </div>
+
           
         </div>
       </div>

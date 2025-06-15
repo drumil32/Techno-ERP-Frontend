@@ -24,7 +24,8 @@ const SingleSemesterDetailsSection: React.FC<SingleSemesterDetailsFormPropInterf
   semesterNo,
   semester
 }) => {
-  const hasSubjects = semester?.subjects && semester.subjects.length > 0;
+  // const hasSubjects = semester?.subjects && semester.subjects.length > 0;
+  const hasSubjects = true;
 
   const subjects: Subject[] = [
     {

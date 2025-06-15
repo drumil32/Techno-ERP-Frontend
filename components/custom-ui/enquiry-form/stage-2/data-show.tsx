@@ -3,6 +3,7 @@ import { AffiliationMapper, CollegeNameMapper, Course, CourseNameMapper } from '
 import { User, Phone, Users, BookOpen, School, ShieldCheck } from 'lucide-react';
 
 export default function ShowStudentData({ data }: { data: Admission }) {
+  console.log(data, " default data")
   return (
     <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
       <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-100">
@@ -68,7 +69,7 @@ export default function ShowStudentData({ data }: { data: Admission }) {
             <div>
               <p className="text-sm font-medium text-gray-500">College Name</p>
               <p className="text-base font-medium text-gray-800 mt-1">
-                {data?.course ? CollegeNameMapper[data.course] : 'N/A'}
+                {data?.collegeName ? data.collegeName : 'N/A'}
               </p>
             </div>
           </div>
@@ -82,7 +83,7 @@ export default function ShowStudentData({ data }: { data: Admission }) {
             <div>
               <p className="text-sm font-medium text-gray-500">Affiliation</p>
               <p className="text-base font-medium text-gray-800 mt-1">
-                {data?.course ? AffiliationMapper[data.course] : 'N/A'}
+                {data?.affiliation ? data.affiliation : 'N/A'}
               </p>
             </div>
           </div>

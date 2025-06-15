@@ -71,6 +71,12 @@ export default function RecentAdmissionsPage() {
       </div>
     },
     // {
+    //   id: "admission",
+    //   header: '',
+    //   meta: { align: 'center' },
+    //   cell: ({ row }: any) => <DownloadAdmissionReceiptDialog studentId={row.original._id} />
+    // },
+    // {
     //   id: 'receipt',
     //   header: '',
     //   meta: { align: 'center' },
@@ -127,7 +133,7 @@ export default function RecentAdmissionsPage() {
 
       <TechnoDataTable
         selectedRowId={selectedRowId}
-        setSelectedRowId={setSelectedRowId}
+        // setSelectedRowId={setSelectedRowId}
         columns={columns}
         data={admissionsData}
         tableName={`Recent Admissions (${Object.values(admissionsData).length}) `}
@@ -138,7 +144,7 @@ export default function RecentAdmissionsPage() {
         handleViewMore={() => { }}
         searchTerm={search}
         showPagination={false}
-        tableActionButton={<TableActionButton/>}
+        tableActionButton={<TableActionButton />}
       />
     </>
   );
@@ -152,18 +158,6 @@ export function TableActionButton() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [selectedSheet, setSelectedSheet] = useState<string | null>(null);
 
-  const results = useQueries({
-        queries: [
-          {
-            queryKey: ['telecallers'],
-            queryFn: getTeleCallers
-          },
-          {
-            queryKey: ['counsellors'],
-            queryFn: getCounsellors
-          }
-        ]
-      });
 
   const uploadAction = async () => {
     setIsUploading(true);
@@ -172,22 +166,6 @@ export function TableActionButton() {
   const downloadAction = async () => {
     setIsDownloading(true);
     try {
-
-
-      
-
-      const telecallers: { _id: string; name: string }[] = Array.isArray(results[0].data)
-        ? results[0].data.map((name: string) => ({ _id: name, name }))
-        : [];
-
-      const counsellors: { _id: string; name: string }[] = Array.isArray(results[1].data)
-        ? results[1].data.map((name: string) => ({ _id: name, name }))
-        : [];
-
-      const references: { _id: string; name: string }[] = Object.values(AdmissionReference).map(
-        (ref) => ({ _id: ref, name: ref })
-      );
-
 
       const response = await fetch(API_ENDPOINTS.admissionExcelSheetData, {
         method: 'GET',
@@ -198,7 +176,12 @@ export function TableActionButton() {
       const userName = authStore.user?.name ?? 'user';
       const dateStr = format(new Date(), 'dd-MM-yyyy');
 
-      const excelData =  Array.from(addmissionData.DATA).map((enq: any, index: number) => {
+      const excelData = Array.from(addmissionData.DATA).map((enq: any, index: number) => {
+        const avaliableReferences = enq?.references
+
+        const avaliableTelecallers = enq?.telecaller
+
+        const avaliableCounsellors = enq?.counsellor
         return {
           "S.No": index + 1,
           "Admission Date": enq.dateOfAdmission,
@@ -206,30 +189,164 @@ export function TableActionButton() {
           "Course": enq.course,
           "Form No.": enq.formNo,
           "Name of Student": enq.studentName,
-          "Father's Name" : enq.fatherName,
-          "Mother's Name" : enq.motherName,
-          "Address" : enq.address.addressLine1,
-          "District" :enq.address.district,
-          "Pincode" : enq.address.pincode,
-          "State" : enq.address.state,
-          "Country" : enq.address.country,
-          "Aadhaar Number" : enq.aadharNumber,
-          "Date of Birth" : enq.dateOfBirth,
-          "Student's Number" : enq.studentName,
-          "Father's Number" : enq.fatherName,
-          "Email" : enq.emailId,
-          "Gender" : enq.gender,
-          "Religion" : enq.religion,
+          "Father's Name": enq.fatherName,
+          "Mother's Name": enq.motherName,
+          "Address": enq.address.addressLine1 + ", " + enq.address.district + ", " + enq.address.state + ", " + enq.address.country + ", " + enq.address.pincode,
+          "District": enq.address.district,
+          "Pincode": enq.address.pincode,
+          "State": enq.address.state,
+          "Country": enq.address.country,
+          "Aadhaar Number": enq.aadharNumber,
+          "Date of Birth": enq.dateOfBirth,
+          "Student's Number": enq.studentPhoneNumber,
+          "Father's Number": enq.fatherPhoneNumber,
+          "Email": enq.emailId,
+          "Gender": enq.gender,
+          "Religion": enq.religion,
+          "Blood Group": enq.bloodGroup,
+          "Category": enq.category,
+          "10th": enq?.academicDetails?.[0]?.educationLevel === "10th"
+            ? `School/Collage Name: ${enq.academicDetails[0].schoolCollegeName || 'N/A'}\n` +
+            `University/Board Name: ${enq.academicDetails[0].universityBoardName || 'N/A'}\n` +
+            `Passing Year: ${enq.academicDetails[0].passingYear || 'N/A'}\n` +
+            `Percentage Obtained: ${enq.academicDetails[0].PercentageObtained || 'N/A'}\n` +
+            `Mention Subjects: ${enq.academicDetails[0].subjects || 'N/A'}`
+            : '',
+
+          "12th": enq?.academicDetails?.[1]?.educationLevel === "12th"
+            ? `School/Collage Name: ${enq.academicDetails[1].schoolCollegeName || 'N/A'}\n` +
+            `University/Board Name: ${enq.academicDetails[1].universityBoardName || 'N/A'}\n` +
+            `Passing Year: ${enq.academicDetails[1].passingYear || 'N/A'}\n` +
+            `Percentage Obtained: ${enq.academicDetails[1].PercentageObtained || 'N/A'}\n` +
+            `Mention Subjects: ${enq.academicDetails[1].subjects || 'N/A'}`
+            : '',
+
+          "Graduation": enq?.academicDetails?.[2]?.educationLevel === "Graduation"
+            ? `School/Collage Name: ${enq.academicDetails[2].schoolCollegeName || 'N/A'}\n` +
+            `University/Board Name: ${enq.academicDetails[2].universityBoardName || 'N/A'}\n` +
+            `Passing Year: ${enq.academicDetails[2].passingYear || 'N/A'}\n` +
+            `Percentage Obtained: ${enq.academicDetails[2].PercentageObtained || 'N/A'}\n` +
+            `Mention Stream: ${enq.academicDetails[2].subjects || 'N/A'}`
+            : '',
+
+          "Doc 1": enq.physicalDocumentNote?.[0]?.type === "10th Marksheet" ?
+            `Name: ${enq.physicalDocumentNote?.[0].type || 'N/A'}\n` +
+            `Staus: ${enq.physicalDocumentNote?.[0].status}\n`
+            : '',
+
+          "Due Date 1": enq.physicalDocumentNote?.[0]?.type === "10th Marksheet" ?
+            `${enq.physicalDocumentNote?.[0].dueBy || 'N/A'}\n`
+            : '',
+
+          "Doc 2": enq.physicalDocumentNote?.[1]?.type === "12th Marksheet" ?
+            `Name: ${enq.physicalDocumentNote?.[1].type || 'N/A'}\n` +
+            `Staus: ${enq.physicalDocumentNote?.[1].status}\n`
+            : '',
+
+          "Due Date 2": enq.physicalDocumentNote?.[1]?.type === "12th Marksheet" ?
+            `${enq.physicalDocumentNote?.[1].dueBy || 'N/A'}\n`
+            : '',
+
+          "Doc 3": enq.physicalDocumentNote?.[2]?.type === "T.C. / Migration" ?
+            `Name: ${enq.physicalDocumentNote?.[2].type || 'N/A'}\n` +
+            `Staus: ${enq.physicalDocumentNote?.[2].status}\n`
+            : '',
+
+          "Due Date 3": enq.physicalDocumentNote?.[2]?.type === "T.C. / Migration" ?
+            `${enq.physicalDocumentNote?.[2].dueBy || 'N/A'}\n`
+            : '',
+
+          "Doc 4": enq.physicalDocumentNote?.[3]?.type === "Gap Affidavit (If Applicable)" ?
+            `Name: ${enq.physicalDocumentNote?.[3].type || 'N/A'}\n` +
+            `Staus: ${enq.physicalDocumentNote?.[3].status}\n`
+            : '',
+
+          "Due Date 4": enq.physicalDocumentNote?.[3]?.type === "Gap Affidavit (If Applicable)" ?
+            `${enq.physicalDocumentNote?.[3].dueBy || 'N/A'}\n`
+            : '',
+
+          "Doc 5": enq.physicalDocumentNote?.[4]?.type === "Caste Certificate (If Applicable)" ?
+            `Name: ${enq.physicalDocumentNote?.[4].type || 'N/A'}\n` +
+            `Staus: ${enq.physicalDocumentNote?.[4].status}\n`
+            : '',
+
+          "Due Date 5": enq.physicalDocumentNote?.[4]?.type === "Caste Certificate (If Applicable)" ?
+            `${enq.physicalDocumentNote?.[4].dueBy || 'N/A'}\n`
+            : '',
+
+          "Source Reference": avaliableReferences?.map((ref: any) => ref).join(", "),
+          "Telecaller(s)": avaliableTelecallers?.map((tel: any) => tel).join(", "),
+          "COUNSELLOR(S)": avaliableCounsellors?.map((col: any) => col).join(", "),
+
+          "Remark - Enquiry": enq.enquiryRemark,
+          "Remark - Fees Details": enq.feeDetailsRemark,
+          "Remark - Registrar Office": enq.registarOfficeRemark,
+          "Remark - Finance": enq.financeOfficeRemark,
+          "Applicable Fees": (enq.applicableFee ?? 0),
+          "Final Fees": (enq.finalFee ?? 0),
+          "Discount Applicable": (enq.discountApplicable ?? 0),
+          "TOTAL DISCOUNT": (enq.totalDiscountApplicable ?? 0),
+          "REFERENCE AMOUNT": (enq.srAmount ?? 0),
         }
       })
 
 
       const worksheet = XLSX.utils.json_to_sheet(excelData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'enquiry-excel');
+      worksheet['!cols'] = [
+        { wch: 5 },   // S.No
+        { wch: 15 },  // Admission Date
+        { wch: 10 },  // Photo No.
+        { wch: 20 },  // Course
+        { wch: 10 },  // Form No.
+        { wch: 25 },  // Name of Student
+        { wch: 25 },  // Father's Name
+        { wch: 25 },  // Mother's Name
+        { wch: 40 },  // Address
+        { wch: 15 },  // District
+        { wch: 10 },  // Pincode
+        { wch: 15 },  // State
+        { wch: 15 },  // Country
+        { wch: 15 },  // Aadhaar Number
+        { wch: 15 },  // Date of Birth
+        { wch: 15 },  // Student's Number
+        { wch: 15 },  // Father's Number
+        { wch: 25 },  // Email
+        { wch: 10 },  // Gender
+        { wch: 15 },  // Religion
+        { wch: 15 },  // Blood Group
+        { wch: 15 },  // Category
+        { wch: 40 },  // 10th
+        { wch: 40 },  // 12th
+        { wch: 40 },  // Graduation
+        { wch: 20 },  // Doc 1
+        { wch: 15 },  // Due Date 1
+        { wch: 20 },  // Doc 2
+        { wch: 15 },  // Due Date 2
+        { wch: 20 },  // Doc 3
+        { wch: 15 },  // Due Date 3
+        { wch: 20 },  // Doc 4
+        { wch: 15 },  // Due Date 4
+        { wch: 20 },  // Doc 5
+        { wch: 15 },  // Due Date 5
+        { wch: 20 },  // Source Reference
+        { wch: 20 },  // Telecaller(s)
+        { wch: 20 },  // COUNSELLOR(S)
+        { wch: 30 },  // Remark - Enquiry
+        { wch: 30 },  // Remark - Fees Details
+        { wch: 30 },  // Remark - Registrar Office
+        { wch: 30 },  // Remark - Finance
+        { wch: 15 },  // Applicable Fees
+        { wch: 15 },  // Final Fees
+        { wch: 20 },  // Discount Applicable
+        { wch: 15 },  // TOTAL DISCOUNT
+        { wch: 15 }   // REFERENCE AMOUNT
+      ];
 
-      XLSX.writeFile(workbook, `${userName}-${dateStr}-enquiry-excel-sheet.xlsx`);
-    
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'admission-excel');
+
+      XLSX.writeFile(workbook, `${dateStr} - Recent Admissions.xlsx`);
+
       toast.success('Marketing Data Downloaded Successfully');
       setDownloadOpen(false);
     } catch (error) {

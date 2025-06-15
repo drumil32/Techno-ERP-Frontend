@@ -7,7 +7,8 @@ export const otherFeesSchema = z.object({
   feeAmount: z.number().min(0, '').optional().nullable(),
   finalFee: z.number().min(0, '').optional().nullable(),
   feesDepositedTOA: z.number().min(0, '').optional().nullable(),
-  remarks: z.string().optional().nullable()
+  remarks: z.string().optional().nullable(),
+  amount : z.number().optional()
 });
 
 export const requiredOtherFeesSchema = otherFeesSchema
