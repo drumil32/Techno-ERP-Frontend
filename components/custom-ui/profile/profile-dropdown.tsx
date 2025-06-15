@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, JSX } from 'react';
 import {
   LogOut,
   Crown,
@@ -23,20 +23,23 @@ import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const RoleBadge = ({ role }: { role: UserRoles }) => {
-  const roleStyles = {
+  const roleStyles: Record<UserRoles, string> = {
     [UserRoles.ADMIN]: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
     [UserRoles.LEAD_MARKETING]: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-    [UserRoles.EMPLOYEE_MARKETING]:
-      'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+    [UserRoles.EMPLOYEE_MARKETING]: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
     [UserRoles.BASIC_USER]: 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200',
     [UserRoles.COUNSELOR]: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200',
     [UserRoles.REGISTAR]: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
     [UserRoles.HOD]: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
     [UserRoles.INSTRUCTOR]: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200',
-    [UserRoles.SYSTEM_ADMIN]: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
+    [UserRoles.SYSTEM_ADMIN]: 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200',
+    [UserRoles.STUDENT]: '',
+    [UserRoles.FINANCE]: '',
+    [UserRoles.FRONT_DESK]: '',
+    [UserRoles.LAMBDA_FUNCTION]: ''
   };
 
-  const roleIcons = {
+  const roleIcons: Record<UserRoles, JSX.Element> = {
     [UserRoles.ADMIN]: <Crown className="h-3 w-3" />,
     [UserRoles.LEAD_MARKETING]: <ArrowUpRight className="h-3 w-3" />,
     [UserRoles.EMPLOYEE_MARKETING]: <Briefcase className="h-3 w-3" />,
@@ -45,7 +48,11 @@ const RoleBadge = ({ role }: { role: UserRoles }) => {
     [UserRoles.REGISTAR]: <ClipboardList className="h-3 w-3" />,
     [UserRoles.HOD]: <GraduationCap className="h-3 w-3" />,
     [UserRoles.INSTRUCTOR]: <School className="h-3 w-3" />,
-    [UserRoles.SYSTEM_ADMIN]: <Server className="h-3 w-3" />
+    [UserRoles.SYSTEM_ADMIN]: <Server className="h-3 w-3" />,
+    [UserRoles.STUDENT]: <></>,
+    [UserRoles.FINANCE]: <></>,
+    [UserRoles.FRONT_DESK]: <></>,
+    [UserRoles.LAMBDA_FUNCTION]: <></>
   };
 
   const formattedRole = role
