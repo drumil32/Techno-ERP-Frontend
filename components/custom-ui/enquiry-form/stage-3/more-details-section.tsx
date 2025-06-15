@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
 import { Nationality, Qualification } from '../schema/schema';
 import {
+  AdmittedThrough,
   AreaType,
   BloodGroup,
   Category,
@@ -72,7 +73,7 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
         religion: true,
         category: true,
         bloodGroup: true,
-        aadharNumber: true
+        aadharNumber: true,
       })
       .safeParse(moreDetails);
 
@@ -290,6 +291,38 @@ const MoreDetailsSection: React.FC<MoreDetailsSectionInterface> = ({
                               {category}
                             </SelectItem>
                           ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <div className="h-[20px]">
+                      <FormMessage className="text-[11px]" />
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                key="admittedThrough"
+                control={form.control}
+                name="admittedThrough"
+                render={({ field }) => (
+                  <FormItem className={`${commonFormItemClass} col-span-1`}>
+                    <FormLabel className="font-inter font-semibold text-[14px] text-primary">
+                      Admitted Through
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => field.onChange(value)}
+                        value={
+                          field.value
+                        }
+                      >
+                        <SelectTrigger className={`${commonFieldClass} w-full`}>
+                          <SelectValue  defaultValue={"Direct"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Direct">Direct</SelectItem>
+                          <SelectItem value="Counselling">Counselling</SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>

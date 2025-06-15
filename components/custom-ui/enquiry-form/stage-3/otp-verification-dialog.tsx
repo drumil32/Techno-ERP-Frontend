@@ -79,7 +79,6 @@ export function OtpVerificationDialog({
     setIsSubmitting(true);
     try {
       const response = await verifyOtp(enquiryId, otp);
-
       toast.success('OTP verified successfully!');
       onSuccess();
       onOpenChange(false);

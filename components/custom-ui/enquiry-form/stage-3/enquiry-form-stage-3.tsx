@@ -18,7 +18,7 @@ import { Form } from '@/components/ui/form';
 import EnquiryFormFooter from '../stage-1/enquiry-form-footer-section';
 import AcademicDetailsSectionStage3 from './academic-details-section';
 import StudentDetailsSectionStage3 from './student-details-section';
-import AddressDetailsSectionStage3 from './address-details-section';
+// import AddressDetailsSectionStage3 from './address-details-section';
 import ConfirmationCheckBoxStage3 from './acknowledgement-section';
 import EntranceExamDetailsSection from './entrance-exam-details-section';
 import MoreDetailsSection from './more-details-section';
@@ -34,7 +34,7 @@ import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 
 // Utility and type imports
 import { format } from 'date-fns';
-import { ApplicationStatus, EducationLevel, StatesOfIndia } from '@/types/enum';
+import { AdmittedThrough, ApplicationStatus, EducationLevel, StatesOfIndia } from '@/types/enum';
 import { Admission } from '@/types/admissions';
 import { toast } from 'sonner';
 import { filterBySchema, removeNullValues } from '@/lib/utils';
@@ -45,6 +45,7 @@ import { EnquiryDocument } from './documents-section/single-document-form';
 import DocumentVerificationSection from './document-verification';
 import { OtpVerificationDialog } from './otp-verification-dialog';
 import FilledByCollegeSection from '../stage-1/filled-by-college-section';
+import AddressDetailsSection from '../stage-1/address-details-section';
 
 export const formSchemaStep3 = z.object(enquiryStep3UpdateRequestSchema.shape).extend({
   confirmation: z.boolean().refine((value) => value === true, {
@@ -90,10 +91,11 @@ const EnquiryFormStage3 = () => {
       stateOfDomicile: StatesOfIndia.UttarPradesh,
       nationality: Nationality.INDIAN,
       srAmount: data?.srAmount || 0,
-      telecaller :data?.telecaller,
-      registarOfficeRemark : '',
+      telecaller: data?.telecaller,
+      registarOfficeRemark: '',
       enquiryRemark: data?.enquiryRemark || "",
-      feeDetailsRemark: data?.feeDetailsRemark || ""
+      feeDetailsRemark: data?.feeDetailsRemark || "",
+      admittedThrough: AdmittedThrough.DIRECT
     },
     disabled: isViewable
   });
@@ -103,6 +105,9 @@ const EnquiryFormStage3 = () => {
     const documentNotes = values.physicalDocumentNote || [];
 
     values = removeNullValues(values);
+    if (!values.admittedThrough) {
+      values.admittedThrough = AdmittedThrough.DIRECT
+    }
     values.physicalDocumentNote = documentNotes.map((note) => ({
       type: note.type,
       status: note.status,
@@ -186,6 +191,27 @@ const EnquiryFormStage3 = () => {
     try {
       let values = form.getValues();
       values = removeNullValues(values);
+      const email = values.emailId;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!email) {
+        form.setError('emailId', {
+          type: 'manual',
+          message: 'Email is required'
+        });
+        toast.error('Please enter your email address.');
+        return false;
+      }
+
+      if (!emailRegex.test(email)) {
+        form.setError('emailId', {
+          type: 'manual',
+          message: 'Invalid email format'
+        });
+        toast.error('Please enter a valid email address.');
+        return false;
+      }
+
       const filteredData = filterBySchema(formSchemaStep3, values);
 
       if (currentDocuments.length !== 2) {
@@ -270,6 +296,24 @@ const EnquiryFormStage3 = () => {
   useEffect(() => {
     if (data) {
       const sanitizedData = removeNullValues(data);
+      
+      const levels = ["10th", "12th", "Graduation"];
+      const academicMap = new Map();
+
+      // First, build a map of existing levels
+      if (Array.isArray((sanitizedData as any).academicDetails)) {
+        for (const entry of (sanitizedData as any).academicDetails) {
+          academicMap.set(entry.educationLevel, entry);
+        }
+      }
+
+      // Ensure fixed positions for 10th, 12th, Graduation
+      let academicDetails = levels.map((level) => {
+        return academicMap.get(level) || { educationLevel: level };
+      });
+
+      // Save back the updated list
+      (sanitizedData as any).academicDetails = academicDetails;
 
       form.reset({
         ...sanitizedData,
@@ -277,8 +321,10 @@ const EnquiryFormStage3 = () => {
         id: id,
         confirmation: false,
         enquiryRemark: sanitizedData.enquiryRemark || "",
-        feeDetailsRemark : sanitizedData.feeDetailsRemark || "",
-        registarOfficeRemark: sanitizedData.registarOfficeRemark || ""
+        feeDetailsRemark: sanitizedData.feeDetailsRemark || "",
+        registarOfficeRemark: sanitizedData.registarOfficeRemark || "",
+        admittedThrough: sanitizedData.admittedThrough || AdmittedThrough.DIRECT,
+        academicDetails: academicDetails
       });
     }
   }, [data, form, id, refreshKey, isLoading, isFetching]);
@@ -356,7 +402,7 @@ const EnquiryFormStage3 = () => {
             setCurrentDocuments={setCurrentDocuments}
           />
           {/* Address details */}
-          <AddressDetailsSectionStage3
+          <AddressDetailsSection
             form={form}
             isViewable={isViewable}
             commonFieldClass={commonFieldClass}

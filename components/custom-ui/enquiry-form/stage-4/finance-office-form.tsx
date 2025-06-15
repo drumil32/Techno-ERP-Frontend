@@ -136,9 +136,9 @@ const FinanceOfficeForm = () => {
       feesClearanceDate: null,
       counsellor: [],
       telecaller: [],
-      financeOfficeRemark : enquiryData?.financeOfficeRemark  || '',
-      registarOfficeRemark : enquiryData?.registarOfficeRemark,
-      feeDetailsRemark : enquiryData?.feeDetailsRemark,
+      financeOfficeRemark: enquiryData?.financeOfficeRemark || '',
+      registarOfficeRemark: enquiryData?.registarOfficeRemark,
+      feeDetailsRemark: enquiryData?.feeDetailsRemark,
       enquiryRemark: enquiryData?.enquiryRemark,
       confirmationCheck: false,
       isFeeApplicable: true,
@@ -231,6 +231,7 @@ const FinanceOfficeForm = () => {
       } else {
         initialFeesClearanceDate = format(new Date(), 'dd/MM/yyyy');
       }
+      console.log("data ", enquiryData)
       form.reset({
         enquiryId: enquiry_id,
         otherFees: initialOtherFees,
@@ -241,9 +242,9 @@ const FinanceOfficeForm = () => {
         telecaller: initialTelecallers,
         isFeeApplicable: enquiryData.isFeeApplicable,
         financeOfficeRemark: initialCollegeRemarks,
-        enquiryRemark : enquiryData.enquiryRemark,
-        registarOfficeRemark : enquiryData.registarOfficeRemark,
-        feeDetailsRemark : enquiryData.feeDetailsRemark,
+        enquiryRemark: enquiryData.enquiryRemark,
+        registarOfficeRemark: enquiryData.registarOfficeRemark,
+        feeDetailsRemark: enquiryData.feeDetailsRemark,
         srAmount: enquiryData.srAmount
       });
     } else if (error) {
@@ -260,7 +261,7 @@ const FinanceOfficeForm = () => {
       const baseOriginal = otherFeesData.reduce((sum, fee) => {
         const isExcluded =
           fee.type === displayFeeMapper(FeeType.TRANSPORT) ||
-          fee.type === displayFeeMapper(FeeType.HOSTEL);
+          fee.type === displayFeeMapper(FeeType.HOSTELYEARLY);
 
         if (isExcluded) {
           return sum;
@@ -342,12 +343,12 @@ const FinanceOfficeForm = () => {
 
       const validatedDataForCleaning = validationResult.data;
       const cleanedData = cleanDataForDraft(validatedDataForCleaning);
-      
+
 
       const finalPayLoad: any = {
         id: recordId,
         ...cleanedData,
-        financeOfficeRemark : values.financeOfficeRemark
+        financeOfficeRemark: values.financeOfficeRemark
       };
 
       await updateEnquiryStep4(finalPayLoad);
@@ -445,8 +446,8 @@ const FinanceOfficeForm = () => {
               <hr className="flex-1 border-t border-[#DADADA] ml-2" />
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
-              <div className="w-full xl:w-2/3 space-y-2">
-                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold p-3 sm:p-4 grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-x-2 sm:gap-x-3 gap-y-2 rounded-[5px] text-sm sm:text-base">
+              <div className="w-full xl:w-2/3 space-y-1">
+                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold px-3 py-2 grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-x-2 sm:gap-x-3 gap-y-2 rounded-[5px] text-sm sm:text-base">
                   <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Fees Details</div>
                   <div className="text-left">Schedule</div>
                   <div className="text-left">Fees</div>
@@ -460,13 +461,12 @@ const FinanceOfficeForm = () => {
                   {otherFeesFields.map((field, index) => {
                     const feeType = form.getValues(`otherFees.${index}.type`);
                     const originalFeeData = otherFeesData?.find((fee: any) =>
-                      fee.type === FeeType.SEM1FEE
-                        ? fee.type === feeType
-                        : fee.type === displayFeeMapper(feeType)
+                      fee.type === feeType
                     );
+                    const feeTypeArray = ["HOSTELMAINTENANCE", "HOSTELCAUTIONMONEY", "HOSTELYEARLY", "TRANSPORT"]
 
                     let totalFee;
-                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                    if (feeTypeArray.includes(feeType)) {
                       totalFee = form.getValues(`otherFees.${index}.finalFee`);
                     } else {
                       totalFee = originalFeeData?.amount;
@@ -477,22 +477,22 @@ const FinanceOfficeForm = () => {
                     const feesDeposited = otherFeesWatched?.[index]?.feesDepositedTOA;
 
                     let discountValue;
-                    if (feeType == FeeType.TRANSPORT || feeType == FeeType.HOSTEL) {
+                    if (feeTypeArray.includes(feeType)) {
                       discountValue = '-';
                     } else {
                       discountValue =
-                        finalFee != undefined
-                          ? calculateDiscountPercentage(totalFee, finalFee)
+                        finalFee !== undefined
+                          ? totalFee - Number(finalFee)
                           : '-';
                     }
+
                     const discountDisplay =
-                      typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
+                      typeof discountValue === 'number' ? `₹${discountValue}` : discountValue;
                     const remainingFee = (finalFee ?? 0) - (feesDeposited ?? 0);
 
                     if (
-                      totalFee === 0 &&
-                      feeType != FeeType.TRANSPORT &&
-                      feeType != FeeType.HOSTEL
+
+                      feeType == FeeType.BOOKBANK && totalFee == 0
                     ) {
                       return;
                     }
@@ -500,7 +500,7 @@ const FinanceOfficeForm = () => {
                     return (
                       <div
                         key={field.id}
-                        className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-2 sm:gap-3 md:gap-4 items-center p-3 sm:p-4 hover:bg-gray-50 transition-colors"
+                        className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[1fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr] gap-2 sm:gap-3 md:gap-4 items-center px-3 py-1 hover:bg-gray-50 transition-colors"
                       >
                         <div className="xs:col-span-2 text-left sm:col-span-4 md:col-span-1 text-sm font-medium text-gray-800">
                           {displayFeeMapper(feeType)}
@@ -527,10 +527,11 @@ const FinanceOfficeForm = () => {
                                     type="text"
                                     placeholder="Enter fees"
                                     {...formField}
-                                    className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
+                                    className="text-right px-3 h-8 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
                                     onChange={(e) => {
                                       const value = e.target.value;
                                       if (/^[0-9]*$/.test(value)) {
+                                        if (totalFee - Number(value) < 0 && !feeTypeArray.includes(feeType)) return;
                                         formField.onChange(value === '' ? null : Number(value));
                                       }
                                     }}
@@ -563,10 +564,11 @@ const FinanceOfficeForm = () => {
                                     type="text"
                                     placeholder="Enter fees"
                                     {...formField}
-                                    className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
+                                    className="text-right px-3 h-8 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
                                     onChange={(e) => {
                                       const value = e.target.value;
                                       if (/^[0-9]*$/.test(value)) {
+                                        if (Number(finalFee) < Number(value)) return;
                                         formField.onChange(value === '' ? null : Number(value));
                                       }
                                     }}
@@ -600,7 +602,7 @@ const FinanceOfficeForm = () => {
                   })}
                 </div>
 
-                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold p-3 sm:p-4 rounded-[5px] grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr]  gap-x-2 sm:gap-x-3 gap-y-2 text-sm sm:text-base">
+                <div className="grid bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold px-3 py-2 rounded-[5px] grid-cols-1 xs:grid-cols-2 sm:grid-cols-4 md:grid-cols-[.8fr_0.5fr_0.5fr_0.5fr_0.8fr_0.8fr_0.5fr]  gap-x-2 sm:gap-x-3 gap-y-2 text-sm sm:text-base">
                   <div className="xs:col-span-2 sm:col-span-4 md:col-span-1">Total Fees</div>
                   <div></div>
                   {/* <div className="text-left">{formatCurrency(otherFeesTotals.totalOriginal)}</div> */}
@@ -688,8 +690,8 @@ const FinanceOfficeForm = () => {
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-full lg:w-max">
-                <div className="space-y-3 sm:space-y-4">
-                  <div className="grid rounded-[5px] bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold text-sm sm:text-base p-3 sm:p-4 grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 border-b border-gray-200">
+                <div className="space-y-1">
+                  <div className="grid rounded-[5px] bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold text-sm sm:text-base px-3 py-2 grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 border-b border-gray-200">
                     <div className="text-left">Semester</div>
                     <div className="text-center">Fee Details</div>
                     <div className="text-center">Fees</div>
@@ -703,15 +705,15 @@ const FinanceOfficeForm = () => {
                       const finalFee = semWiseFeesWatched?.[index]?.finalFee;
                       const discountValue =
                         finalFee != undefined
-                          ? calculateDiscountPercentage(originalFeeAmount, finalFee)
+                          ? originalFeeAmount - finalFee
                           : '-';
                       const discountDisplay =
-                        typeof discountValue === 'number' ? `${discountValue}%` : discountValue;
+                        typeof discountValue === 'number' ? `₹${discountValue}` : discountValue;
 
                       return (
                         <div
                           key={field.id}
-                          className="grid grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 items-center p-3 sm:p-4 hover:bg-gray-50 transition-colors"
+                          className="grid grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 items-center px-3 py-1 hover:bg-gray-50 transition-colors"
                         >
                           <div className="text-sm font-medium text-gray-800">
                             Semester {index + 1}
@@ -736,10 +738,11 @@ const FinanceOfficeForm = () => {
                                     defaultValue={0}
                                     placeholder="Enter fees"
                                     {...formField}
-                                    className="text-right px-3 h-9 sm:h-10 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
+                                    className="text-right px-3 h-8text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
                                     onChange={(e) => {
                                       const value = e.target.value;
                                       if (/^[0-9]*$/.test(value)) {
+                                        if (Number(value) > Number(originalFeeAmount)) return;
                                         formField.onChange(value === '' ? null : Number(value));
                                       }
                                     }}

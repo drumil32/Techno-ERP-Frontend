@@ -227,4 +227,5 @@ export interface DocumentWithFileUrl {
 export interface FieldDefinition {
   label: string;
   value?: string | number | boolean;
+  icon?:any
 }

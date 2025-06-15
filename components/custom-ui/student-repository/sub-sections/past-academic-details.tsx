@@ -20,6 +20,7 @@ import { handleNumericInputChange, toPascal } from '@/lib/utils';
 import { updateStudentDetailsRequestSchema } from '../helpers/schema';
 import { EducationLevel } from '@/types/enum';
 import { academicDetailsArraySchema, academicDetailSchema } from '../../enquiry-form/schema/schema';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface PastAcademicDetailsFormPropInterface<T extends FieldValues = FieldValues> {
   form: UseFormReturn<z.infer<typeof updateStudentDetailsRequestSchema>>;
@@ -100,11 +101,10 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
           <AccordionTrigger className="w-full items-center">
             <h3 className="font-inter text-[16px] font-semibold">Past Academic Details</h3>
             <span
-              className={`cursor-pointer rounded-[10px] border font-inter font-medium text-[12px] px-3 py-1 gap-2 h-fit bg-transparent inline-flex items-center ${
-                isEditing
+              className={`cursor-pointer rounded-[10px] border font-inter font-medium text-[12px] px-3 py-1 gap-2 h-fit bg-transparent inline-flex items-center ${isEditing
                   ? 'text-green-600 border-green-600 hover:text-green-600'
                   : 'text-[#5B31D1] border-[#5B31D1] hover:text-[#5B31D1]'
-              }`}
+                }`}
             >
               {isEditing ? (
                 <span
@@ -820,7 +820,9 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                     )}
                   </div>
 
-                  <FormField
+                  <div className="col-start-2 ">
+                    {isEditing ? (
+                      <FormField
                     key="entranceExamDetails.qualified"
                     control={form.control}
                     name="entranceExamDetails.qualified"
@@ -830,16 +832,35 @@ const PastAcademicDetailsSection: React.FC<PastAcademicDetailsFormPropInterface>
                           Qualified
                         </FormLabel>
                         <FormControl>
-                          <Checkbox
-                            checked={field.value}
-                            onCheckedChange={(checked) => field.onChange(checked)}
-                            className="h-4 w-4 border border-black"
-                            disabled={!isEditing}
-                          />
+                          <Select
+                            onValueChange={(value) => field.onChange(value === 'Yes')}
+                            value={
+                              field.value === true ? 'Yes' : field.value === false ? 'No' : undefined
+                            }
+                          >
+                            <SelectTrigger className={`${commonFieldClass} w-full`}>
+                              <SelectValue placeholder="Yes/No" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Yes">Yes</SelectItem>
+                              <SelectItem value="No">No</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </FormControl>
+                        <div className="h-[20px]">
+                          <FormMessage className="text-[11px]" />
+                        </div>
                       </FormItem>
                     )}
                   />
+                    ) : (
+                      <DisplayField
+                        label="Qualified"
+                        value={form.getValues('entranceExamDetails.qualified') == true ? 'Yes' : 'No'}
+                      />
+                    )}
+                  </div>
+
                 </div>
               </div>
             </div>

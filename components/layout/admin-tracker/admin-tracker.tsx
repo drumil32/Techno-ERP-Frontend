@@ -37,8 +37,12 @@ const AdminTracker = () => {
   const currentFiltersRef = useRef<{ [key: string]: any } | null>(null);
   const authStore = useAuthStore();
   const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING);
-  const {setSidebarActiveItem} = useSidebarContext();
-
+  const { setSidebarActiveItem } = useSidebarContext();
+  const [data, setData] = useState()
+  const [finalCampusConversion, setFinalCampusConversion] = useState <CardItem[] | undefined> (undefined)
+  const [yellowLeadsVisited, setYellowLeadsVisited] = useState <CardItem[] | undefined> (undefined)
+  const [yellowLeadsConverted, setYellowLeadsConverted] = useState<CardItem[] | undefined>(undefined)
+  const [totalLeadsReached, setTotalLeadsReached] = useState<CardItem[] | undefined>(undefined)
   useEffect(() => {
     setSidebarActiveItem(SIDEBAR_ITEMS.MARKETING)
   }, [])
@@ -163,102 +167,114 @@ const AdminTracker = () => {
 
   const analyticsParams = {};
 
-  const { data } = useQuery<AdminAnalyticsResponse['DATA']>({
-    queryKey: ['analytics', analyticsParams, appliedFilters],
-    queryFn: getAnalytics
-  });
 
-  const totalLeadsReached = refineAnalytics(
-    {
-      allLeads: data?.allLeadsAnalytics?.allLeads,
-      reached: data?.allLeadsAnalytics?.reached,
-      notReached: data?.allLeadsAnalytics?.notReached
-    },
-    'allLeads',
-    {
-      allLeads: 'All Leads',
-      reached: 'Reached Leads',
-      notReached: 'Not Reached'
-    },
-    {
-      allLeads: 'text-black',
-      reached: 'text-green-600',
-      notReached: 'text-red-600'
-    }
-  );
 
-  const yellowLeadsConverted = refineAnalytics(
-    {
-      reached: data?.allLeadsAnalytics?.reached,
-      white: data?.allLeadsAnalytics?.white,
-      black: data?.allLeadsAnalytics?.black,
-      invalidType: data?.allLeadsAnalytics?.invalidType,
-      red: data?.allLeadsAnalytics?.red,
-      blue: data?.allLeadsAnalytics?.blue,
-      activeLeads: data?.allLeadsAnalytics?.activeLeads
-    },
-    'reached',
-    {
-      reached: 'Reached',
-      white: 'Did Not Pick',
-      black: 'Course NA',
-      red: 'Dead Data',
-      blue: 'Neutral Data',
-      activeLeads: 'Active Data',
-      invalidType: 'Invalid Data'
-    },
-    {
-      reached: 'text-black',
-      white: 'text-gray-500',
-      black: 'text-black',
-      red: 'text-red-600',
-      blue: 'text-blue-600',
-      orange: 'text-orange-600',
-      activeLeads: 'text-green-600',
-      invalidType: 'text-yellow-600'
-    }
-  );
+  
+  useEffect(() => {
+    async function fetchData() {
+      const getdata = await getAnalytics()
+      setData(getdata);
+      
+      const gettotalLeadsReached = refineAnalytics(
+        {
+          allLeads: getdata?.allLeadsAnalytics?.allLeads,
+          reached: getdata?.allLeadsAnalytics?.reached,
+          notReached: getdata?.allLeadsAnalytics?.notReached
+        },
+        'allLeads',
+        {
+          allLeads: 'All Leads',
+          reached: 'Reached Leads',
+          notReached: 'Not Reached'
+        },
+        {
+          allLeads: 'text-black',
+          reached: 'text-green-600',
+          notReached: 'text-red-600'
+        }
+      );
+    
+      const getyellowLeadsConverted = refineAnalytics(
+        {
+          reached: getdata?.allLeadsAnalytics?.reached,
+          white: getdata?.allLeadsAnalytics?.white,
+          black: getdata?.allLeadsAnalytics?.black,
+          invalidType: getdata?.allLeadsAnalytics?.invalidType,
+          red: getdata?.allLeadsAnalytics?.red,
+          blue: getdata?.allLeadsAnalytics?.blue,
+          activeLeads: getdata?.allLeadsAnalytics?.activeLeads
+        },
+        'reached',
+        {
+          reached: 'Reached',
+          white: 'Did Not Pick',
+          black: 'Course NA',
+          red: 'Dead Data',
+          blue: 'Neutral Data',
+          activeLeads: 'Active Data',
+          invalidType: 'Invalid Data'
+        },
+        {
+          reached: 'text-black',
+          white: 'text-gray-500',
+          black: 'text-black',
+          red: 'text-red-600',
+          blue: 'text-blue-600',
+          orange: 'text-orange-600',
+          activeLeads: 'text-green-600',
+          invalidType: 'text-yellow-600'
+        }
+      );
+    
+      const getyellowLeadsVisited = refineAnalytics(
+        {
+          activeLeads: getdata?.allLeadsAnalytics?.activeLeads,
+          footFall: getdata?.yellowLeadsAnalytics?.footFall,
+          noFootFall: getdata?.yellowLeadsAnalytics?.noFootFall
+        },
+        'activeLeads',
+        {
+          activeLeads: 'Active Data',
+          footFall: 'Footfall',
+          noFootFall: 'No Footfall'
+        },
+        {
+          activeLeads: 'text-black',
+          footFall: 'text-[#E06C06]',
+          noFootFall: 'text-[#A67B0A]'
+        }
+      );
+    
+      const getfinalCampusConversion = refineAnalytics(
+        {
+          footFall: getdata?.yellowLeadsAnalytics?.footFall,
+          neutral: getdata?.yellowLeadsAnalytics?.neutral,
+          dead: getdata?.yellowLeadsAnalytics?.dead,
+          admissions: getdata?.yellowLeadsAnalytics?.admissions
+        },
+        'footFall',
+        {
+          footFall: 'Footfall',
+          neutral: 'Neutral',
+          dead: 'Dead Data',
+          admissions: 'Admissions'
+        },
+        {
+          footFall: 'text-[#000000]',
+          neutral: 'text-[#006ED8]',
+          dead: 'text-[#A67B0A]',
+          admissions: 'text-[#0EA80E]'
+        }
+      );
 
-  const yellowLeadsVisited = refineAnalytics(
-    {
-      activeLeads: data?.allLeadsAnalytics?.activeLeads,
-      footFall: data?.yellowLeadsAnalytics?.footFall,
-      noFootFall: data?.yellowLeadsAnalytics?.noFootFall
-    },
-    'activeLeads',
-    {
-      activeLeads: 'Active Data',
-      footFall: 'Footfall',
-      noFootFall: 'No Footfall'
-    },
-    {
-      activeLeads: 'text-black',
-      footFall: 'text-[#E06C06]',
-      noFootFall: 'text-[#A67B0A]'
+      setTotalLeadsReached(gettotalLeadsReached)
+      setYellowLeadsConverted(getyellowLeadsConverted)
+      setYellowLeadsVisited(getyellowLeadsVisited)
+      setFinalCampusConversion(getfinalCampusConversion)
     }
-  );
+    fetchData();
 
-  const finalCampusConversion = refineAnalytics(
-    {
-      footFall: data?.yellowLeadsAnalytics?.footFall,
-      neutral: data?.yellowLeadsAnalytics?.neutral,
-      dead: data?.yellowLeadsAnalytics?.dead,
-      admissions: data?.yellowLeadsAnalytics?.admissions
-    },
-    'footFall',
-    {
-      footFall: 'Footfall',
-      neutral: 'Neutral',
-      dead: 'Dead Data',
-      admissions: 'Admissions'
-    },
-    {
-      footFall: 'text-[#000000]',
-      neutral: 'text-[#006ED8]',
-      dead: 'text-[#A67B0A]',
-      admissions: 'text-[#0EA80E]'
-    }
-  );
+  }, [appliedFilters])
 
   const toastIdRef = useRef<string | number | null>(null);
 

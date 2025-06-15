@@ -297,28 +297,28 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
 
               {/* Summary row */}
               <TableRow className="border-t-2">
-                <TableCell className="font-medium">Total</TableCell>
+                <TableCell className="font-medium text-[15px]">Total</TableCell>
                 <TableCell className="text-left font-medium">--</TableCell>
                 <TableCell className="text-left font-medium">--</TableCell>
-                <TableCell className="text-left font-medium">
+                <TableCell className="text-left font-medium text-[15px]">
                   {renderSafe(totals.classes)}
                 </TableCell>
-                <TableCell className="text-left font-medium">
+                <TableCell className="text-left font-medium text-[15px]">
                   {renderSafe(totals.attendance)}
                 </TableCell>
-                <TableCell className="text-left font-medium">
+                <TableCell className="text-left font-medium text-[15px]">
                   {renderSafe(totalAttendancePercentage, { suffix: '%', decimals: 0 })}
                 </TableCell>
-                <TableCell className="text-left font-medium">
+                <TableCell className="text-left font-medium text-[15px]">
                   {renderSafe(totals.theory, { zeroAsPlaceholder: true })}
                 </TableCell>
-                <TableCell className="text-left font-medium">
+                <TableCell className="text-left font-medium text-[15px]">
                   {renderSafe(totals.practical, { zeroAsPlaceholder: true })}
                 </TableCell>
-                <TableCell className="text-left font-medium">
+                <TableCell className="text-left font-medium text-[15px]">
                   {renderSafe(totals.finalMarks, { zeroAsPlaceholder: true })}
                 </TableCell>
-                <TableCell className="text-left font-medium">
+                <TableCell className="text-left font-medium text-[15px]">
                   {renderSafe(totalPercentageScore, {
                     suffix: '%',
                     decimals: 0,
@@ -329,7 +329,7 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
                   {totalPercentageScore === null ? (
                     <Badge
                       variant="outline"
-                      className="bg-gray-100 text-gray-800 hover:bg-gray-100"
+                      className="bg-gray-100 text-gray-800 hover:bg-gray-100 text-[15px]"
                     >
                       Pending
                     </Badge>
@@ -338,8 +338,8 @@ export default function ResultsTable({ subjects }: ResultsTableProps) {
                       variant="outline"
                       className={
                         totalPercentageScore >= 40
-                          ? 'bg-green-100 text-green-800 hover:bg-green-100'
-                          : 'bg-red-100 text-red-800 hover:bg-red-100'
+                          ? 'bg-green-100 text-green-800 hover:bg-green-100 text-[15px]'
+                          : 'bg-red-100 text-red-800 hover:bg-red-100 text-[15px]'
                       }
                     >
                       {totalPercentageScore >= 40 ? 'Pass' : 'Fail'}

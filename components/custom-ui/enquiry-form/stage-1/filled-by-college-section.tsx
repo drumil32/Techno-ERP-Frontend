@@ -56,7 +56,6 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
   currentStep = 'enquiry',
   remarkLabel = 'Enquiry Remark'
 }) => {
-  console.log(form.getValues())
   const results = useQueries({
     queries: [
       {
@@ -181,6 +180,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                 options={telecallers}
                 placeholder="Select Telecaller's Name"
               />
+              
               <MultiSelectPopoverCheckbox
                 form={form}
                 name="counsellor"
@@ -209,7 +209,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                     </FormControl>
                     <FormControl>
                       <div className="h-auto ">
-                        {form.getValues().registarOfficeRemark && remark != "registarOfficeRemark" && 
+                        {(form.getValues().registarOfficeRemark == "" || form.getValues().registarOfficeRemark) && remark != "registarOfficeRemark" && remark != "feeDetailsRemark"  &&
                           <div className='mt-4'>
                             <FormLabel className="font-inter font-semibold text-[12px] text-primary">
                               {"Registar Office Remaks"}
@@ -228,7 +228,7 @@ const FilledByCollegeSection: React.FC<FilledByCollegeSectionInterface> = ({
                     </FormControl>
                     <FormControl>
                       <div className="h-auto">
-                        {(form.getValues().feeDetailsRemark == "" || form.getValues().feeDetailsRemark)&& remark != "feeDetailsRemark" &&
+                        {(form.getValues().feeDetailsRemark == "" || form.getValues().feeDetailsRemark)&& remark != "feeDetailsRemark" && remark != "enquiryRemark" &&
                           <div className='mt-4'>
                             <FormLabel className="font-inter font-semibold text-[12px] text-primary">
                               {"Fee Details Remaks"}

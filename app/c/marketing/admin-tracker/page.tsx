@@ -8,7 +8,7 @@ import { SITE_MAP } from '@/common/constants/frontendRouting';
 
 export default function AdminTrackerPage() {
   return (
-    <RoleGuard allowedRoles={[UserRoles.ADMIN]} fallbackPath={SITE_MAP.ADMISSIONS.DEFAULT}>
+    <RoleGuard allowedRoles={[UserRoles.ADMIN,UserRoles.LEAD_MARKETING]} fallbackPath={SITE_MAP.MARKETING.ALL_LEADS}>
       <CRMLayout>
         <TechnoFilterProvider key="admin-tracker" sectionKey="admin-tracker">
           <AdminTrackerProvider key="admin-tracker">
