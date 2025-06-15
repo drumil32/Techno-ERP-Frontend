@@ -47,4 +47,5 @@ jobs:
             rm -rf .next node_modules
             tar -xzf deploy.tar.gz
             rm deploy.tar.gz
+            cd ..
             pm2 reload ecosystem.config.js --only techno-development-frontend
