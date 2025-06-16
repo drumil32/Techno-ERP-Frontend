@@ -51,7 +51,7 @@ export default function YellowLeadsTracker() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editRow, setEditRow] = useState<any>(null);
   const authStore = useAuthStore();
-  const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING);
+  const isRoleLeadMarketing = authStore.hasRole(UserRoles.ADMIN ) || authStore.hasRole(UserRoles.LEAD_MARKETING);
 
   const [sortState, setSortState] = useState<any>({
     sortBy: ['leadTypeModifiedDate'],
@@ -187,7 +187,6 @@ export default function YellowLeadsTracker() {
           let newleads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData) : null;
           setLeadData((prev) => {
             const tleads = [...prev, ...(newleads?.leads || [])];
-            // console.log(tleads);
 
             const allleads = tleads
               .filter(lead => lead)
@@ -462,7 +461,6 @@ export default function YellowLeadsTracker() {
               throw new Error();
             }
           } catch (err) {
-            console.log("err is ", err)
             toast.dismiss(toastIdRef.current);
             toast.error('Failed to update follow-up count', { duration: 1500 });
             setSelectedValue(previousValue);
@@ -591,7 +589,6 @@ export default function YellowLeadsTracker() {
   });
   const courses = Array.isArray(courseQuery.data) ? courseQuery.data : [];
   const getFiltersData = (): FilterData[] => {
-    // console.log("in filters ")
     return [
       {
         filterKey: 'date',

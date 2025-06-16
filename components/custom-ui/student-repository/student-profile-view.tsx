@@ -44,7 +44,6 @@ const ProfilePicSection = ({
       setImageKey((prev) => prev + 1);
     },
     onError: (error) => {
-      console.error('Update failed:', error);
     }
   });
 

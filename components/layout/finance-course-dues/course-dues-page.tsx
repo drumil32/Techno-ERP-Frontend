@@ -121,7 +121,6 @@ export default function CourseDuesDetails() {
 
   // Error handling
   if (isError) {
-    console.error('Query error:', courseDuesQuery.error);
   }
 
   // Define table columns
@@ -241,7 +240,6 @@ export default function CourseDuesDetails() {
 
 function CourseTableActionButton() {
   const handleDownload = () => {
-    console.log('Download Course Dues data...');
   };
 
   return (

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import loginSchema from './login-form-schema';
 import { apiRequest } from '@/lib/apiClient';
 import {
@@ -31,6 +31,8 @@ import { API_METHODS } from '@/common/constants/apiMethods';
 import { API_ENDPOINTS } from '@/common/constants/apiEndpoints';
 import useAuthStore from '@/stores/auth-store';
 import { AuthResponse } from '@/types/auth';
+import { useHomeContext } from '@/app/c/HomeRouteContext';
+import { getHomePage } from '@/lib/enumDisplayMapper';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,6 +42,7 @@ export default function LoginPage() {
   const { login } = useAuthStore();
   const [currentAnimation, setCurrentAnimation] = useState(0);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const { setHomeRoute } = useHomeContext()
 
   const {
     register,
@@ -87,7 +90,15 @@ export default function LoginPage() {
         accessToken: response.token
       });
 
-      router.push(SITE_MAP.HOME.DEFAULT);
+      for (const role of response.roles) {
+        const homePage = getHomePage(role);
+        if (homePage) {
+          setHomeRoute(homePage)
+          return router.push(homePage);
+        }
+      }
+
+      // router.push(SITE_MAP.HOME.DEFAULT);
     } catch (err) {
       setError('Invalid credentials. Please try again.');
     } finally {

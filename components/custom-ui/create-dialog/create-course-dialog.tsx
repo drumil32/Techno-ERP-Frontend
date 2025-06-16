@@ -143,7 +143,6 @@ export const CreateCourseDialog = () => {
   useEffect(() => {
     if (departmentName && departments) {
       const selectedDepartment = departments.find((dep) => dep.departmentName === departmentName);
-      // console.log("Department selected : ", selectedDepartment);
       if (selectedDepartment) {
         setValue('departmentHOD', selectedDepartment.departmentHOD);
       }
@@ -170,7 +169,6 @@ export const CreateCourseDialog = () => {
         id: toastIdRef.current || undefined
       });
       toastIdRef.current = null;
-      console.error('Create course error:', error);
     }
   });
 
@@ -210,7 +208,7 @@ export const CreateCourseDialog = () => {
           label={'Create New Course'}
           btnClassName="bg-white"
           onClick={() => {
-            // console.log('Clicked button of creating new course');
+            
           }}
         ></AddMoreDataBtn>
       </Dialog.Trigger>

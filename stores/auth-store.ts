@@ -29,7 +29,6 @@ const useAuthStore = create<AuthState>()(
       setLoading: (loading: boolean) => set({ isLoading: loading }),
       hasRole: (role: UserRoles) => {
         const { user } = get();
-        // console.log(user?.roles, "get roles");
         return user?.roles?.includes(role) || false;
       }
     }),

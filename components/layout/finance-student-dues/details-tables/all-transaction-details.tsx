@@ -51,7 +51,6 @@ export default function AllTransactionsDetails({
   );
 
   const handleReceiptDownload = (transactionId: string) => {
-    console.log('Download receipt for transaction ID:', transactionId);
   };
 
   return (

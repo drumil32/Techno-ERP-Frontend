@@ -47,6 +47,8 @@ export const apiRequest = async <T>(
     credentials: 'include'
   });
 
+  if(response.status === 403) return null;
+
   if (response.status === 401 && !isAuthRequest) {
     toast.error('Your session has expired. Please login again.');
     //FOR YOUR INFORMATION,

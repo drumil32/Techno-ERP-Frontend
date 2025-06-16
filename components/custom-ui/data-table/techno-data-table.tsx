@@ -91,7 +91,6 @@ export const TruncatedCell = ({
   if (columnId === "remarks") {
     
     const showValue = cellRef.current?.innerText
-    console.log("after update ", showValue)
     return (
       <TooltipProvider delayDuration={200}>
         <Tooltip>

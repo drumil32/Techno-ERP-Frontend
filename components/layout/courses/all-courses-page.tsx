@@ -52,10 +52,6 @@ export default function AllCoursesPage() {
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleViewMore = (row: any) => {
-    console.log('Inside handle view more!');
-    console.log('Row is : ', row);
-    console.log('Course ID : ', row.courseId);
-    console.log('Semester ID : ', row.semesterId);
     const { courseCode, courseId, semesterId } = row;
     //DTODO : Here this will redirect to other page.
     const redirectionPath = `${SITE_MAP.ACADEMICS.COURSES}/${courseCode}?crsi=${courseId}&si=${semesterId}`;
@@ -69,13 +65,11 @@ export default function AllCoursesPage() {
   const applyFilter = () => {
     currentFiltersRef.current = { ...filters };
     setPage(1);
-    console.log('Filters are : ', filters);
     setAppliedFilters({ ...filters });
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
   const clearFilters = () => {
-    console.log('Applied filters are : ', appliedFilters);
     currentFiltersRef.current = {};
     setPage(1);
     setRefreshKey((prevKey) => prevKey + 1);
@@ -174,7 +168,6 @@ export default function AllCoursesPage() {
   });
 
   const courseResponse: CourseApiResponse = courseQuery.data as CourseApiResponse;
-  console.log(courseResponse);
   const courses = courseResponse?.courseInformation || [];
   const coursesWithSerialNo = courses.map((course, index) => ({
     ...course,

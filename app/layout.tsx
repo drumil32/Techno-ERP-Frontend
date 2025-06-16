@@ -8,6 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import ProgressBar from '@/components/custom-ui/progress-bar/progress-bar';
 import { NavigationEvents } from '@/components/custom-ui/router-events/router-event';
 import { DevBadge } from '@/components/ui/dev-badge';
+import { HomeProvider } from './c/HomeRouteContext';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -61,10 +62,12 @@ export default function RootLayout({
         <DevBadge />
         <Suspense>
           <ProgressBar />
-          <QueryClientProvider client={queryClient}>
-            {children}
-          </QueryClientProvider>
-          <NavigationEvents />
+          <HomeProvider>
+            <QueryClientProvider client={queryClient}>
+              {children}
+            </QueryClientProvider>
+            <NavigationEvents />
+          </HomeProvider>
           <Toaster richColors theme="light" position="top-center" />
         </Suspense>
       </body>

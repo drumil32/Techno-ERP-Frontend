@@ -11,7 +11,6 @@ export const uploadPlanDocument = async (params: {
     instructorId: string;
     document: File;
 }) => {
-    console.log("Uploading document with params: ", params);
 
     const formData = new FormData();
     formData.append("planId", params.planId);
@@ -26,6 +25,5 @@ export const uploadPlanDocument = async (params: {
         "Content-Type": "multipart/form-data",
     });
 
-    console.log("Upload response: ", res);
     return res;
 };

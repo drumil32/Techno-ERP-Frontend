@@ -34,7 +34,6 @@ export default function CourseWiseAdmissionTrend() {
 
   const handleDateChange = (newDate: string) => {
     setSelectedDate(newDate);
-    console.log('Selected date:', newDate);
   };
 
   const { data, isError, isLoading, error } = useQuery<AdmissionMonthCourseWiseResponse, Error>({

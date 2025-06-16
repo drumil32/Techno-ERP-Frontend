@@ -28,19 +28,14 @@ class Logger {
     if (this.canLog(level)) {
       switch (level) {
         case logLevels.DEBUG:
-          console.debug(message, ...args);
           break;
         case logLevels.INFO:
-          console.info(message, ...args);
           break;
         case logLevels.WARN:
-          console.warn(message, ...args);
           break;
         case logLevels.ERROR:
-          console.error(message, ...args);
           break;
         default:
-          console.log(message, ...args);
       }
     }
   }

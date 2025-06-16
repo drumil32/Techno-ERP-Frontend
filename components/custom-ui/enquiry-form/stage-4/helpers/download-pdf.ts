@@ -25,7 +25,6 @@ export const downloadStep4 = async (
   directSave: boolean = false
 ): Promise<{ url: string; fileName: string }> => {
 
-  console.log("data is ",data)
 
   const container = document.createElement('div');
   container.style.width = '794px'; // A4 width in pixels (210mm)
