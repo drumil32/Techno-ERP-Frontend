@@ -1,3 +1,4 @@
+"use client"
 import AdmissionLayout from '@/components/layout/admission-layout';
 import RecentAdmissionsPage from '@/components/layout/admissions/recent-admission-page';
 import RoleGuard from '@/guards/role-guard';
