@@ -117,8 +117,8 @@ export default function TechnoSidebarItem({
     }
 
     setLoading(false)
-    if (url) {
-      return redirect(url);
+     if (url && url !== pathname) {
+      router.push(url);
     }
   }, [pathname])
 

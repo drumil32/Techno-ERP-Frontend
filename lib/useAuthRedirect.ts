@@ -24,7 +24,6 @@ const useAuthRedirect = () => {
           router.replace('/');
         }
       } catch (error) {
-        console.error('Auth check failed:', error);
       }
     };
 

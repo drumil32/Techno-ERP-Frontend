@@ -9,6 +9,8 @@ import { useSidebarContext } from '../custom-ui/sidebar/sidebar-context';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import useAuthStore from '@/stores/auth-store';
 import { UserRoles } from '@/types/enum';
+import { getAccess } from '@/lib/checkAccess';
+import { redirect, usePathname } from 'next/navigation';
 
 interface HeaderItem {
   title: string;
@@ -16,7 +18,7 @@ interface HeaderItem {
   requiredRoles?: UserRoles[];
 }
 
-interface HeaderItems {
+export interface HeaderItems {
   [key: string]: HeaderItem;
 }
 
@@ -36,7 +38,7 @@ const HEADER_ITEMS: HeaderItems = {
   }
 };
 
-interface FilteredHeaders {
+export interface FilteredHeaders {
   [key: string]: {
     title: string;
     route: string;
@@ -44,12 +46,8 @@ interface FilteredHeaders {
 }
 
 export default function CRMLayout({ children }: { children: React.ReactNode }) {
-  const { setSidebarActiveItem } = useSidebarContext();
-  const { hasRole } = useAuthStore();
-
-  useEffect(() => {
-    setSidebarActiveItem(SIDEBAR_ITEMS.MARKETING);
-  }, []);
+  const { hasRole,user } = useAuthStore();
+  
 
   const filteredHeaders: FilteredHeaders = Object.entries(HEADER_ITEMS).reduce(
     (acc, [key, item]) => {

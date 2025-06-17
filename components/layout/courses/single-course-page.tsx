@@ -49,8 +49,6 @@ export const SingleCoursePage = () => {
   const courseId = searchParams.get("crsi");
   const semesterId = searchParams.get("si");
 
-  console.log("COurse id : ", courseId);
-  console.log("Semester Id : ", semesterId);
   const rows = [4, 4];
 
   const [createSubjectDialogOpen, setCreateSubjectDialogOpen] = useState(false);
@@ -63,12 +61,6 @@ export const SingleCoursePage = () => {
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleViewMore = (row: Subject) => {
-    console.log(row);
-    console.log("Subject ID : ", row.subjectId);
-    console.log("Instructor ID : ", row.instructorId);
-    console.log("Course ID : ", courseId);
-    console.log("Semester ID : ", semesterId);
-    console.log("Path Name is : ", pathname);
     const currentCourse = getCurrentBreadCrumb(pathname);
     const redirectionPath = `${SITE_MAP.ACADEMICS.COURSES}/${currentCourse}/${row.subjectCode}?crsi=${courseId}&si=${semesterId}&subi=${row.subjectId}&ii=${row.instructorId}`;
 
@@ -108,7 +100,6 @@ export const SingleCoursePage = () => {
   };
 
   const filterParams = getQueryParams();
-  console.log("FIlter params : ", filterParams);
   const subjectQuery = useQuery({
     queryKey: ['subjectswiseinfo', filterParams, debouncedSearch],
     queryFn: fetchSubjects,
@@ -118,10 +109,8 @@ export const SingleCoursePage = () => {
 
 
   const subjectResponse: SubjectApiResponse = subjectQuery.data as SubjectApiResponse || {};
-  console.log(subjectResponse);
   let subjects = subjectResponse?.subjectInformation?.subjectDetails || [];
 
-  console.log("Subject information is : ", subjects);
   subjects.forEach((subject, index) => {
     subject.serialNo = index + 1;
     subject.disabled = !subject.instructorName?.trim();
@@ -150,7 +139,6 @@ export const SingleCoursePage = () => {
     collegeName: subjectResponse?.subjectInformation?.collegeName
   }
 
-  console.log(courseData);
 
   const toastIdRef = useRef<string | number | null>(null);
 

@@ -79,7 +79,6 @@ export default function BulkFeeUpdateDialogue() {
     currentFiltersRef.current = { ...filters };
     setAppliedFilters({ ...filters });
     setRefreshKey((prevKey) => prevKey + 1);
-    console.log('Applied Filters:', filters);
   };
 
   const handleShowList = () => {
@@ -226,10 +225,7 @@ export default function BulkFeeUpdateDialogue() {
       };
     });
 
-    console.log('Apply Fee Changes Payload:', {
-      filters: appliedFilters,
-      updatedData
-    });
+    
   };
 
   const handleSaveDraft = () => {
@@ -247,10 +243,6 @@ export default function BulkFeeUpdateDialogue() {
       };
     });
 
-    console.log('Save Draft Payload:', {
-      filters: appliedFilters,
-      updatedData
-    });
   };
 
   const handleClose = () => {

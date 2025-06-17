@@ -230,7 +230,6 @@ export default function LeadViewEdit({
 
   const handleExistingRemarkChange = (index: number, value: string) => {
     if (!formData) return;
-    console.log("here bro got it in handleExistingRemarkChange")
     const updatedRemarks = [...formData.remarks];
     updatedRemarks[index] = value;
     setFormData((prev) => (prev ? { ...prev, remarks: updatedRemarks } : null));
@@ -299,7 +298,6 @@ export default function LeadViewEdit({
     ];
 
     return allowedFields.some((field) => {
-      console.log("in allowed filed also bro")
       const origValue = originalData[field] || '';
       const newValue = formData[field] || '';
 
@@ -368,7 +366,6 @@ export default function LeadViewEdit({
           newErrors[key] = err.message;
         });
         setErrors(newErrors);
-        console.log("newErrors", newErrors)
         toast.error('Please fix the errors in the form');
         return;
       }
@@ -484,7 +481,6 @@ export default function LeadViewEdit({
       // toggleIsEditing(false);
       setErrors({});
     } catch (err) {
-      console.error('Error updating lead:', err);
     } finally {
       setIsSubmitting(false);
     }

@@ -70,7 +70,7 @@ import UserAnalytics from './user-analytics';
 import clsx from 'clsx';
 
 export default function AllLeadsPage() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<any>({});
   const [refreshKey, setRefreshKey] = useState(0);
@@ -83,9 +83,6 @@ export default function AllLeadsPage() {
   });
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const authStore = useAuthStore();
-  const isRoleLeadMarketing = authStore.hasRole(UserRoles.LEAD_MARKETING);
-  const [ticks, setTicks] = useState<boolean[]>([])
-
   const handleSortChange = (column: string, order: string) => {
     if (column === 'nextDueDateView') {
       column = 'nextDueDate';
@@ -235,7 +232,8 @@ export default function AllLeadsPage() {
     queryFn: fetchLeads,
     placeholderData: (previousData) => previousData,
     refetchOnWindowFocus: false,
-    enabled: true
+    enabled: true,
+    retry: 1,
   });
 
 
@@ -265,7 +263,6 @@ export default function AllLeadsPage() {
           let newleads = leadsQuery.data ? refineLeads(leadsQuery.data, assignedToDropdownData, limit) : null;
           setLeadData((prev) => {
             const tleads = [...prev, ...(newleads?.leads || [])];
-            // console.log(tleads);
 
             const allleads = tleads
               .filter(lead => lead)
@@ -489,10 +486,10 @@ export default function AllLeadsPage() {
             }
           } catch (error) {
             toast.dismiss(toastIdRef.current);
-            toast.error('Failed to update lead type', {
-              id: toastIdRef.current,
-              duration: 3000
-            });
+            // toast.error('Failed to update lead type', {
+            //   id: toastIdRef.current,
+            //   duration: 3000
+            // });
             setSelectedType(previousValue);
           }
         };
@@ -620,11 +617,11 @@ export default function AllLeadsPage() {
               setSelectedValue(previousValue);
             }
           } catch (error) {
-            // console.log(error)
-            toast.error('Failed to update follow-up count', {
-              id: toastIdRef.current,
-              duration: 1500
-            });
+            toast.dismiss(toastIdRef.current);
+            // toast.error('Failed to update follow-up count', {
+            //   id: toastIdRef.current,
+            //   duration: 1500
+            // });
             setSelectedValue(previousValue);
           } finally {
             toastIdRef.current = null;
@@ -666,16 +663,13 @@ export default function AllLeadsPage() {
       meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
     },
 
-    ...(isRoleLeadMarketing
-      ? [
-        {
-          accessorKey: 'assignedToName',
-          header: 'Assigned To',
-          meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
-        }
-      ]
-      : [])
-  ];
+    {
+      accessorKey: 'assignedToName',
+      header: 'Assigned To',
+      meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
+    }
+      
+  ]
 
   const marketingSourceQuery = useQuery({
     queryKey: ['marketingSources'],
@@ -742,23 +736,20 @@ export default function AllLeadsPage() {
         options: Object.values(LeadType),
         multiSelect: true
       },
-      ...(isRoleLeadMarketing
-        ? [
-          {
-            filterKey: 'assignedTo',
-            label: 'Assigned To',
-            options: assignedToDropdownData.map((item: any) => {
-              return {
-                label: item.name,
-                id: item._id
-              };
-            }),
-            placeholder: 'assignee',
-            hasSearch: true,
-            multiSelect: true
-          }
-        ]
-        : [])
+      {
+        filterKey: 'assignedTo',
+        label: 'Assigned To',
+        options: assignedToDropdownData.map((item: any) => {
+          return {
+            label: item.name,
+            id: item._id
+          };
+        }),
+        placeholder: 'assignee',
+        hasSearch: true,
+        multiSelect: true
+      }
+
     ];
   };
 
@@ -865,14 +856,18 @@ export function TableActionButton() {
   const [isUploading, setIsUploading] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [selectedSheet, setSelectedSheet] = useState<string | null>(null);
+  const isUploadDisabled = !authStore.hasRole(UserRoles.LEAD_MARKETING);
+  const isDownloadDisabled =
+    !authStore.hasRole(UserRoles.EMPLOYEE_MARKETING) &&
+    !authStore.hasRole(UserRoles.LEAD_MARKETING);
 
-  const availableSheetsQuery = useQuery<SheetItem[]>({
+  const availableSheetsQuery = !isUploadDisabled ? (useQuery<SheetItem[]>({
     queryKey: ['available-sheets'],
     queryFn: (context) =>
       fetchAvailableSheets(context as QueryFunctionContext<readonly [string, any]>),
     refetchOnWindowFocus: false,
     placeholderData: (previousData) => previousData
-  });
+  })) : { data: null }
 
   const sheetDropdownData = availableSheetsQuery.data;
 
@@ -923,10 +918,7 @@ export function TableActionButton() {
     }
   };
 
-  const isUploadDisabled = !authStore.hasRole(UserRoles.LEAD_MARKETING);
-  const isDownloadDisabled =
-    !authStore.hasRole(UserRoles.EMPLOYEE_MARKETING) &&
-    !authStore.hasRole(UserRoles.LEAD_MARKETING);
+
 
   return (
     <>

@@ -21,7 +21,7 @@ import axios from 'axios';
 import { API_DOMAIN } from '@/common/constants/apiEndpoints';
 import { Document, StudentData } from '../helpers/interface';
 import { PhysicalDocumentNoteStatus } from '../helpers/enum';
-import { updateStudentDocuments } from '../helpers/api';
+import { updateDocument, updateStudentDocuments } from '../helpers/api';
 import { toast } from 'sonner';
 import { formatDisplayDate } from '../../enquiry-form/stage-2/student-fees-form';
 
@@ -45,6 +45,8 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
   const [changedDocId, setChangedDocId] = useState<string | null>(null);
+  const [prevDate, setPrevDate] = useState<string | undefined | null>(null);
+  const [prevStatus, setPrevStatus] = useState<string | undefined | null>(null)
 
   const course = studentData?.courseName;
   const existingNotes = studentData?.studentInfo?.physicalDocumentNote;
@@ -104,7 +106,16 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
 
   const handleStatusChange = (docId: string, status: PhysicalDocumentNoteStatus) => {
     setDocuments((prevDocs) =>
-      prevDocs.map((doc) => (doc.id === docId ? { ...doc, status } : doc))
+      prevDocs.map((doc) => {
+        if(doc.id === docId){
+          setPrevStatus(doc.status);
+          setPrevDate(doc.dueBy)
+          return {
+            ...doc,status
+          }
+        }
+        return doc
+      })
     );
     setChangedDocId(docId);
   };
@@ -114,6 +125,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
     if (docIndex === -1) return;
 
     const updatedDocuments = [...documents];
+    setPrevDate(updatedDocuments[docIndex].dueBy)
     updatedDocuments[docIndex] = {
       ...updatedDocuments[docIndex],
       dueBy: date || undefined
@@ -126,7 +138,10 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
   useEffect(() => {
     const updateDocumentsOnServer = async () => {
       if (!changedDocId) return;
-      
+
+      // Store the current state before making changes
+      const prevDocuments = [...documents];
+
       try {
         const changedDoc = documents.find((doc) => doc.id === changedDocId);
         if (!changedDoc) return;
@@ -141,13 +156,27 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
 
         if (response) {
           toast.success('Documents updated successfully');
+          // Update the student data in parent component if needed
+
         } else {
-          setError('Failed to update documents');
-          toast.error('Failed to update documents');
+          // Revert to previous state if update fails
+          setDocuments(prevDocuments);
+          // toast.error('Failed to update documents');
         }
       } catch (error) {
-        setError('Failed to update documents');
-        toast.error('Failed to update documents');
+        const docIndex = documents.findIndex((doc) => doc.id === changedDocId);
+        if (docIndex === -1) return;
+
+        const updatedDocuments = [...documents];
+        updatedDocuments[docIndex] = {
+          ...updatedDocuments[docIndex],
+          dueBy: prevDate || undefined,
+          status: (prevStatus as PhysicalDocumentNoteStatus) || PhysicalDocumentNoteStatus.PENDING
+        };
+
+        // Revert to previous state on error
+        setDocuments(updatedDocuments);
+        // toast.error('Failed to update documents. Please try again.');
       } finally {
         setChangedDocId(null);
       }
@@ -228,7 +257,7 @@ const DocumentVerificationSection: React.FC<DocumentVerificationProps> = ({
                           'ml-5 w-[200px] justify-start text-left font-normal',
                           !doc.dueBy && 'text-muted-foreground',
                           doc.status !== PhysicalDocumentNoteStatus.PENDING &&
-                            'cursor-not-allowed opacity-60'
+                          'cursor-not-allowed opacity-60'
                         )}
                         disabled={doc.status !== PhysicalDocumentNoteStatus.PENDING}
                       >

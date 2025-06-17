@@ -336,7 +336,6 @@ export default function YellowLeadViewEdit({
           const key = err.path[0] as keyof FormErrors;
           newErrors[key] = err.message;
         });
-        console.log("newErrors", newErrors)
         setErrors(newErrors);
         toast.error('Please fix the errors in the form');
         return;
@@ -459,7 +458,7 @@ export default function YellowLeadViewEdit({
         setFormData(originalData);
       }
     } catch (err) {
-      toast.error('An error occurred while updating the lead');
+      // toast.error('An error occurred while updating the lead');
     } finally {
       setIsSubmitting(false);
     }

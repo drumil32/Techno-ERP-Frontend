@@ -46,7 +46,6 @@ const parseDateFromAPI = (dateString: string | undefined): Date | undefined => {
   try {
     return parse(dateString, 'dd/MM/yyyy', new Date());
   } catch (error) {
-    console.error('Error parsing date:', error);
     return undefined;
   }
 };

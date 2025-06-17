@@ -42,7 +42,6 @@ export const processPlan = (plans: Plan[], prefix: string, type: CourseMaterialT
             }
         }
     }
-    console.log(courseMaterials);
     return courseMaterials;
 }
 
@@ -63,26 +62,15 @@ export const processAdditionalResources = (documents : string[], prefix : string
             }
         })
     }
-    console.log(courseMaterials);
     return courseMaterials;
 }
 
 
 export const prepareSubjectMaterial = (lecturePlan: Plan[], practicalPlan: Plan[], additionalResources: string[], courseId: string, semesterId: string, subjectId: string, instructorId : string) => {
-    console.log(lecturePlan);
-    console.log(practicalPlan);
-    console.log(additionalResources);
-    console.log("Course ID : ", courseId);
-    console.log("Subject ID : ", subjectId);
-    console.log("Semester ID : ", semesterId);
     const processedLectureMaterials = processPlan(lecturePlan, "L", CourseMaterialType.LPLAN, courseId, semesterId, subjectId, instructorId);
     const processedPracticalMaterials = processPlan(practicalPlan,"P", CourseMaterialType.PPLAN, courseId, semesterId, subjectId, instructorId);
     const processedAdditionalResources = processAdditionalResources(additionalResources, "G", CourseMaterialType.General, courseId, semesterId, subjectId, instructorId);
-    console.log("Processed Lecture Materials : ", processedLectureMaterials);
-    console.log("Processed Practical Materials : ", processedPracticalMaterials);
-    console.log("Processed AdditionalResources Materials : ", processedAdditionalResources);
 
     const courseMaterials : SubjectMaterial[] = [...processedLectureMaterials, ...processedPracticalMaterials, ...processedAdditionalResources];
-    console.log("Processed course materials : ", courseMaterials);
     return courseMaterials;
 }

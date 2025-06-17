@@ -25,9 +25,6 @@ type Props = {
   onUpload: () => void;
 };
 
-// const onRemove = (index : number, materials: SubjectMaterial[]) => {
-//   console.log(index);
-// }
 
 export default function SubjectMaterialsSection({
   materials,
@@ -61,7 +58,7 @@ export default function SubjectMaterialsSection({
               <Link
                 href={material.link}
                 target="_blank"
-                onClick={() => console.log('clicked me')}
+                onClick={() => {}}
                 rel="noopener"
                 className={`font-inter documentHeading truncate hover:underline ${nameFontSize}`}
               >

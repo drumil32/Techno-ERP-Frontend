@@ -1,7 +1,17 @@
 import * as React from 'react';
 import { cn } from '@/lib/utils';
 
-function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
+function Input({ 
+  className, 
+  type = 'text',
+  value,
+  defaultValue,
+  ...props 
+}: React.ComponentProps<'input'>) {
+  const inputProps = value !== undefined 
+    ? { value, ...props }
+    : { defaultValue, ...props };
+
   return (
     <input
       type={type}
@@ -13,7 +23,7 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
         'placeholder:text-gray-400 dark:placeholder:text-gray-500 placeholder:italic',
         className
       )}
-      {...props}
+      {...inputProps}
     />
   );
 }

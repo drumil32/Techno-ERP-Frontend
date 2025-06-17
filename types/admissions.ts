@@ -86,6 +86,7 @@ export interface StudentFee {
 }
 
 export interface OtherFees {
+  feeAmount: any;
   type: FeeType;
   fee: number;
   finalFee?: number;
