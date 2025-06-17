@@ -25,7 +25,6 @@ export const downloadStep4 = async (
   directSave: boolean = false
 ): Promise<{ url: string; fileName: string }> => {
 
-
   const container = document.createElement('div');
   container.style.width = '794px'; // A4 width in pixels (210mm)
   container.style.minHeight = '1123px'; // A4 height in pixels (297mm)
@@ -53,15 +52,7 @@ export const downloadStep4 = async (
       .replace(/'/g, '&#039;');
   };
 
-  const otherfixedfees = [
-    {Fees : 12000, Discount: 0},
-    {Fees : 1000, Discount: 99},
-    {Fees : 100, Discount: 90},
-    {Fees : 4000, Discount: 100},
-    {Fees : 1500, Discount: 99},
-    {Fees : 0, Discount: 0},
-    {Fees : 0, Discount: 0},
-  ]
+
   // College logo handling
   let logo = placeholderLogoBase64;
   if (data.collegeName === TIMS) logo = '/images/TIMS.png';
@@ -126,19 +117,20 @@ export const downloadStep4 = async (
         ${createTableHeader(headerColumns)}
 
         <div style="border: 1px solid ${borderColor}; border-top: none; border-radius: 0 0 6px 6px;">
-  ${data.studentFee.otherFees?.map((fee: any, index: number) => {
-    let feeType = fee.type;
-    if(feeType === "BOOKBANK"){
+  ${data.otherFeeStructer?.map((fee: any, index: number) => {
+    const feeType = fee.type;
+    const feeAmount = fee.feeAmount
+    if(feeType === "Book Bank" && feeAmount == 0){
       return;
     }
-    let schedule = scheduleFeeMapper(feeType) || '-';
+    const schedule = fee.schedule || '-';
     
     // Get values from fee object with fallbacks
-    const totalFee = otherfixedfees[index]?.Fees || 0;
+    const totalFee = feeAmount;
     const finalFee = fee.finalFee || 0;
-    const feesDeposited = fee.feesDepositedTOA || 0;
-    const discountValue = otherfixedfees[index]?.Discount || 0;
-    const remainingFee = finalFee - feesDeposited;
+    const feesDeposited = fee.feesDeposited || 0;
+    const discountValue =  fee.discount || 0;
+    const remainingFee = fee.feesDue || 0;
 
     totalOriginal += totalFee;
     totalDeposited += feesDeposited;
@@ -157,17 +149,17 @@ export const downloadStep4 = async (
         align-items: center;
       ">
         <div style="font-weight: 500; color: ${textColor}; text-align: left;">
-          ${displayFeeMapper(feeType)}
+          ${feeType}
         </div>
         <div style="color: ${secondaryText}; text-align: right;">
-          ${escapeHtml(schedule)}
+          ${schedule}
         </div>
         <div style="color: ${secondaryText}; text-align: right;">
-          ${formatCurrency(totalFee)}
+          ${formatCurrency(feeAmount)}
         </div>
         <div style="color: ${typeof discountValue === 'number' && discountValue > 0 ? '#059669' : secondaryText}; 
              text-align: right; font-weight: ${typeof discountValue === 'number' ? '500' : 'normal'}">
-          ${typeof discountValue === 'number' ? `${discountValue}%` : '-'}
+          ${typeof discountValue === 'number' ? `${formatCurrency(discountValue)}` : '-'}
         </div>
         <div style="color: ${textColor}; font-weight: 500; text-align: right;">
           ${formatCurrency(finalFee)}
@@ -257,15 +249,10 @@ export const downloadStep4 = async (
         ${createTableHeader(headerColumns)}
 
         <div style="border: 1px solid ${borderColor}; border-top: none; border-radius: 0 0 6px 6px;">
-          ${data.studentFee.semWiseFees?.map((fee: any, index: number) => {
-      const originalFeeAmount: number = fee.finalFee || 0;
+          ${data.semWiseFeeStructer?.map((fee: any, index: number) => {
+      const originalFeeAmount: number = fee.feeAmount || 0;
       const finalFee = fee?.finalFee;
-      const discountValue = finalFee != undefined
-        ? calculateDiscountPercentage(originalFeeAmount, finalFee)
-        : '0';
-      const discountDisplay = typeof discountValue === 'number'
-        ? `${discountValue || 0}%`
-        : discountValue || 0;
+      const discountValue = fee.discount
 
         totalDue += finalFee;
         totalFees += originalFeeAmount;
@@ -288,7 +275,7 @@ export const downloadStep4 = async (
                 <div style="color: ${secondaryText}; text-align: right;">${formatCurrency(originalFeeAmount)}</div>
                 <div style="color: ${typeof discountValue === 'number' && discountValue > 0 ? '#059669' : secondaryText}; 
                      text-align: right; font-weight: ${typeof discountValue === 'number' ? '500' : 'normal'}">
-                  ${discountDisplay}
+                  ${formatCurrency(discountValue)}
                 </div>
                 <div style="color: ${textColor}; font-weight: 500; text-align: right;">
                   ${finalFee ? formatCurrency(finalFee) : '-'}
@@ -314,7 +301,7 @@ export const downloadStep4 = async (
         ">
           <div style="text-align: left;">Total</div>
           <div></div>
-          <div style="text-align: right;">${totalFees}</div>
+          <div style="text-align: right;"> ${formatCurrency(totalFees)}</div>
           <div style="text-align: center;">-</div>
           <div style="text-align: right;">
             ${formatCurrency(totalDue)}
@@ -343,8 +330,8 @@ export const downloadStep4 = async (
             ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}
           </p>
           <p style="font-size: 8px; margin: 0; color: ${secondaryText};">
-            Email: ${escapeHtml(data.collegeFeeEmail ?? 'registrar@tims.edu.in')} | 
-            Contact: ${escapeHtml(data.collegeFeeContactNumber  ?? '9839506777')}
+            Email: ${escapeHtml(data.feeReciptData.collegeFeeEmail ?? 'registrar@tims.edu.in')} | 
+            Contact: ${escapeHtml(data.feeReciptData.collegeFeeContactNumber  ?? '9839506777')}
           </p>
         </div>
       </div>
@@ -409,17 +396,17 @@ export const downloadStep4 = async (
       ${generateSemWiseFeesTable()}
 
       <!-- Footer Section -->
-      <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+      <div style="margin-top: 15px; display: flex; justify-content: space-between;">
         <div style="font-size: 10px; color: ${textColor};">
-          <div style="margin-bottom: 30px;">Fee applicable: ${data.isFeeApplicable ? 'Yes' : 'No'}</div>
+          <div style="margin-bottom: 20px;">Fee applicable: ${data.isFeeApplicable ? 'Yes' : 'No'}</div>
           <div>Date: ____________________</div>
         </div>
         <div style="text-align: center; font-size: 10px; color: ${textColor};">
-          <div style="margin-bottom: 30px;">Student Signature</div>
+          <div style="margin-bottom: 20px;">Student Signature</div>
           <div>____________________</div>
         </div>
         <div style="text-align: right; font-size: 10px; color: ${textColor};">
-          <div style="margin-bottom: 30px;">Verified by</div>
+          <div style="margin-bottom: 20px;">Verified by</div>
           <div>Authorised Signatory</div>
         </div>
       </div>
@@ -431,7 +418,7 @@ export const downloadStep4 = async (
 
   try {
     const canvas = await html2canvas(container, {
-      scale: 2,
+      scale: 3,
       useCORS: true,
       logging: false,
       backgroundColor: 'white'

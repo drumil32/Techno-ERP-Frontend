@@ -490,7 +490,6 @@ export default function AllLeadsPage() {
             //   id: toastIdRef.current,
             //   duration: 3000
             // });
-            console.log(error)
             setSelectedType(previousValue);
           }
         };
