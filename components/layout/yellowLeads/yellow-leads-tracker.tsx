@@ -369,11 +369,11 @@ export default function YellowLeadsTracker() {
 
               queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
             } else {
-              throw new Error();
+              // throw new Error();
             }
           } catch {
             toast.dismiss(toastId);
-            toast.error('Update failed!', { duration: 1500 });
+            // toast.error('Update failed!', { duration: 1500 });
             setSelectedStatus(previousValue);
           }
         };
@@ -457,11 +457,11 @@ export default function YellowLeadsTracker() {
 
               queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
             } else {
-              throw new Error();
+              // throw new Error();
             }
           } catch (err) {
             toast.dismiss(toastIdRef.current);
-            toast.error('Failed to update follow-up count', { duration: 1500 });
+            // toast.error('Failed to update follow-up count', { duration: 1500 });
             setSelectedValue(previousValue);
           }
         };
@@ -493,57 +493,64 @@ export default function YellowLeadsTracker() {
       meta: { align: 'center', maxWidth: 170, fixedWidth: 190 },
       cell: ({ row }: any) => {
         const value = row.original.finalConversion as FinalConversionStatus;
-
+        const [selectedValue, setSelectedValue] = useState(value);
+        const toastIdRef = useRef<string | number | null>(null);
         const handleChange = async (newValue: FinalConversionStatus) => {
           const updatedData = { _id: row.original._id, finalConversion: newValue };
+          const previousValue = selectedValue;
           const { id } = row.original
-          const response: LeadData | null = await apiRequest(
-            API_METHODS.PUT,
-            API_ENDPOINTS.updateYellowLead,
-            updatedData
-          );
+          toastIdRef.current = toast.loading('Updating...', { duration: Infinity });
 
-          if (response) {
-            toast.success('Lead Type updated successfully');
+          try {
+            const response: LeadData | null = await apiRequest(
+              API_METHODS.PUT,
+              API_ENDPOINTS.updateYellowLead,
+              updatedData
+            );
+            if (response) {
+              toast.success('Lead Type updated successfully');
 
-            queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
-            const updateLeadCache = () => {
-              const queryCache = queryClient.getQueryCache();
-              const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
+              queryClient.invalidateQueries({ queryKey: ['leadsAnalytics'] });
+              const updateLeadCache = () => {
+                const queryCache = queryClient.getQueryCache();
+                const leadQueries = queryCache.findAll({ queryKey: ['leads'] });
 
-              leadQueries.forEach((query) => {
-                queryClient.setQueryData(query.queryKey, (oldData: any) => {
-                  if (!oldData || !oldData.yellowLeads) return oldData;
+                leadQueries.forEach((query) => {
+                  queryClient.setQueryData(query.queryKey, (oldData: any) => {
+                    if (!oldData || !oldData.yellowLeads) return oldData;
 
-                  const newData = JSON.parse(JSON.stringify(oldData));
+                    const newData = JSON.parse(JSON.stringify(oldData));
 
-                  const leadIndex = newData.yellowLeads.findIndex(
-                    (lead: any) => lead._id === response._id
-                  );
+                    const leadIndex = newData.yellowLeads.findIndex(
+                      (lead: any) => lead._id === response._id
+                    );
 
-                  if (leadIndex !== -1) {
-                    setLeadData((prevLeads) => {
-                      return prevLeads.map((lead, index) => {
-                        if (index === id - 1) {
-                          return {
-                            ...lead,
-                            finalConversion: response.finalConversion,
-                            lastCallDate: response.lastCallDate,
-                          };
-                        }
-                        return lead;
+                    if (leadIndex !== -1) {
+                      setLeadData((prevLeads) => {
+                        return prevLeads.map((lead, index) => {
+                          if (index === id - 1) {
+                            return {
+                              ...lead,
+                              finalConversion: response.finalConversion,
+                              lastCallDate: response.lastCallDate,
+                            };
+                          }
+                          return lead;
+                        });
                       });
-                    });
-                  }
+                    }
 
-                  return newData;
+                    return newData;
+                  });
                 });
-              });
-            };
+              };
 
-            updateLeadCache();
+              updateLeadCache();
+            }
+          } catch (error) {
+            toast.dismiss(toastIdRef.current);
+            setSelectedValue(previousValue);
           }
-
         };
 
         return <FinalConversionSelect value={value} onChange={handleChange} />;

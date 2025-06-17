@@ -486,10 +486,11 @@ export default function AllLeadsPage() {
             }
           } catch (error) {
             toast.dismiss(toastIdRef.current);
-            toast.error('Failed to update lead type', {
-              id: toastIdRef.current,
-              duration: 3000
-            });
+            // toast.error('Failed to update lead type', {
+            //   id: toastIdRef.current,
+            //   duration: 3000
+            // });
+            console.log(error)
             setSelectedType(previousValue);
           }
         };
@@ -617,10 +618,11 @@ export default function AllLeadsPage() {
               setSelectedValue(previousValue);
             }
           } catch (error) {
-            toast.error('Failed to update follow-up count', {
-              id: toastIdRef.current,
-              duration: 1500
-            });
+            toast.dismiss(toastIdRef.current);
+            // toast.error('Failed to update follow-up count', {
+            //   id: toastIdRef.current,
+            //   duration: 1500
+            // });
             setSelectedValue(previousValue);
           } finally {
             toastIdRef.current = null;

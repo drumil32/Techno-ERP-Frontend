@@ -7,14 +7,13 @@ import { getHomePage } from "@/lib/enumDisplayMapper";
 import useAuthStore from "@/stores/auth-store";
 import { UserRoles } from "@/types/enum";
 import { useEffect } from "react";
+import { useParams } from "next/navigation";
 
-export default async function AdmissionsPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
-  const { user } = useAuthStore()
+export default function AdmissionsPage() {
+  const { user } = useAuthStore();
   const { setHomeRoute, homeRoute } = useHomeContext();
+  const params = useParams();
+  const id = params.id as string;
 
   useEffect(() => {
     if (user && user.roles) {
@@ -26,12 +25,10 @@ export default async function AdmissionsPage({
         }
       }
     }
+  }, [user]);
 
-  }, [user])
-
-  const { id } = await params;
   return (
-    <RoleGuard allowedRoles={[UserRoles.ADMIN, UserRoles.REGISTAR, UserRoles.FINANCE, UserRoles.FRONT_DESK]} fallbackPath={homeRoute} >
+    <RoleGuard allowedRoles={[UserRoles.ADMIN, UserRoles.REGISTAR, UserRoles.FINANCE, UserRoles.FRONT_DESK]} fallbackPath={homeRoute}>
       <AdmissionFormLayout>
         <EnquiryFormStage1 id={id} />
       </AdmissionFormLayout>

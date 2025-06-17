@@ -65,7 +65,7 @@ const ProfilePicSection = ({
       toast.success(`${getReadableDocumentName(DocumentType.PHOTO)} uploaded successfully!`);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'File upload failed';
-      toast.error(errorMessage);
+      // toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }

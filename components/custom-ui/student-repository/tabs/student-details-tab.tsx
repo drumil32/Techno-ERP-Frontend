@@ -123,12 +123,12 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
         return true;
       } else {
         personalDetailsForm.reset(getPersonalDetailsFormData(studentData));
-        toast.error('Failed to update student data');
+        // toast.error('Failed to update student data');
         return false;
       }
     } catch (error) {
       personalDetailsForm.reset(getPersonalDetailsFormData(studentData));
-      toast.error('An unexpected error occurred');
+      // toast.error('An unexpected error occurred');
       return false;
     }
   };

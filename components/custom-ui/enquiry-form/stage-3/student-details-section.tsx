@@ -45,7 +45,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
   const checkValidity = () => {
     const studentDetails = {
       admissionMode: form.getValues('admissionMode'),
-      dateOfAdmission: form.getValues('dateOfAdmission'),
+      // dateOfAdmission: form.getValues('dateOfAdmission'),
       studentName: form.getValues('studentName'),
       studentPhoneNumber: form.getValues('studentPhoneNumber'),
       // emailId: form.getValues('emailId'),
@@ -64,7 +64,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
     const result = formSchemaStep3
       .pick({
         admissionMode: true,
-        dateOfAdmission: true,
+        // dateOfAdmission: true,
         studentName: true,
         studentPhoneNumber: true,
         // emailId: true,
@@ -173,7 +173,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 )}
               />
 
-              <DatePicker
+              {/* <DatePicker
                 control={form.control}
                 name="dateOfAdmission"
                 disabled={isViewable}
@@ -182,7 +182,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 showYearMonthDropdowns={true}
                 formItemClassName={`${commonFormItemClass} border-none`}
                 labelClassName="font-inter font-semibold text-[14px] text-primary"
-              />
+              /> */}
               <FormField
                 key="course"
                 control={form.control}
@@ -219,7 +219,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 control={form.control}
                 name="studentName"
                 render={({ field }) => (
-                  <FormItem className={`${commonFormItemClass} col-start-1`}>
+                  <FormItem className={`${commonFormItemClass} `}>
                     <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                       Student Name
                       <span className="text-red-500 pl-0">*</span>

@@ -10,7 +10,9 @@ export const contactNumberSchema = z
   .regex(/^[1-9]\d{9}$/, 'Invalid contact number format. Expected: 1234567890');
 
 export const addressSchema = z.object({
-  addressLine1: z.string(),
+  addressLine1: z.string().min(5, {
+    message: "Address Line 1 must be at least 5 characters long"
+  }),
   addressLine2: z.string().optional(),
   pincode: z
     .string()

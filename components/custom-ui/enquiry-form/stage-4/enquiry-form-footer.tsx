@@ -111,7 +111,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
         toast.success('Draft saved successfully');
       }
     } catch {
-      toast.error('Failed to save draft');
+      // toast.error('Failed to save draft');
     } finally {
       setDraftDialogOpen(false);
     }
