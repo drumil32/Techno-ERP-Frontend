@@ -51,7 +51,6 @@ export default function YellowLeadsTracker() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [editRow, setEditRow] = useState<any>(null);
   const authStore = useAuthStore();
-  const isRoleLeadMarketing = authStore.hasRole(UserRoles.ADMIN ) || authStore.hasRole(UserRoles.LEAD_MARKETING);
 
   const [sortState, setSortState] = useState<any>({
     sortBy: ['leadTypeModifiedDate'],
@@ -387,9 +386,9 @@ export default function YellowLeadsTracker() {
       header: 'Remarks',
       meta: {
         maxWidth: 130,
-        fixedWidth:130 ,
+        fixedWidth: 130,
       },
-      
+
     },
     {
       accessorKey: 'followUpCount',
@@ -560,15 +559,11 @@ export default function YellowLeadsTracker() {
       header: 'City',
       meta: { maxWidth: 120, fixedWidth: 120 },
     },
-    ...(isRoleLeadMarketing
-      ? [
-        {
-          accessorKey: 'assignedToName',
-          header: 'Assigned To',
-          meta: { align: 'left', maxWidth: 140, fixedWidth: 140 },
-        },
-      ]
-      : []),
+    {
+      accessorKey: 'assignedToName',
+      header: 'Assigned To',
+      meta: { align: 'left', maxWidth: 140, fixedWidth: 140 },
+    },
   ];
 
   const cityDropdownQuery = useQuery({
@@ -641,21 +636,17 @@ export default function YellowLeadsTracker() {
         options: Object.values(FinalConversionStatus),
         multiSelect: true
       },
-      ...(isRoleLeadMarketing
-        ? [
-          {
-            filterKey: 'assignedTo',
-            label: 'Assigned To',
-            placeholder: 'Assigned To',
-            options: assignedToDropdownData?.map((item: any) => ({
-              label: item.name,
-              id: item._id
-            })),
-            hasSearch: true,
-            multiSelect: true
-          }
-        ]
-        : [])
+      {
+        filterKey: 'assignedTo',
+        label: 'Assigned To',
+        placeholder: 'Assigned To',
+        options: assignedToDropdownData?.map((item: any) => ({
+          label: item.name,
+          id: item._id
+        })),
+        hasSearch: true,
+        multiSelect: true
+      }
     ];
   };
 
@@ -688,9 +679,9 @@ export default function YellowLeadsTracker() {
 
   const clearFilters = () => {
     getFiltersData().forEach((filter) => {
-      
+
       if (filter.filterKey === 'date' || filter.isDateFilter) {
-        const dateKeys = ['startDate', 'endDate', 'startLTCDate', 'endLTCDate', 'date','activeLeadsDateFilters','allLeadsDateFilters'];
+        const dateKeys = ['startDate', 'endDate', 'startLTCDate', 'endLTCDate', 'date', 'activeLeadsDateFilters', 'allLeadsDateFilters'];
 
         dateKeys.forEach((key) => updateFilter(key, undefined));
       } else {

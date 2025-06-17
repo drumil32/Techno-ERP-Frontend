@@ -28,7 +28,7 @@ export default function AllLeads() {
   }, [user])
 
   return (
-    <RoleGuard allowedRoles={[UserRoles.ADMIN, UserRoles.LEAD_MARKETING, UserRoles.FRONT_DESK]} fallbackPath={homeRoute}>
+    <RoleGuard allowedRoles={[UserRoles.ADMIN, UserRoles.LEAD_MARKETING, UserRoles.FRONT_DESK,  UserRoles.EMPLOYEE_MARKETING]} fallbackPath={homeRoute}>
       <CRMLayout>
         <TechnoFilterProvider key="all-leads" sectionKey="all-leads">
           <AllLeadsPage />

@@ -83,7 +83,6 @@ export default function AllLeadsPage() {
   });
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const authStore = useAuthStore();
-  const isRoleLeadMarketing = authStore.hasRole(UserRoles.ADMIN) || authStore.hasRole(UserRoles.LEAD_MARKETING);
   const handleSortChange = (column: string, order: string) => {
     if (column === 'nextDueDateView') {
       column = 'nextDueDate';
@@ -663,16 +662,13 @@ export default function AllLeadsPage() {
       meta: { align: 'left', maxWidth: 120, fixedWidth: 120 }
     },
 
-    ...(isRoleLeadMarketing
-      ? [
-        {
-          accessorKey: 'assignedToName',
-          header: 'Assigned To',
-          meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
-        }
-      ]
-      : [])
-  ];
+    {
+      accessorKey: 'assignedToName',
+      header: 'Assigned To',
+      meta: { align: 'left', maxWidth: 140, fixedWidth: 140 }
+    }
+      
+  ]
 
   const marketingSourceQuery = useQuery({
     queryKey: ['marketingSources'],
@@ -739,23 +735,20 @@ export default function AllLeadsPage() {
         options: Object.values(LeadType),
         multiSelect: true
       },
-      ...(isRoleLeadMarketing
-        ? [
-          {
-            filterKey: 'assignedTo',
-            label: 'Assigned To',
-            options: assignedToDropdownData.map((item: any) => {
-              return {
-                label: item.name,
-                id: item._id
-              };
-            }),
-            placeholder: 'assignee',
-            hasSearch: true,
-            multiSelect: true
-          }
-        ]
-        : [])
+      {
+        filterKey: 'assignedTo',
+        label: 'Assigned To',
+        options: assignedToDropdownData.map((item: any) => {
+          return {
+            label: item.name,
+            id: item._id
+          };
+        }),
+        placeholder: 'assignee',
+        hasSearch: true,
+        multiSelect: true
+      }
+
     ];
   };
 
@@ -867,13 +860,13 @@ export function TableActionButton() {
     !authStore.hasRole(UserRoles.EMPLOYEE_MARKETING) &&
     !authStore.hasRole(UserRoles.LEAD_MARKETING);
 
-  const availableSheetsQuery = !isUploadDisabled ?  (useQuery<SheetItem[]>({
+  const availableSheetsQuery = !isUploadDisabled ? (useQuery<SheetItem[]>({
     queryKey: ['available-sheets'],
     queryFn: (context) =>
       fetchAvailableSheets(context as QueryFunctionContext<readonly [string, any]>),
     refetchOnWindowFocus: false,
     placeholderData: (previousData) => previousData
-  })) : {data : null}
+  })) : { data: null }
 
   const sheetDropdownData = availableSheetsQuery.data;
 
@@ -924,7 +917,7 @@ export function TableActionButton() {
     }
   };
 
-  
+
 
   return (
     <>

@@ -27,7 +27,7 @@ export default function YellowLeads() {
 
   }, [user])
   return (
-    <RoleGuard allowedRoles={[UserRoles.FRONT_DESK, UserRoles.ADMIN, UserRoles.LEAD_MARKETING]} fallbackPath={homeRoute}>
+    <RoleGuard allowedRoles={[UserRoles.FRONT_DESK, UserRoles.ADMIN, UserRoles.LEAD_MARKETING, UserRoles.EMPLOYEE_MARKETING]} fallbackPath={homeRoute}>
       <CRMLayout>
         <TechnoFilterProvider key="yellow-leads" sectionKey="yellow-leads">
           <YellowLeadsTracker />
