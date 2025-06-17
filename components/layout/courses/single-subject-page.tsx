@@ -101,10 +101,6 @@ export const SingleSubjectPage = () => {
   const subjectId = searchParams.get('subi');
   const instructorId = searchParams.get('ii');
 
-  console.log('Course id : ', courseId);
-  console.log('Semester Id : ', semesterId);
-  console.log('Subject Id : ', subjectId);
-  console.log('Instructor Id : ', instructorId);
 
   const rows = [4, 4, 3];
 
@@ -160,14 +156,11 @@ export const SingleSubjectPage = () => {
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
 
   const handleFileAccepted = (files: File[]) => {
-    console.log('Accepted files:', files);
   };
 
   const handlePlanFileSave = async (file: File) => {
-    console.log('Handling file save');
     if (!uploadContext) return;
 
-    console.log('Upload information is: ', uploadContext);
 
     const formData = new FormData();
     formData.append('planId', uploadContext.planId);
@@ -203,7 +196,6 @@ export const SingleSubjectPage = () => {
     batchUpdateData: IFetchScheduleSchema[],
     type: 'LPlan' | 'PPlan'
   ) => {
-    console.log('Handling Batch Update');
 
     const toastId = toast.loading('Processing batch update...');
 
@@ -226,7 +218,6 @@ export const SingleSubjectPage = () => {
         data: sanitizedData
       };
 
-      console.log('Update Object : ', updateObject);
 
       const response = await axios.put(API_ENDPOINTS.batchUpdatePlan, updateObject, {
         headers: {
@@ -242,7 +233,6 @@ export const SingleSubjectPage = () => {
         toast.error(response.data.ERROR, { id: toastId });
       }
     } catch (error) {
-      console.error('Batch update failed:', error);
       toast.error('Failed to perform batch update', { id: toastId });
     }
   };
@@ -252,8 +242,6 @@ export const SingleSubjectPage = () => {
   };
 
   const handleDelete = (row: any, type: 'LPlan' | 'PPlan') => {
-    console.log('Handling delete : ', row);
-    console.log(row);
     setDeletePlanInfo({
       courseId: courseId!,
       semesterId: semesterId!,
@@ -263,7 +251,6 @@ export const SingleSubjectPage = () => {
       type: type,
       lectureNumber: row.lectureNumber
     });
-    console.log('DELETE INFO IS : ', deletePlanInfo);
   };
 
   const handleDocumentDelete = async () => {
@@ -278,7 +265,6 @@ export const SingleSubjectPage = () => {
       link: documentUrl
     } = deleteInfo.material;
 
-    console.log('Delete Info is:', deleteInfo);
 
     const payload: Record<string, any> = {
       courseId,
@@ -308,7 +294,6 @@ export const SingleSubjectPage = () => {
       }
     } catch (error) {
       toast.error('An error occurred while deleting the document.');
-      console.error(error);
     } finally {
       setDeleteLoading(false);
     }
@@ -322,12 +307,6 @@ export const SingleSubjectPage = () => {
     instructorId: string,
     newRowData: any
   ) => {
-    console.log('Saving lecture plan: ');
-    console.log('Data to save, courseId : ', courseId);
-    console.log('Data to save, semesterId : ', semesterId);
-    console.log('Data to save, subjectId : ', subjectId);
-    console.log('Data to save, instructorId : ', instructorId);
-    console.log('Data to save, new data : ', newRowData);
     const requestObject = {
       courseId: courseId,
       semesterId: semesterId,
@@ -344,10 +323,8 @@ export const SingleSubjectPage = () => {
       withCredentials: true
     });
 
-    console.log('Response is : ', response);
 
     if (response.data.SUCCESS) {
-      console.log('Response Data : ', response.data);
       toast.success(response.data.MESSAGE);
       queryClient.invalidateQueries({ queryKey: ['scheduleInfo'] });
     } else {
@@ -359,8 +336,6 @@ export const SingleSubjectPage = () => {
     if (!deletePlanInfo) return;
 
     const { courseId, semesterId, subjectId, instructorId, planId, type } = deletePlanInfo;
-
-    console.log('Delete Plan Info is:', deleteInfo);
 
     const payload: Record<string, any> = {
       courseId,
@@ -387,7 +362,6 @@ export const SingleSubjectPage = () => {
       }
     } catch (error) {
       toast.error('An error occurred while deleting the document.');
-      console.error(error);
     } finally {
       setDeleteLoading(false);
     }
@@ -417,10 +391,8 @@ export const SingleSubjectPage = () => {
   };
 
   const handleAdditionalResourceFileSave = async (file: File) => {
-    console.log('Handling file save');
     if (!additionalResourcesContext) return;
 
-    console.log('Upload information is: ', uploadContext);
 
     const formData = new FormData();
     formData.append('courseId', additionalResourcesContext.courseId);
@@ -482,8 +454,6 @@ export const SingleSubjectPage = () => {
   }, []);
 
   const addLecturePlan = () => {
-    console.log('Adding lecture plan!');
-    console.log('Added lecture plan');
   };
 
   const getQueryParams = () => {
@@ -517,15 +487,12 @@ export const SingleSubjectPage = () => {
 
   // setFullSchedule(scheduleResponse);
 
-  console.log(scheduleResponse);
   let schedule = scheduleResponse?.schedule || [];
 
   let practicalPlan = schedule?.practicalPlan || [];
   let lecturePlan = schedule?.lecturePlan || [];
   let additionalResources = schedule?.additionalResources || [];
 
-  console.log('Practical Plan : ', practicalPlan);
-  console.log('Lecture Plan is : ', lecturePlan);
   useEffect(() => {
     if (fullSchedule) {
       let schedule = fullSchedule.schedule || [];
@@ -563,7 +530,6 @@ export const SingleSubjectPage = () => {
     subjectId!,
     instructorId!
   );
-  console.log('Document Materials are : ', documentMaterials);
   // setMaterials(documentMaterials);
   const lecturePlanWithAttendance = filteredLecturePlan.map((plan) => ({
     ...plan,
@@ -597,7 +563,6 @@ export const SingleSubjectPage = () => {
     'College Name': scheduleResponse?.collegeName
   };
 
-  console.log(subjectData);
 
   const toastIdRef = useRef<string | number | null>(null);
 
@@ -677,7 +642,6 @@ export const SingleSubjectPage = () => {
             className="border rounded px-2 py-1 text-sm"
             onChange={(e) => {
               const updatedValue = e.target.value as LectureConfirmation;
-              console.log('Updated Confirmation:', updatedValue);
             }}
           >
             {Object.values(LectureConfirmation).map((status) => (
@@ -747,7 +711,6 @@ export const SingleSubjectPage = () => {
         addButtonPlacement={'bottom'}
         addBtnLabel={'Add Lecture Plan'}
         onSaveNewRow={(newRowData: any) => {
-          console.log('Saving new row:', newRowData);
           savePlan(
             CourseMaterialType.LPLAN,
             courseId!,
@@ -758,7 +721,6 @@ export const SingleSubjectPage = () => {
           );
         }}
         handleBatchEdit={(batchEditedData: any) => {
-          console.log('Batch Updated Data', batchEditedData);
           batchUpdatePlan(
             courseId!,
             semesterId!,
@@ -796,7 +758,6 @@ export const SingleSubjectPage = () => {
         addButtonPlacement={'bottom'}
         addBtnLabel={'Add Practical Plan'}
         onSaveNewRow={(newRowData: any) => {
-          console.log('Saving new row:', newRowData);
           savePlan(
             CourseMaterialType.PPLAN,
             courseId!,
@@ -807,7 +768,6 @@ export const SingleSubjectPage = () => {
           );
         }}
         handleBatchEdit={(batchEditedData: any) => {
-          console.log('Batch Updated Data', batchEditedData);
           batchUpdatePlan(
             courseId!,
             semesterId!,

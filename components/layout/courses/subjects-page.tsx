@@ -53,11 +53,6 @@ export const AllSubjectsPage = () => {
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleViewMore = (row: Subjects) => {
-    console.log(row);
-    console.log('Subject ID : ', row.subjectId);
-    console.log('Instructor ID : ', row.instructorId);
-    console.log('Course ID : ', row.courseId);
-    console.log('Semester ID : ', row.semesterId);
     const redirectionPath = `${SITE_MAP.ACADEMICS.COURSES}/${row.courseName}/${row.subjectCode}?crsi=${row.courseId}&si=${row.semesterId}&subi=${row.subjectId}&ii=${row.instructorId}`;
     routerNav.push(redirectionPath);
   };
@@ -173,7 +168,6 @@ export const AllSubjectsPage = () => {
   const subjectResponse: Subjects[] = subjectQuery.data as Subjects[];
   let subjects = subjectResponse || [];
 
-  console.log('Subjects Information is : ', subjects);
   subjects.forEach((subject, index) => {
     subject.serialNo = index + 1;
   });

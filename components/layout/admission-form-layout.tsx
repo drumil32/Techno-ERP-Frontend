@@ -41,7 +41,6 @@ export default function AdmissionFormLayout({ children }: { children: React.Reac
           setStatus(enquiryData.applicationStatus);
         }
       } catch (error) {
-        console.error('Error fetching enquiry status:', error);
       }
     };
     

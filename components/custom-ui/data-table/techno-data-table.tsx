@@ -71,11 +71,12 @@ export const TruncatedCell = ({
   maxWidth?: number;
   disableTooltip?: boolean;
   columnId?: string;
-  tableName ?:string;
+  tableName?: string;
 }) => {
 
-  
+
   const cellRef = useRef<HTMLSpanElement>(null);
+  const [value2, setvalue2] = useState(cellRef.current?.innerText)
   const [isTruncated, setIsTruncated] = useState(false);
 
   useEffect(() => {
@@ -84,14 +85,18 @@ export const TruncatedCell = ({
     }
   }, [value, maxWidth]);
 
-  const value2 = cellRef.current?.innerText
-  
-  if (!value || value == '-'|| value2 == "-" || value2 == "--" || value === "--" || value === 'N/A'  || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip || tableName.includes("Ongoing Enquiry") || tableName.includes("Recent Admissions") || tableName.includes("Course Dues") || tableName.includes("Student Dues")) return <>{value}</>;
+
+  useEffect(() => {
+    if (cellRef.current?.innerText) {
+      setvalue2(cellRef.current.innerText)
+    }
+  }, [value2])
+
+  if (!value || value == '-' || value2 == "-" || value2 == "--" || value === "--" || value === 'N/A' || columnId == "name" || columnId == "nextDueDateView" || columnId == "assignedToName" || columnId == "followUpCount" || columnId == "leadType" || columnId == "date" || columnId == "id" || columnId == "finalConversion" || columnId == "footFall" || columnId == "phoneNumber" || disableTooltip || tableName.includes("Ongoing Enquiry") || tableName.includes("Recent Admissions") || tableName.includes("Course Dues") || tableName.includes("Student Dues")) return <>{value}</>;
 
   if (columnId === "remarks") {
-    
+
     const showValue = cellRef.current?.innerText
-    console.log("after update ", showValue)
     return (
       <TooltipProvider delayDuration={200}>
         <Tooltip>
@@ -489,7 +494,7 @@ export default function TechnoDataTable({
       <div className="relative">
         <div
           ref={tableContainerRef}
-          className= " min-h-[900px] h-[240px] overflow-auto custom-scrollbar relative"
+          className=" min-h-[900px] h-[240px] overflow-auto custom-scrollbar relative"
         >
           <Table ref={tableRef} className={cn('  w-full', tableStyles)}>
             <TableHeader className="bg-[#5B31D1]/10 backdrop-blur-lg font-bolds sticky top-0 z-10">
@@ -570,7 +575,7 @@ export default function TechnoDataTable({
                                   header.column.columnDef.header,
                                   header.getContext()
                                 )}
-                                 disableTooltip={true}
+                                disableTooltip={true}
                                 columnId={columnId}
                                 maxWidth={maxWidth}
                                 tableName={tableName}
@@ -606,7 +611,7 @@ export default function TechnoDataTable({
                         const maxWidth = cell.column.columnDef.meta?.maxWidth;
                         const fixedWidth = cell.column.columnDef.meta?.fixedWidth;
 
-                        if(["Step_1","Step_2","Step_3","Step_4"].includes(cellValue)){
+                        if (["Step_1", "Step_2", "Step_3", "Step_4"].includes(cellValue)) {
                           cellValue = StepMapper[cellValue?.toString()]
                         }
 
@@ -700,7 +705,7 @@ export default function TechnoDataTable({
         <div className="flex items-center justify-between py-4">
           <div className="flex items-center space-x-2">
             <span>Rows per page:</span>
-           
+
             <span>
               {table.getState().pagination.pageIndex * pageSize + 1} -{' '}
               {data.length} of{' '}

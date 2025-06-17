@@ -39,7 +39,6 @@ const otherDocuments = [
 const AllDocuments = ({ enquiryDocuments, setCurrentDocuments }: { enquiryDocuments: any, setCurrentDocuments: any }) => {
   const params = useParams();
   const enquiry_id = params.id as string;
-  console.log(enquiryDocuments)
 
   // const {
   //   data: enquiryData,

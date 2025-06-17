@@ -67,9 +67,8 @@ export default function AdmissionsLandingPage() {
       meta: { align: 'center' },
       cell: ({ getValue }: CellContext<AdmissionTableRow, string>) => {
         const rawStatus = getValue<string>();
-        console.log(rawStatus, "get rwa")
         return (
-          <div className="text-primary font-semibold">wow</div>
+          <div className="text-primary font-semibold"> {StepMapper[rawStatus]} </div>
         );
       }
     }
@@ -241,8 +240,6 @@ export function TableActionButton() {
       XLSX.utils.book_append_sheet(workbook, worksheet, 'enquiry-excel');
 
       XLSX.writeFile(workbook, `${dateStr} - Ongoing Enquiry.xlsx`);
-      console.log(enquiryData.DATA)
-
 
 
       toast.success('Marketing Data Downloaded Successfully');

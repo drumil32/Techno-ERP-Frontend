@@ -109,7 +109,6 @@ export default function EditFeeBreakupDialogue({
       })
     };
 
-    console.log('Updated Breakup:', updatedBreakup);
 
     if (onSave) {
       onSave(updatedBreakup);
