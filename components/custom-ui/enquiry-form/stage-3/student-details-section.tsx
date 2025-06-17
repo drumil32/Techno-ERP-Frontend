@@ -429,7 +429,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                       Mother's Occupation
-                      <span className="text-red-500 pl-0">*</span>
+                      
                     </FormLabel>
                     <FormControl>
                       <Input
