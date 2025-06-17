@@ -47,6 +47,7 @@ export const apiRequest = async <T>(
     credentials: 'include'
   });
 
+
   if (response.status === 401 && !isAuthRequest) {
     toast.error('Your session has expired. Please login again.');
     //FOR YOUR INFORMATION,
@@ -69,7 +70,7 @@ export const apiRequest = async <T>(
     return null;
   }
 
-  if (!response.ok || !responseBody.SUCCESS) {
+  if (response.status === 403 || !response.ok || !responseBody.SUCCESS) {
     toast.error(responseBody.ERROR || responseBody.MESSAGE || `HTTP Error: ${response.status}`);
     const errorMessage = responseBody.ERROR || responseBody.MESSAGE|| 'Something went wrong'
     throw Error(errorMessage);

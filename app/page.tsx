@@ -3,9 +3,11 @@ import { getHomePage } from '@/lib/enumDisplayMapper';
 import useAuthStore from '@/stores/auth-store';
 import { redirect } from 'next/navigation';
 import { useEffect } from 'react';
+import { useHomeContext } from './c/HomeRouteContext';
 
 export default function Home() {
   const { user } = useAuthStore();
+  const { setHomeRoute} = useHomeContext();
 
   useEffect(() => {
     if (!user?.roles?.length) {
@@ -15,9 +17,9 @@ export default function Home() {
     // Find first role that has a valid home page
     for (const role of user.roles) {
       const homePage = getHomePage(role);
-      console.log(homePage)
       if (homePage) {
-        redirect(homePage);
+        setHomeRoute(homePage)
+        return redirect(homePage);
       }
     }
 

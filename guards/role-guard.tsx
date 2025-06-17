@@ -8,6 +8,7 @@ import useAuthStore from '@/stores/auth-store';
 import { UserRoles } from '@/types/enum';
 import { toast } from 'sonner';
 import { isatty } from 'tty';
+import { useHomeContext } from '@/app/c/HomeRouteContext';
 
 interface RoleGuardProps {
   children: ReactNode;
@@ -33,7 +34,7 @@ export default function RoleGuard({
 
       const hasPermission = user?.roles?.some((role) => allowedRoles.includes(role));
       if (!hasPermission) {
-        toast.error('You do not have permission');
+        // toast.error('You do not have permission');
         router.push(fallbackPath);
       }
 

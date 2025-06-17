@@ -108,7 +108,6 @@ export const ProfileDropdown = () => {
         router.replace('/auth/login');
       }
     } catch (error) {
-      console.error('Logout failed:', error);
       document.cookie =
         'is-authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; secure; samesite=strict';
       localStorage.clear();

@@ -66,7 +66,7 @@ export function getRequiredRoles(item: string): string[] {
     [SIDEBAR_ITEMS.ADMISSIONS]: [UserRoles.ADMIN, UserRoles.REGISTAR, UserRoles.FINANCE, UserRoles.FRONT_DESK],
     [SIDEBAR_ITEMS.FACULTY]: [UserRoles.ADMIN],
     [SIDEBAR_ITEMS.FINANCE]: [UserRoles.ADMIN, UserRoles.FINANCE],
-    [SIDEBAR_ITEMS.MARKETING]: [UserRoles.ADMIN, UserRoles.LEAD_MARKETING, UserRoles.EMPLOYEE_MARKETING],
+    [SIDEBAR_ITEMS.MARKETING]: [UserRoles.ADMIN, UserRoles.LEAD_MARKETING, UserRoles.EMPLOYEE_MARKETING, UserRoles.FRONT_DESK],
     [SIDEBAR_ITEMS.STUDENT_REPOSITORY]: [UserRoles.ADMIN, UserRoles.REGISTAR, UserRoles.FINANCE, UserRoles.FRONT_DESK],
   }
 

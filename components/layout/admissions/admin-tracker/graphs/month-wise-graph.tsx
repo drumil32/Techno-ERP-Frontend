@@ -34,8 +34,6 @@ export function MonthWiseCourseTrend({
   const isEmpty = chartData.length === 0;
   const max = Math.max(...chartData.map(d => d.count));
   const ticks = Array.from({ length: max + 1 }, (_, i) => i);
-  console.log(chartData)
-
   return (
     <Card className="w-full bg-gradient-to-br border border-gray-100 shadow-lg rounded-2xl">
       <CardHeader className="pb-4">

@@ -75,7 +75,6 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
     setFinalApproval(true);
     try {
       const result = await onSubmit();
-      // console.log('Submission result:', result);
       if (result !== false) {
         setSubmitDialogOpen(false);
         setSuccessDialogOpen(true);
@@ -112,7 +111,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
         toast.success('Draft saved successfully');
       }
     } catch {
-      toast.error('Failed to save draft');
+      // toast.error('Failed to save draft');
     } finally {
       setDraftDialogOpen(false);
     }

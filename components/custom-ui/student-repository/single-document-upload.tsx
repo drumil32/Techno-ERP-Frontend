@@ -158,7 +158,6 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
         queryClient.invalidateQueries({ queryKey: ['student', studentData._id] });
       },
       onError: (error) => {
-        console.error('Update failed:', error);
       }
     });
   };
@@ -203,7 +202,6 @@ const SingleDocumentUpload: React.FC<SingleDocumentUploadProps> = ({
         message: `${getReadableDocumentName(documentType)} uploaded successfully!`
       });
     } catch (error) {
-      console.error('Upload failed:', error);
       let errorMessage = 'File upload failed. Please try again.';
       if (error instanceof Error) {
         errorMessage = error.message;

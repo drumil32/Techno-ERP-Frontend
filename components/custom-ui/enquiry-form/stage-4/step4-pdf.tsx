@@ -29,6 +29,7 @@ import { downloadStep4 } from './helpers/download-pdf';
 import { useQuery } from '@tanstack/react-query';
 import { getEnquiry } from '../stage-1/enquiry-form-api';
 import { fetchDataForAdmissionFeeReceipt } from '@/components/layout/admissions/helpers/fetch-data';
+import { displayFeeMapper, scheduleFeeMapper } from '../stage-2/helpers/mappers';
 
 export function DownloadStep4({
   tableActionButton = true, 
@@ -37,6 +38,8 @@ export function DownloadStep4({
   tableActionButton?: boolean; 
   studentId: string;
 }) {
+
+
 
   const [downloadOpen, setDownloadOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,9 +58,48 @@ export function DownloadStep4({
       setPdfDataUrl(null);
       try {
         const res  = await getEnquiry(studentId);
-        const feeReciptData = await fetchDataForAdmissionFeeReceipt({studentId})
-        if (res && feeReciptData) {
-          const data = {...res, ...feeReciptData}
+        const feeReciptData = await fetchDataForAdmissionFeeReceipt({studentId});
+
+        let otherFeeStructer:any = [];
+        let semWiseFeeStructer:any = [];
+
+        res.studentFee?.otherFees.map((fee,index)=>{
+          
+          const type = displayFeeMapper(fee.type);
+          const finalFee = fee.finalFee;
+          const feesDeposited = fee.feesDepositedTOA;
+          const feesDue = Number(fee.finalFee) - Number(fee.feesDepositedTOA);
+          const schedule = scheduleFeeMapper(fee.type);
+          if(index == 0){
+            const feeobj = {
+              type,finalFee,feesDeposited,feesDue,schedule,
+              feeAmount : res.studentFee?.semWiseFees[0].feeAmount,
+              discount : Number(res.studentFee?.semWiseFees[0].feeAmount) - Number(fee.finalFee),
+            }
+            otherFeeStructer.push(feeobj)
+          }else{
+            const feeobj = {
+              type,finalFee,feesDeposited,feesDue,schedule,
+              discount : Number(fee?.feeAmount) - Number(fee.finalFee),
+              feeAmount : fee.feeAmount,
+            }
+            otherFeeStructer.push(feeobj)
+          }
+        })
+
+        res.studentFee?.semWiseFees.map((fee,index) => {
+          const feeobj = {
+            feeAmount : fee.feeAmount,
+            finalFee : fee.finalFee,
+            discount : fee.feeAmount - fee.finalFee
+          }
+          semWiseFeeStructer.push(feeobj);
+        })
+
+
+        if (res && feeReciptData ) {
+         
+          const data = {...res,feeReciptData,otherFeeStructer,semWiseFeeStructer}
           const { url, fileName } = await downloadStep4(data);
           if (fileName) setFileName(fileName);
           if (url) setPdfDataUrl(url);

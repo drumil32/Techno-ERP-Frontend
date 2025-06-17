@@ -170,7 +170,7 @@ const EnquiryFormStage3 = () => {
     try {
       const response = await updateEnquiryDraftStep3({ ...rest, id });
       if (!response) {
-        toast.error('Failed to update enquiry draft');
+        // toast.error('Failed to update enquiry draft');
         throw new Error('Update failed');
       }
 
@@ -317,7 +317,7 @@ const EnquiryFormStage3 = () => {
 
       form.reset({
         ...sanitizedData,
-        dateOfAdmission: sanitizedData.dateOfAdmission || format(new Date(), 'dd/MM/yyyy'),
+        // dateOfAdmission: sanitizedData.dateOfAdmission || format(new Date(), 'dd/MM/yyyy'),
         id: id,
         confirmation: false,
         enquiryRemark: sanitizedData.enquiryRemark || "",

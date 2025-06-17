@@ -48,7 +48,6 @@ export const useAdmissionRedirect = ({
           !fetchedStatus ||
           !Object.values(ApplicationStatus).includes(fetchedStatus as ApplicationStatus)
         ) {
-          console.warn(`Invalid application status: ${fetchedStatus}`);
           return;
         }
 
@@ -56,7 +55,6 @@ export const useAdmissionRedirect = ({
           setIsViewable(true);
         }
       } catch (err) {
-        console.error(`Error fetching enquiry ${id}:`, err);
         toast.error(`Failed to load enquiry data (ID: ${id})`);
         setIsCheckError(true);
       } finally {

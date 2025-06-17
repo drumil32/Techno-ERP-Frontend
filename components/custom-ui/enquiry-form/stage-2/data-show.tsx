@@ -3,7 +3,6 @@ import { AffiliationMapper, CollegeNameMapper, Course, CourseNameMapper } from '
 import { User, Phone, Users, BookOpen, School, ShieldCheck } from 'lucide-react';
 
 export default function ShowStudentData({ data }: { data: Admission }) {
-  console.log(data, " default data")
   return (
     <div className="p-6 bg-white rounded-xl shadow-sm border border-gray-100">
       <h3 className="text-lg font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-100">

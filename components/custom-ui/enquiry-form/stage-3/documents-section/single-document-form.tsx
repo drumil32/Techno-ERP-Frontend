@@ -87,7 +87,6 @@ export const SingleEnquiryUploadDocument = ({
         const parsedDate = parseISO(existingDocument.dueBy);
         return parsedDate;
       } catch (e) {
-        console.error('Error parsing due date:', existingDocument.dueBy, e);
         return undefined;
       }
     }
@@ -220,22 +219,17 @@ export const SingleEnquiryUploadDocument = ({
       const updatedDocuments = response?.documents;
 
       if (onUploadSuccess && Array.isArray(updatedDocuments)) {
-        console.log('Calling onUploadSuccess with updated documents array.');
         onUploadSuccess(updatedDocuments);
         setSelectedFile(null);
         resetFileInput();
       } else if (onUploadSuccess) {
-        console.error(
-          'Upload successful, but response.documents is not an array or missing:',
-          response
-        );
+        
       }
       setStatus({
         type: 'success',
         message: `${getReadableDocumentName(documentType)} uploaded successfully!`
       });
     } catch (error) {
-      console.error('Upload failed:', error);
       let errorMessage = 'File upload failed. Please try again.';
       if (error instanceof Error) {
         errorMessage = error.message;

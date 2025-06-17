@@ -29,7 +29,6 @@ export function AdminTrackerProvider({ children }: { children: ReactNode }) {
       transformedValues
     );
 
-    console.log("get response ", response)
     return response;
   };
 

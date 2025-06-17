@@ -35,7 +35,6 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
       let data = personalDetailsForm.getValues();
 
       const filteredData = filterBySchema(updateStudentDetailsRequestSchema, data);
-      console.log('Filtered Data:', filteredData);
       if (filteredData.academicDetails) {
         const filteredAcademicDetails: IAcademicDetailArraySchema =
           filteredData.academicDetails.filter((entry: IAcademicDetailSchema) => {
@@ -60,12 +59,10 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
       }
 
       const cleanedData = removeNullValues(filteredData);
-      console.log(cleanedData);
       // if form contains errors, then show toast error
       const validationResult = updateStudentDetailsRequestSchema.safeParse(cleanedData);
 
       if (!validationResult.success) {
-        console.log(validationResult.error);
         const errorMessages = validationResult?.error?.issues?.map((issue) => {
           // Get the field name from the path
           const fieldPath = issue.path;
@@ -126,13 +123,12 @@ const StudentDetailsTab: React.FC<StudentDetailsTabProps> = ({
         return true;
       } else {
         personalDetailsForm.reset(getPersonalDetailsFormData(studentData));
-        toast.error('Failed to update student data');
+        // toast.error('Failed to update student data');
         return false;
       }
     } catch (error) {
-      console.error('Error in handleSave:', error);
       personalDetailsForm.reset(getPersonalDetailsFormData(studentData));
-      toast.error('An unexpected error occurred');
+      // toast.error('An unexpected error occurred');
       return false;
     }
   };
