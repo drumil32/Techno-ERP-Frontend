@@ -198,7 +198,7 @@ export const downloadAdmissionForm = async (
                 Address :</td>
             <td colspan="3" style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none; width:30%;">
            <span style="display: inline-block; width: 100%; word-wrap: break-word; word-break: break-word;">
-  ${escapeHtml(data.address ?? '--')}
+  ${escapeHtml((data.address ?? '').replace(", ,",", "))}
 </span>
 
                 </td>
@@ -324,6 +324,7 @@ export const downloadAdmissionForm = async (
 
 <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end;">
     <p style="font-size: 12px; color: #333333; margin: 0;">Date: ____________________</p>
+    <p style="text-align: center;font-size: 12px; color: #333333; margin: 0;">Student/Parent Signature </p>
     <p style="text-align: right; font-size: 12px; color: #333333; margin: 0;">Authorised Signatory</p>
 </div>
 `;
