@@ -26,7 +26,7 @@ import {
   Receipt
 } from 'lucide-react';
 import { FaCircleExclamation } from 'react-icons/fa6';
-import { fetchDataForAdmissionFeeReceipt } from './helpers/fetch-data';
+import { fetchDataForAdmissionFeeReceipt, fetchDataForAdmissionReceipt } from './helpers/fetch-data';
 import { downloadFeeReceipt } from './helpers/download-pdf';
 
 export function AdmissionFeeReceiptDialog({
