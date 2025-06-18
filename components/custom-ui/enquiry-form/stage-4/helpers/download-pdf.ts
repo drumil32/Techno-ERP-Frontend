@@ -24,7 +24,7 @@ export const downloadStep4 = async (
   data: any,
   directSave: boolean = false
 ): Promise<{ url: string; fileName: string }> => {
-
+  console.log(data)
   const container = document.createElement('div');
   container.style.width = '794px'; // A4 width in pixels (210mm)
   container.style.minHeight = '1123px'; // A4 height in pixels (297mm)
@@ -40,7 +40,7 @@ export const downloadStep4 = async (
   const lightBgColor = '#F8FAFC';
   const borderColor = '#E5E7EB';
   const textColor = '#111827';
-  const secondaryText = '#4B5563';
+  const secondaryText = '#111827';
 
   const escapeHtml = (unsafe: any) => {
     if (typeof unsafe !== 'string') return unsafe;
@@ -75,151 +75,154 @@ export const downloadStep4 = async (
       border: 1px solid ${borderColor};
       border-radius: 6px 6px 0 0;
     ">
-      ${columns.map(col => `<div style="text-align: ${(col === 'Semester' || col === 'Fees Details') ? 'left' : (col === 'Fee Type') ? 'center' : 'right'}">${col}</div>`).join('')}
+      ${columns.map(col => `<div style="text-align: ${(col === 'Semester' || col === 'Fees Details' || col === "Schedule") ? 'left' : (col === 'Fee Type') ? 'center' : 'right'}">${col}</div>`).join('')}
     </div>
   `;
 
   // Main fees table generator
-  const generateFeeTables = () => {
-    const feeDate = data.studentFee?.feesClearanceDate
-      ? new Date(data.studentFee.feesClearanceDate).toLocaleDateString('en-IN')
-      : new Date().toLocaleDateString('en-IN');
+ const generateFeeTables = () => {
+  const feeDate = data.dateOfAdmission;
 
-      let totalOriginal= 0;
-      let totalDue = 0;
-      let totalDeposited = 0;
-      let totalFinal = 0;
+  let totalOriginal = 0;
+  let totalDue = 0;
+  let totalDeposited = 0;
+  let totalFinal = 0;
 
+  const headerColumns = [
+    { name: 'Fees Details', width: '2fr' },
+    { name: 'Schedule', width: '1fr' },
+    { name: 'Final Fees', width: '1fr' },
+    { name: 'Fees Deposit', width: '1fr' },
+    { name: 'Fees Due', width: '1fr' }
+  ];
 
-    const headerColumns = [
-      'Fees Details',
-      'Schedule',
-      'Fees',
-      'Discount',
-      'Final Fees',
-      'Fees Deposit',
-      'Fees Due'
-    ];
+  return `
+    <div style="margin-top: 20px;">
+      <h4 style="
+        font-size: 10px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: ${secondaryColor};
+        padding-bottom: 4px;
+        border-bottom: 1px solid ${borderColor};
+      ">
+        Fees Details (Date: ${feeDate})
+      </h4>
 
-    return `
-      <div style="margin-top: 20px;">
-        <h4 style="
-          font-size: 10px;
-          font-weight: bold;
-          margin-bottom: 10px;
-          color: ${secondaryColor};
-          padding-bottom: 4px;
-          border-bottom: 1px solid ${borderColor};
-        ">
-          Fees Details (Date: ${feeDate})
-        </h4>
-
-        ${createTableHeader(headerColumns)}
-
-        <div style="border: 1px solid ${borderColor}; border-top: none; border-radius: 0 0 6px 6px;">
-  ${data.otherFeeStructer?.map((fee: any, index: number) => {
-    const feeType = fee.type;
-    const feeAmount = fee.feeAmount
-    if(feeType === "Book Bank" && feeAmount == 0){
-      return;
-    }
-    const schedule = fee.schedule || '-';
-    
-    // Get values from fee object with fallbacks
-    const totalFee = feeAmount;
-    const finalFee = fee.finalFee || 0;
-    const feesDeposited = fee.feesDeposited || 0;
-    const discountValue =  fee.discount || 0;
-    const remainingFee = fee.feesDue || 0;
-
-    totalOriginal += totalFee;
-    totalDeposited += feesDeposited;
-    totalFinal += finalFee;
-    totalDue += remainingFee;
-
-    return `
+      <!-- Table Header -->
       <div style="
         display: grid;
-        grid-template-columns: ${headerColumns.map(() => '1fr').join(' ')};
+        grid-template-columns: ${headerColumns.map(col => col.width).join(' ')};
+        background-color: ${lightBgColor};
+        color: ${secondaryText};
+        font-weight: bold;
         padding: 10px;
         font-size: 9px;
-        gap: 1px;
-        border-bottom: 1px solid ${borderColor};
-        background-color: ${index % 2 === 0 ? 'white' : lightBgColor};
+        border: 1px solid ${borderColor};
+        border-radius: 6px 6px 0 0;
         align-items: center;
       ">
-        <div style="font-weight: 500; color: ${textColor}; text-align: left;">
-          ${feeType}
-        </div>
-        <div style="color: ${secondaryText}; text-align: right;">
-          ${schedule}
-        </div>
-        <div style="color: ${secondaryText}; text-align: right;">
-          ${formatCurrency(feeAmount)}
-        </div>
-        <div style="color: ${typeof discountValue === 'number' && discountValue > 0 ? '#059669' : secondaryText}; 
-             text-align: right; font-weight: ${typeof discountValue === 'number' ? '500' : 'normal'}">
-          ${typeof discountValue === 'number' ? `${formatCurrency(discountValue)}` : '-'}
-        </div>
-        <div style="color: ${textColor}; font-weight: 500; text-align: right;">
-          ${formatCurrency(finalFee)}
-        </div>
-        <div style="color: ${secondaryText}; text-align: right;">
-          ${formatCurrency(feesDeposited)}
-        </div>
-        <div style="color: ${remainingFee > 0 ? '#DC2626' : textColor}; font-weight: 500; text-align: right;">
-          ${formatCurrency(remainingFee)}
-        </div>
+        ${headerColumns.map(col => `
+          <div style="text-align: ${(col.name === "Final Fees" || col.name === "Fees Deposit" || col.name === "Fees Due") ? 'right' : ''}">
+            ${col.name}
+          </div>
+        `).join('')}
       </div>
-    `;
-  }).join('')}
-</div>
+
+      <!-- Table Body -->
+      <div style="border: 1px solid ${borderColor}; border-top: none; border-radius: 0 0 6px 6px;">
+        ${data.otherFeeStructer?.map((fee: any, index: number) => {
+          const feeType = fee.type;
+          const feeAmount = fee.feeAmount;
+          if (feeType === "Book Bank" && feeAmount == 0) {
+            return;
+          }
+          const schedule = fee.schedule || '-';
+          
+          const totalFee = feeAmount || 0;
+          const finalFee = fee.finalFee || 0;
+          const feesDeposited = fee.feesDeposited || 0;
+          const remainingFee = fee.feesDue || 0;
+
+          totalOriginal += totalFee;
+          totalDeposited += feesDeposited;
+          totalFinal += finalFee;
+          totalDue += remainingFee;
+
+          return `
+            <div style="
+              display: grid;
+              grid-template-columns: ${headerColumns.map(col => col.width).join(' ')};
+              padding: 10px;
+              font-size: 9px;
+              gap: 1px;
+              border-bottom: 1px solid ${borderColor};
+              background-color: ${index % 2 === 0 ? 'white' : lightBgColor};
+              align-items: center;
+            ">
+              <div style="font-weight: 500; color: ${textColor}; text-align: left;">
+                ${feeType}
+              </div>
+              <div style="color: ${secondaryText}; text-align: left;">
+                ${schedule}
+              </div>
+              
+              <div style="color: ${textColor}; font-weight: 500; text-align: right;">
+                ${formatCurrency(finalFee)}
+              </div>
+              <div style="color: ${secondaryText}; text-align: right;">
+                ${formatCurrency(feesDeposited)}
+              </div>
+              <div style="color: ${remainingFee > 0 ? '#111827' : textColor}; font-weight: 500; text-align: right;">
+                ${formatCurrency(remainingFee)}
+              </div>
+            </div>
+          `;
+        }).join('')}
 
         <!-- Total Row -->
         <div style="
           display: grid;
-          grid-template-columns: ${headerColumns.map(() => '1fr').join(' ')};
+          grid-template-columns: ${headerColumns.map(col => col.width).join(' ')};
           background-color: ${lightBgColor};
           color: ${textColor};
           font-weight: bold;
           padding: 10px;
           font-size: 9px;
           gap: 1px;
-          border: 1px solid ${borderColor};
-          border-top: none;
-          border-radius: 0 0 6px 6px;
+          border-top: 1px solid ${borderColor};
         ">
-          <div style="text-align: left;">Total Fees</div>
-          <div></div>
-          <div style="text-align: right;">${formatCurrency(totalOriginal || 0)}</div>
-          <div style="text-align: center;">-</div>
-          <div style="text-align: right;">${formatCurrency(totalFinal || 0)}</div>
-          <div style="text-align: right;">${formatCurrency(totalDeposited || 0)}</div>
-          <div style="text-align: right; color: ${(totalDue || 0) > 0 ? '#DC2626' : textColor}">
-            ${formatCurrency(totalDue || 0)}
+          <div style="text-align: left;">Total</div>
+          <div style="text-align: left;">-</div>
+          
+          <div style="text-align: right;">${formatCurrency(totalFinal)}</div>
+          <div style="text-align: right;">${formatCurrency(totalDeposited)}</div>
+          <div style="text-align: right; color: ${totalDue > 0 ? '#111827' : textColor}">
+            ${formatCurrency(totalDue)}
           </div>
         </div>
-
-        <!-- Additional notes -->
-        <div style="
-          margin-top: 15px;
-          padding: 10px;
-          background-color: ${lightBgColor};
-          border-radius: 6px;
-          font-size: 8px;
-          color: ${secondaryText};
-          border: 1px solid ${borderColor};
-        ">
-          <p style="margin: 0 0 5px 0;"><strong>Notes:</strong></p>
-          <ul style="margin: 0; padding-left: 15px;">
-            <li>Book Bank - 50% adjustable at the end of final semester</li>
-            <li>Book Bank - Applicable only in BBA, MBA, BAJMC, MAJMC & BCom (Hons)</li>
-            <li>Exam Fees - To be given at the time of exam form submission as per LU/AKTU Norms</li>
-          </ul>
-        </div>
       </div>
-    `;
-  };
+
+      <!-- Additional notes -->
+      <div style="
+        margin-top: 15px;
+        padding: 10px;
+        background-color: ${lightBgColor};
+        border-radius: 6px;
+        font-size: 8px;
+        color: ${secondaryText};
+        border: 1px solid ${borderColor};
+      ">
+        <p style="margin: 0 0 5px 0;"><strong>Notes:</strong></p>
+        <ul style="margin: 0; padding-left: 15px;">
+          <li>Book Bank - 50% adjustable at the end of final semester</li>
+          <li>Book Bank - Applicable only in BBA, MBA, BAJMC, MAJMC & BCom (Hons)</li>
+          <li>Exam Fees - To be given at the time of exam form submission as per LU/AKTU Norms</li>
+        </ul>
+      </div>
+    </div>
+  `;
+};
 
   // Semester-wise fees table generator
   const generateSemWiseFeesTable = () => {
@@ -273,7 +276,7 @@ export const downloadStep4 = async (
                 </div>
                 <div style="color: ${secondaryText};margin-left:2px; text-align: center;">Tuition Fee</div>
                 <div style="color: ${secondaryText}; text-align: right;">${formatCurrency(originalFeeAmount)}</div>
-                <div style="color: ${typeof discountValue === 'number' && discountValue > 0 ? '#059669' : secondaryText}; 
+                <div style="color: ${typeof discountValue === 'number' && discountValue > 0 ? '#111827' : secondaryText}; 
                      text-align: right; font-weight: ${typeof discountValue === 'number' ? '500' : 'normal'}">
                   ${formatCurrency(discountValue)}
                 </div>
@@ -402,7 +405,7 @@ export const downloadStep4 = async (
           <div>Date: ____________________</div>
         </div>
         <div style="text-align: center; font-size: 10px; color: ${textColor};">
-          <div style="margin-bottom: 20px;">Student Signature</div>
+          <div style="margin-bottom: 20px;">Student/Parent Signature</div>
           <div>____________________</div>
         </div>
         <div style="text-align: right; font-size: 10px; color: ${textColor};">
