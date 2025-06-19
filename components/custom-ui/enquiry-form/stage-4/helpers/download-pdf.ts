@@ -391,31 +391,31 @@ export const downloadStep4 = async (
           <!-- Row 1 -->
           <div style="display: flex; ">
             <div style="color: ${secondaryText}; min-width: 70px;">Student Name:</div>
-            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.studentName)}</div>
+            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.studentName ?? "--")}</div>
           </div>
           <div style="display: flex; ">
             <div style="color: ${secondaryText}; min-width: 75px;">Student Number:</div>
-            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.studentPhoneNumber)}</div>
+            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.studentPhoneNumber ?? "--")}</div>
           </div>
           
           <!-- Row 2 -->
           <div style="display: flex;">
             <div style="color: ${secondaryText}; min-width: 68px;">Father Name:</div>
-            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.fatherName)}</div>
+            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.fatherName ?? "--")}</div>
           </div>
           <div style="display: flex;">
             <div style="color: ${secondaryText}; min-width: 75px;">Father Number:</div>
-            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.fatherPhoneNumber)}</div>
+            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.fatherPhoneNumber ?? "--")}</div>
           </div>
           
           <!-- Row 3 -->
           <div style="display: flex; ">
             <div style="color: ${secondaryText}; min-width: 68px;">Category:</div>
-            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.category)}</div>
+            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.category ?? "--")}</div>
           </div>
           <div style="display: flex;">
             <div style="color: ${secondaryText}; min-width: 75px;">Course:</div>
-            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.course)}</div>
+            <div style="font-weight: 500; color: ${textColor};">${escapeHtml(data.course ?? "--")}</div>
           </div>
 
           

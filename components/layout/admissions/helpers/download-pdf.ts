@@ -474,8 +474,8 @@ export const downloadFeeReceipt = async (
           <p style="text-align: center; font-size: 8px; font-weight: 600; margin: 0; line-height: 1.2;">
               (Affiliated to ${escapeHtml(data.affiliationName) ?? 'Dr. A.P.J. Abdul Kalam Technical University, Lucknow'})<br />
               ${escapeHtml(data.collegeAddress ?? 'CAMPUS : 331, Near Indira Nahar, Faizabad Road, Lucknow - 226028')}<br />
-              Email: ${escapeHtml(data.collegeFeeEmail ?? '')} | Contact:
-              ${escapeHtml(data.collegeFeeContactNumber ?? '')}
+              Email: ${escapeHtml(data.collegeFeeEmail ?? '--')} | Contact:
+              ${escapeHtml(data.collegeFeeContactNumber ?? '--')}
           </p>
       </div>
     </div>
@@ -488,25 +488,25 @@ export const downloadFeeReceipt = async (
       <tbody style="border: 0.5px solid #E6E6E6; padding: 1px 2px 10px 2px;">
         <tr>
           <td style="color: #666666;padding-left:5px; width: 18%; border:none;">Receipt No :</td>
-          <td style="padding-left:5px; width: 32%; border:none;">${escapeHtml(data.recieptNumber)}</td>
+          <td style="padding-left:5px; width: 32%; border:none;">${escapeHtml(data.recieptNumber ?? "--")}</td>
           <td style="color: #666666;padding-left:5px; width: 18%; border:none;">Date :</td>
-          <td style="padding-left:5px; width: 32%; border:none;">${escapeHtml(data.date)}</td>
+          <td style="padding-left:5px; width: 32%; border:none;">${escapeHtml(data.date ?? "--")}</td>
         </tr>
         <tr>
           <td style="color: #666666;padding-left:5px; border:none;">Name :</td>
-          <td style="padding-left:5px; border:none;">${escapeHtml(data.studentName)}</td>
+          <td style="padding-left:5px; border:none;">${escapeHtml(data.studentName ?? "--")}</td>
           <td style="color: #666666;padding-left:5px; border:none;">Category :</td>
-          <td style="padding-left:5px; border:none;">${escapeHtml(data.category)}</td>
+          <td style="padding-left:5px; border:none;">${escapeHtml(data.category ?? "--")}</td>
         </tr>
         <tr>
           <td style="color: #666666;padding-left:5px; border:none;">Father Name :</td>
-          <td style="padding-left:5px; border:none;">${escapeHtml(data.fatherName)}</td>
+          <td style="padding-left:5px; border:none;">${escapeHtml(data.fatherName ?? "--")}</td>
           <td style="color: #666666;padding-left:5px; border:none;">Session :</td>
-          <td style="ppadding-left:5px; border:none;">${escapeHtml(data.session)}</td>
+          <td style="ppadding-left:5px; border:none;">${escapeHtml(data.session ?? "--")}</td>
         </tr>
         <tr>
           <td style="color: #666666;padding-top:0px; padding-left:5px;padding-bottom:10px; border:none;">Course :</td>
-          <td style="padding-left:5px; padding-bottom:10px;padding-top:0px;border:none; ">${escapeHtml(data.course)}</td>
+          <td style="padding-left:5px; padding-bottom:10px;padding-top:0px;border:none; ">${escapeHtml(data.course ?? "--")}</td>
           <td style="padding-left:5px;padding-bottom:10px;padding-top:0px; border:none; "></td>
           <td style="padding-left:5px;padding-bottom:10px border:none;padding-top:0px;"></td>
         </tr>
