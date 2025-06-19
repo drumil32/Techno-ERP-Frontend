@@ -29,13 +29,6 @@ export const createEnquiry = async (data: any) => {
     );
 }
 
-export const updateEnquiry = async (data: any) => {
-    return apiRequest(
-        API_METHODS.PUT,
-        API_ENDPOINTS.updateEnquiry,
-        data
-    );
-}
 
 export const createEnquiryDraft = async (data: any) => {
     return apiRequest(

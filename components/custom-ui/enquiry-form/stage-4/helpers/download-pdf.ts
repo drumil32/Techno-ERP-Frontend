@@ -9,6 +9,21 @@ const TIMS = 'Techno Institute of Management Sciences';
 const THIS = 'Techno Institute of Higher Studies';
 const TCL = 'Techno College of Law';
 
+const calculateRelevantOtherFees = (otherFees: any[]) => {
+  return otherFees.reduce((sum, fee, index) => {
+    // Skip SEM1FEE (index 0) and only include fees that apply to all semesters
+    if (index === 0 || fee.type === FeeType.SEM1FEE) return sum;
+
+    
+    if (fee.schedule == 'Yearly') {
+      const finalFee = Number(fee.finalFee) || 0;
+      return sum + (finalFee);
+    }
+    return sum;
+
+  }, 0);
+};
+
 const toBase64 = async (url: string) => {
   const res = await fetch(url);
   const blob = await res.blob();
@@ -59,6 +74,7 @@ export const downloadStep4 = async (
   else if (data.collegeName === TCL) logo = '/images/TCL.jpg';
   else if (data.collegeName === THIS) logo = '/images/TIHS.png';
 
+  let bookFees = 0;
 
 
   // Helper function to create consistent table headers
@@ -74,19 +90,20 @@ export const downloadStep4 = async (
       gap: 1px;
       border: 1px solid ${borderColor};
       border-radius: 6px 6px 0 0;
-    ">
+      ">
       ${columns.map(col => `<div style="text-align: ${(col === 'Semester' || col === 'Fees Details' || col === "Schedule") ? 'left' : (col === 'Fee Type') ? 'center' : 'right'}">${col}</div>`).join('')}
-    </div>
-  `;
-
-  // Main fees table generator
+      </div>
+      `;
+      
+      // Main fees table generator
+      let totalDue = 0;
+      let totalFee =  0;
+      let totalFinal = 0;
  const generateFeeTables = () => {
   const feeDate = data.dateOfAdmission;
 
   let totalOriginal = 0;
-  let totalDue = 0;
   let totalDeposited = 0;
-  let totalFinal = 0;
 
   const headerColumns = [
     { name: 'Fees Details', width: '2fr' },
@@ -116,7 +133,7 @@ export const downloadStep4 = async (
         background-color: ${lightBgColor};
         color: ${secondaryText};
         font-weight: bold;
-        padding: 10px;
+        padding: 7px;
         font-size: 9px;
         border: 1px solid ${borderColor};
         border-radius: 6px 6px 0 0;
@@ -134,13 +151,14 @@ export const downloadStep4 = async (
         ${data.otherFeeStructer?.map((fee: any, index: number) => {
           const feeType = fee.type;
           const feeAmount = fee.feeAmount;
+          const finalFee = fee.finalFee || 0;
           if (feeType === "Book Bank" && feeAmount == 0) {
             return;
+          }else if(feeType === "Book Bank"){
+            bookFees = finalFee;
           }
           const schedule = fee.schedule || '-';
           
-          const totalFee = feeAmount || 0;
-          const finalFee = fee.finalFee || 0;
           const feesDeposited = fee.feesDeposited || 0;
           const remainingFee = fee.feesDue || 0;
 
@@ -153,7 +171,7 @@ export const downloadStep4 = async (
             <div style="
               display: grid;
               grid-template-columns: ${headerColumns.map(col => col.width).join(' ')};
-              padding: 10px;
+              padding: 7px;
               font-size: 9px;
               gap: 1px;
               border-bottom: 1px solid ${borderColor};
@@ -187,7 +205,7 @@ export const downloadStep4 = async (
           background-color: ${lightBgColor};
           color: ${textColor};
           font-weight: bold;
-          padding: 10px;
+          padding: 7px;
           font-size: 9px;
           gap: 1px;
           border-top: 1px solid ${borderColor};
@@ -206,7 +224,7 @@ export const downloadStep4 = async (
       <!-- Additional notes -->
       <div style="
         margin-top: 15px;
-        padding: 10px;
+        padding: 7px;
         background-color: ${lightBgColor};
         border-radius: 6px;
         font-size: 8px;
@@ -227,17 +245,18 @@ export const downloadStep4 = async (
   // Semester-wise fees table generator
   const generateSemWiseFeesTable = () => {
     let totalFees = 0;
-    let totalDue = 0;
+    let totalDue2 = 0;
     const headerColumns = [
       'Semester',
       'Fee Type',
       'Original Fee',
       'Discount',
-      'Final Fee'
+      'Final Tuition Fees',
+      'Total Semester Fees',
     ];
 
     return `
-      <div style="margin-top: 30px;">
+      <div style="margin-top: 10px;">
         <h4 style="
           font-size: 10px;
           font-weight: bold;
@@ -257,14 +276,20 @@ export const downloadStep4 = async (
       const finalFee = fee?.finalFee;
       const discountValue = fee.discount
 
-        totalDue += finalFee;
+        totalDue2 += finalFee;
         totalFees += originalFeeAmount;
+        let totalSemFee = Number(finalFee ?? 0) + bookFees;
+        if (index == 0) {
+          totalSemFee = totalFinal
+        }else if(index % 2 == 0){
+          totalSemFee += calculateRelevantOtherFees(data.otherFeeStructer || []);
+        }
 
       return `
               <div style="
                 display: grid;
                 grid-template-columns: ${headerColumns.map(() => '1fr').join(' ')};
-                padding: 10px;
+                padding: 7px;
                 font-size: 9px;
                 gap: 1px;
                 border-bottom: 1px solid ${borderColor};
@@ -283,6 +308,9 @@ export const downloadStep4 = async (
                 <div style="color: ${textColor}; font-weight: 500; text-align: right;">
                   ${finalFee ? formatCurrency(finalFee) : '-'}
                 </div>
+                <div style="color: ${textColor}; font-weight: 500; text-align: right;">
+                  ${totalSemFee ? formatCurrency(totalSemFee) : '-'}
+                </div>
               </div>
             `;
     }).join('')}
@@ -295,7 +323,7 @@ export const downloadStep4 = async (
           background-color: ${lightBgColor};
           color: ${textColor};
           font-weight: bold;
-          padding: 10px;
+          padding: 7px;
           font-size: 9px;
           gap: 1px;
           border: 1px solid ${borderColor};
@@ -307,7 +335,7 @@ export const downloadStep4 = async (
           <div style="text-align: right;"> ${formatCurrency(totalFees)}</div>
           <div style="text-align: center;">-</div>
           <div style="text-align: right;">
-            ${formatCurrency(totalDue)}
+            ${formatCurrency(totalDue2)}
           </div>
         </div>
       </div>
@@ -397,9 +425,22 @@ export const downloadStep4 = async (
       <!-- Fee Tables -->
       ${generateFeeTables()}
       ${generateSemWiseFeesTable()}
+      <div style="
+  font-size:9px;
+  color: ${secondaryText};
+  margin-top: 20px;
+">
+  <div style="">
+    Remarks : ${data.enquiryRemark ? `<span style="">${escapeHtml(data.enquiryRemark + " | ")}</span>` : ''}
+    ${data.feeDetailsRemark ? `<span style="">${escapeHtml(data.feeDetailsRemark  + " | ")}</span>` : ''}
+    ${data.registarOfficeRemark ? `<span style=" ">${escapeHtml(data.registarOfficeRemark  + " | ")}</span>` : ''}
+    ${data.financeOfficeRemark ? `<span style=" ">${escapeHtml(data.financeOfficeRemark)}</span>` : ''}
+  </div>
+</div>
+    </div>
 
       <!-- Footer Section -->
-      <div style="margin-top: 15px; display: flex; justify-content: space-between;">
+      <div style="margin-top: 70px; display: flex; justify-content: space-between;">
         <div style="font-size: 10px; color: ${textColor};">
           <div style="margin-bottom: 20px;">Fee applicable: ${data.isFeeApplicable ? 'Yes' : 'No'}</div>
           <div>Date: ____________________</div>
@@ -412,8 +453,10 @@ export const downloadStep4 = async (
           <div style="margin-bottom: 20px;">Verified by</div>
           <div>Authorised Signatory</div>
         </div>
+
       </div>
-    </div>
+
+
   `;
 
   container.innerHTML = generateReceiptHtml();

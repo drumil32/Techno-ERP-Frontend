@@ -1,6 +1,6 @@
 import { AdmissionAggregationType, DropDownType } from '@/types/enum';
 
-export const API_DOMAIN = process.env.NEXT_PUBLIC_API_URL;
+export const API_DOMAIN = process.env.NEXT_PUBLIC_LOCAL_API_URL;
 
 export const API_ENDPOINTS = {
   // Auth

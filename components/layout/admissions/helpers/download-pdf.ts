@@ -198,7 +198,7 @@ export const downloadAdmissionForm = async (
                 Address :</td>
             <td colspan="3" style="border:1px solid #E6E6E6; padding: 4px 4px 10px 4px; border-left: none; width:30%;">
            <span style="display: inline-block; width: 100%; word-wrap: break-word; word-break: break-word;">
-  ${escapeHtml((data.address ?? '').replace(", ,",", "))}
+  ${escapeHtml(data.address ?? '')}
 </span>
 
                 </td>
