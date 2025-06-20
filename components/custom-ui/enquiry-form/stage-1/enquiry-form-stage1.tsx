@@ -1,7 +1,7 @@
 'use client';
 
 // React and Next.js imports
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 import { enquiryDraftStep1RequestSchema, enquiryStep1RequestSchema } from '../schema/schema';
@@ -19,25 +19,24 @@ import {
   createEnquiry,
   createEnquiryDraft,
   getEnquiry,
-  updateEnquiryDraft,
-  updateEnquiryStatus
+  updateEnquiryDraft
 } from './enquiry-form-api';
 
 // Component and UI imports
 import { Form } from '@/components/ui/form';
-import EnquiryFormFooter from './enquiry-form-footer-section';
-import StudentDetailsForm from './student-details-section';
-import AddressDetailsSection from './address-details-section';
 import AcademicDetailsSection from './academic-details-section';
-import FilledByCollegeSection from './filled-by-college-section';
+import AddressDetailsSection from './address-details-section';
 import ConfirmationCheckBox from './confirmation-check-box';
+import EnquiryFormFooter from './enquiry-form-footer-section';
+import FilledByCollegeSection from './filled-by-college-section';
+import StudentDetailsForm from './student-details-section';
 
 // Utility and constants imports
-import { toast } from 'sonner';
-import { ApplicationStatus, Countries, EducationLevel, StatesOfIndia } from '@/types/enum';
-import { filterBySchema, removeNullValues } from '@/lib/utils';
-import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
+import { useAdmissionRedirect } from '@/lib/useAdmissionRedirect';
+import { filterBySchema, removeNullValues } from '@/lib/utils';
+import { ApplicationStatus, Countries, StatesOfIndia } from '@/types/enum';
+import { toast } from 'sonner';
 
 // Form Schema
 export const formSchema = z.object(enquiryStep1RequestSchema.shape).extend({
@@ -90,6 +89,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
       const sanitizedData = removeNullValues(data);
       form.reset(sanitizedData);
     }
+    console.log("form in useEffect", form.getValues());
   }, [data, form]);
 
   const toastIdRef = useRef<string | number | null>(null);
@@ -224,6 +224,7 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
   async function onSubmit() {
     let values = form.getValues();
+    console.log("values in onSubmit", values)
     values = removeNullValues(values);
     const filteredData = filterBySchema(formSchema, values);
 
@@ -266,7 +267,6 @@ const EnquiryFormStage1 = ({ id }: { id?: string }) => {
 
       setNestedErrors(validation.error.format());
       return false;
-      throw new Error('Validation failed');
     }
     const enquiry: any = await createEnquiry(rest);
 
