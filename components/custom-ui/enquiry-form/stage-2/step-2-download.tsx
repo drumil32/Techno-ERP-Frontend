@@ -25,22 +25,19 @@ import {
   FileTextIcon
 } from 'lucide-react';
 import { FaCircleExclamation } from 'react-icons/fa6';
-import { downloadStep4 } from './helpers/download-pdf';
 import { useQuery } from '@tanstack/react-query';
 import { getEnquiry } from '../stage-1/enquiry-form-api';
 import { fetchDataForAdmissionFeeReceipt } from '@/components/layout/admissions/helpers/fetch-data';
 import { displayFeeMapper, scheduleFeeMapper } from '../stage-2/helpers/mappers';
+import { downloadStep2 } from './helpers/downloadStep2';
 
-export function DownloadStep4({
+export function DownloadStep2Dialog({
   tableActionButton = true, 
-  studentId,
-  isStep4 = false 
+  studentData,
 }: { 
   tableActionButton?: boolean; 
-  studentId: string;
-  isStep4?:boolean;
+  studentData: any;
 }) {
-
 
 
   const [downloadOpen, setDownloadOpen] = useState(false);
@@ -59,16 +56,12 @@ export function DownloadStep4({
       setIsLoading(true);
       setPdfDataUrl(null);
       try {
-        const res  = await getEnquiry(studentId);
-        let feeReciptData = null;
-        if(isStep4){
-          feeReciptData = await fetchDataForAdmissionFeeReceipt({studentId});
-        }
-
+        const res  = studentData
+      
         let otherFeeStructer:any = [];
         let semWiseFeeStructer:any = [];
 
-        res.studentFee?.otherFees.map((fee,index)=>{
+        res.studentFeeDraft?.otherFees.map((fee:any,index:number)=>{
           
           const type = displayFeeMapper(fee.type);
           const finalFee = fee.finalFee;
@@ -92,7 +85,7 @@ export function DownloadStep4({
           }
         })
 
-        res.studentFee?.semWiseFees.map((fee,index) => {
+        res.studentFeeDraft?.semWiseFees.map((fee:any) => {
           const feeobj = {
             feeAmount : fee.feeAmount,
             finalFee : fee.finalFee,
@@ -102,15 +95,9 @@ export function DownloadStep4({
         })
 
 
-        if (res && feeReciptData != null ) {
-          const data = {...res,feeReciptData,otherFeeStructer,semWiseFeeStructer}
-          const { url, fileName } = await downloadStep4(data);
-          if (fileName) setFileName(fileName);
-          if (url) setPdfDataUrl(url);
-          else toast.error('Error in showing preview.');
-        }else{
+        if (res ) {
           const data = {...res,otherFeeStructer,semWiseFeeStructer}
-          const { url, fileName } = await downloadStep4(data);
+          const { url, fileName } = await downloadStep2(data);
           if (fileName) setFileName(fileName);
           if (url) setPdfDataUrl(url);
           else toast.error('Error in showing preview.');
@@ -123,7 +110,7 @@ export function DownloadStep4({
     };
 
     if (downloadOpen) loadPreview();
-  }, [downloadOpen, studentId]);
+  }, [downloadOpen]);
 
   useEffect(() => {
     if (!iframeRef.current || !pdfDataUrl) return;

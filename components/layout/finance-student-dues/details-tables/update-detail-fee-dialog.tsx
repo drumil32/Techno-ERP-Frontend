@@ -22,6 +22,7 @@ import { updateFeeBreakUp } from '../helpers/fetch-data';
 import { toast } from 'sonner';
 import { SemesterBreakUp } from '@/types/finance';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { Textarea } from '@/components/ui/textarea';
 
 const feeSchema = z.object({
   amount: z.coerce
@@ -34,7 +35,8 @@ const feeSchema = z.object({
     })
     .refine((val) => val !== null && val !== undefined, {
       message: ''
-    })
+    }),
+  remark : z.string().optional()
 });
 
 type FormData = z.infer<typeof feeSchema>;
@@ -59,10 +61,12 @@ export default function UpdateFeeDetailDialog({
   const params = useParams();
   const studentId = params.studentId as string;
   const queryClient = useQueryClient();
+  const [remark, setRemark] = useState<string>("")
 
   const form = useForm<FormData>({
     defaultValues: {
-      amount: 0
+      amount: 0,
+      remark: ""
     },
     resolver: zodResolver(feeSchema)
   });
@@ -91,7 +95,8 @@ export default function UpdateFeeDetailDialog({
       studentId,
       semesterId,
       detailId: feeDetail.feeDetailId,
-      amount: feeDetail.finalFee + data.amount
+      amount: feeDetail.finalFee + data.amount,
+      remark: form.getValues().remark
     };
 
     try {
@@ -227,6 +232,29 @@ export default function UpdateFeeDetailDialog({
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="remark"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Remark (optional)</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter any remark or note"
+                          {...field}
+                          className="resize-none"
+                          disabled={isLoading}
+                          onChange={(e) => {
+                            field.onChange(e);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
 
                 <div className="flex justify-end gap-3 mt-6">
                   <Button

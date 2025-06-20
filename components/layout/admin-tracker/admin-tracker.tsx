@@ -165,10 +165,6 @@ const AdminTracker = () => {
     // setRefreshKey((prevKey) => prevKey + 1);
   };
 
-  const analyticsParams = {};
-
-
-
   
   useEffect(() => {
     async function fetchData() {

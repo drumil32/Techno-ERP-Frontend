@@ -9,9 +9,11 @@ import {
   Landmark,
   ReceiptIndianRupee,
   School,
+  StickyNote,
   User,
   Users
 } from 'lucide-react';
+import { TruncatedCell } from '@/components/custom-ui/data-table/techno-data-table';
 
 export default function StudentData({ studentData }: { studentData: StudentDetails }) {
   return (
@@ -84,6 +86,18 @@ export default function StudentData({ studentData }: { studentData: StudentDetai
               </p>
             </div>
           </div>
+
+          <div className='flex items-start'>
+            <div className="p-2 bg-purple-50 rounded-lg mr-3 text-purple-600">
+              <StickyNote className="size-4" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500">Remark</p>
+              <p className="hover:cursor-pointer text-base font-medium text-gray-800 mt-1">
+                <TruncatedCell maxWidth={80} value={studentData.step2And4Remark} />
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -113,6 +127,7 @@ export default function StudentData({ studentData }: { studentData: StudentDetai
               </p>
             </div>
           </div>
+
         </div>
       </div>
     </div>

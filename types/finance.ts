@@ -45,6 +45,7 @@ export interface StudentFeeInformationResponse {
   semesterWiseFeeInformation: SemesterWiseFeeInformation[];
   semesterBreakUp: SemesterBreakUp[];
   transactionHistory: Transaction[];
+  step2And4Remark?: string;
 }
 
 export interface SemesterWiseFeeInformation {
@@ -66,7 +67,9 @@ export interface SemesterBreakUp {
     finalFee: number;
     paidAmount: number;
     totalDues?: number;
+    remark?:string;
   }[];
+  
 }
 
 export interface Transaction {
@@ -92,6 +95,7 @@ export interface FeeHistoryItemType {
   updatedFee: number;
   extraAmount: number;
   updatedBy?: string;
+  remark?: string;
 }
 
 export interface FeeHistoryResponse {
@@ -108,6 +112,7 @@ export interface StudentDetails {
   currentSemester?: number;
   extraBalance?: number;
   universityId?: string;
+  step2And4Remark?: string;
 }
 
 // Course Dues

@@ -12,7 +12,10 @@ export function getFinanceFeeTypeLabel(type: FinanceFeeType): string {
     [FinanceFeeType.BOOKBANK]: 'Book Bank Fee',
     [FinanceFeeType.EXAMFEES]: 'Exam Fees',
     [FinanceFeeType.MISCELLANEOUS]: 'Miscellaneous Fee',
-    [FinanceFeeType.SEMESTERFEE]: 'Semester Fee'
+    [FinanceFeeType.SEMESTERFEE]: 'Tution Fee',
+    [FinanceFeeType.HOSTELMAINTENANCE]: 'Hostel Maintenance',
+    [FinanceFeeType.HOSTELCAUTIONMONEY]: 'Hostel Caution Money',
+    [FinanceFeeType.HOSTELYEARLY]: 'Hostel Yearly'
   };
   return labels[type] ?? type;
 }
