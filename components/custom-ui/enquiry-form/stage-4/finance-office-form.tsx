@@ -30,7 +30,7 @@ import {
 } from '../stage-2/studentFeesSchema';
 import { validateCustomFeeLogic } from '../stage-2/helpers/validateFees';
 import { cleanDataForDraft } from '../stage-2/helpers/refine-data';
-import { calculateDiscountPercentage, formatCurrency } from '../stage-2/student-fees-form';
+import { calculateDiscountPercentage, calculateRelevantOtherFees, formatCurrency } from '../stage-2/student-fees-form';
 import { displayFeeMapper, scheduleFeeMapper } from '../stage-2/helpers/mappers';
 import { AdmissionReference, ApplicationStatus, FeeType, TransactionTypes } from '@/types/enum';
 import ShowStudentData from '../stage-2/data-show';
@@ -689,13 +689,14 @@ const FinanceOfficeForm = () => {
             </AccordionTrigger>
             <AccordionContent className="p-6 bg-white rounded-[10px]">
               <div className="w-full lg:w-max">
-                <div className="space-y-1">
-                  <div className="grid rounded-[5px] bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold text-sm sm:text-base px-3 py-2 grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 border-b border-gray-200">
+                <div className="space-y-3 sm:space-y-1">
+                  <div className="grid rounded-[5px] bg-[#5B31D1]/10 backdrop-blur-lg text-[#5B31D1] font-semibold text-sm sm:text-base px-3 py-2 grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr_1fr] border-b border-gray-200">
                     <div className="text-left">Semester</div>
                     <div className="text-center">Fee Details</div>
                     <div className="text-center">Fees</div>
                     <div className="text-center">Discount</div>
-                    <div className="text-right">Final Fees</div>
+                    <div className="text-right">Final Tuition Fees</div>
+                    <div className="text-right">Total Semester Fees</div>
                   </div>
 
                   <div className="border border-gray-200 rounded-lg divide-y divide-gray-100 overflow-hidden">
@@ -709,10 +710,21 @@ const FinanceOfficeForm = () => {
                       const discountDisplay =
                         typeof discountValue === 'number' ? `₹${discountValue}` : discountValue;
 
+                      const bookFees =  otherFeesWatched?.find((f) => f.type === FeeType.BOOKBANK)?.finalFee ?? 0;
+
+                      // Calculate relevant other fees (excluding SEM1FEE)
+                      let totalSemFee = Number(finalFee ?? 0) + bookFees;
+
+                      if (index == 0) {
+                        totalSemFee = otherFeesTotals.totalFinal
+                      }else if(index % 2 == 0){
+                        totalSemFee += calculateRelevantOtherFees(otherFeesWatched || []);
+                      }
+
                       return (
                         <div
                           key={field.id}
-                          className="grid grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr] gap-x-2 sm:gap-x-3 gap-y-2 items-center px-3 py-1 hover:bg-gray-50 transition-colors"
+                          className="grid grid-cols-1 xs:grid-cols-3 sm:grid-cols-[0.5fr_0.5fr_0.5fr_0.5fr_0.8fr_1fr] gap-x-2 sm:gap-x-3 gap-y-2 items-center px-3 py-1 hover:bg-gray-50 transition-colors"
                         >
                           <div className="text-sm font-medium text-gray-800">
                             Semester {index + 1}
@@ -737,7 +749,7 @@ const FinanceOfficeForm = () => {
                                     defaultValue={0}
                                     placeholder="Enter fees"
                                     {...formField}
-                                    className="text-right px-3 h-8text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
+                                    className="text-right px-3 h-8 text-sm border-gray-300 focus:ring-1 focus:ring-[#5B31D1]"
                                     onChange={(e) => {
                                       const value = e.target.value;
                                       if (/^[0-9]*$/.test(value)) {
@@ -753,6 +765,9 @@ const FinanceOfficeForm = () => {
                               </FormItem>
                             )}
                           />
+                          <div className="text-sm text-right text-gray-600">
+                            {formatCurrency(totalSemFee)}
+                          </div>
                         </div>
                       );
                     })}

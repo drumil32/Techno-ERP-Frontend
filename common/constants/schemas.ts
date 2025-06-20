@@ -12,11 +12,11 @@ export const contactNumberSchema = z
 export const addressSchema = z.object({
   addressLine1: z.string().min(5, {
     message: "Address Line 1 must be at least 5 characters long"
-  }),
+  }).optional(),
   addressLine2: z.string().optional(),
   pincode: z
     .string()
-    .regex(/^[1-9][0-9]{5}$/, 'Pincode must be a 6-digit number starting with a non-zero digit'),
+    .regex(/^[1-9][0-9]{5}$/, 'Pincode must be a 6-digit number starting with a non-zero digit').optional(),
 
   district: z.string(),
   state: z.nativeEnum(StatesOfIndia),

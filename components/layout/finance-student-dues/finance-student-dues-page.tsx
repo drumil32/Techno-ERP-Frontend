@@ -46,20 +46,9 @@ export default function StudentDuesPage() {
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(20);
   const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
 
-  const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
-  };
-
-  const handleLimitChange = (newLimit: number) => {
-    setLimit(newLimit);
-    setPage(1);
-  };
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -84,8 +73,6 @@ export default function StudentDuesPage() {
 
   const getQueryParams = () => {
     return {
-      page,
-      limit,
       search: debouncedSearch,
       academicYear
     };
@@ -100,19 +87,13 @@ export default function StudentDuesPage() {
     placeholderData: (previousData) => previousData
   });
 
-  useEffect(() => {
-    if (duesQuery.data) {
-      setTotalPages(duesQuery.data.pagination.totalPages);
-      setTotalEntries(duesQuery.data.pagination.totalCount);
-    }
-  }, [duesQuery.data]);
 
   const isLoading = duesQuery.isLoading || duesQuery.isFetching;
   const isError = duesQuery.isError;
   const tableData =
     duesQuery.data?.data.map((due, index) => ({
       ...due,
-      serialNo: (page - 1) * limit + index + 1
+      serialNo:  index + 1
     })) ?? [];
 
   const handleViewMore = (studentData: StudentDue) => {
@@ -206,18 +187,13 @@ export default function StudentDuesPage() {
         data={tableData}
         tableName="Student Dues"
         tableActionButton={<TableActionButton />}
-        currentPage={page}
-        totalPages={totalPages}
-        pageLimit={limit}
-        totalEntries={totalEntries}
-        onPageChange={handlePageChange}
-        onLimitChange={handleLimitChange}
         onSearch={handleSearch}
         searchTerm={search}
         isLoading={isLoading}
         searchBarPlaceholder={'Search Student Name, ID, Phone Number here'}
-        handleViewMore={handleViewMore}
         headerStyles={'text-[#5B31D1] bg-[#F7F4FF]'}
+        showPagination={false}
+        handleViewMore={handleViewMore}
       />
     </>
   );

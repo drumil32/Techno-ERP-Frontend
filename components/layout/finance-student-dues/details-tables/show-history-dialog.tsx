@@ -8,6 +8,7 @@ import { fetchFeeBreakUpHistory } from '../helpers/fetch-data';
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { TruncatedCell } from '@/components/custom-ui/data-table/techno-data-table';
 
 export default function ShowHistoryDialog({
   semesterId,
@@ -124,6 +125,16 @@ export default function ShowHistoryDialog({
                           </span>
                         </div>
                       </div>
+                      <div className="text-sm text-gray-700 flex gap-2 items-center">
+                        <span className="text-gray-500">Remark:</span>
+                        <p className='hover:cursor-pointer  text-gray-800 '>
+                          <TruncatedCell
+                            maxWidth={350}
+                            value={entry.remark || '--'}
+                          />
+                        </p>
+                      </div>
+
                     </div>
                   ))
                 ) : (

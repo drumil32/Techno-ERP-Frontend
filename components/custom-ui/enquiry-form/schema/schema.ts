@@ -143,35 +143,35 @@ export enum AdmittedThrough {
 export const enquirySchema = z.object({
   _id: z.string().optional(),
   admissionMode: z.nativeEnum(AdmissionMode).default(AdmissionMode.OFFLINE),
-  dateOfEnquiry: requestDateSchema.optional(),
+  dateOfEnquiry: requestDateSchema,
   studentName: z
     .string({ required_error: 'Student Name is required' })
     .nonempty('Student Name is required'),
-  studentPhoneNumber: contactNumberSchema,
+  studentPhoneNumber: contactNumberSchema.optional(),
   emailId: z
     .string()
     .email('Invalid email format')
     .optional(),
   fatherName: z
     .string({ required_error: 'Father Name is required' })
-    .nonempty("Father's Name is required"),
-  fatherPhoneNumber: contactNumberSchema,
+    .nonempty("Father's Name is required").optional(),
+  fatherPhoneNumber: contactNumberSchema.optional(),
   fatherOccupation: z
-    .string({ required_error: 'Father occupation is required' }),
+    .string({ required_error: 'Father occupation is required' }).optional(),
   motherName: z
     .string({ required_error: "Mother's Name is required" })
-    .nonempty("Mother's Name is required"),
+    .nonempty("Mother's Name is required").optional(),
   motherPhoneNumber: contactNumberSchema.optional(),
   motherOccupation: z
     .string().optional(),
-  gender: z.nativeEnum(Gender),
-  dateOfBirth: requestDateSchema,
-  category: z.nativeEnum(Category),
+  gender: z.nativeEnum(Gender).optional(),
+  dateOfBirth: requestDateSchema.optional(),
+  category: z.nativeEnum(Category).optional(),
   course: z.string(),
   references: z.array(z.nativeEnum(AdmissionReference)).optional(),
 
   // Address Details
-  address: addressSchema,
+  address: addressSchema.optional(),
 
   // Academic Details
   academicDetails: academicDetailsArraySchema.optional(),
@@ -196,19 +196,19 @@ export const enquirySchema = z.object({
   aadharNumber: z
     .string()
     .regex(/^\d{12}$/, 'Aadhar Number must be exactly 12 digits')
-    .nonempty('Adhaar Number is required'),
+    .nonempty('Adhaar Number is required').optional(),
   physicalDocumentNote: z.array(physicalDocumentNoteSchema).optional(),
   religion: z.nativeEnum(Religion).optional(),
   bloodGroup: z.nativeEnum(BloodGroup).optional(),
   previousCollegeData: previousCollegeDataSchema.optional(),
-  stateOfDomicile: z.nativeEnum(StatesOfIndia).default(StatesOfIndia.UttarPradesh),
+  stateOfDomicile: z.nativeEnum(StatesOfIndia).default(StatesOfIndia.UttarPradesh).optional(),
   areaType: z.nativeEnum(AreaType).optional(),
   nationality: z.string().optional().default(Nationality.INDIAN),
   entranceExamDetails: entranceExamDetailSchema.optional(),
   admittedBy: z.union([z.string(), z.enum(['other'])]).optional(),
   isFeeApplicable: z.boolean().default(true).optional(),
   srAmount: z.number().min(0).optional(),
-  admittedThrough: z.nativeEnum(AdmittedThrough).default(AdmittedThrough.DIRECT)
+  admittedThrough: z.nativeEnum(AdmittedThrough).default(AdmittedThrough.DIRECT).optional()
 });
 
 export enum Qualification {
@@ -259,11 +259,10 @@ export const enquiryDraftStep3Schema = enquiryStep3UpdateRequestSchema
     academicDetails: academicDetailsPartialArraySchema.optional(),
     studentName: z
       .string({ required_error: 'Student Name is required' })
-      .nonempty('Student Name is required'),
+      .nonempty('Student Name is required').optional(),
     emailId: z
-      .string()
-      .optional(),
-    studentPhoneNumber: contactNumberSchema,
+      .string(),
+    studentPhoneNumber: contactNumberSchema.optional(),
     counsellor: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     telecaller: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     dateOfAdmission: requestDateSchema.optional(),
