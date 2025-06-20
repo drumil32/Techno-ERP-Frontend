@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/dialog';
 import { FaCircleExclamation } from 'react-icons/fa6';
 import { IAcademicDetailArraySchema, IAcademicDetailSchema } from '../schema/schema';
+import { DownloadStep4 } from '../stage-4/step4-pdf';
+import { DownloadStep2Dialog } from '../stage-2/step-2-download';
 
 interface EnquiryFormFooterProps {
   saveDraft: () => Promise<boolean | void>;
@@ -21,6 +23,7 @@ interface EnquiryFormFooterProps {
   confirmationChecked?: boolean;
   draftExists?: boolean;
   isOtpVerificationRequired?: boolean;
+  studentData?:any;
 }
 
 const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
@@ -30,7 +33,8 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
   isSavingDraft,
   confirmationChecked,
   draftExists,
-  isOtpVerificationRequired
+  isOtpVerificationRequired,
+  studentData
 }) => {
   const [isSubmitDialogOpen, setSubmitDialogOpen] = useState(false);
   const [isDraftDialogOpen, setDraftDialogOpen] = useState(false);
@@ -134,6 +138,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <DownloadStep2Dialog studentData={studentData} />
 
       <Dialog open={isSubmitDialogOpen} onOpenChange={setSubmitDialogOpen}>
         <DialogTrigger asChild>

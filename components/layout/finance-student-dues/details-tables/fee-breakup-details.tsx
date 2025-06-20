@@ -158,6 +158,7 @@ export default function FeesBreakupDetails({
                       semesterId={selectedSemesterId}
                       feeDetail={item}
                       studentName={studentName ?? ''}
+                      // remark={remark}
                     />
                     <UpdateFeeDetailDialog
                       semesterNumber={selectedSemester}
