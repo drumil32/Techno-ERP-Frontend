@@ -68,10 +68,8 @@ export const calculateRelevantOtherFees = (otherFees: any[]) => {
     
     if (scheduleFeeMapper(fee.type) == 'Yearly') {
       const finalFee = Number(fee.finalFee) || 0;
-      console.log("in ", finalFee + sum)
       return sum + (finalFee);
     }
-    console.log("int" , sum)
     return sum;
 
   }, 0);

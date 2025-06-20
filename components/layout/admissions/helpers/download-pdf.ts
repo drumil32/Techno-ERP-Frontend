@@ -447,7 +447,7 @@ export const downloadFeeReceipt = async (
       totalAmount += due.amount;
       return `
             <div style="heigth:auto; display: flex; justify-content: space-between;  background-color:#fff;font-size:7px">
-                <div style="flex: 2;margin-bottom:3px;">${due.label}</div>
+                <div style="flex: 2;margin-bottom:3px;">${due.label.replace("Semester Fee","Tution Fee")}</div>
                 <div style="flex: 1;margin-bottom:3px; text-align: right; margin-right:50px; ">₹${due.amount.toLocaleString('en-IN')}</div>
             </div>
             `;
@@ -525,7 +525,7 @@ export const downloadFeeReceipt = async (
       .map(
         (fee: any) => `
         <tr>
-          <td style="padding: 1px 1px 1px 1px; border:none;">${escapeHtml(fee.name)}</td>
+          <td style="padding: 1px 1px 1px 1px; border:none;">${escapeHtml(fee.label)}</td>
           <td style="padding: 1px 1px 1px 1px; text-align: right; border:none;">
           ${parseFloat(fee.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </td>

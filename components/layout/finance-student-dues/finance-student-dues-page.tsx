@@ -206,18 +206,13 @@ export default function StudentDuesPage() {
         data={tableData}
         tableName="Student Dues"
         tableActionButton={<TableActionButton />}
-        currentPage={page}
-        totalPages={totalPages}
-        pageLimit={limit}
-        totalEntries={totalEntries}
-        onPageChange={handlePageChange}
-        onLimitChange={handleLimitChange}
         onSearch={handleSearch}
         searchTerm={search}
         isLoading={isLoading}
         searchBarPlaceholder={'Search Student Name, ID, Phone Number here'}
-        handleViewMore={handleViewMore}
         headerStyles={'text-[#5B31D1] bg-[#F7F4FF]'}
+        showPagination={false}
+        handleViewMore={handleViewMore}
       />
     </>
   );

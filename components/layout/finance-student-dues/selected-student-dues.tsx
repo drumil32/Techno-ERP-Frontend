@@ -26,6 +26,7 @@ export default function SelectedStudentDuesDetails() {
     refetchOnWindowFocus: false
   });
 
+
   const isLoading = studentFeesInformationQuery.isLoading;
   const studentFeesInformation = studentFeesInformationQuery.data;
 
@@ -37,7 +38,8 @@ export default function SelectedStudentDuesDetails() {
     course: studentFeesInformation?.course || '',
     HOD: studentFeesInformation?.HOD || '',
     currentSemester: studentFeesInformation?.currentSemester || 0,
-    extraBalance: studentFeesInformation?.extraBalance
+    extraBalance: studentFeesInformation?.extraBalance,
+    step2And4Remark: studentFeesInformation?.step2And4Remark
   };
 
   const semesterWiseFeesDetails = studentFeesInformation?.semesterWiseFeeInformation || [];

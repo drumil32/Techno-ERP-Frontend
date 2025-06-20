@@ -27,6 +27,10 @@ import TechnoBreadCrumb from '@/components/custom-ui/breadcrump/techno-breadcrum
 import AdvancedTechnoBreadcrumb from '@/components/custom-ui/breadcrump/advanced-techno-breadcrumb';
 import Loading from '@/app/c/marketing/loading';
 import SendEmailDialog from './send-email-dialog';
+import { ChevronDown } from 'lucide-react';
+import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const collegeOptions = [
   { id: 'ALL', label: 'All' },
@@ -54,6 +58,9 @@ export default function CourseDuesDetails() {
   const [totalEntries, setTotalEntries] = useState(0);
 
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const [academicYear, setAcademicYear] = useState(getCurrentAcademicYear());
+  const academicYearDropdownData = generateAcademicYearDropdown(0, 1);
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -93,7 +100,8 @@ export default function CourseDuesDetails() {
       // sortBy: sortState.sortBy,
       // orderBy: sortState.orderBy
       collegeName,
-      date: yesterday
+      date: yesterday,
+      academicYear
       // date: format(today, 'dd/MM/yyyy')
     };
   };
@@ -107,12 +115,12 @@ export default function CourseDuesDetails() {
     refetchOnWindowFocus: false,
   });
 
-  useEffect(() => {
-    if (courseDuesQuery.data) {
-      // setTotalPages(courseDuesQuery.data.totalPages);
-      // setTotalEntries(courseDuesQuery.data.total);
-    }
-  }, [courseDuesQuery.data]);
+  // useEffect(() => {
+  //   if (courseDuesQuery.data) {
+  //     // setTotalPages(courseDuesQuery.data.totalPages);
+  //     // setTotalEntries(courseDuesQuery.data.total);
+  //   }
+  // }, [courseDuesQuery.data]);
 
   // Prepare table state
   const isLoading = courseDuesQuery.isLoading || courseDuesQuery.isFetching;
@@ -168,6 +176,11 @@ export default function CourseDuesDetails() {
     { title: 'Course Dues', route: SITE_MAP.FINANCE.COURSE_DUES }
   ];
 
+  const handleAcademicYearChange = (value: string) => {
+    setAcademicYear(value);
+  };
+
+
   return (
     <>
       <AdvancedTechnoBreadcrumb items={breadcrumbItems} />
@@ -199,10 +212,32 @@ export default function CourseDuesDetails() {
             </div>
           </span>
         </div>
-        <div className="flex w-1/5">
-          <Label className="text-[#666666] w-1/3">Academic Year</Label>
-          <Label>{getCurrentAcademicYear()}</Label>
-        </div>
+        <span>
+          <div className="flex items-center gap-4">
+            <span className="font-[500]">Academic Year: </span>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="min-w-[200px] justify-between">
+                  {academicYear || 'Select Academic Year'}
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-white w-auto min-w-[200px] max-h-[300px] overflow-y-auto">
+                {academicYearDropdownData.map((item: string) => (
+                  <div
+                    key={item}
+                    onClick={() => handleAcademicYearChange(item)}
+                    className="flex items-center space-x-2 p-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    <Checkbox checked={academicYear === item} />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </span>
       </div>
 
       {isError && (
