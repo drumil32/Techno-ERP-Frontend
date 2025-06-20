@@ -61,7 +61,7 @@ export default function CourseWiseCollections({
       let compareValue = 0;
 
       if (activeSortColumn === 'courseCode') {
-        compareValue = (a.courseCode || '').localeCompare(b.courseCode || '');
+        compareValue = (a.courseName || '').localeCompare(b.courseName || '');
       } else if (activeSortColumn === 'totalCollection') {
         compareValue = (a.totalCollection || 0) - (b.totalCollection || 0);
       }
@@ -111,11 +111,11 @@ export default function CourseWiseCollections({
               <TableBody>
                 {sortedCourseWiseCollection.map((item, index) => (
                   <TableRow
-                    key={item.courseCode}
+                    key={item.courseName}
                     className="hover:bg-[#5B31D1]/5 transition-colors"
                   >
                     <TableCell className="text-center py-4">{index + 1}</TableCell>
-                    <TableCell className="text-center py-4">{item.courseCode}</TableCell>
+                    <TableCell className="text-center py-4">{item.courseName}</TableCell>
                     <TableCell className="text-right py-4">
                       {item.totalCollection ? `₹${item.totalCollection?.toLocaleString()}` : '--'}
                     </TableCell>

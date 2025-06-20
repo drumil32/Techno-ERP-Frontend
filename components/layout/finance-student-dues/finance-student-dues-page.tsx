@@ -1,42 +1,34 @@
 'use client';
 
-import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
-import TechnoPageHeading from '@/components/custom-ui/page-heading/techno-page-heading';
-import FeesPaidTag from './fees-paid-status-tag';
-import { Button } from '@/components/ui/button';
-import { LuDownload } from 'react-icons/lu';
-import { StudentDue, StudentDuesApiResponse } from '@/types/finance';
-import { useEffect, useRef, useState } from 'react';
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
-import { FeesPaidStatus } from '@/types/enum';
-import { useRouter } from 'next/navigation';
-import { SITE_MAP } from '@/common/constants/frontendRouting';
-import BulkFeeUpdateDialogue from './bulk-fees-update-dialogue';
-import { TechnoFilterProvider } from '@/components/custom-ui/filter/filter-context';
-import { fetchActiveDues } from './helpers/fetch-data';
-import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
-import { getCurrentAcademicYear } from '@/lib/getCurrentAcademicYear';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import { toWordsOrdinal } from 'number-to-words';
-import { capitalize } from '@/lib/capitalize';
-import AdvancedTechnoBreadcrumb from '@/components/custom-ui/breadcrump/advanced-techno-breadcrumb';
 import Loading from '@/app/c/marketing/loading';
+import { SITE_MAP } from '@/common/constants/frontendRouting';
+import AdvancedTechnoBreadcrumb from '@/components/custom-ui/breadcrump/advanced-techno-breadcrumb';
+import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
+import { TechnoFilterProvider } from '@/components/custom-ui/filter/filter-context';
+import TechnoPageHeading from '@/components/custom-ui/page-heading/techno-page-heading';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import { capitalize } from '@/lib/capitalize';
+import { generateAcademicYearDropdown } from '@/lib/generateAcademicYearDropdown';
+import { FeesPaidStatus } from '@/types/enum';
+import { StudentDue, StudentDuesApiResponse } from '@/types/finance';
+import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
 import { ChevronDown } from 'lucide-react';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useRouter } from 'next/navigation';
+import { toWordsOrdinal } from 'number-to-words';
+import { useEffect, useRef, useState } from 'react';
+import { LuDownload } from 'react-icons/lu';
+import FeesPaidTag from './fees-paid-status-tag';
+import { fetchActiveDues } from './helpers/fetch-data';
+import { getCurrentAcademicYearForTemp } from '@/lib/getCurrentAcademicYear';
 
 export default function StudentDuesPage() {
-  const [academicYear, setAcademicYear] = useState(getCurrentAcademicYear());
+  const [academicYear, setAcademicYear] = useState(getCurrentAcademicYearForTemp());
   const academicYearDropdownData = generateAcademicYearDropdown(0, 1);
   const router = useRouter();
   const [search, setSearch] = useState('');

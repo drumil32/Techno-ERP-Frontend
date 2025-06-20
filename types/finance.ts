@@ -164,7 +164,7 @@ export interface MonthDayCollection {
 }
 
 export interface CourseCollection {
-  courseCode: Course;
+  courseName: string;
   details?: { courseYear: CourseYear; totalCollection: number }[];
   totalCollection?: number;
 }
