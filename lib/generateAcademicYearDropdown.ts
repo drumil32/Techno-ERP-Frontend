@@ -2,7 +2,9 @@
 // next: how many next year required from current
 export function generateAcademicYearDropdown(prev:number = -5, next: number = 5): string[] {
     const date = new Date();
-    const currentYear = date.getMonth() >= 6 ? date.getFullYear() : date.getFullYear() - 1;
+    // const currentYear = date.getMonth() >= 6 ? date.getFullYear() : date.getFullYear() - 1;
+    // TODO: this is a temporary fix for the academic year dropdown
+    const currentYear = date.getMonth() >= 5 ? date.getFullYear() : date.getFullYear() - 1;
     const academicYears: string[] = [];
 
     for (let i = prev; i <= next; i++) {
