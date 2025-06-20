@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
 import TechnoDataTable from '@/components/custom-ui/data-table/techno-data-table';
 import TechnoPageHeading from '@/components/custom-ui/page-heading/techno-page-heading';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,6 @@ import { LuDownload } from 'react-icons/lu';
 import { CourseDues, CourseDueTableItem } from '@/types/finance';
 import { Label } from '@/components/ui/label';
 import { CollegeNames } from '@/types/enum';
-import { useTechnoFilterContext } from '@/components/custom-ui/filter/filter-context';
 import { useRouter } from 'next/navigation';
 import { SITE_MAP } from '@/common/constants/frontendRouting';
 import {
@@ -23,7 +21,6 @@ import { addDays, format } from 'date-fns';
 import { fetchCourseDues } from './helpers/fetch-data';
 import { convertForTableView } from './helpers/convertToTableData';
 import { getCurrentAcademicYear } from '@/lib/getCurrentAcademicYear';
-import TechnoBreadCrumb from '@/components/custom-ui/breadcrump/techno-breadcrumb';
 import AdvancedTechnoBreadcrumb from '@/components/custom-ui/breadcrump/advanced-techno-breadcrumb';
 import Loading from '@/app/c/marketing/loading';
 import SendEmailDialog from './send-email-dialog';
@@ -39,39 +36,23 @@ const collegeOptions = [
     label: college
   }))
 ];
+
 export default function CourseDuesDetails() {
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const today = new Date();
   const yesterday = format(addDays(today, -1), 'dd/MM/yyyy');
   const [collegeName, setSelectedCollege] = useState('ALL');
-  const collegeDropdownData = collegeOptions;
-  const router = useRouter();
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [sortState, setSortState] = useState<any>({
-    sortBy: ['course'],
-    orderBy: ['asc']
-  });
-  const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
   const [totalEntries, setTotalEntries] = useState(0);
+  const [academicYear, setAcademicYear] = useState(getCurrentAcademicYear());
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [tableData, setTableData] = useState<CourseDueTableItem[]>([]);
 
   const searchTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const [academicYear, setAcademicYear] = useState(getCurrentAcademicYear());
+  const router = useRouter();
   const academicYearDropdownData = generateAcademicYearDropdown(0, 1);
-
-  const handlePageChange = (newPage: number) => {
-    if (newPage >= 1 && newPage <= totalPages) {
-      setPage(newPage);
-    }
-  };
-
-  const handleLimitChange = (newLimit: number) => {
-    setLimit(newLimit);
-    setPage(1);
-  };
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -80,7 +61,6 @@ export default function CourseDuesDetails() {
     }
     searchTimerRef.current = setTimeout(() => {
       setDebouncedSearch(value);
-      setPage(1);
     }, 500);
   };
 
@@ -92,44 +72,39 @@ export default function CourseDuesDetails() {
     };
   }, []);
 
-  const getQueryParams = () => {
-    return {
-      // page,
-      // limit,
-      // search: debouncedSearch,
-      // sortBy: sortState.sortBy,
-      // orderBy: sortState.orderBy
-      collegeName,
-      date: yesterday,
-      academicYear
-      // date: format(today, 'dd/MM/yyyy')
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsError(false);
+      
+      try {
+        const params = {
+          collegeName,
+          date: yesterday,
+          academicYear,
+          search: debouncedSearch
+        };
+        
+
+        const response = await fetchCourseDues({
+          client: undefined as any, 
+          queryKey: ['courseDues', params],
+          signal: undefined as any,
+          meta: undefined,
+        });
+        const convertedData = convertForTableView(response ?? []);
+        
+        setTableData(convertedData);
+        setTotalEntries(convertedData.length);
+      } catch (error) {
+        console.error('Error fetching course dues:', error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
     };
-  };
 
-  const queryParams = getQueryParams();
-
-  const courseDuesQuery = useQuery<CourseDues[], Error>({
-    queryKey: ['courseDues', queryParams],
-    queryFn: (context) => fetchCourseDues(context as QueryFunctionContext<readonly [string, any]>),
-    placeholderData: (previousData) => previousData,
-    refetchOnWindowFocus: false,
-  });
-
-  // useEffect(() => {
-  //   if (courseDuesQuery.data) {
-  //     // setTotalPages(courseDuesQuery.data.totalPages);
-  //     // setTotalEntries(courseDuesQuery.data.total);
-  //   }
-  // }, [courseDuesQuery.data]);
-
-  // Prepare table state
-  const isLoading = courseDuesQuery.isLoading || courseDuesQuery.isFetching;
-  const isError = courseDuesQuery.isError;
-  const tableData = convertForTableView(courseDuesQuery.data ?? []);
-
-  // Error handling
-  if (isError) {
-  }
+    fetchData();
+  }, [academicYear, debouncedSearch, collegeName, yesterday]);
 
   // Define table columns
   const columns = [
@@ -159,8 +134,6 @@ export default function CourseDuesDetails() {
     }
   ];
 
-  // const { filters, updateFilter } = useTechnoFilterContext();
-
   const handleViewMore = (courseDueData: CourseDueTableItem) => {
     router.push(
       SITE_MAP.FINANCE.SELECTED_COURSE_DUES(courseDueData.courseCode, courseDueData.courseYear)
@@ -180,11 +153,13 @@ export default function CourseDuesDetails() {
     setAcademicYear(value);
   };
 
+  if (isLoading && tableData.length === 0) {
+    return <Loading />;
+  }
 
   return (
     <>
       <AdvancedTechnoBreadcrumb items={breadcrumbItems} />
-
       <TechnoPageHeading title="All Course Dues" />
 
       <div className="w-full flex flex-row px-4 py-5 bg-white shadow-sm border-[1px] rounded-[10px] border-gray-200">
@@ -194,7 +169,6 @@ export default function CourseDuesDetails() {
         </div>
         <div className="flex w-1/5">
           <Label className="text-[#666666] w-1/3">College</Label>
-
           <span>
             <div className="flex items-center gap-4">
               <Select value={collegeName.toString()} onValueChange={handleCollegeChange}>
@@ -215,7 +189,6 @@ export default function CourseDuesDetails() {
         <span>
           <div className="flex items-center gap-4">
             <span className="font-[500]">Academic Year: </span>
-
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="min-w-[200px] justify-between">
@@ -246,29 +219,21 @@ export default function CourseDuesDetails() {
         </div>
       )}
 
-      {isLoading && <Loading />}
-      {!isLoading && !isError && (
-        <TechnoDataTable
-          selectedRowId={selectedRowId}
-          setSelectedRowId={setSelectedRowId}
-          columns={columns}
-          data={tableData}
-          showPagination={false}
-          tableName="Course Dues"
-          tableActionButton={<CourseTableActionButton />}
-          currentPage={page}
-          totalPages={totalPages}
-          pageLimit={limit}
-          totalEntries={totalEntries}
-          onPageChange={handlePageChange}
-          onLimitChange={handleLimitChange}
-          onSearch={handleSearch}
-          searchTerm={search}
-          isLoading={isLoading}
-          handleViewMore={handleViewMore}
-          headerStyles={'text-[#5B31D1] bg-[#F7F4FF]'}
-        />
-      )}
+      <TechnoDataTable
+        selectedRowId={selectedRowId}
+        setSelectedRowId={setSelectedRowId}
+        columns={columns}
+        data={tableData}
+        showPagination={false}
+        tableName="Course Dues"
+        tableActionButton={<CourseTableActionButton />}
+        totalEntries={totalEntries}
+        onSearch={handleSearch}
+        searchTerm={search}
+        isLoading={isLoading}
+        handleViewMore={handleViewMore}
+        headerStyles={'text-[#5B31D1] bg-[#F7F4FF]'}
+      />
     </>
   );
 }

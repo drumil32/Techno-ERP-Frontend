@@ -65,7 +65,7 @@ export const calculateRelevantOtherFees = (otherFees: any[]) => {
     // Skip SEM1FEE (index 0) and only include fees that apply to all semesters
     if (index === 0 || fee.type === FeeType.SEM1FEE) return sum;
 
-    
+
     if (scheduleFeeMapper(fee.type) == 'Yearly') {
       const finalFee = Number(fee.finalFee) || 0;
       return sum + (finalFee);
@@ -127,6 +127,7 @@ export const StudentFeesForm = () => {
   const [dataUpdated, setDataUpdated] = useState(true);
   const [isSubmittingFinal, setIsSubmittingFinal] = useState(false);
   const router = useRouter();
+  const [first, setFirst] = useState(true)
 
   const {
     isChecking: isRedirectChecking,
@@ -704,9 +705,14 @@ export const StudentFeesForm = () => {
     form.setValue('semWiseFees.0.finalFee', sourceValue);
   }, [sourceValue]);
 
-  const handleOtherFeesChange = (value: number) => {
-    form.setValue(sourceField, value);
-  };
+
+  useEffect(() => {
+  if (otherFeesWatched?.[0]?.finalFee !== undefined && !first) {
+    semFields.forEach((_, index) => {
+      form.setValue(`semWiseFees.${index}.finalFee`, otherFeesWatched[0].finalFee);
+    });
+  }
+}, [otherFeesWatched?.[0]?.finalFee]);
 
   if (isLoadingOtherFees || isLoadingEnquiry || isLoadingSemFees) {
     return <Loading />;
@@ -818,6 +824,10 @@ export const StudentFeesForm = () => {
                                         if (totalFee - Number(value) < 0 &&
                                           !feeTypeArray.includes(feeType))
                                           return;
+
+                                        if(index == 0){
+                                          setFirst(false);
+                                        }
 
                                         formField.onChange(value === '' ? null : Number(value));
                                       }
@@ -990,11 +1000,8 @@ export const StudentFeesForm = () => {
 
                   <div className="border border-gray-200 rounded-lg divide-y divide-gray-100 overflow-hidden">
                     {semFields.map((field, index) => {
-
-                      
-
                       const originalFeeAmount = semWiseFeesData[index];
-                      const finalFee = semWiseFeesWatched?.[index]?.finalFee;
+                      let finalFee = semWiseFeesWatched?.[index]?.finalFee;
                       const discountValue =
                         finalFee != undefined
                           ? originalFeeAmount - finalFee
@@ -1003,13 +1010,13 @@ export const StudentFeesForm = () => {
                         typeof discountValue === 'number' ? `₹${discountValue}` : discountValue;
 
                       // Calculate relevant other fees (excluding SEM1FEE)
-                      const bookFees =  otherFeesWatched?.find((f) => f.type === FeeType.BOOKBANK)?.finalFee ?? 0;
-                      
+                      const bookFees = otherFeesWatched?.find((f) => f.type === FeeType.BOOKBANK)?.finalFee ?? 0;
+
                       let totalSemFee = Number(finalFee ?? 0) + bookFees;
 
                       if (index == 0) {
                         totalSemFee = otherFeesTotals.totalFinal
-                      }else if(index % 2 == 0){
+                      } else if (index % 2 == 0) {
                         totalSemFee += calculateRelevantOtherFees(otherFeesWatched || []);
                       }
 
@@ -1046,7 +1053,8 @@ export const StudentFeesForm = () => {
                                       const value = e.target.value;
                                       if (/^[0-9]*$/.test(value)) {
                                         if (Number(value) > Number(originalFeeAmount)) return;
-                                        formField.onChange(value === '' ? null : Number(value));
+                                        const numValue = value === '' ? null : Number(value);
+                                        formField.onChange(numValue);
                                       }
                                     }}
                                     readOnly={index === 0}
@@ -1189,6 +1197,7 @@ export const StudentFeesForm = () => {
             isSavingDraft={isSavingDraft}
             confirmationChecked={!!confirmationChecked}
             draftExists={draftExists}
+            studentData={enquiryData}
           />
         )}
       </form>
