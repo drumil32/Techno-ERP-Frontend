@@ -35,7 +35,7 @@ const toBase64 = async (url: string) => {
   });
 };
 
-export const downloadStep4 = async (
+export const downloadStep2 = async (
   data: any,
   directSave: boolean = false
 ): Promise<{ url: string; fileName: string }> => {
@@ -512,38 +512,4 @@ export const downloadStep4 = async (
       document.body.removeChild(container);
     }
   }
-};
-export const mockDataFee = {
-  logoLink: placeholderLogoBase64,
-  collegeName: 'TECHNO INSTITUTE OF HIGHER STUDIES',
-  collegeAddress: '331, Anaura, Near Indira Canal, Ayodhya Road, Lucknow - 226028',
-  email: 'accounts@tims.edu.in',
-  contact: '7897123666 (Voice & Whatsapp)',
-  receiptNo: '767',
-  date: '16-05-25',
-  studentName: 'Avnish Kumar S/o Mr. Bal Govind',
-  category: 'General',
-  fatherName: 'Mr. Bal Govind',
-  session: '2024 - 25',
-  course: 'BSc',
-  feeDetails: [
-    {
-      particular: '2022-23- Third Year-Vith-Misc Fee',
-      amount: 400.0
-    },
-    {
-      particular: '2024-25- Third Year-Vith-Exam Fee & PC',
-      amount: 2600.0
-    },
-    {
-      particular: '2024-25- Third Year-Vith-Misc Fee',
-      amount: 800.0
-    },
-    {
-      particular: '2024-25- Third Year-Vith-Tution Fee',
-      amount: 10000.0
-    }
-  ],
-  amountInWords: 'INR Thirteen Thousand Eight Hundred Only',
-  qrCode: 'QQ 271395'
 };

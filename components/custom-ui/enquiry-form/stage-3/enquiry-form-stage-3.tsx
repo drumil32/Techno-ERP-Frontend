@@ -119,7 +119,7 @@ const EnquiryFormStage3 = () => {
       Object.entries(values).filter(([key]) => schemaKeys.includes(key))
     );
 
-    const alwaysIncludeKeys = ['studentName', 'studentPhoneNumber', 'emailId'];
+    const alwaysIncludeKeys = ['studentName'];
     const filteredKeys = Array.from(new Set([...Object.keys(values), ...alwaysIncludeKeys])).filter(
       (key) => schemaKeys.includes(key)
     );
@@ -214,10 +214,10 @@ const EnquiryFormStage3 = () => {
 
       const filteredData = filterBySchema(formSchemaStep3, values);
 
-      if (currentDocuments.length !== 2) {
-        toast.error('Please upload all mandatory documents before proceeding.');
-        return false;
-      }
+      // if (currentDocuments.length !== 2) {
+      //   toast.error('Please upload all mandatory documents before proceeding.');
+      //   return false;
+      // }
 
       const { confirmation, _id, ...rest } = filteredData;
 
@@ -233,11 +233,11 @@ const EnquiryFormStage3 = () => {
         }
       }
 
-      if (!isDocumentVerificationValid) {
-        toast.error('Please ensure you complete document verification first');
-        setDocumentVerificationStatus(false);
-        return false;
-      }
+      // if (!isDocumentVerificationValid) {
+      //   toast.error('Please ensure you complete document verification first');
+      //   setDocumentVerificationStatus(false);
+      //   return false;
+      // }
 
       const validation = enquiryStep3UpdateRequestSchema.safeParse(rest);
       if (!validation.success) {
