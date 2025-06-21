@@ -96,7 +96,8 @@ export const TruncatedCell = ({
 
   if (columnId === "remarks") {
 
-    const showValue = cellRef.current?.innerText
+    let showValue = cellRef.current?.innerText
+    
     return (
       <TooltipProvider delayDuration={200}>
         <Tooltip>
@@ -116,7 +117,6 @@ export const TruncatedCell = ({
       </TooltipProvider>
     )
   }
-
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -655,7 +655,7 @@ export default function TechnoDataTable({
                                 </div>
                               ) : (
                                 <TruncatedCell
-                                  value={flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                  value={cellValue === "ZERO" ? "New Admission" : flexRender(cell.column.columnDef.cell, cell.getContext()) }
                                   // value={cellValue}
                                   maxWidth={maxWidth}
                                   columnId={cell.column.id}
