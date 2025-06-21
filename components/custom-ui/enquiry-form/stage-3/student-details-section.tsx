@@ -45,10 +45,10 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
   const checkValidity = () => {
     const studentDetails = {
       admissionMode: form.getValues('admissionMode'),
-      // dateOfAdmission: form.getValues('dateOfAdmission'),
+      dateOfAdmission: form.getValues('dateOfAdmission'),
       studentName: form.getValues('studentName'),
       studentPhoneNumber: form.getValues('studentPhoneNumber'),
-      // emailId: form.getValues('emailId'),
+      emailId: form.getValues('emailId'),
       fatherName: form.getValues('fatherName'),
       fatherPhoneNumber: form.getValues('fatherPhoneNumber'),
       fatherOccupation: form.getValues('fatherOccupation'),
@@ -64,10 +64,10 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
     const result = formSchemaStep3
       .pick({
         admissionMode: true,
-        // dateOfAdmission: true,
+        dateOfAdmission: true,
         studentName: true,
         studentPhoneNumber: true,
-        // emailId: true,
+        emailId: true,
         fatherName: true,
         fatherPhoneNumber: true,
         fatherOccupation: true,
@@ -175,6 +175,19 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
 
               {/* <DatePicker
                 control={form.control}
+                name="dateOfEnquiry"
+                formItemClassName={commonFormItemClass}
+                disabled={true}
+                label="Date of Enquiry"
+                placeholder="Select Enquiry Date"
+                showYearMonthDropdowns={true}
+                defaultSelectedDate={new Date()}
+                labelClassName="font-inter font-semibold text-[14px] text-primary"
+              /> */}
+
+              <DatePicker
+                control={form.control}
+                isRequired={true}
                 name="dateOfAdmission"
                 disabled={isViewable}
                 label="Date of Admission"
@@ -182,7 +195,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                 showYearMonthDropdowns={true}
                 formItemClassName={`${commonFormItemClass} border-none`}
                 labelClassName="font-inter font-semibold text-[14px] text-primary"
-              /> */}
+              />
               <FormField
                 key="course"
                 control={form.control}
@@ -274,7 +287,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-semibold text-[14px] text-primary">
                       Email ID
-                      
+                      <span className="text-red-500 pl-0">*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -429,7 +442,7 @@ const StudentDetailsSectionStage3: React.FC<StudentDetailsFormPropInterface> = (
                   <FormItem className={`${commonFormItemClass}`}>
                     <FormLabel className="font-inter font-semibold text-[14px] text-primary gap-x-1">
                       Mother's Occupation
-                      
+
                     </FormLabel>
                     <FormControl>
                       <Input

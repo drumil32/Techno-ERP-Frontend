@@ -189,7 +189,7 @@ export const enquirySchema = z.object({
 
   studentFee: z.string().optional(),
   studentFeeDraft: z.string().optional(),
-  dateOfAdmission: requestDateSchema.optional(),
+  dateOfAdmission: requestDateSchema,
 
   documents: z.array(singleDocumentSchema).optional(),
 
@@ -265,7 +265,7 @@ export const enquiryDraftStep3Schema = enquiryStep3UpdateRequestSchema
     studentPhoneNumber: contactNumberSchema.optional(),
     counsellor: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
     telecaller: z.array(z.union([z.string(), z.enum(['other'])])).optional(),
-    dateOfAdmission: requestDateSchema.optional(),
+    dateOfAdmission: requestDateSchema,
     dateOfBirth: requestDateSchema.optional(),
     entranceExamDetails: entranceExamDetailSchema.partial().optional(),
     admittedThrough: z.nativeEnum(AdmittedThrough).default(AdmittedThrough.DIRECT)
