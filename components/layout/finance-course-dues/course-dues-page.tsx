@@ -75,7 +75,7 @@ export default function CourseDuesDetails() {
   useEffect(() => {
     const fetchData = async () => {
       setIsError(false);
-      
+
       try {
         const params = {
           collegeName,
@@ -83,16 +83,16 @@ export default function CourseDuesDetails() {
           academicYear,
           search: debouncedSearch
         };
-        
+
 
         const response = await fetchCourseDues({
-          client: undefined as any, 
+          client: undefined as any,
           queryKey: ['courseDues', params],
           signal: undefined as any,
           meta: undefined,
         });
         const convertedData = convertForTableView(response ?? []);
-        
+
         setTableData(convertedData);
         setTotalEntries(convertedData.length);
       } catch (error) {
@@ -186,8 +186,12 @@ export default function CourseDuesDetails() {
             </div>
           </span>
         </div>
-        <span>
-          <div className="flex items-center gap-4">
+
+        <div className="flex w-1/5">
+          <Label className="text-[#666666] w-1/3">Academic Year:</Label>
+          <Label>{getCurrentAcademicYear()}</Label>
+        </div>
+        {/* <div className="flex items-center gap-4">
             <span className="font-[500]">Academic Year: </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -209,8 +213,8 @@ export default function CourseDuesDetails() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-        </span>
+          </div> */}
+
       </div>
 
       {isError && (

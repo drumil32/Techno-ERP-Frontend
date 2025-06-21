@@ -209,7 +209,6 @@ export function DownloadStep2Dialog({
             <DownloadCloud className="w-4 h-4 ml-auto text-gray-400" />
           </Button>
         }
-
       </DialogTrigger>
       <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-hidden">
         <DialogHeader>
