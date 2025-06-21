@@ -99,7 +99,6 @@ const FinanceOfficeForm = () => {
   const { data: otherFeesData, isLoading: isLoadingOtherFees } = useQuery({
     queryKey: ['otherFeesData'],
     queryFn: () => getOtherFees(courseName),
-    staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     enabled: !!courseName
   });
