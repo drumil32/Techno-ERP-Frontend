@@ -138,7 +138,7 @@ const EnquiryFormFooter: React.FC<EnquiryFormFooterProps> = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <DownloadStep2Dialog studentData={studentData} />
+      {/* <DownloadStep2Dialog studentData={studentData} /> */}
 
       <Dialog open={isSubmitDialogOpen} onOpenChange={setSubmitDialogOpen}>
         <DialogTrigger asChild>
