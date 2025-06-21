@@ -125,9 +125,9 @@ export default function CourseDuesDetails() {
       },
       cell: ({ row }: any) => {
         return (
-          <div className='flex gap-5 items-center justify-center w-full'>
-            <div>{`${row.original.departmentHODEmail}`}</div>
-            <SendEmailDialog hodName={row.original.departmentHODName} hodEmail={row.original.departmentHODEmail} />
+          <div className='flex gap-5 items-center justify-end w-full'>
+            <div>{`${row.original.departmentHODEmail ?? "--"}`}</div>
+            <SendEmailDialog hodName={row.original.departmentHODName ?? "--"} hodEmail={row.original.departmentHODEmail ?? "--"} />
           </div>
         )
       }

@@ -179,7 +179,6 @@ export const StudentFeesForm = () => {
   } = useQuery<any>({
     queryKey: ['courseFees', courseName],
     refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5,
     queryFn: () => getFeesByCourseName(courseName),
     enabled: !!courseName
   });
@@ -223,7 +222,6 @@ export const StudentFeesForm = () => {
     queryKey: ['otherFeesData'],
     queryFn: () => getOtherFees(courseName),
     refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5,
     enabled: !!courseName
   });
 
